@@ -169,7 +169,12 @@ abstract class AnnotationController extends Controller
                 $ex->setValidate($validate);
                 throw $ex;
             }
-            return $this->$actionName(...array_values($actionArgs));
+            if(isset($annotations['CircuitBreaker'])){
+
+
+            }else{
+                return $this->$actionName(...array_values($actionArgs));
+            }
         }else{
             return $this->$actionName();
         }
