@@ -8,9 +8,6 @@ use EasySwoole\Annotation\Annotation;
 use EasySwoole\Component\Context\ContextManager;
 use EasySwoole\Component\Di as IOC;
 use EasySwoole\Http\AbstractInterface\Controller;
-use EasySwoole\Http\Exception\AnnotationMethodNotAllow;
-use EasySwoole\Http\Exception\ParamAnnotationError;
-use EasySwoole\Http\Exception\ParamAnnotationValidateError;
 use EasySwoole\Http\Request;
 use EasySwoole\Http\Response;
 use EasySwoole\HttpAnnotation\AnnotationTag\CircuitBreaker;
@@ -18,7 +15,12 @@ use EasySwoole\HttpAnnotation\AnnotationTag\Context;
 use EasySwoole\HttpAnnotation\AnnotationTag\DI;
 use EasySwoole\HttpAnnotation\AnnotationTag\Method;
 use EasySwoole\HttpAnnotation\AnnotationTag\Param;
+use EasySwoole\HttpAnnotation\Exception\Annotation\ActionTimeout;
+use EasySwoole\HttpAnnotation\Exception\Annotation\MethodNotAllow;
+use EasySwoole\HttpAnnotation\Exception\Annotation\ParamError;
+use EasySwoole\HttpAnnotation\Exception\Annotation\ParamValidateError;
 use EasySwoole\Validate\Validate;
+use Swoole\Coroutine\Channel;
 
 abstract class AnnotationController extends Controller
 {
@@ -106,7 +108,7 @@ abstract class AnnotationController extends Controller
             if(!empty($annotations['Method'])){
                 $method = $annotations['Method'][0]->allow;
                 if(!in_array($this->request()->getMethod(),$method)){
-                    throw new AnnotationMethodNotAllow("request method {$this->request()->getMethod()} is not allow for action {$actionName} in class ".(static::class) );
+                    throw new MethodNotAllow("request method {$this->request()->getMethod()} is not allow for action {$actionName} in class ".(static::class) );
                 }
             }
             /*
@@ -119,7 +121,7 @@ abstract class AnnotationController extends Controller
                 foreach ($params as $param){
                     $paramName = $param->name;
                     if(empty($paramName)){
-                        throw new ParamAnnotationError("param annotation error for action {$actionName} in class ".(static::class));
+                        throw new ParamError("param annotation error for action {$actionName} in class ".(static::class));
                     }
                     if(!empty($param->from)){
                         $value = null;
@@ -165,13 +167,39 @@ abstract class AnnotationController extends Controller
             }
             $data = $actionArgs +  $this->request()->getRequestParam();
             if(!$validate->validate($data)){
-                $ex = new ParamAnnotationValidateError("validate fail for column {$validate->getError()->getField()}");
+                $ex = new ParamValidateError("validate fail for column {$validate->getError()->getField()}");
                 $ex->setValidate($validate);
                 throw $ex;
             }
             if(isset($annotations['CircuitBreaker'])){
-
-
+                $breakerInfo = $annotations['CircuitBreaker'][0];
+                $timeout = $breakerInfo->timeout;
+                $failAction = $breakerInfo->failAction;
+                $channel = new Channel(1);
+                go(function ()use($channel,$actionName,$actionArgs){
+                    /*
+                     * 因为协程内的异常需要被外层捕获
+                     */
+                    try{
+                        $ret = $this->$actionName(...array_values($actionArgs));
+                    }catch (\Throwable $exception){
+                        $ret = $exception;
+                    }
+                    $channel->push($ret);
+                });
+                $ret = $channel->pop($timeout);
+                if($ret instanceof \Throwable){
+                    throw $ret;
+                }
+                if($ret === false){
+                    if($failAction){
+                        return $this->$failAction();
+                    }else{
+                        throw new ActionTimeout("action timeout");
+                    }
+                }else{
+                    return $ret;
+                }
             }else{
                 return $this->$actionName(...array_values($actionArgs));
             }
