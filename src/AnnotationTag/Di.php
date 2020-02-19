@@ -7,11 +7,11 @@ namespace EasySwoole\HttpAnnotation\AnnotationTag;
 use EasySwoole\Annotation\AbstractAnnotationTag;
 
 /**
- * Class DI
+ * Class Di
  * @package EasySwoole\HttpAnnotation\AnnotationTag
  * @Annotation
  */
-final class DI extends AbstractAnnotationTag
+final class Di extends AbstractAnnotationTag
 {
 
     /**
