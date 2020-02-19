@@ -12,7 +12,7 @@ use EasySwoole\Http\Request;
 use EasySwoole\Http\Response;
 use EasySwoole\HttpAnnotation\AnnotationTag\CircuitBreaker;
 use EasySwoole\HttpAnnotation\AnnotationTag\Context;
-use EasySwoole\HttpAnnotation\AnnotationTag\DI;
+use EasySwoole\HttpAnnotation\AnnotationTag\Di;
 use EasySwoole\HttpAnnotation\AnnotationTag\Method;
 use EasySwoole\HttpAnnotation\AnnotationTag\Param;
 use EasySwoole\HttpAnnotation\Exception\Annotation\ActionTimeout;
@@ -92,8 +92,8 @@ abstract class AnnotationController extends Controller
             /*
              * 判断Di注入
              */
-            if(!empty($propertyAnnotation['DI'])){
-                $key = $propertyAnnotation['DI'][0]->key;
+            if(!empty($propertyAnnotation['Di'])){
+                $key = $propertyAnnotation['Di'][0]->key;
                 if(!empty($key)){
                     $this->{$name} = IOC::getInstance()->get($key);
                 }
