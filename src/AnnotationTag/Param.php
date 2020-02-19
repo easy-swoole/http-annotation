@@ -61,7 +61,7 @@ final class Param extends AbstractAnnotationTag
      */
     public $alphaDash;
     /**
-     * @var string
+     * @var array
      */
     public $between;
     /**
@@ -105,7 +105,7 @@ final class Param extends AbstractAnnotationTag
      */
     public $func;
     /**
-     * @var string
+     * @var array
      */
     public $inArray;
     /**
@@ -125,7 +125,7 @@ final class Param extends AbstractAnnotationTag
      */
     public $numeric;
     /**
-     * @var string
+     * @var array
      */
     public $notInArray;
     /**
@@ -141,7 +141,7 @@ final class Param extends AbstractAnnotationTag
      */
     public $lengthMin;
     /**
-     * @var string
+     * @var array
      */
     public $betweenLen;
     /**
