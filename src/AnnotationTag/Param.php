@@ -23,6 +23,8 @@ final class Param extends AbstractAnnotationTag
      */
     public $from = [];
 
+    public $defaultValue = null;
+
     /**
      * @var string
      */
@@ -223,6 +225,11 @@ final class Param extends AbstractAnnotationTag
                 }
                 case 'alias':{
                     $this->alias = (string)$param;
+                    break;
+                }
+                case 'defaultValue':{
+                    $this->defaultValue = $param;
+                    break;
                 }
                 default :{
                     if(in_array($key,$this->allowValidateRule))

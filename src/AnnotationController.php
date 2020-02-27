@@ -150,6 +150,13 @@ abstract class AnnotationController extends Controller
                     }else{
                         $value = $this->request()->getRequestParam($paramName);
                     }
+
+                    if($value === null && $param->defaultValue){
+                        $value = $param->defaultValue;
+                        $data = $this->request()->getQueryParams();
+                        $this->request()->withQueryParams($data + [$paramName=>$value]);
+                    }
+
                     /*
                      * 注意，这边可能得到null数据，若要求某个数据不能为null,请用验证器柜子
                      */
