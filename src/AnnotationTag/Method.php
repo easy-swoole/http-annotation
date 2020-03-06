@@ -11,7 +11,7 @@ use EasySwoole\Annotation\AbstractAnnotationTag;
  * @package EasySwoole\HttpAnnotation\AnnotationTag
  * @Annotation
  */
-final class Method extends AbstractAnnotationTag
+class Method extends AbstractAnnotationTag
 {
     /**
      * @var array

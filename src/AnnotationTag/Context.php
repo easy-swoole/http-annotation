@@ -10,7 +10,7 @@ use EasySwoole\Annotation\AbstractAnnotationTag;
  * @package EasySwoole\HttpAnnotation\AnnotationTag
  * @Annotation
  */
-final class Context extends AbstractAnnotationTag
+class Context extends AbstractAnnotationTag
 {
     /**
      * @var string

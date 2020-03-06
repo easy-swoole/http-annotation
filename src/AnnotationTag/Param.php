@@ -11,7 +11,7 @@ use EasySwoole\Annotation\ValueParser;
  * @package EasySwoole\HttpAnnotation\AnnotationTag
  * @Annotation
  */
-final class Param extends AbstractAnnotationTag
+class Param extends AbstractAnnotationTag
 {
     /**
      * @var string

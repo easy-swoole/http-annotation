@@ -12,7 +12,7 @@ use EasySwoole\Annotation\ValueParser;
  * @package EasySwoole\HttpAnnotation\AnnotationTag
  * @Annotation
  */
-final class CircuitBreaker extends AbstractAnnotationTag
+class CircuitBreaker extends AbstractAnnotationTag
 {
     /** @var float  */
     public $timeout = 3.0;
