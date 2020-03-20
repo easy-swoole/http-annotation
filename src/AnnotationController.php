@@ -71,13 +71,8 @@ abstract class AnnotationController extends Controller
 
     function __hook(?string $actionName, Request $request, Response $response, callable $actionHook = null)
     {
-        return parent::__hook($actionName, $request, $response, [$this,'__annotationHook']);
-    }
-
-    protected function __annotationHook(string $actionName)
-    {
         /*
-        * 扫码全部public属性的注解
+           执行成员属性解析
         */
         foreach ($this->propertyAnnotations as $name => $propertyAnnotation){
             /*
@@ -99,7 +94,11 @@ abstract class AnnotationController extends Controller
                 }
             }
         }
+        return parent::__hook($actionName, $request, $response, [$this,'__annotationHook']);
+    }
 
+    protected function __annotationHook(string $actionName)
+    {
         if(isset($this->methodAnnotations[$actionName])){
             $annotations = $this->methodAnnotations[$actionName];
             /*
