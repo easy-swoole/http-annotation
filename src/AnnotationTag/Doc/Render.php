@@ -21,9 +21,9 @@ class Render
         $tpl = '';
         $deprecated = '';
         if($api->deprecated){
-            $deprecated .= "<sup class='deprecated'>已废弃</sup>\n\n";
+            $deprecated = "<sup class='deprecated'>已废弃</sup>";
         }
-        $tpl .= "<h2 id='{$api->group}-{$api->name}'>{$api->group}-{$api->name}</h2>\n";
+        $tpl .= "<h2 id='{$api->group}-{$api->name}'>{$api->group}-{$api->name}{$deprecated}</h2>\n";
         $tpl .= "接口说明: <span>{$api->description}</span> \n\n";
         if(isset($methodAnnotation['Method'][0])){
             $method = implode("|",$methodAnnotation['Method'][0]->allow);

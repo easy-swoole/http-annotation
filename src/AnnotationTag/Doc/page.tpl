@@ -7,6 +7,9 @@
     <link href="https://cdn.bootcss.com/font-awesome/5.12.1/css/all.min.css" rel="stylesheet">
     <link href="https://cdn.bootcss.com/github-markdown-css/4.0.0/github-markdown.css" rel="stylesheet">
     <style>
+        .deprecated{
+            color: red;
+        }
         .fa-angle-right::before {
             padding-right:0.3rem
         }
