@@ -1,0 +1,9 @@
+#!/usr/bin/env php
+
+<?php
+$file = getcwd().'/vendor/autoload.php';
+if (file_exists($file)) {
+    require $file;
+}else{
+    die("include composer autoload.php fail\n");
+}

@@ -13,6 +13,12 @@ use EasySwoole\Http\Response;
 use EasySwoole\HttpAnnotation\AnnotationTag\CircuitBreaker;
 use EasySwoole\HttpAnnotation\AnnotationTag\Context;
 use EasySwoole\HttpAnnotation\AnnotationTag\Di;
+use EasySwoole\HttpAnnotation\AnnotationTag\DocTag\Api;
+use EasySwoole\HttpAnnotation\AnnotationTag\DocTag\ApiFail;
+use EasySwoole\HttpAnnotation\AnnotationTag\DocTag\ApiRequestExample;
+use EasySwoole\HttpAnnotation\AnnotationTag\DocTag\ApiResponseExample;
+use EasySwoole\HttpAnnotation\AnnotationTag\DocTag\ApiSuccess;
+use EasySwoole\HttpAnnotation\AnnotationTag\DocTag\ResponseParam;
 use EasySwoole\HttpAnnotation\AnnotationTag\Method;
 use EasySwoole\HttpAnnotation\AnnotationTag\Param;
 use EasySwoole\HttpAnnotation\Exception\Annotation\ActionTimeout;
@@ -41,32 +47,56 @@ abstract class AnnotationController extends Controller
             $this->annotation->addParserTag(new Context());
             $this->annotation->addParserTag(new Di());
             $this->annotation->addParserTag(new CircuitBreaker());
+            $this->annotation->addParserTag(new Api());
+            $this->annotation->addParserTag(new ApiFail());
+            $this->annotation->addParserTag(new ApiSuccess());
+            $this->annotation->addParserTag(new ApiRequestExample());
+            $this->annotation->addParserTag(new ResponseParam());
         }else{
             $this->annotation = $annotation;
         }
 
         foreach ($this->getAllowMethodReflections() as $name => $reflection){
-            $ret = $this->annotation->getClassMethodAnnotation($reflection);
+            $ret = $this->annotation->getAnnotation($reflection);
             if(!empty($ret)){
                 $this->methodAnnotations[$name] = $ret;
             }
         }
         foreach ($this->getPropertyReflections() as $name => $reflection){
-            $ret = $this->annotation->getPropertyAnnotation($reflection);
+            $ret = $this->annotation->getAnnotation($reflection);
             if(!empty($ret)){
                 $this->propertyAnnotations[$name] = $ret;
             }
         }
     }
 
-    protected function getMethodAnnotations():array
-    {
-        return $this->methodAnnotations;
-    }
-
     protected function getAnnotation():Annotation
     {
         return $this->annotation;
+    }
+
+    protected function getMethodAnnotation(?string $method = null):?array
+    {
+        if($method === null){
+            return $this->methodAnnotations;
+        }
+        if(isset($this->methodAnnotations[$method])){
+            return $this->methodAnnotations[$method];
+        }else{
+            return null;
+        }
+    }
+
+    protected function getPropertyAnnotation(?string $property = null):?array
+    {
+        if($property === null){
+            return $this->propertyAnnotations;
+        }
+        if(isset($this->propertyAnnotations[$property])){
+            return $this->propertyAnnotations[$property];
+        }else{
+            return null;
+        }
     }
 
     function __hook(?string $actionName, Request $request, Response $response, callable $actionHook = null)

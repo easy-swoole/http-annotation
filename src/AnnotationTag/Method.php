@@ -5,6 +5,7 @@ namespace EasySwoole\HttpAnnotation\AnnotationTag;
 
 
 use EasySwoole\Annotation\AbstractAnnotationTag;
+use EasySwoole\Annotation\ValueParser;
 
 /**
  * Class Method
@@ -25,13 +26,9 @@ class Method extends AbstractAnnotationTag
 
     public function assetValue(?string $raw)
     {
-        parse_str($raw,$str);
-        if(isset($str['allow'])){
-            $str = trim($str['allow'],"{}");
-            $list = explode(",",$str);
-            foreach ($list as $item){
-                $this->allow[] = trim($item);
-            }
+        $array = ValueParser::parser($raw);
+        foreach ($array as $key => $value){
+            $this->$key = $value;
         }
     }
 }

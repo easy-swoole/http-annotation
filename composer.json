@@ -20,7 +20,8 @@
         "php": ">=7.1.0",
         "ext-swoole": ">=4.4.7",
         "easyswoole/http": "^1.4",
-        "easyswoole/annotation": "^1.0"
+        "easyswoole/annotation": "^1.0",
+        "easyswoole/parsedown": "^1.0"
     },
     "require-dev": {
         "easyswoole/phpunit": "^1.0",
@@ -35,5 +36,8 @@
         "psr-4": {
             "EasySwoole\\HttpAnnotation\\Tests\\": "tests/"
         }
-    }
+    },
+    "bin": [
+        "bin/easy-doc"
+    ]
 }

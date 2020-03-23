@@ -19,6 +19,15 @@ class Param extends AbstractAnnotationTag
     public $name;
 
     /**
+     * @var string
+     */
+    public $type = 'string';
+    /**
+     * @var string
+     */
+    public $description;
+
+    /**
      * @var array
      */
     public $from = [];
@@ -214,39 +223,20 @@ class Param extends AbstractAnnotationTag
     {
         $allParams = ValueParser::parser($raw);
         foreach ($allParams as $key => $param){
-            switch ($key){
-                case 'name':{
-                    $this->name = (string)$param;
-                    break;
-                }
-                case 'from':{
-                    $this->from = (array)$param;
-                    break;
-                }
-                case 'alias':{
-                    $this->alias = (string)$param;
-                    break;
-                }
-                case 'defaultValue':{
-                    $this->defaultValue = $param;
-                    break;
-                }
-                default :{
-                    if(in_array($key,$this->allowValidateRule))
-                    {
-                        /*
-                         * 对inarray 做特殊处理
-                         */
-                        if(in_array($key,['inArray','notInArray'])){
-                            if(!is_array($param[0])){
-                                $param = [$param];
-                            }
-                        }
-                        $this->$key = $param;
-                        $this->validateRuleList[$key] = true;
+            if(in_array($key,$this->allowValidateRule))
+            {
+                /*
+                 * 对inarray 做特殊处理
+                 */
+                if(in_array($key,['inArray','notInArray'])){
+                    if(!is_array($param[0])){
+                        $param = [$param];
                     }
-                    break;
                 }
+                $this->$key = $param;
+                $this->validateRuleList[$key] = $param;
+            }else{
+                $this->$key = $param;
             }
         }
     }
