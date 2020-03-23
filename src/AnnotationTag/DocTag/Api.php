@@ -32,10 +32,6 @@ class Api extends AbstractAnnotationTag
      */
     public $deprecated;
     /**
-     * @var array
-     */
-    public $method;
-    /**
      * @var string
      */
     public $version = '1.0.0';
