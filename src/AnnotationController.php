@@ -172,12 +172,16 @@ abstract class AnnotationController extends Controller
                                     break;
                                 }
                                 case 'HEADER':{
-                                    $value = $this->request()->getHeader(strtolower($paramName));
+                                    $value = $this->request()->getHeader($paramName);
                                     if(!empty($value)){
                                         $value = $value[0];
                                     }else{
                                         $value = null;
                                     }
+                                    break;
+                                }
+                                case 'FILE':{
+                                    $value = $this->request()->getUploadedFile($paramName);
                                     break;
                                 }
                             }
