@@ -1,65 +1,21 @@
 #!/usr/bin/env php
 <?php
 require_once getcwd().'/vendor/autoload.php';
+use EasySwoole\HttpAnnotation\AnnotationTag\Doc\Render;
 
-
-use EasySwoole\Annotation\Annotation;
-use EasySwoole\HttpAnnotation\AnnotationTag\CircuitBreaker;
-use EasySwoole\HttpAnnotation\AnnotationTag\Context;
-use EasySwoole\HttpAnnotation\AnnotationTag\Di;
-use EasySwoole\HttpAnnotation\AnnotationTag\DocTag\Api;
-use EasySwoole\HttpAnnotation\AnnotationTag\DocTag\ApiFail;
-use EasySwoole\HttpAnnotation\AnnotationTag\DocTag\ApiRequestExample;
-use EasySwoole\HttpAnnotation\AnnotationTag\DocTag\ApiSuccess;
-use EasySwoole\HttpAnnotation\AnnotationTag\DocTag\ResponseParam;
-use EasySwoole\HttpAnnotation\AnnotationTag\Method;
-use EasySwoole\HttpAnnotation\AnnotationTag\Param;
-use EasySwoole\Utility\File;
-
-echo "scan dir: App/HttpController\n";
-$list = File::scanDirectory("App/HttpController")['files'];
-
-$annotation = new Annotation();
-/*
-    * 注册解析命令
-*/
-$annotation->addParserTag(new Method());
-$annotation->addParserTag(new Param());
-$annotation->addParserTag(new Context());
-$annotation->addParserTag(new Di());
-$annotation->addParserTag(new CircuitBreaker());
-$annotation->addParserTag(new Api());
-$annotation->addParserTag(new ApiFail());
-$annotation->addParserTag(new ApiSuccess());
-$annotation->addParserTag(new ApiRequestExample());
-$annotation->addParserTag(new ResponseParam());
-
-$ret = [];
-
-if(empty($list)){
-echo "not file found \n";
-return ;
+$array = $argv;
+array_shift($array);
+$file = array_shift($array);
+if(empty($file)){
+    $file = 'App/HttpController';
 }
+echo "scan dir: {$file}\n";
 
+$string = Render::renderDir($file);
 
-foreach ($list as $file){
-    $class = str_replace('/','\\',substr($file,0,-4));
-    try{
-        $ref = new \ReflectionClass($class);
-        if($ref->isSubclassOf(\EasySwoole\HttpAnnotation\AnnotationController::class)){
-            foreach ($ref->getMethods() as $method){
-                $temp = $annotation->getAnnotation($method);
-                if(!empty($temp)){
-                    $ret[] = $temp;
-                }
-            }
-        }
-    }catch (\Throwable $throwable){
-
-    }
+if(!empty($string)){
+    file_put_contents('easy_doc.html',$string);
+    echo "extra to  file: easy_doc.html\n";
+}else{
+    echo "no any api doc found\n";
 }
-
-$string = \EasySwoole\HttpAnnotation\AnnotationTag\Doc\Render::renderToHtml($ret);
-file_put_contents('easy_doc.html',$string);
-
-echo "extra to  file: easy_doc.html\n";

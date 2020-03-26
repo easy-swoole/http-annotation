@@ -4,9 +4,20 @@
 namespace EasySwoole\HttpAnnotation\AnnotationTag\Doc;
 
 
+use EasySwoole\HttpAnnotation\AnnotationController;
 use EasySwoole\HttpAnnotation\AnnotationTag\DocTag\Api;
 use EasySwoole\HttpAnnotation\AnnotationTag\Param;
 use EasySwoole\ParserDown\ParserDown;
+use EasySwoole\Annotation\Annotation;
+use EasySwoole\HttpAnnotation\AnnotationTag\CircuitBreaker;
+use EasySwoole\HttpAnnotation\AnnotationTag\Context;
+use EasySwoole\HttpAnnotation\AnnotationTag\Di;
+use EasySwoole\HttpAnnotation\AnnotationTag\DocTag\ApiFail;
+use EasySwoole\HttpAnnotation\AnnotationTag\DocTag\ApiRequestExample;
+use EasySwoole\HttpAnnotation\AnnotationTag\DocTag\ApiSuccess;
+use EasySwoole\HttpAnnotation\AnnotationTag\DocTag\ResponseParam;
+use EasySwoole\HttpAnnotation\AnnotationTag\Method;
+use EasySwoole\Utility\File;
 
 class Render
 {
@@ -118,5 +129,49 @@ class Render
         $tpl = str_replace('{$SIDEBAR}',$ret,$tpl);
         $ret = $parser->text($temp);
         return str_replace('{$BODY}',$ret,$tpl);
+    }
+
+
+    public static function renderDir($dir):?string
+    {
+        $annotation = new Annotation();
+        /*
+            * 注册解析命令
+        */
+        $annotation->addParserTag(new Method());
+        $annotation->addParserTag(new Param());
+        $annotation->addParserTag(new Context());
+        $annotation->addParserTag(new Di());
+        $annotation->addParserTag(new CircuitBreaker());
+        $annotation->addParserTag(new Api());
+        $annotation->addParserTag(new ApiFail());
+        $annotation->addParserTag(new ApiSuccess());
+        $annotation->addParserTag(new ApiRequestExample());
+        $annotation->addParserTag(new ResponseParam());
+
+        $list = File::scanDirectory($dir)['files'];
+        $ret = [];
+        if(empty($list)){
+            return null;
+        }
+
+        foreach ($list as $file){
+            $file = substr($file,strlen($dir));
+            $class = str_replace('/','\\',substr($file,0,-4));
+            try{
+                $ref = new \ReflectionClass($class);
+                if($ref->isSubclassOf(AnnotationController::class)){
+                    foreach ($ref->getMethods() as $method){
+                        $temp = $annotation->getAnnotation($method);
+                        if(!empty($temp)){
+                            $ret[] = $temp;
+                        }
+                    }
+                }
+            }catch (\Throwable $throwable){
+
+            }
+        }
+        return  Render::renderToHtml($ret);
     }
 }
