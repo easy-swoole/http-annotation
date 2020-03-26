@@ -4,7 +4,6 @@
 namespace EasySwoole\HttpAnnotation\AnnotationTag\Doc;
 
 
-use EasySwoole\HttpAnnotation\AnnotationController;
 use EasySwoole\HttpAnnotation\AnnotationTag\DocTag\Api;
 use EasySwoole\HttpAnnotation\AnnotationTag\Param;
 use EasySwoole\ParserDown\ParserDown;
@@ -41,7 +40,8 @@ class Render
         }else{
             $method = '不限制';
         }
-        $tpl .= "> <span class='requestMethod'>Method: {$method}</span>  <span>```{$api->path}```</span>\n\n";
+        $tpl .= "#### <span class='requestMethod'>Method : ```{$method}```</span> \n\n";
+        $tpl .= "#### Url : <span>```{$api->path}```</span>\n\n";
 
         $tpl .= "### 请求 \n\n";
 
@@ -132,7 +132,79 @@ class Render
     }
 
 
-    public static function renderDir($dir):?string
+    public static function renderClass(string $class):string
+    {
+
+        $ref = new \ReflectionClass($class);
+        $ret= [];
+        foreach ($ref->getMethods() as $method){
+            $temp = static::getAnnotation()->getAnnotation($method);
+            if(!empty($temp)){
+                $ret[] = $temp;
+            }
+        }
+        return  Render::renderToHtml($ret);
+    }
+
+    public static function renderDir($path):?string
+    {
+        if(is_file($path)){
+            $list = [$path];
+        }else{
+            $list = File::scanDirectory($path)['files'];
+        }
+
+        $ret = [];
+        if(empty($list)){
+            return null;
+        }
+        foreach ($list as $file){
+            $class = static::getFileClass(file_get_contents($file));
+            if($class){
+                $ref = new \ReflectionClass($class);
+                foreach ($ref->getMethods() as $method){
+                    $temp = static::getAnnotation()->getAnnotation($method);
+                    if(!empty($temp)){
+                        $ret[] = $temp;
+                    }
+                }
+            }
+        }
+        return  Render::renderToHtml($ret);
+    }
+
+    private static function getFileClass($php_code):?string
+    {
+        $namespace = '';
+        $class = NULL;
+        $tokens = token_get_all($php_code);
+        for ($i=0;$i<count($tokens);$i++) {
+            if ($tokens[$i][0] === T_NAMESPACE) {
+                for ($j=$i+1;$j<count($tokens); $j++) {
+                    if ($tokens[$j][0] === T_STRING) {
+                        $namespace .= '\\'.$tokens[$j][1];
+                    } else if ($tokens[$j] === '{' || $tokens[$j] === ';') {
+                        break;
+                    }
+                }
+            }
+
+            if ($tokens[$i][0] === T_CLASS) {
+                for ($j=$i+1;$j<count($tokens);$j++) {
+                    if ($tokens[$j] === '{') {
+                        $class = $tokens[$i+2][1];
+                    }
+                }
+            }
+        }
+        if(!empty($class)){
+            return $namespace.'\\'.$class;
+        }else{
+            return null;
+        }
+    }
+
+    private static function getAnnotation():Annotation
     {
         $annotation = new Annotation();
         /*
@@ -148,30 +220,6 @@ class Render
         $annotation->addParserTag(new ApiSuccess());
         $annotation->addParserTag(new ApiRequestExample());
         $annotation->addParserTag(new ResponseParam());
-
-        $list = File::scanDirectory($dir)['files'];
-        $ret = [];
-        if(empty($list)){
-            return null;
-        }
-
-        foreach ($list as $file){
-            $file = substr($file,strlen($dir));
-            $class = str_replace('/','\\',substr($file,0,-4));
-            try{
-                $ref = new \ReflectionClass($class);
-                if($ref->isSubclassOf(AnnotationController::class)){
-                    foreach ($ref->getMethods() as $method){
-                        $temp = $annotation->getAnnotation($method);
-                        if(!empty($temp)){
-                            $ret[] = $temp;
-                        }
-                    }
-                }
-            }catch (\Throwable $throwable){
-
-            }
-        }
-        return  Render::renderToHtml($ret);
+        return $annotation;
     }
 }
