@@ -30,11 +30,12 @@ class Render
         }else{
             $method = '不限制';
         }
-        $tpl .= "> <span class='requestMethod'>{$method}</span> <span>```{$api->path}```</span>\n\n";
+        $tpl .= "> <span class='requestMethod'>Method: {$method}</span>  <span>```{$api->path}```</span>\n\n";
 
         $tpl .= "### 请求 \n\n";
-        $tpl .= "#### 请求字段 \n\n";
+
         if(isset($methodAnnotation['Param'])){
+            $tpl .= "#### 请求字段 \n\n";
             $tpl .= "|字段|类型|描述|验证规则|\n";
             $tpl .= "|----|----|----|----|\n";
             /** @var Param $param */
@@ -43,22 +44,21 @@ class Render
                 $tpl .= "| {$param->name} | {$param->type} | {$param->description} | {$rule} |\n";
             }
             $tpl .= "\n\n";
-        }else{
-            $tpl .= "无 \n\n";
         }
-        $tpl .= "#### 请求示例 \n\n";
+
         if(isset($methodAnnotation['ApiRequestExample'])){
+            $tpl .= "#### 请求示例 \n\n";
             $index = 1;
             foreach ($methodAnnotation['ApiRequestExample'] as $example){
                 $tpl .= "##### 请求示例{$index} \n\n";
                 $tpl .= "```\n{$example->getContent()}\n```\n";
             }
-        }else{
-            $tpl .= "无 \n\n";
         }
+
         $tpl .= "### 响应 \n\n";
-        $tpl .= "#### 响应字段 \n\n";
+
         if(isset($methodAnnotation['ResponseParam'])){
+            $tpl .= "#### 响应字段 \n\n";
             $tpl .= "|字段|类型|描述|\n";
             $tpl .= "|----|----|----|\n";
             /** @var Param $param */
@@ -66,29 +66,24 @@ class Render
                 $tpl .= "| {$param->name} | {$param->type} | {$param->description} | \n";
             }
             $tpl .= "\n\n";
-        }else{
-            $tpl .= "无 \n\n";
         }
-        $tpl .= "#### 成功响应示例 \n\n";
+
         if(isset($methodAnnotation['ApiSuccess'])){
+            $tpl .= "#### 成功响应示例 \n\n";
             $index = 1;
             foreach ($methodAnnotation['ApiSuccess'] as $example){
                 $tpl .= "##### 成功响应示例{$index} \n\n";
                 $tpl .= "```\n{$example->getContent()}\n```\n";
             }
-        }else{
-            $tpl .= "无 \n\n";
         }
 
-        $tpl .= "#### 失败响应示例 \n\n";
         if(isset($methodAnnotation['ApiFail'])){
+            $tpl .= "#### 失败响应示例 \n\n";
             $index = 1;
             foreach ($methodAnnotation['ApiFail'] as $example){
                 $tpl .= "##### 失败响应示例{$index} \n\n";
                 $tpl .= "```\n{$example->getContent()} \n```\n";
             }
-        }else{
-            $tpl .= "无 \n\n";
         }
         return $tpl;
     }

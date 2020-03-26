@@ -16,7 +16,6 @@ use EasySwoole\HttpAnnotation\AnnotationTag\Di;
 use EasySwoole\HttpAnnotation\AnnotationTag\DocTag\Api;
 use EasySwoole\HttpAnnotation\AnnotationTag\DocTag\ApiFail;
 use EasySwoole\HttpAnnotation\AnnotationTag\DocTag\ApiRequestExample;
-use EasySwoole\HttpAnnotation\AnnotationTag\DocTag\ApiResponseExample;
 use EasySwoole\HttpAnnotation\AnnotationTag\DocTag\ApiSuccess;
 use EasySwoole\HttpAnnotation\AnnotationTag\DocTag\ResponseParam;
 use EasySwoole\HttpAnnotation\AnnotationTag\Method;
