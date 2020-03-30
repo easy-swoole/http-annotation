@@ -153,7 +153,7 @@ class Render
         return  Render::renderToHtml($ret);
     }
 
-    public static function renderDir($path):?string
+    public static function renderDir($path,?string $extraMd = null):?string
     {
         if(is_file($path)){
             $list = [$path];
@@ -177,7 +177,7 @@ class Render
                 }
             }
         }
-        return  Render::renderToHtml($ret);
+        return  Render::renderToHtml($ret,$extraMd);
     }
 
     private static function getFileClass($php_code):?string

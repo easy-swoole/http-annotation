@@ -9,9 +9,17 @@ $file = array_shift($array);
 if(empty($file)){
     $file = 'App/HttpController';
 }
+
+$extra = array_shift($array);
+if(!empty($extra) && is_file($extra)){
+    $extra = file_get_contents($extra);
+}else{
+    $extra = null;
+}
+
 echo "scan dir: {$file}\n";
 
-$string = Render::renderDir($file);
+$string = Render::renderDir($file,$extra);
 
 if(!empty($string)){
     file_put_contents('easy_doc.html',$string);
