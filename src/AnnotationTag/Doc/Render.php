@@ -99,7 +99,7 @@ class Render
         return $tpl;
     }
 
-    public static function renderToHtml(array $methodAnnotations)
+    public static function renderToHtml(array $methodAnnotations,?string $extraMd = null)
     {
         $category = [];
         $temp = '';
@@ -115,6 +115,13 @@ class Render
          * 构造sidebar
          */
         $sideBar = '';
+
+        if(!empty($extraMd)){
+            $sideBar .= "- (附加说明)[附加说明]\n";
+            $extraMd = "# 附加说明\n\n".$extraMd;
+            $temp = $extraMd."\n\n".$temp;
+        }
+
         foreach ($category as $group => $value){
             $sideBar .= "- {$group}\n";
             foreach ($value as $h){
