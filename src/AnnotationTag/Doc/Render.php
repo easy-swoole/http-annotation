@@ -117,8 +117,8 @@ class Render
         $sideBar = '';
 
         if(!empty($extraMd)){
-            $sideBar .= "- (附加说明)[附加说明]\n";
-            $extraMd = "# 附加说明\n\n".$extraMd;
+            $sideBar .= "- [附加说明](#附加说明)\n";
+            $extraMd = "<h1 id='附加说明'>附加说明</h1>\n\n".$extraMd;
             $temp = $extraMd."\n\n".$temp;
         }
 
