@@ -18,8 +18,7 @@ if(!empty($extra) && is_file($extra)){
 }
 
 echo "scan dir: {$file}\n";
-
-$string = Render::renderDir($file,$extra);
+$string = (new Render())->renderDir($file,$extra);
 
 if(!empty($string)){
     file_put_contents('easy_doc.html',$string);

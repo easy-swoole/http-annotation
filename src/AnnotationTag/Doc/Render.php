@@ -20,7 +20,7 @@ use EasySwoole\Utility\File;
 
 class Render
 {
-    static function parseToMarkdown(array $methodAnnotation):?string
+    function parseToMarkdown(array $methodAnnotation):?string
     {
         //一定要有Api标签
         if(!isset($methodAnnotation['Api'][0])){
@@ -61,8 +61,9 @@ class Render
             $tpl .= "#### 请求示例 \n\n";
             $index = 1;
             foreach ($methodAnnotation['ApiRequestExample'] as $example){
+                $content = $this->contentFormat($example->getContent());
                 $tpl .= "##### 请求示例{$index} \n\n";
-                $tpl .= "```\n{$example->getContent()}\n```\n";
+                $tpl .= "```\n{$content}\n```\n";
             }
         }
 
@@ -83,8 +84,9 @@ class Render
             $tpl .= "#### 成功响应示例 \n\n";
             $index = 1;
             foreach ($methodAnnotation['ApiSuccess'] as $example){
+                $content = $this->contentFormat($example->getContent());
                 $tpl .= "##### 成功响应示例{$index} \n\n";
-                $tpl .= "```\n{$example->getContent()}\n```\n";
+                $tpl .= "```\n{$content}\n```\n";
             }
         }
 
@@ -92,19 +94,20 @@ class Render
             $tpl .= "#### 失败响应示例 \n\n";
             $index = 1;
             foreach ($methodAnnotation['ApiFail'] as $example){
+                $content = $this->contentFormat($example->getContent());
                 $tpl .= "##### 失败响应示例{$index} \n\n";
-                $tpl .= "```\n{$example->getContent()} \n```\n";
+                $tpl .= "```\n{$content} \n```\n";
             }
         }
         return $tpl;
     }
 
-    public static function renderToHtml(array $methodAnnotations,?string $extraMd = null)
+    public function renderToHtml(array $methodAnnotations,?string $extraMd = null)
     {
         $category = [];
         $temp = '';
         foreach ($methodAnnotations as $methodAnnotation){
-            $ret = static::parseToMarkdown($methodAnnotation);
+            $ret = $this->parseToMarkdown($methodAnnotation);
             if($ret){
                 $category[$methodAnnotation['Api'][0]->group][] = "{$methodAnnotation['Api'][0]->group}-{$methodAnnotation['Api'][0]->name}";
                 $temp .= $ret;
@@ -139,21 +142,21 @@ class Render
     }
 
 
-    public static function renderClass(string $class):string
+    public function renderClass(string $class):string
     {
 
         $ref = new \ReflectionClass($class);
         $ret= [];
         foreach ($ref->getMethods() as $method){
-            $temp = static::getAnnotation()->getAnnotation($method);
+            $temp = $this->getAnnotation()->getAnnotation($method);
             if(!empty($temp)){
                 $ret[] = $temp;
             }
         }
-        return  Render::renderToHtml($ret);
+        return $this->renderToHtml($ret);
     }
 
-    public static function renderDir($path,?string $extraMd = null):?string
+    public function renderDir($path,?string $extraMd = null):?string
     {
         if(is_file($path)){
             $list = [$path];
@@ -166,21 +169,21 @@ class Render
             return null;
         }
         foreach ($list as $file){
-            $class = static::getFileClass(file_get_contents($file));
+            $class = $this->getFileClass(file_get_contents($file));
             if($class){
                 $ref = new \ReflectionClass($class);
                 foreach ($ref->getMethods() as $method){
-                    $temp = static::getAnnotation()->getAnnotation($method);
+                    $temp = $this->getAnnotation()->getAnnotation($method);
                     if(!empty($temp)){
                         $ret[] = $temp;
                     }
                 }
             }
         }
-        return  Render::renderToHtml($ret,$extraMd);
+        return  $this->renderToHtml($ret,$extraMd);
     }
 
-    private static function getFileClass($php_code):?string
+    private function getFileClass($php_code):?string
     {
         $namespace = '';
         $class = NULL;
@@ -211,7 +214,7 @@ class Render
         }
     }
 
-    private static function getAnnotation():Annotation
+    private function getAnnotation():Annotation
     {
         $annotation = new Annotation();
         /*
@@ -228,5 +231,20 @@ class Render
         $annotation->addParserTag(new ApiRequestExample());
         $annotation->addParserTag(new ResponseParam());
         return $annotation;
+    }
+
+    private function contentFormat(string $content)
+    {
+        $json = json_decode($content,true);
+        if($json){
+            $content = json_encode($json,JSON_UNESCAPED_SLASHES|JSON_UNESCAPED_UNICODE|JSON_PRETTY_PRINT);
+        }else{
+            libxml_disable_entity_loader(true);
+            $xml = simplexml_load_string($content, 'SimpleXMLElement', LIBXML_NOERROR | LIBXML_NOCDATA);
+            if($xml){
+                $content = $xml->saveXML();
+            }
+        }
+        return $content;
     }
 }
