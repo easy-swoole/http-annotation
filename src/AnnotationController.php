@@ -32,6 +32,7 @@ abstract class AnnotationController extends Controller
     private $methodAnnotations = [];
     private $propertyAnnotations = [];
     private $annotation;
+    private $l = [];
 
     public function __construct(?Annotation $annotation = null)
     {
@@ -181,6 +182,14 @@ abstract class AnnotationController extends Controller
                                 }
                                 case 'FILE':{
                                     $value = $this->request()->getUploadedFile($paramName);
+                                    break;
+                                }
+                                case 'DI':{
+                                    $value = IOC::getInstance()->get($paramName);
+                                    break;
+                                }
+                                case 'CONTEXT':{
+                                    $value = ContextManager::getInstance()->get($paramName);
                                     break;
                                 }
                             }
