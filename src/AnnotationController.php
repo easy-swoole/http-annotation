@@ -18,6 +18,7 @@ use EasySwoole\HttpAnnotation\AnnotationTag\DocTag\ApiFail;
 use EasySwoole\HttpAnnotation\AnnotationTag\DocTag\ApiRequestExample;
 use EasySwoole\HttpAnnotation\AnnotationTag\DocTag\ApiSuccess;
 use EasySwoole\HttpAnnotation\AnnotationTag\DocTag\ResponseParam;
+use EasySwoole\HttpAnnotation\AnnotationTag\InjectParamsContext;
 use EasySwoole\HttpAnnotation\AnnotationTag\Method;
 use EasySwoole\HttpAnnotation\AnnotationTag\Param;
 use EasySwoole\HttpAnnotation\Exception\Annotation\ActionTimeout;
@@ -52,6 +53,7 @@ abstract class AnnotationController extends Controller
             $this->annotation->addParserTag(new ApiSuccess());
             $this->annotation->addParserTag(new ApiRequestExample());
             $this->annotation->addParserTag(new ResponseParam());
+            $this->annotation->addParserTag(new InjectParamsContext());
         }else{
             $this->annotation = $annotation;
         }
@@ -140,6 +142,11 @@ abstract class AnnotationController extends Controller
                     throw new MethodNotAllow("request method {$this->request()->getMethod()} is not allow for action {$actionName} in class ".(static::class) );
                 }
             }
+
+            $injectKey = null;
+            if(!empty($annotations['InjectParamsContext'])){
+                $injectKey = $annotations['InjectParamsContext'][0]->key;
+            }
             /*
              * 参数构造与validate验证
              */
@@ -221,6 +228,9 @@ abstract class AnnotationController extends Controller
                         }
                     }
                 }
+            }
+            if($injectKey){
+                ContextManager::getInstance()->set($injectKey,$actionArgs);
             }
             $data = $actionArgs +  $this->request()->getRequestParam();
             if(!$validate->validate($data)){

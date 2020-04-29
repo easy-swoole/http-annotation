@@ -21,6 +21,9 @@ class InjectParamsContext extends AbstractAnnotationTag
 
     public function assetValue(?string $raw)
     {
-        var_dump($raw);
+        parse_str($raw,$str);
+        if(!empty($str['key'])){
+            $this->key = trim($str['key']," \t\n\r\0\x0B\"'");
+        }
     }
 }
