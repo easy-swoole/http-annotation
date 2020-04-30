@@ -25,6 +25,7 @@ use EasySwoole\HttpAnnotation\Exception\Annotation\ActionTimeout;
 use EasySwoole\HttpAnnotation\Exception\Annotation\MethodNotAllow;
 use EasySwoole\HttpAnnotation\Exception\Annotation\ParamError;
 use EasySwoole\HttpAnnotation\Exception\Annotation\ParamValidateError;
+use EasySwoole\HttpAnnotation\Exception\Exception;
 use EasySwoole\Validate\Validate;
 use Swoole\Coroutine\Channel;
 
@@ -210,9 +211,16 @@ abstract class AnnotationController extends Controller
 
                     if($value === null && $param->defaultValue){
                         $value = $param->defaultValue;
-                        $data = $this->request()->getQueryParams();
-                        $this->request()->withQueryParams($data + [$paramName=>$value]);
                     }
+
+                    if(!empty($param->preHandler)){
+                        if(is_callable($param->preHandler)){
+                            $value = call_user_func($param->preHandler,$value);
+                        }else{
+                            throw new Exception("annotation param: {$paramName} preHandler is not callable");
+                        }
+                    }
+
 
                     /*
                      * 注意，这边可能得到null数据，若要求某个数据不能为null,请用验证器柜子
@@ -232,7 +240,9 @@ abstract class AnnotationController extends Controller
             if($injectKey){
                 ContextManager::getInstance()->set($injectKey,$actionArgs);
             }
-            $data = $actionArgs +  $this->request()->getRequestParam();
+            //覆盖回去
+            $data = $actionArgs + $this->request()->getRequestParam();
+            $this->request()->withQueryParams($data);
             if(!$validate->validate($data)){
                 $ex = new ParamValidateError("validate fail for column {$validate->getError()->getField()}");
                 $ex->setValidate($validate);

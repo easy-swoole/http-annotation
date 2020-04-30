@@ -18,6 +18,8 @@ class Param extends AbstractAnnotationTag
      */
     public $name;
 
+    public $preHandler;
+
     /**
      * @var string
      */
