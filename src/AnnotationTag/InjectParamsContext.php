@@ -4,6 +4,7 @@
 namespace EasySwoole\HttpAnnotation\AnnotationTag;
 
 use EasySwoole\Annotation\AbstractAnnotationTag;
+use EasySwoole\Annotation\ValueParser;
 
 /**
  * Class InjectParamsContext
@@ -13,6 +14,15 @@ use EasySwoole\Annotation\AbstractAnnotationTag;
 class InjectParamsContext extends AbstractAnnotationTag
 {
     public $key = 'INJECT_PARAMS';
+    /**
+     * @var bool
+     */
+    public $filterNull = false;
+
+    /**
+     * @var bool
+     */
+    public $filterEmpty = false;
 
     public function tagName(): string
     {
@@ -21,9 +31,9 @@ class InjectParamsContext extends AbstractAnnotationTag
 
     public function assetValue(?string $raw)
     {
-        parse_str($raw,$str);
-        if(!empty($str['key'])){
-            $this->key = trim($str['key']," \t\n\r\0\x0B\"'");
+        $allParams = ValueParser::parser($raw);
+        foreach ($allParams as $key => $value){
+            $this->$key = $value;
         }
     }
 }

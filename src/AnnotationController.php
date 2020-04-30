@@ -34,7 +34,6 @@ abstract class AnnotationController extends Controller
     private $methodAnnotations = [];
     private $propertyAnnotations = [];
     private $annotation;
-    private $l = [];
 
     public function __construct(?Annotation $annotation = null)
     {
@@ -145,8 +144,12 @@ abstract class AnnotationController extends Controller
             }
 
             $injectKey = null;
+            $filterNull = false;
+            $filterEmpty = false;
             if(!empty($annotations['InjectParamsContext'])){
                 $injectKey = $annotations['InjectParamsContext'][0]->key;
+                $filterNull = $annotations['InjectParamsContext'][0]->filterNull;
+                $filterEmpty = $annotations['InjectParamsContext'][0]->filterEmpty;
             }
             /*
              * 参数构造与validate验证
@@ -213,7 +216,7 @@ abstract class AnnotationController extends Controller
                         $value = $param->defaultValue;
                     }
 
-                    if(!empty($param->preHandler)){
+                    if(!empty($param->preHandler) && $value !== null){
                         if(is_callable($param->preHandler)){
                             $value = call_user_func($param->preHandler,$value);
                         }else{
@@ -237,6 +240,24 @@ abstract class AnnotationController extends Controller
                 }
             }
             if($injectKey){
+                if($filterNull){
+                    foreach ($actionArgs as $key => $arg){
+                        if($arg === null){
+                            unset($actionArgs[$key]);
+                        }else if($filterEmpty){
+                            if(empty($arg)){
+                                unset($actionArgs[$key]);
+                            }
+                        }
+
+                    }
+                }else if($filterEmpty){
+                    foreach ($actionArgs as $key => $arg){
+                        if(empty($arg)){
+                            unset($actionArgs[$key]);
+                        }
+                    }
+                }
                 ContextManager::getInstance()->set($injectKey,$actionArgs);
             }
             //合并参数
