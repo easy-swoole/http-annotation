@@ -221,7 +221,6 @@ abstract class AnnotationController extends Controller
                         }
                     }
 
-
                     /*
                      * 注意，这边可能得到null数据，若要求某个数据不能为null,请用验证器柜子
                      */
@@ -240,14 +239,14 @@ abstract class AnnotationController extends Controller
             if($injectKey){
                 ContextManager::getInstance()->set($injectKey,$actionArgs);
             }
-            //覆盖回去
+            //合并参数
             $data = $actionArgs + $this->request()->getRequestParam();
-            $this->request()->withQueryParams($data);
             if(!$validate->validate($data)){
                 $ex = new ParamValidateError("validate fail for column {$validate->getError()->getField()}");
                 $ex->setValidate($validate);
                 throw $ex;
             }
+
             if(isset($annotations['CircuitBreaker'])){
                 $breakerInfo = $annotations['CircuitBreaker'][0];
                 $timeout = $breakerInfo->timeout;
