@@ -39,6 +39,6 @@
         }
     },
     "bin": [
-      "bin/easyswoole-doc"
+      "bin/doc-generator"
     ]
 }
