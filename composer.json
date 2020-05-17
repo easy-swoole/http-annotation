@@ -38,6 +38,6 @@
         }
     },
     "bin": [
-        "bin/easy-doc"
+      "bin/easyswoole-doc"
     ]
 }
