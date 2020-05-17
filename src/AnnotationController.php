@@ -29,7 +29,7 @@ use EasySwoole\HttpAnnotation\Exception\Exception;
 use EasySwoole\Validate\Validate;
 use Swoole\Coroutine\Channel;
 
-abstract class AnnotationController extends Controller
+class AnnotationController extends Controller
 {
     private $methodAnnotations = [];
     private $propertyAnnotations = [];
