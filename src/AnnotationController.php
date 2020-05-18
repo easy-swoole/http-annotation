@@ -158,6 +158,7 @@ class AnnotationController extends Controller
             $validate = new Validate();
             if(!empty($annotations['Param'])){
                 $params = $annotations['Param'];
+                /** @var Param $param */
                 foreach ($params as $param){
                     $paramName = $param->name;
                     if(empty($paramName)){
@@ -216,7 +217,11 @@ class AnnotationController extends Controller
                         $value = $param->defaultValue;
                     }
 
-                    if(!empty($param->preHandler) && $value !== null){
+                    if($value !== null){
+                        $value = $param->typeCast($value);
+                    }
+
+                    if(!empty($param->preHandler)){
                         if(is_callable($param->preHandler)){
                             $value = call_user_func($param->preHandler,$value);
                         }else{

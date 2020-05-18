@@ -23,7 +23,7 @@ class Param extends AbstractAnnotationTag
     /**
      * @var string
      */
-    public $type = 'string';
+    public $type;
     /**
      * @var string
      */
@@ -239,6 +239,36 @@ class Param extends AbstractAnnotationTag
                 $this->validateRuleList[$key] = $param;
             }else{
                 $this->$key = $param;
+            }
+        }
+    }
+
+    public function typeCast($val)
+    {
+        switch ($this->type)
+        {
+            case 'string':{
+                return (string)$val;
+            }
+            case 'int':{
+                return (int)$val;
+            }
+            case 'double':
+            case 'real':
+            case 'float':{
+                return (float)$val;
+            }
+            case 'bool':{
+                return (bool)$val;
+            }
+            case 'object':{
+                return json_decode($val);
+            }
+            case 'array':{
+                return json_encode($val);
+            }
+            default:{
+                return $val;
             }
         }
     }
