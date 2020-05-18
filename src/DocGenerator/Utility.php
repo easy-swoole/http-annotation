@@ -160,24 +160,34 @@ class Utility
 
     public static function renderDir($path,?string $extraMd = null):?string
     {
-        return static::annotationsToHtml(self::getPathAllAnnotations($path),$extraMd);
+        $temp = [];
+        $ret = static::getPathAllAnnotations($path);
+        foreach ($ret as $key => $list){
+            foreach ($list as $item){
+                $temp[] = $item;
+            }
+        }
+        return static::annotationsToHtml($temp,$extraMd);
     }
 
-    public static function mappingRouter(RouteCollector $collector,string $controllerPath):void
+    public static function mappingRouter(RouteCollector $collector,string $controllerPath,string $controllerNameSpace = 'App\\HttpController\\'):void
     {
+        //用于psr规范去除命名空间
+        $prefixLen = strlen(trim($controllerNameSpace,'\\'));
         $annotations = static::getPathAllAnnotations($controllerPath);
-        foreach ($annotations as $annotation){
-            if(isset($annotation['Api'][0]) && !empty($annotation['Api'][0]->path)){
-                /** @var Api $api */
-                $api = $annotation['Api'][0];
-                if(isset($annotation['Method'][0])){
-                    $method = $annotation['Method'][0]->allow;
-                }else{
-                    $method = ['POST','GET','PUT','PATCH','DELETE','HEAD','OPTIONS'];
+        foreach ($annotations as $class => $classAnnotation){
+            foreach ($classAnnotation as $methodName => $annotation){
+                if(isset($annotation['Api'][0]) && !empty($annotation['Api'][0]->path)){
+                    /** @var Api $api */
+                    $api = $annotation['Api'][0];
+                    if(isset($annotation['Method'][0])){
+                        $method = $annotation['Method'][0]->allow;
+                    }else{
+                        $method = ['POST','GET','PUT','PATCH','DELETE','HEAD','OPTIONS'];
+                    }
+                    $realPath = '/'.substr($class,$prefixLen + 1).'/'.$methodName;
+                    $collector->addRoute($method,$api->path,$realPath);
                 }
-
-//                $collector->addRoute($method,$api->path,);
-
             }
         }
     }
@@ -199,7 +209,7 @@ class Utility
                     foreach ($ref->getMethods() as $method){
                         $temp = $parser->getAnnotation($method);
                         if(!empty($temp)){
-                            $ret[$class][] = $temp;
+                            $ret[$class][$method->getName()] = $temp;
                         }
                     }
                 }
@@ -234,6 +244,10 @@ class Utility
             }
         }
         if(!empty($class)){
+            if(!empty($namespace)){
+                //去除第一个\
+                $namespace = substr($namespace,1);
+            }
             return $namespace.'\\'.$class;
         }else{
             return null;
