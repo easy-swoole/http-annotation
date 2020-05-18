@@ -17,6 +17,7 @@ use EasySwoole\HttpAnnotation\AnnotationTag\Method;
 use EasySwoole\HttpAnnotation\AnnotationTag\Param;
 use EasySwoole\ParserDown\ParserDown;
 use EasySwoole\Utility\File;
+use FastRoute\RouteCollector;
 
 class Utility
 {
@@ -162,6 +163,25 @@ class Utility
         return static::annotationsToHtml(self::getPathAllAnnotations($path),$extraMd);
     }
 
+    public static function mappingRouter(RouteCollector $collector,string $controllerPath):void
+    {
+        $annotations = static::getPathAllAnnotations($controllerPath);
+        foreach ($annotations as $annotation){
+            if(isset($annotation['Api'][0]) && !empty($annotation['Api'][0]->path)){
+                /** @var Api $api */
+                $api = $annotation['Api'][0];
+                if(isset($annotation['Method'][0])){
+                    $method = $annotation['Method'][0]->allow;
+                }else{
+                    $method = ['POST','GET','PUT','PATCH','DELETE','HEAD','OPTIONS'];
+                }
+
+//                $collector->addRoute($method,$api->path,);
+
+            }
+        }
+    }
+
     public static function getPathAllAnnotations(string $path):array
     {
         if(is_file($path)){
@@ -179,7 +199,7 @@ class Utility
                     foreach ($ref->getMethods() as $method){
                         $temp = $parser->getAnnotation($method);
                         if(!empty($temp)){
-                            $ret[] = $temp;
+                            $ret[$class][] = $temp;
                         }
                     }
                 }
