@@ -18,9 +18,9 @@ use EasySwoole\HttpAnnotation\AnnotationTag\Param;
 use EasySwoole\ParserDown\ParserDown;
 use EasySwoole\Utility\File;
 
-class Render
+class Utility
 {
-    function parseToMarkdown(array $methodAnnotation):?string
+    public static function annotationToMarkdown(array $methodAnnotation):?string
     {
         //一定要有Api标签
         if(!isset($methodAnnotation['Api'][0])){
@@ -61,7 +61,7 @@ class Render
             $tpl .= "#### 请求示例 \n\n";
             $index = 1;
             foreach ($methodAnnotation['ApiRequestExample'] as $example){
-                $content = $this->contentFormat($example->getContent());
+                $content = static::contentFormat($example->getContent());
                 $tpl .= "##### 请求示例{$index} \n\n";
                 $tpl .= "```\n{$content}\n```\n";
             }
@@ -84,7 +84,7 @@ class Render
             $tpl .= "#### 成功响应示例 \n\n";
             $index = 1;
             foreach ($methodAnnotation['ApiSuccess'] as $example){
-                $content = $this->contentFormat($example->getContent());
+                $content = static::contentFormat($example->getContent());
                 $tpl .= "##### 成功响应示例{$index} \n\n";
                 $tpl .= "```\n{$content}\n```\n";
             }
@@ -94,7 +94,7 @@ class Render
             $tpl .= "#### 失败响应示例 \n\n";
             $index = 1;
             foreach ($methodAnnotation['ApiFail'] as $example){
-                $content = $this->contentFormat($example->getContent());
+                $content = static::contentFormat($example->getContent());
                 $tpl .= "##### 失败响应示例{$index} \n\n";
                 $tpl .= "```\n{$content} \n```\n";
             }
@@ -102,12 +102,12 @@ class Render
         return $tpl;
     }
 
-    public function renderToHtml(array $methodAnnotations,?string $extraMd = null)
+    public static function annotationsToHtml(array $methodAnnotations, ?string $extraMd = null)
     {
         $category = [];
         $temp = '';
         foreach ($methodAnnotations as $methodAnnotation){
-            $ret = $this->parseToMarkdown($methodAnnotation);
+            $ret = static::annotationToMarkdown($methodAnnotation);
             if($ret){
                 $category[$methodAnnotation['Api'][0]->group][] = "{$methodAnnotation['Api'][0]->group}-{$methodAnnotation['Api'][0]->name}";
                 $temp .= $ret;
@@ -142,52 +142,58 @@ class Render
     }
 
 
-    public function renderClass(string $class):string
+    public static function renderClass(string $class):string
     {
 
+        $parser = static::getAnnotation();
         $ref = new \ReflectionClass($class);
         $ret= [];
         foreach ($ref->getMethods() as $method){
-            $temp = $this->getAnnotation()->getAnnotation($method);
+            $temp = $parser->getAnnotation($method);
             if(!empty($temp)){
                 $ret[] = $temp;
             }
         }
-        return $this->renderToHtml($ret);
+        return static::annotationsToHtml($ret);
     }
 
-    public function renderDir($path,?string $extraMd = null):?string
+    public static function renderDir($path,?string $extraMd = null):?string
+    {
+        return static::annotationsToHtml(self::getPathAllAnnotations($path),$extraMd);
+    }
+
+    public static function getPathAllAnnotations(string $path):array
     {
         if(is_file($path)){
             $list = [$path];
         }else{
             $list = File::scanDirectory($path)['files'];
         }
-
         $ret = [];
-        if(empty($list)){
-            return null;
-        }
-        foreach ($list as $file){
-            $class = $this->getFileClass(file_get_contents($file));
-            if($class){
-                $ref = new \ReflectionClass($class);
-                foreach ($ref->getMethods() as $method){
-                    $temp = $this->getAnnotation()->getAnnotation($method);
-                    if(!empty($temp)){
-                        $ret[] = $temp;
+        $parser = static::getAnnotation();
+        if(!empty($list)){
+            foreach ($list as $file){
+                $class = static::getFileDeclareClass($file);
+                if($class){
+                    $ref = new \ReflectionClass($class);
+                    foreach ($ref->getMethods() as $method){
+                        $temp = $parser->getAnnotation($method);
+                        if(!empty($temp)){
+                            $ret[] = $temp;
+                        }
                     }
                 }
             }
         }
-        return  $this->renderToHtml($ret,$extraMd);
+        return $ret;
     }
 
-    private function getFileClass($php_code):?string
+    public static function getFileDeclareClass(string $file):?string
     {
         $namespace = '';
         $class = NULL;
-        $tokens = token_get_all($php_code);
+        $phpCode = file_get_contents($file);
+        $tokens = token_get_all($phpCode);
         for ($i=0;$i<count($tokens);$i++) {
             if ($tokens[$i][0] === T_NAMESPACE) {
                 for ($j=$i+1;$j<count($tokens); $j++) {
@@ -214,7 +220,7 @@ class Render
         }
     }
 
-    private function getAnnotation():Annotation
+    protected static function getAnnotation():Annotation
     {
         $annotation = new Annotation();
         /*
@@ -233,7 +239,7 @@ class Render
         return $annotation;
     }
 
-    private function contentFormat(string $content)
+    protected static function contentFormat(string $content)
     {
         $json = json_decode($content,true);
         if($json){

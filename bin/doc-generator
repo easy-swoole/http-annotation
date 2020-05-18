@@ -1,5 +1,8 @@
 #!/usr/bin/env php
 <?php
+
+use EasySwoole\HttpAnnotation\DocGenerator\Utility;
+
 require_once getcwd().'/vendor/autoload.php';
 
 $array = $argv;
@@ -17,7 +20,7 @@ if(!empty($extra) && is_file($extra)){
 }
 
 echo "scan dir: {$file}\n";
-$string = (new \EasySwoole\HttpAnnotation\DocGenerator\Render())->renderDir($file,$extra);
+$string = Utility::renderDir($file,$extra);
 
 if(!empty($string)){
     file_put_contents('easy_doc.html',$string);

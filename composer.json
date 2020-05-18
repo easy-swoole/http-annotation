@@ -23,7 +23,9 @@
         "easyswoole/annotation": "^1.0",
         "easyswoole/parsedown": "^1.0",
         "ext-json": "*",
-        "easyswoole/validate": "^1.2"
+        "easyswoole/validate": "^1.2",
+        "ext-libxml": "*",
+        "ext-simplexml": "*"
     },
     "require-dev": {
         "easyswoole/phpunit": "^1.0",
