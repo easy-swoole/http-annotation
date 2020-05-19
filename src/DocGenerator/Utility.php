@@ -5,6 +5,7 @@ namespace EasySwoole\HttpAnnotation\DocGenerator;
 
 
 use EasySwoole\Annotation\Annotation;
+use EasySwoole\Http\UrlParser;
 use EasySwoole\HttpAnnotation\AnnotationTag\CircuitBreaker;
 use EasySwoole\HttpAnnotation\AnnotationTag\Context;
 use EasySwoole\HttpAnnotation\AnnotationTag\Di;
@@ -186,7 +187,7 @@ class Utility
                         $method = ['POST','GET','PUT','PATCH','DELETE','HEAD','OPTIONS'];
                     }
                     $realPath = '/'.substr($class,$prefixLen + 1).'/'.$methodName;
-                    $collector->addRoute($method,$api->path,$realPath);
+                    $collector->addRoute($method,UrlParser::pathInfo($api->path),$realPath);
                 }
             }
         }
