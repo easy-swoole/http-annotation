@@ -204,6 +204,10 @@ class AnnotationController extends Controller
                                     $value = ContextManager::getInstance()->get($paramName);
                                     break;
                                 }
+                                case 'RAW':{
+                                    $value = $this->request()->getBody()->__toString();
+                                    break;
+                                }
                             }
                             if($value !== null){
                                 break;
