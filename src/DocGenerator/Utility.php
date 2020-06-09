@@ -13,6 +13,7 @@ use EasySwoole\HttpAnnotation\AnnotationTag\DocTag\Api;
 use EasySwoole\HttpAnnotation\AnnotationTag\DocTag\ApiFail;
 use EasySwoole\HttpAnnotation\AnnotationTag\DocTag\ApiRequestExample;
 use EasySwoole\HttpAnnotation\AnnotationTag\DocTag\ApiSuccess;
+use EasySwoole\HttpAnnotation\AnnotationTag\DocTag\Auth;
 use EasySwoole\HttpAnnotation\AnnotationTag\DocTag\ResponseParam;
 use EasySwoole\HttpAnnotation\AnnotationTag\Method;
 use EasySwoole\HttpAnnotation\AnnotationTag\Param;
@@ -44,6 +45,17 @@ class Utility
         }
         $tpl .= "#### <span class='requestMethod'>Method : ```{$method}```</span> \n\n";
         $tpl .= "#### Url : <span>```{$api->path}```</span>\n\n";
+
+        $tpl .= "### 权限要求 \n\n";
+        if(isset($methodAnnotation['Auth'][0])){
+            $auth = $methodAnnotation['Auth'][0];
+            $authFrom = implode("|",$auth->from);
+            $tpl .= "- 参数名称：{$auth->name}\n";
+            $tpl .= "- 参数来源：{$authFrom}\n";
+            $tpl .= "- 参数描述：{$auth->description}\n\n";
+        }else{
+            $tpl .= "无\n\n";
+        }
 
         $tpl .= "### 请求 \n\n";
 
@@ -267,6 +279,7 @@ class Utility
         $annotation->addParserTag(new Di());
         $annotation->addParserTag(new CircuitBreaker());
         $annotation->addParserTag(new Api());
+        $annotation->addParserTag(new Auth());
         $annotation->addParserTag(new ApiFail());
         $annotation->addParserTag(new ApiSuccess());
         $annotation->addParserTag(new ApiRequestExample());

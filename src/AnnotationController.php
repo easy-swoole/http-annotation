@@ -17,6 +17,7 @@ use EasySwoole\HttpAnnotation\AnnotationTag\DocTag\Api;
 use EasySwoole\HttpAnnotation\AnnotationTag\DocTag\ApiFail;
 use EasySwoole\HttpAnnotation\AnnotationTag\DocTag\ApiRequestExample;
 use EasySwoole\HttpAnnotation\AnnotationTag\DocTag\ApiSuccess;
+use EasySwoole\HttpAnnotation\AnnotationTag\DocTag\Auth;
 use EasySwoole\HttpAnnotation\AnnotationTag\DocTag\ResponseParam;
 use EasySwoole\HttpAnnotation\AnnotationTag\InjectParamsContext;
 use EasySwoole\HttpAnnotation\AnnotationTag\Method;
@@ -49,6 +50,7 @@ class AnnotationController extends Controller
             $this->annotation->addParserTag(new Di());
             $this->annotation->addParserTag(new CircuitBreaker());
             $this->annotation->addParserTag(new Api());
+            $this->annotation->addParserTag(new Auth());
             $this->annotation->addParserTag(new ApiFail());
             $this->annotation->addParserTag(new ApiSuccess());
             $this->annotation->addParserTag(new ApiRequestExample());
