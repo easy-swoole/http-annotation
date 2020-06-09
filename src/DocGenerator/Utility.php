@@ -284,6 +284,7 @@ class Utility
         $annotation->addParserTag(new ApiSuccess());
         $annotation->addParserTag(new ApiRequestExample());
         $annotation->addParserTag(new ResponseParam());
+        $annotation->addAlias('Auth','Param');
         return $annotation;
     }
 

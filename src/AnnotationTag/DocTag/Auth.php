@@ -4,41 +4,15 @@
 namespace EasySwoole\HttpAnnotation\AnnotationTag\DocTag;
 
 
-use EasySwoole\Annotation\AbstractAnnotationTag;
 use EasySwoole\Annotation\ValueParser;
+use EasySwoole\HttpAnnotation\AnnotationTag\Param;
 
 /**
  * Class Auth
  * @package EasySwoole\HttpAnnotation\AnnotationTag\DocTag
  * @Annotation
  */
-class Auth extends AbstractAnnotationTag
+class Auth extends Param
 {
-    /**
-     * @var string
-     */
-    public $name;
 
-    /**
-     * @var array
-     */
-    public $from = [];
-
-    /**
-     * @var string
-     */
-    public $description;
-
-    public function tagName(): string
-    {
-        return 'Auth';
-    }
-
-    public function assetValue(?string $raw)
-    {
-        $allParams = ValueParser::parser($raw);
-        foreach ($allParams as $key => $val){
-            $this->$key = $val;
-        }
-    }
 }

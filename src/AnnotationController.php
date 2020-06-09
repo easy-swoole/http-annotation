@@ -55,6 +55,7 @@ class AnnotationController extends Controller
             $this->annotation->addParserTag(new ApiRequestExample());
             $this->annotation->addParserTag(new ResponseParam());
             $this->annotation->addParserTag(new InjectParamsContext());
+            $this->annotation->addAlias('Auth','Param');
         }else{
             $this->annotation = $annotation;
         }
