@@ -65,6 +65,13 @@ class AnnotationController extends Controller
                 $this->methodAnnotations[$name] = $ret;
             }
         }
+        //单独获取一次onRequest注解并加入
+        $ref = new \ReflectionClass(static::class);
+        $ret = $this->annotation->getAnnotation($ref->getMethod('onRequest'));
+        if(!empty($ret)){
+            $this->methodAnnotations['onRequest'] = $ret;
+        }
+
         foreach ($this->getPropertyReflections() as $name => $reflection){
             $ret = $this->annotation->getAnnotation($reflection);
             if(!empty($ret)){
@@ -132,7 +139,8 @@ class AnnotationController extends Controller
         $allowMethodReflections = $this->getAllowMethodReflections();
         $forwardPath = null;
         try {
-            $ret = call_user_func([$this,'onRequest'],$actionName,...$this->__handleAnnotationParams('onRequest'));
+            $onRequestArgs = $this->__handleAnnotationParams('onRequest');
+            $ret = call_user_func([$this,'onRequest'],$actionName,...array_values($onRequestArgs));
             if ($ret !== false) {
                 if (isset($allowMethodReflections[$actionName])) {
                     $actionArgs = $this->__handleAnnotationParams($actionName);
