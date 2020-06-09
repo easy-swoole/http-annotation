@@ -19,7 +19,7 @@
     "require": {
         "php": ">=7.1.0",
         "ext-swoole": ">=4.4.7",
-        "easyswoole/http": "dev-master",
+        "easyswoole/http": "^1.7",
         "easyswoole/annotation": "^1.0",
         "easyswoole/parsedown": "^1.0",
         "ext-json": "*",
