@@ -132,7 +132,7 @@ class AnnotationController extends Controller
         $allowMethodReflections = $this->getAllowMethodReflections();
         $forwardPath = null;
         try {
-            $ret = call_user_func([$this,'onRequest'],...$this->__handleAnnotationParams('onRequest'));
+            $ret = call_user_func([$this,'onRequest'],$actionName,...$this->__handleAnnotationParams('onRequest'));
             if ($ret !== false) {
                 if (isset($allowMethodReflections[$actionName])) {
                     $actionArgs = $this->__handleAnnotationParams($actionName);
