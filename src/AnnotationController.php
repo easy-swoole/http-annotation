@@ -8,8 +8,6 @@ use EasySwoole\Annotation\Annotation;
 use EasySwoole\Component\Context\ContextManager;
 use EasySwoole\Component\Di as IOC;
 use EasySwoole\Http\AbstractInterface\Controller;
-use EasySwoole\Http\Request;
-use EasySwoole\Http\Response;
 use EasySwoole\HttpAnnotation\AnnotationTag\CircuitBreaker;
 use EasySwoole\HttpAnnotation\AnnotationTag\Context;
 use EasySwoole\HttpAnnotation\AnnotationTag\Di;
@@ -28,6 +26,7 @@ use EasySwoole\HttpAnnotation\Exception\Annotation\ParamError;
 use EasySwoole\HttpAnnotation\Exception\Annotation\ParamValidateError;
 use EasySwoole\HttpAnnotation\Exception\Exception;
 use EasySwoole\Validate\Validate;
+use Swoole\Coroutine;
 use Swoole\Coroutine\Channel;
 
 class AnnotationController extends Controller
@@ -103,7 +102,7 @@ class AnnotationController extends Controller
         }
     }
 
-    function __hook(?string $actionName, Request $request, Response $response, callable $actionHook = null)
+    protected function __exec()
     {
         /*
            执行成员属性解析
@@ -128,23 +127,82 @@ class AnnotationController extends Controller
                 }
             }
         }
-        return parent::__hook($actionName, $request, $response, [$this,'__annotationHook']);
+        //执行
+        $actionName = $this->getActionName();
+        $allowMethodReflections = $this->getAllowMethodReflections();
+        $forwardPath = null;
+        try {
+            $ret = call_user_func([$this,'onRequest'],...$this->__handleAnnotationParams('onRequest'));
+            if ($ret !== false) {
+                if (isset($allowMethodReflections[$actionName])) {
+                    $actionArgs = $this->__handleAnnotationParams($actionName);
+                    if(isset($annotations['CircuitBreaker'])){
+                        $breakerInfo = $annotations['CircuitBreaker'][0];
+                        $timeout = $breakerInfo->timeout;
+                        $failAction = $breakerInfo->failAction;
+                        $channel = new Channel(1);
+                        Coroutine::create(function ()use($channel,$actionName,$actionArgs){
+                            /*
+                             * 因为协程内的异常需要被外层捕获
+                             */
+                            try{
+                                $ret = $this->$actionName(...array_values($actionArgs));
+                            }catch (\Throwable $exception){
+                                $ret = $exception;
+                            }
+                            $channel->push($ret);
+                        });
+                        $ret = $channel->pop($timeout);
+                        if($ret instanceof \Throwable){
+                            throw $ret;
+                        }
+                        if($ret === false){
+                            if($failAction){
+                                $forwardPath =  $this->$failAction();
+                            }else{
+                                throw new ActionTimeout("action:{$actionName} timeout");
+                            }
+                        }else{
+                            $forwardPath = $ret;
+                        }
+                    }else{
+                        $forwardPath = $this->$actionName(...array_values($actionArgs));
+                    }
+                } else {
+                    $forwardPath = $this->actionNotFound($actionName);
+                }
+            }
+        } catch (\Throwable $throwable) {
+            //若没有重构onException，直接抛出给上层
+            $this->onException($throwable);
+        } finally {
+            try {
+                $this->afterAction($actionName);
+            } catch (\Throwable $throwable) {
+                $this->onException($throwable);
+            } finally {
+                try {
+                    $this->gc();
+                } catch (\Throwable $throwable) {
+                    $this->onException($throwable);
+                }
+            }
+        }
+        return $forwardPath;
     }
 
-    protected function __annotationHook(string $actionName)
+    protected function __handleAnnotationParams(?string $actionName):array
     {
         if(isset($this->methodAnnotations[$actionName])){
             $annotations = $this->methodAnnotations[$actionName];
-            /*
-                 * 处理请求方法
-            */
+            //request method check
             if(!empty($annotations['Method'])){
                 $method = $annotations['Method'][0]->allow;
                 if(!in_array($this->request()->getMethod(),$method)){
                     throw new MethodNotAllow("request method {$this->request()->getMethod()} is not allow for action {$actionName} in class ".(static::class) );
                 }
             }
-
+            //params handler
             $injectKey = null;
             $filterNull = false;
             $filterEmpty = false;
@@ -153,9 +211,6 @@ class AnnotationController extends Controller
                 $filterNull = $annotations['InjectParamsContext'][0]->filterNull;
                 $filterEmpty = $annotations['InjectParamsContext'][0]->filterEmpty;
             }
-            /*
-             * 参数构造与validate验证
-             */
             $actionArgs = [];
             $validate = new Validate();
             if(!empty($annotations['Param'])){
@@ -278,41 +333,8 @@ class AnnotationController extends Controller
                 $ex->setValidate($validate);
                 throw $ex;
             }
-
-            if(isset($annotations['CircuitBreaker'])){
-                $breakerInfo = $annotations['CircuitBreaker'][0];
-                $timeout = $breakerInfo->timeout;
-                $failAction = $breakerInfo->failAction;
-                $channel = new Channel(1);
-                go(function ()use($channel,$actionName,$actionArgs){
-                    /*
-                     * 因为协程内的异常需要被外层捕获
-                     */
-                    try{
-                        $ret = $this->$actionName(...array_values($actionArgs));
-                    }catch (\Throwable $exception){
-                        $ret = $exception;
-                    }
-                    $channel->push($ret);
-                });
-                $ret = $channel->pop($timeout);
-                if($ret instanceof \Throwable){
-                    throw $ret;
-                }
-                if($ret === false){
-                    if($failAction){
-                        return $this->$failAction();
-                    }else{
-                        throw new ActionTimeout("action:{$actionName} timeout");
-                    }
-                }else{
-                    return $ret;
-                }
-            }else{
-                return $this->$actionName(...array_values($actionArgs));
-            }
-        }else{
-            return $this->$actionName();
+            return $actionArgs;
         }
+        return [];
     }
 }
