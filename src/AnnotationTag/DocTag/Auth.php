@@ -4,7 +4,6 @@
 namespace EasySwoole\HttpAnnotation\AnnotationTag\DocTag;
 
 
-use EasySwoole\Annotation\ValueParser;
 use EasySwoole\HttpAnnotation\AnnotationTag\Param;
 
 /**
