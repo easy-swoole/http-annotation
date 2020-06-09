@@ -123,7 +123,7 @@ class Utility
         foreach ($methodAnnotations as $methodAnnotation){
             $ret = static::annotationToMarkdown($methodAnnotation);
             if($ret){
-                $category[$methodAnnotation['Api'][0]->group][] = "{$methodAnnotation['Api'][0]->group}-{$methodAnnotation['Api'][0]->name}";
+                $category[$methodAnnotation['Api'][0]->group][] = "{$methodAnnotation['Api'][0]->name}";
                 $temp .= $ret;
             }
         }
