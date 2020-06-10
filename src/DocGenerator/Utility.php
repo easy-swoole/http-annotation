@@ -13,8 +13,8 @@ use EasySwoole\HttpAnnotation\AnnotationTag\DocTag\Api;
 use EasySwoole\HttpAnnotation\AnnotationTag\DocTag\ApiFail;
 use EasySwoole\HttpAnnotation\AnnotationTag\DocTag\ApiRequestExample;
 use EasySwoole\HttpAnnotation\AnnotationTag\DocTag\ApiSuccess;
-use EasySwoole\HttpAnnotation\AnnotationTag\DocTag\Auth;
-use EasySwoole\HttpAnnotation\AnnotationTag\DocTag\ResponseParam;
+use EasySwoole\HttpAnnotation\AnnotationTag\DocTag\ApiAuth;
+use EasySwoole\HttpAnnotation\AnnotationTag\DocTag\ApiResponseParam;
 use EasySwoole\HttpAnnotation\AnnotationTag\Method;
 use EasySwoole\HttpAnnotation\AnnotationTag\Param;
 use EasySwoole\ParserDown\ParserDown;
@@ -49,7 +49,11 @@ class Utility
         $tpl .= "### 权限要求 \n\n";
         if(isset($methodAnnotation['Auth'][0])){
             $auth = $methodAnnotation['Auth'][0];
-            $authFrom = implode("|",$auth->from);
+            if(!empty($auth->from)){
+                $authFrom = implode("|",$auth->from);
+            }else{
+                $authFrom = "COOKIE|HEADER|POST|GET";
+            }
             $tpl .= "- 参数名称：{$auth->name}\n";
             $tpl .= "- 参数来源：{$authFrom}\n";
             $tpl .= "- 参数描述：{$auth->description}\n\n";
@@ -279,12 +283,12 @@ class Utility
         $annotation->addParserTag(new Di());
         $annotation->addParserTag(new CircuitBreaker());
         $annotation->addParserTag(new Api());
-        $annotation->addParserTag(new Auth());
+        $annotation->addParserTag(new ApiAuth());
         $annotation->addParserTag(new ApiFail());
         $annotation->addParserTag(new ApiSuccess());
         $annotation->addParserTag(new ApiRequestExample());
-        $annotation->addParserTag(new ResponseParam());
-        $annotation->addAlias('Auth','Param');
+        $annotation->addParserTag(new ApiResponseParam());
+        $annotation->addAlias('ApiAuth','Param');
         return $annotation;
     }
 

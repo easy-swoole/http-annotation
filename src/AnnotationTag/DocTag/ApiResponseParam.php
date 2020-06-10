@@ -7,11 +7,15 @@ namespace EasySwoole\HttpAnnotation\AnnotationTag\DocTag;
 use EasySwoole\HttpAnnotation\AnnotationTag\Param;
 
 /**
- * Class Auth
+ * Class ApiResponseParam
  * @package EasySwoole\HttpAnnotation\AnnotationTag\DocTag
  * @Annotation
  */
-class Auth extends Param
+class ApiResponseParam extends Param
 {
+    public function tagName(): string
+    {
+        return 'ApiResponseParam';
+    }
 
 }
