@@ -99,10 +99,17 @@ class Parser
         return $content;
     }
 
-    function getClassAnnotation(string $class)
+    function getClassAnnotation(string $class):ClassAnnotation
     {
+        $classAnnotation = new ClassAnnotation();
         $ref = new \ReflectionClass($class);
         $global = $this->getAnnotationParser()->getAnnotation($ref);
-
+        foreach (['ApiGroup','ApiGroupAuth','ApiGroupDescription'] as $key){
+            if(isset($global[$key])){
+                $method = "set{$key}";
+                $classAnnotation->$method($global[$key][0]);
+            }
+        }
+        return $classAnnotation;
     }
 }
