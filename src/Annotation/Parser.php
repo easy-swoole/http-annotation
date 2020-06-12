@@ -1,7 +1,7 @@
 <?php
 
 
-namespace EasySwoole\HttpAnnotation\DocGenerator;
+namespace EasySwoole\HttpAnnotation\Annotation;
 
 
 use EasySwoole\Annotation\Annotation;
@@ -11,13 +11,16 @@ use EasySwoole\HttpAnnotation\AnnotationTag\Di;
 use EasySwoole\HttpAnnotation\AnnotationTag\DocTag\Api;
 use EasySwoole\HttpAnnotation\AnnotationTag\DocTag\ApiAuth;
 use EasySwoole\HttpAnnotation\AnnotationTag\DocTag\ApiFail;
+use EasySwoole\HttpAnnotation\AnnotationTag\DocTag\ApiGroup;
+use EasySwoole\HttpAnnotation\AnnotationTag\DocTag\ApiGroupAuth;
+use EasySwoole\HttpAnnotation\AnnotationTag\DocTag\ApiGroupDescription;
 use EasySwoole\HttpAnnotation\AnnotationTag\DocTag\ApiRequestExample;
 use EasySwoole\HttpAnnotation\AnnotationTag\DocTag\ApiResponseParam;
 use EasySwoole\HttpAnnotation\AnnotationTag\DocTag\ApiSuccess;
 use EasySwoole\HttpAnnotation\AnnotationTag\Method;
 use EasySwoole\HttpAnnotation\AnnotationTag\Param;
 
-class Utility2
+class Parser
 {
     protected $parser;
 
@@ -33,6 +36,9 @@ class Utility2
             $annotation->addParserTag(new Api());
             $annotation->addParserTag(new ApiAuth());
             $annotation->addParserTag(new ApiFail());
+            $annotation->addParserTag(new ApiGroup());
+            $annotation->addParserTag(new ApiGroupAuth());
+            $annotation->addParserTag(new ApiGroupDescription());
             $annotation->addParserTag(new ApiSuccess());
             $annotation->addParserTag(new ApiRequestExample());
             $annotation->addParserTag(new ApiResponseParam());
@@ -95,6 +101,8 @@ class Utility2
 
     function getClassAnnotation(string $class)
     {
+        $ref = new \ReflectionClass($class);
+        $global = $this->getAnnotationParser()->getAnnotation($ref);
 
     }
 }
