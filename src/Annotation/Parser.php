@@ -19,6 +19,7 @@ use EasySwoole\HttpAnnotation\AnnotationTag\ApiResponseParam;
 use EasySwoole\HttpAnnotation\AnnotationTag\ApiSuccess;
 use EasySwoole\HttpAnnotation\AnnotationTag\Method;
 use EasySwoole\HttpAnnotation\AnnotationTag\Param;
+use EasySwoole\Utility\File;
 
 class Parser
 {
@@ -46,6 +47,46 @@ class Parser
             $this->parser = $annotation;
         }
         return $this->parser;
+    }
+
+    function scanDir(string $path)
+    {
+        if(is_file($path)){
+            $list = [$path];
+        }else{
+            $list = File::scanDirectory($path)['files'];
+        }
+        $ret = [];
+        if(!empty($list)){
+            $parser = $this->getAnnotationParser();
+            foreach ($list as $file){
+                $class = static::getFileDeclareClass($file);
+                if($class){
+                    $ret[] = $this->getClassAnnotation($class);
+                }
+            }
+        }
+        return $ret;
+    }
+
+    function getClassAnnotation(string $class):ClassAnnotation
+    {
+        $classAnnotation = new ClassAnnotation();
+        $ref = new \ReflectionClass($class);
+        $global = $this->getAnnotationParser()->getAnnotation($ref);
+        foreach (['ApiGroup','ApiGroupAuth','ApiGroupDescription'] as $key){
+            if(isset($global[$key])){
+                $method = "set{$key}";
+                $classAnnotation->$method($global[$key][0]);
+            }
+        }
+        foreach ($ref->getMethods() as $method){
+            $methodAnnotation = $classAnnotation->addMethod($method->getName());
+            $methodAnnotation->setMethodReflection($method);
+            $methodAnnotation->setAnnotation($this->getAnnotationParser()->getAnnotation($method));
+        }
+
+        return $classAnnotation;
     }
 
     public static function getFileDeclareClass(string $file):?string
@@ -97,25 +138,5 @@ class Parser
             }
         }
         return $content;
-    }
-
-    function getClassAnnotation(string $class):ClassAnnotation
-    {
-        $classAnnotation = new ClassAnnotation();
-        $ref = new \ReflectionClass($class);
-        $global = $this->getAnnotationParser()->getAnnotation($ref);
-        foreach (['ApiGroup','ApiGroupAuth','ApiGroupDescription'] as $key){
-            if(isset($global[$key])){
-                $method = "set{$key}";
-                $classAnnotation->$method($global[$key][0]);
-            }
-        }
-        foreach ($ref->getMethods() as $method){
-            $methodAnnotation = $classAnnotation->addMethod($method->getName());
-            $methodAnnotation->setMethodReflection($method);
-            $methodAnnotation->setAnnotation($this->getAnnotationParser()->getAnnotation($method));
-        }
-
-        return $classAnnotation;
     }
 }
