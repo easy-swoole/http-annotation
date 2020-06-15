@@ -58,7 +58,6 @@ class Parser
         }
         $ret = [];
         if(!empty($list)){
-            $parser = $this->getAnnotationParser();
             foreach ($list as $file){
                 $class = static::getFileDeclareClass($file);
                 if($class){
@@ -75,7 +74,7 @@ class Parser
     }
 
 
-    function getClassAnnotation(string $class):ClassAnnotation
+    function getClassAnnotation(string $class,?int $methodType = null):ClassAnnotation
     {
         $classAnnotation = new ClassAnnotation();
         $ref = new \ReflectionClass($class);
@@ -86,12 +85,14 @@ class Parser
                 $classAnnotation->$method($global[$key][0]);
             }
         }
-        foreach ($ref->getMethods() as $method){
-            $methodAnnotation = $classAnnotation->addMethod($method->getName());
-            $methodAnnotation->setMethodReflection($method);
-            $methodAnnotation->setAnnotation($this->getAnnotationParser()->getAnnotation($method));
+        foreach ($ref->getMethods($methodType) as $method){
+            $temp = $this->getAnnotationParser()->getAnnotation($method);
+            if(!empty($temp)){
+                $methodAnnotation = $classAnnotation->addMethod($method->getName());
+                $methodAnnotation->setMethodReflection($method);
+                $methodAnnotation->setAnnotation($temp);
+            }
         }
-
         return $classAnnotation;
     }
 

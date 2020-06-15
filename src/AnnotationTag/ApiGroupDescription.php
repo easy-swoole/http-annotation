@@ -5,6 +5,7 @@ namespace EasySwoole\HttpAnnotation\AnnotationTag;
 
 
 use EasySwoole\Annotation\AbstractAnnotationTag;
+use EasySwoole\Annotation\ValueParser;
 
 /**
  * Class ApiGroupDescription
@@ -13,6 +14,16 @@ use EasySwoole\Annotation\AbstractAnnotationTag;
  */
 class ApiGroupDescription extends AbstractAnnotationTag
 {
+    /**
+     * @var string
+     */
+    public $desc;
+
+    /**
+     * @var string text|file
+     */
+    public $type = 'text';
+
     public function tagName(): string
     {
        return 'ApiGroupDescription';
@@ -20,7 +31,10 @@ class ApiGroupDescription extends AbstractAnnotationTag
 
     public function assetValue(?string $raw)
     {
-        // TODO: Implement assetValue() method.
+        $array = ValueParser::parser($raw);
+        foreach ($array as $key => $value){
+            $this->$key = $value;
+        }
     }
 
 }
