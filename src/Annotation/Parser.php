@@ -110,6 +110,11 @@ class Parser
                 $classAnnotation->$method($global[$key][0]);
             }
         }
+        foreach ($ref->getMethods() as $method){
+            $methodAnnotation = $classAnnotation->addMethod($method->getName());
+            $methodAnnotation->parserFromReflection($method);
+        }
+
         return $classAnnotation;
     }
 }

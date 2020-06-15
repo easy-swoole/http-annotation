@@ -23,6 +23,8 @@ class ClassAnnotation
      */
     protected $apiGroupAuth;
 
+    protected $methods = [];
+
     /**
      * @return ApiGroup|null
      */
@@ -70,4 +72,36 @@ class ClassAnnotation
     {
         $this->apiGroupAuth = $apiGroupAuth;
     }
+
+    /**
+     * @return array
+     */
+    public function getMethods(): array
+    {
+        return $this->methods;
+    }
+
+    /**
+     * @param array $methods
+     */
+    public function setMethods(array $methods): void
+    {
+        $this->methods = $methods;
+    }
+
+    function getMethod(string $name):?MethodAnnotation
+    {
+        if(isset($this->methods[$name])){
+            return $this->methods[$name];
+        }
+        return null;
+    }
+
+    function addMethod(string $name):MethodAnnotation
+    {
+        $instance = new MethodAnnotation();
+        $this->methods[$name] = $instance;
+        return $instance;
+    }
+
 }
