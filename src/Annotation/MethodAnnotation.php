@@ -41,4 +41,12 @@ class MethodAnnotation
     {
         $this->annotation = $annotation;
     }
+
+    function getAnnotationTag(string $tagName):?array
+    {
+        if(isset($this->annotation[$tagName])){
+            return $this->annotation[$tagName];
+        }
+        return null;
+    }
 }
