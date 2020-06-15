@@ -112,7 +112,8 @@ class Parser
         }
         foreach ($ref->getMethods() as $method){
             $methodAnnotation = $classAnnotation->addMethod($method->getName());
-            $methodAnnotation->parserFromReflection($method);
+            $methodAnnotation->setMethodReflection($method);
+            $methodAnnotation->setAnnotation($this->getAnnotationParser()->getAnnotation($method));
         }
 
         return $classAnnotation;

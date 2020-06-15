@@ -99,7 +99,7 @@ class ClassAnnotation
 
     function addMethod(string $name):MethodAnnotation
     {
-        $instance = new MethodAnnotation();
+        $instance = new MethodAnnotation($name);
         $this->methods[$name] = $instance;
         return $instance;
     }
