@@ -49,7 +49,7 @@ class Parser
         return $this->parser;
     }
 
-    function scanDir(string $path)
+    function scanDir(string $path):array
     {
         if(is_file($path)){
             $list = [$path];
@@ -68,6 +68,12 @@ class Parser
         }
         return $ret;
     }
+
+    function annotations2Html(array $list)
+    {
+
+    }
+
 
     function getClassAnnotation(string $class):ClassAnnotation
     {
