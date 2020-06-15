@@ -13,7 +13,7 @@ use EasySwoole\Annotation\AbstractAnnotationTag;
  */
 class ApiSuccess extends AbstractAnnotationTag
 {
-    protected $content;
+    public $content;
     public function tagName(): string
     {
         return 'ApiSuccess';
@@ -22,10 +22,5 @@ class ApiSuccess extends AbstractAnnotationTag
     public function assetValue(?string $raw)
     {
         $this->content = $raw;
-    }
-
-    function getContent()
-    {
-        return $this->content;
     }
 }

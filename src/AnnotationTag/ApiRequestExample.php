@@ -14,7 +14,7 @@ use EasySwoole\Annotation\AbstractAnnotationTag;
 class ApiRequestExample extends AbstractAnnotationTag
 {
 
-    protected $content;
+    public $content;
 
     public function tagName(): string
     {
@@ -24,10 +24,5 @@ class ApiRequestExample extends AbstractAnnotationTag
     public function assetValue(?string $raw)
     {
         $this->content = $raw;
-    }
-
-    function getContent()
-    {
-        return $this->content;
     }
 }
