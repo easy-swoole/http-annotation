@@ -1,21 +1,21 @@
 <?php
 
 
-namespace EasySwoole\HttpAnnotation\AnnotationTag\DocTag;
+namespace EasySwoole\HttpAnnotation\AnnotationTag;
 
 
 use EasySwoole\Annotation\AbstractAnnotationTag;
 
 /**
- * Class ApiGroup
- * @package EasySwoole\HttpAnnotation\AnnotationTag\DocTag
+ * Class ApiGroupDescription
+ * @package EasySwoole\HttpAnnotation\AnnotationTag
  * @Annotation
  */
-class ApiGroup extends AbstractAnnotationTag
+class ApiGroupDescription extends AbstractAnnotationTag
 {
     public function tagName(): string
     {
-        return 'ApiGroup';
+       return 'ApiGroupDescription';
     }
 
     public function assetValue(?string $raw)

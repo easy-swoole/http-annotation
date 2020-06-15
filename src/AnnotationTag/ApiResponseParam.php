@@ -1,14 +1,11 @@
 <?php
+namespace EasySwoole\HttpAnnotation\AnnotationTag;
 
 
-namespace EasySwoole\HttpAnnotation\AnnotationTag\DocTag;
-
-
-use EasySwoole\HttpAnnotation\AnnotationTag\Param;
 
 /**
  * Class ApiResponseParam
- * @package EasySwoole\HttpAnnotation\AnnotationTag\DocTag
+ * @package EasySwoole\HttpAnnotation\AnnotationTag
  * @Annotation
  */
 class ApiResponseParam extends Param

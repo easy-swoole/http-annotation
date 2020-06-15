@@ -1,14 +1,14 @@
 <?php
 
 
-namespace EasySwoole\HttpAnnotation\AnnotationTag\DocTag;
+namespace EasySwoole\HttpAnnotation\AnnotationTag;
 
 
 use EasySwoole\Annotation\AbstractAnnotationTag;
 
 /**
  * Class ApiFail
- * @package EasySwoole\HttpAnnotation\AnnotationTag\DocTag
+ * @package EasySwoole\HttpAnnotation\AnnotationTag
  * @Annotation
  */
 class ApiFail extends AbstractAnnotationTag

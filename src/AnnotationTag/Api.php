@@ -1,7 +1,7 @@
 <?php
 
 
-namespace EasySwoole\HttpAnnotation\AnnotationTag\DocTag;
+namespace EasySwoole\HttpAnnotation\AnnotationTag;
 
 
 use EasySwoole\Annotation\AbstractAnnotationTag;
@@ -9,7 +9,7 @@ use EasySwoole\Annotation\ValueParser;
 
 /**
  * Class Api
- * @package EasySwoole\HttpAnnotation\AnnotationTag\DocTag
+ * @package EasySwoole\HttpAnnotation\AnnotationTag
  * @Annotation
  */
 class Api extends AbstractAnnotationTag
