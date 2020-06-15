@@ -4,9 +4,9 @@
 namespace EasySwoole\HttpAnnotation\Annotation;
 
 
-use EasySwoole\HttpAnnotation\AnnotationTag\DocTag\ApiGroup;
-use EasySwoole\HttpAnnotation\AnnotationTag\DocTag\ApiGroupAuth;
-use EasySwoole\HttpAnnotation\AnnotationTag\DocTag\ApiGroupDescription;
+use EasySwoole\HttpAnnotation\AnnotationTag\ApiGroup;
+use EasySwoole\HttpAnnotation\AnnotationTag\ApiGroupAuth;
+use EasySwoole\HttpAnnotation\AnnotationTag\ApiGroupDescription;
 
 class ClassAnnotation
 {
