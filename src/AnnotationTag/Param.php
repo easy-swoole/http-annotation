@@ -5,6 +5,7 @@ namespace EasySwoole\HttpAnnotation\AnnotationTag;
 
 use EasySwoole\Annotation\AbstractAnnotationTag;
 use EasySwoole\Annotation\ValueParser;
+use EasySwoole\HttpAnnotation\Exception\Annotation\InvalidTag;
 
 /**
  * Class Param
@@ -240,6 +241,9 @@ class Param extends AbstractAnnotationTag
             }else{
                 $this->$key = $param;
             }
+        }
+        if(empty($this->name)){
+            throw new InvalidTag("Param name is required");
         }
     }
 

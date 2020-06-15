@@ -5,6 +5,7 @@ namespace EasySwoole\HttpAnnotation\AnnotationTag;
 
 
 use EasySwoole\Annotation\AbstractAnnotationTag;
+use EasySwoole\HttpAnnotation\Exception\Annotation\InvalidTag;
 
 /**
  * Class ApiGroup
@@ -13,6 +14,8 @@ use EasySwoole\Annotation\AbstractAnnotationTag;
  */
 class ApiGroup extends AbstractAnnotationTag
 {
+    public $groupName;
+
     public function tagName(): string
     {
         return 'ApiGroup';
@@ -20,7 +23,13 @@ class ApiGroup extends AbstractAnnotationTag
 
     public function assetValue(?string $raw)
     {
-        // TODO: Implement assetValue() method.
+        parse_str($raw,$str);
+        if(!empty($str['groupName'])){
+            $this->groupName = trim($str['groupName']," \t\n\r\0\x0B\"'");
+        }
+        if(empty($this->groupName)){
+            throw new InvalidTag("groupName is required");
+        }
     }
 
 }

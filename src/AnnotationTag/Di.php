@@ -5,6 +5,7 @@ namespace EasySwoole\HttpAnnotation\AnnotationTag;
 
 
 use EasySwoole\Annotation\AbstractAnnotationTag;
+use EasySwoole\HttpAnnotation\Exception\Annotation\InvalidTag;
 
 /**
  * Class Di
@@ -34,6 +35,9 @@ class Di extends AbstractAnnotationTag
         parse_str($raw,$str);
         if(!empty($str['key'])){
             $this->key = trim($str['key']," \t\n\r\0\x0B\"'");
+        }
+        if(empty($this->key)){
+            throw new InvalidTag("Di key is required");
         }
     }
 }

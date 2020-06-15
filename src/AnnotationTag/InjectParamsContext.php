@@ -5,6 +5,7 @@ namespace EasySwoole\HttpAnnotation\AnnotationTag;
 
 use EasySwoole\Annotation\AbstractAnnotationTag;
 use EasySwoole\Annotation\ValueParser;
+use EasySwoole\HttpAnnotation\Exception\Annotation\InvalidTag;
 
 /**
  * Class InjectParamsContext
@@ -34,6 +35,9 @@ class InjectParamsContext extends AbstractAnnotationTag
         $allParams = ValueParser::parser($raw);
         foreach ($allParams as $key => $value){
             $this->$key = $value;
+        }
+        if(empty($this->key)){
+            throw new InvalidTag("InjectParamsContext key is required");
         }
     }
 }
