@@ -4,6 +4,8 @@
 namespace EasySwoole\HttpAnnotation\Annotation;
 
 
+use EasySwoole\Annotation\AbstractAnnotationTag;
+
 class MethodAnnotation
 {
     /** @var string */
@@ -20,6 +22,11 @@ class MethodAnnotation
     public function getMethodName(): string
     {
         return $this->methodName;
+    }
+
+    public function appendTag(AbstractAnnotationTag $abstractAnnotationTag)
+    {
+        $this->annotation[$abstractAnnotationTag->tagName()][] = $abstractAnnotationTag;
     }
 
     public function getMethodReflection(): \ReflectionMethod

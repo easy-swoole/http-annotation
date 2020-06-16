@@ -100,6 +100,16 @@ class Parser
                 $methodAnnotation = $classAnnotation->addMethod($method->getName());
                 $methodAnnotation->setMethodReflection($method);
                 $methodAnnotation->setAnnotation($temp);
+                $g = $methodAnnotation->getAnnotationTag('ApiGroup');
+                if($g == null){
+                    foreach (['ApiGroup','ApiGroupAuth','ApiGroupDescription'] as $key){
+                        $method = "get{$key}";
+                        $c = $classAnnotation->$method();
+                        if($c){
+                            $methodAnnotation->appendTag($c);
+                        }
+                    }
+                }
             }
         }
         return $classAnnotation;
