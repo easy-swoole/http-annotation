@@ -214,6 +214,14 @@ class Param extends AbstractAnnotationTag
         return 'Param';
     }
 
+    function __onParser()
+    {
+        foreach ($this->allowValidateRule as $ruleName){
+            if($this->$ruleName !== null){
+                $this->validateRuleList[$ruleName] = $this->$ruleName;
+            }
+        }
+    }
 
     public function typeCast($val)
     {
