@@ -8,17 +8,7 @@ use EasySwoole\Annotation\Annotation;
 use EasySwoole\Component\Context\ContextManager;
 use EasySwoole\Component\Di as IOC;
 use EasySwoole\Http\AbstractInterface\Controller;
-use EasySwoole\HttpAnnotation\AnnotationTag\CircuitBreaker;
-use EasySwoole\HttpAnnotation\AnnotationTag\Context;
-use EasySwoole\HttpAnnotation\AnnotationTag\Di;
-use EasySwoole\HttpAnnotation\AnnotationTag\Api;
-use EasySwoole\HttpAnnotation\AnnotationTag\ApiFail;
-use EasySwoole\HttpAnnotation\AnnotationTag\ApiRequestExample;
-use EasySwoole\HttpAnnotation\AnnotationTag\ApiSuccess;
-use EasySwoole\HttpAnnotation\AnnotationTag\ApiAuth;
-use EasySwoole\HttpAnnotation\AnnotationTag\ApiResponseParam;
-use EasySwoole\HttpAnnotation\AnnotationTag\InjectParamsContext;
-use EasySwoole\HttpAnnotation\AnnotationTag\Method;
+use EasySwoole\HttpAnnotation\Annotation\Parser;
 use EasySwoole\HttpAnnotation\AnnotationTag\Param;
 use EasySwoole\HttpAnnotation\Exception\Annotation\ActionTimeout;
 use EasySwoole\HttpAnnotation\Exception\Annotation\MethodNotAllow;
@@ -39,23 +29,7 @@ class AnnotationController extends Controller
     {
         parent::__construct();
         if($annotation == null){
-            $this->annotation = new Annotation();
-            /*
-                * 注册解析命令
-            */
-            $this->annotation->addParserTag(new Method());
-            $this->annotation->addParserTag(new Param());
-            $this->annotation->addParserTag(new Context());
-            $this->annotation->addParserTag(new Di());
-            $this->annotation->addParserTag(new CircuitBreaker());
-            $this->annotation->addParserTag(new Api());
-            $this->annotation->addParserTag(new ApiAuth());
-            $this->annotation->addParserTag(new ApiFail());
-            $this->annotation->addParserTag(new ApiSuccess());
-            $this->annotation->addParserTag(new ApiRequestExample());
-            $this->annotation->addParserTag(new ApiResponseParam());
-            $this->annotation->addParserTag(new InjectParamsContext());
-            $this->annotation->addAlias('ApiAuth','Param');
+            $this->annotation = (new Parser())->getAnnotationParser();
         }else{
             $this->annotation = $annotation;
         }
