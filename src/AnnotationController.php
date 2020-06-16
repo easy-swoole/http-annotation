@@ -34,6 +34,17 @@ class AnnotationController extends Controller
             $this->annotation = $annotation;
         }
 
+        Parser::preDefines([
+            "POST"=>"POST",
+            "GET"=>"GET",
+            'COOKIE'=>'COOKIE',
+            'HEADER'=>'HEADER',
+            'FILE'=>'FILE',
+            'DI'=>'DI',
+            'CONTEXT'=>'CONTEXT',
+            'RAW'=>'RAW'
+        ]);
+
         foreach ($this->getAllowMethodReflections() as $name => $reflection){
             $ret = $this->annotation->getAnnotation($reflection);
             if(!empty($ret)){

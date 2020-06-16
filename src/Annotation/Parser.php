@@ -25,6 +25,15 @@ class Parser
 {
     protected $parser;
 
+    public static function preDefines($defines = [])
+    {
+        foreach ($defines as $key => $val){
+            if(!defined($key)){
+                define($key,$val);
+            }
+        }
+    }
+
     public function getAnnotationParser():Annotation
     {
         if(!$this->parser){
