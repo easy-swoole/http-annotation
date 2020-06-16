@@ -4,9 +4,6 @@
 namespace EasySwoole\HttpAnnotation\AnnotationTag;
 
 use EasySwoole\Annotation\AbstractAnnotationTag;
-use EasySwoole\Annotation\ValueParser;
-use EasySwoole\HttpAnnotation\Exception\Annotation\InvalidTag;
-
 /**
  * Class Param
  * @package EasySwoole\HttpAnnotation\AnnotationTag
