@@ -4,25 +4,15 @@
 namespace EasySwoole\HttpAnnotation\AnnotationTag;
 
 
-use EasySwoole\Annotation\AbstractAnnotationTag;
-
 /**
  * Class ApiRequestExample
  * @package EasySwoole\HttpAnnotation\AnnotationTag
  * @Annotation
  */
-class ApiRequestExample extends AbstractAnnotationTag
+class ApiRequestExample extends ApiFail
 {
-
-    public $content;
-
     public function tagName(): string
     {
         return 'ApiRequestExample';
-    }
-
-    public function assetValue(?string $raw)
-    {
-        $this->content = $raw;
     }
 }

@@ -217,35 +217,6 @@ class Param extends AbstractAnnotationTag
         return 'Param';
     }
 
-    public function aliasMap(): array
-    {
-        return [static::class];
-    }
-
-    public function assetValue(?string $raw)
-    {
-        $allParams = ValueParser::parser($raw);
-        foreach ($allParams as $key => $param){
-            if(in_array($key,$this->allowValidateRule))
-            {
-                /*
-                 * 对inarray 做特殊处理
-                 */
-                if(in_array($key,['inArray','notInArray'])){
-                    if(!is_array($param[0])){
-                        $param = [$param];
-                    }
-                }
-                $this->$key = $param;
-                $this->validateRuleList[$key] = $param;
-            }else{
-                $this->$key = $param;
-            }
-        }
-        if(empty($this->name)){
-            throw new InvalidTag("Param name is required");
-        }
-    }
 
     public function typeCast($val)
     {

@@ -13,20 +13,13 @@ use EasySwoole\Annotation\AbstractAnnotationTag;
  */
 class ApiFail extends AbstractAnnotationTag
 {
-    protected $content;
+    /**
+     * @var string text|file
+     */
+    public $type = 'text';
 
     public function tagName(): string
     {
         return 'ApiFail';
-    }
-
-    public function assetValue(?string $raw)
-    {
-        $this->content = $raw;
-    }
-
-    function getContent()
-    {
-        return $this->content;
     }
 }

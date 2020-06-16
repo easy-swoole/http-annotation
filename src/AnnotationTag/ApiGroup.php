@@ -20,16 +20,4 @@ class ApiGroup extends AbstractAnnotationTag
     {
         return 'ApiGroup';
     }
-
-    public function assetValue(?string $raw)
-    {
-        parse_str($raw,$str);
-        if(!empty($str['groupName'])){
-            $this->groupName = trim($str['groupName']," \t\n\r\0\x0B\"'");
-        }
-        if(empty($this->groupName)){
-            throw new InvalidTag("groupName is required");
-        }
-    }
-
 }
