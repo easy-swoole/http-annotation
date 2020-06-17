@@ -52,7 +52,6 @@ class Parser
             $annotation->addParserTag(new ApiSuccess());
             $annotation->addParserTag(new ApiRequestExample());
             $annotation->addParserTag(new ApiResponseParam());
-            $annotation->addAlias('ApiAuth','Param');
             $this->parser = $annotation;
         }
         return $this->parser;
@@ -88,28 +87,21 @@ class Parser
         $classAnnotation = new ClassAnnotation();
         $ref = new \ReflectionClass($class);
         $global = $this->getAnnotationParser()->getAnnotation($ref);
-        foreach (['ApiGroup','ApiGroupAuth','ApiGroupDescription'] as $key){
+        foreach (['ApiGroup','ApiGroupDescription'] as $key){
             if(isset($global[$key])){
                 $method = "set{$key}";
                 $classAnnotation->$method($global[$key][0]);
             }
         }
+        if(isset($global['ApiGroupAuth'])){
+            $classAnnotation->setApiGroupAuth($global['ApiGroupAuth']);
+        }
         foreach ($ref->getMethods($methodType) as $method){
             $temp = $this->getAnnotationParser()->getAnnotation($method);
+            $methodAnnotation = $classAnnotation->addMethod($method->getName());
+            $methodAnnotation->setMethodReflection($method);
             if(!empty($temp)){
-                $methodAnnotation = $classAnnotation->addMethod($method->getName());
-                $methodAnnotation->setMethodReflection($method);
                 $methodAnnotation->setAnnotation($temp);
-                $g = $methodAnnotation->getAnnotationTag('ApiGroup');
-                if($g == null){
-                    foreach (['ApiGroup','ApiGroupAuth','ApiGroupDescription'] as $key){
-                        $method = "get{$key}";
-                        $c = $classAnnotation->$method();
-                        if($c){
-                            $methodAnnotation->appendTag($c);
-                        }
-                    }
-                }
             }
         }
         return $classAnnotation;

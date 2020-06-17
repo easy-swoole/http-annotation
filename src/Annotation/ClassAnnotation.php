@@ -5,7 +5,6 @@ namespace EasySwoole\HttpAnnotation\Annotation;
 
 
 use EasySwoole\HttpAnnotation\AnnotationTag\ApiGroup;
-use EasySwoole\HttpAnnotation\AnnotationTag\ApiGroupAuth;
 use EasySwoole\HttpAnnotation\AnnotationTag\ApiGroupDescription;
 
 class ClassAnnotation
@@ -18,10 +17,8 @@ class ClassAnnotation
      * @var ApiGroupDescription|null
      */
     protected $apiGroupDescription;
-    /**
-     * @var ApiGroupAuth|null
-     */
-    protected $apiGroupAuth;
+
+    protected $apiGroupAuth = [];
 
     protected $methods = [];
 
@@ -57,20 +54,14 @@ class ClassAnnotation
         $this->apiGroupDescription = $apiGroupDescription;
     }
 
-    /**
-     * @return ApiGroupAuth|null
-     */
-    public function getApiGroupAuth(): ?ApiGroupAuth
+    public function getApiGroupAuth():array
     {
         return $this->apiGroupAuth;
     }
 
-    /**
-     * @param ApiGroupAuth|null $apiGroupAuth
-     */
-    public function setApiGroupAuth(?ApiGroupAuth $apiGroupAuth): void
+    public function setApiGroupAuth(array $array): void
     {
-        $this->apiGroupAuth = $apiGroupAuth;
+        $this->apiGroupAuth = $array;
     }
 
     /**
