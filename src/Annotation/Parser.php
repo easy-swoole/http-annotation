@@ -88,10 +88,11 @@ class Parser
                     foreach ($classAnnotation->getApiGroupAuth() as $auth){
                         $group[$classGroup]['auth'][$auth->name] = $auth;
                     }
+                    $group[$classGroup]['methods'] = [];
                 }
                 //找出方法注解内有没有定义group
                 /** @var MethodAnnotation $method */
-                foreach ($classAnnotation->getMethods() as $method){
+                foreach ($classAnnotation->getMethods() as $methodName => $method){
                     $currentGroup = null;
                     $api = $method->getAnnotationTag('Api',0);
                     $methodGroup = $method->getAnnotationTag('ApiGroup',0);
@@ -103,6 +104,7 @@ class Parser
                         $currentGroup = $classGroup;
                     }
                     if(!empty($currentGroup)){
+                        $group[$classGroup]['methods'][$methodName] = $method;
                         if(!isset($group[$currentGroup])){
                             $group[$currentGroup] = [
                                 'apiGroupDescription'=>$method->getAnnotationTag('ApiGroupDescription',0),
