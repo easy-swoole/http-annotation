@@ -76,46 +76,47 @@ class Parser
             }
         }
         if($globalMerge){
-            $merge = [];
             $group = [];
             //先找去全部的group信息并合并
             foreach ($ret as $classAnnotation){
+                $classGroup = null;
                 if($classAnnotation->getApiGroup()){
-                    $group[$classAnnotation->getApiGroup()->groupName] = [
+                    $classGroup = $classAnnotation->getApiGroup()->groupName;
+                    $group[$classGroup] = [
                         'apiGroupDescription'=>$classAnnotation->getApiGroupDescription(),
                     ];
                     foreach ($classAnnotation->getApiGroupAuth() as $auth){
-                        $group[$classAnnotation->getApiGroup()->groupName]['auth'][$auth->name] = $auth;
+                        $group[$classGroup]['auth'][$auth->name] = $auth;
                     }
                 }
                 //找出方法注解内有没有定义group
                 /** @var MethodAnnotation $method */
                 foreach ($classAnnotation->getMethods() as $method){
+                    $currentGroup = null;
                     $api = $method->getAnnotationTag('Api',0);
-                    $methodG = $method->getAnnotationTag('ApiGroup',0);
-                    if($api){
-                        if(!empty($methodG)){
-                            $des = $method->getAnnotationTag('ApiGroupDescription',0);
-                            $group[$methodG->groupName] = [
-                                'apiGroupDescription'=>$des
-                            ];
-                        }else{
-                            $group[$api->group] = [
-                                'apiGroupDescription'=> $method->getAnnotationTag('ApiGroupDescription',0)
+                    $methodGroup = $method->getAnnotationTag('ApiGroup',0);
+                    if($methodGroup){
+                        $currentGroup = $methodGroup->groupName;
+                    }else if($api && !empty($api->group)){
+                        $currentGroup = $api->group;
+                    }else{
+                        $currentGroup = $classGroup;
+                    }
+                    if(!empty($currentGroup)){
+                        if(!isset($group[$currentGroup])){
+                            $group[$currentGroup] = [
+                                'apiGroupDescription'=>$method->getAnnotationTag('ApiGroupDescription',0),
                             ];
                         }
-                    }else{
-                        if(!empty($methodG)){
-                            $des = $method->getAnnotationTag('ApiGroupDescription',0);
-                            $group[$methodG->groupName] = [
-                                'apiGroupDescription'=>$des
-                            ];
+                        if($method->getAnnotationTag('ApiGroupAuth')){
+                            foreach ($method->getAnnotationTag('ApiGroupAuth') as $tag){
+                                $group[$currentGroup][$tag->name] = $tag;
+                            }
                         }
                     }
                 }
             }
-
-            return $merge;
+            return $group;
         }else{
             return $ret;
         }

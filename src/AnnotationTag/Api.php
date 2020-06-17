@@ -38,7 +38,7 @@ class Api extends AbstractAnnotationTag
     /**
      * @var string
      */
-    public $group = 'Api';
+    public $group;
 
     public function tagName(): string
     {
