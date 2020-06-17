@@ -5,7 +5,6 @@ namespace EasySwoole\HttpAnnotation\AnnotationTag;
 
 
 use EasySwoole\Annotation\AbstractAnnotationTag;
-use EasySwoole\HttpAnnotation\Exception\Annotation\InvalidTag;
 
 /**
  * Class ApiGroup

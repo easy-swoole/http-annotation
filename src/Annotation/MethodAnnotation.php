@@ -39,7 +39,7 @@ class MethodAnnotation
         $this->methodReflection = $methodReflection;
     }
 
-    public function getAnnotation(): array
+    public function getAnnotations(): array
     {
         return $this->annotation;
     }
@@ -49,9 +49,12 @@ class MethodAnnotation
         $this->annotation = $annotation;
     }
 
-    function getAnnotationTag(string $tagName):?array
+    function getAnnotationTag(string $tagName,$index = false)
     {
         if(isset($this->annotation[$tagName])){
+            if($index !== false){
+                return $this->annotation[$tagName][0];
+            }
             return $this->annotation[$tagName];
         }
         return null;

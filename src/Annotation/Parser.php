@@ -5,6 +5,7 @@ namespace EasySwoole\HttpAnnotation\Annotation;
 
 
 use EasySwoole\Annotation\Annotation;
+use EasySwoole\HttpAnnotation\AnnotationTag\ApiDescription;
 use EasySwoole\HttpAnnotation\AnnotationTag\CircuitBreaker;
 use EasySwoole\HttpAnnotation\AnnotationTag\Context;
 use EasySwoole\HttpAnnotation\AnnotationTag\Di;
@@ -45,6 +46,7 @@ class Parser
             $annotation->addParserTag(new CircuitBreaker());
             $annotation->addParserTag(new Api());
             $annotation->addParserTag(new ApiAuth());
+            $annotation->addParserTag(new ApiDescription());
             $annotation->addParserTag(new ApiFail());
             $annotation->addParserTag(new ApiGroup());
             $annotation->addParserTag(new ApiGroupAuth());
@@ -86,7 +88,33 @@ class Parser
                         $group[$classAnnotation->getApiGroup()->groupName]['auth'][$auth->name] = $auth;
                     }
                 }
+                //找出方法注解内有没有定义group
+                /** @var MethodAnnotation $method */
+                foreach ($classAnnotation->getMethods() as $method){
+                    $api = $method->getAnnotationTag('Api',0);
+                    $methodG = $method->getAnnotationTag('ApiGroup',0);
+                    if($api){
+                        if(!empty($methodG)){
+                            $des = $method->getAnnotationTag('ApiGroupDescription',0);
+                            $group[$methodG->groupName] = [
+                                'apiGroupDescription'=>$des
+                            ];
+                        }else{
+                            $group[$api->group] = [
+                                'apiGroupDescription'=> $method->getAnnotationTag('ApiGroupDescription',0)
+                            ];
+                        }
+                    }else{
+                        if(!empty($methodG)){
+                            $des = $method->getAnnotationTag('ApiGroupDescription',0);
+                            $group[$methodG->groupName] = [
+                                'apiGroupDescription'=>$des
+                            ];
+                        }
+                    }
+                }
             }
+
             return $merge;
         }else{
             return $ret;

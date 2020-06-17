@@ -8,7 +8,7 @@ namespace EasySwoole\HttpAnnotation\AnnotationTag;
  * @package EasySwoole\HttpAnnotation\AnnotationTag
  * @Annotation
  */
-class ApiSuccess extends ApiFail
+class ApiSuccess extends ApiDescription
 {
     public function tagName(): string
     {

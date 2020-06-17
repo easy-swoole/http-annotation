@@ -3,15 +3,14 @@
 
 namespace EasySwoole\HttpAnnotation\AnnotationTag;
 
-
 use EasySwoole\Annotation\AbstractAnnotationTag;
 
 /**
- * Class ApiFail
+ * Class ApiDescription
  * @package EasySwoole\HttpAnnotation\AnnotationTag
  * @Annotation
  */
-class ApiFail extends ApiDescription
+class ApiDescription extends AbstractAnnotationTag
 {
     /**
      * @var string text|file
@@ -20,6 +19,6 @@ class ApiFail extends ApiDescription
 
     public function tagName(): string
     {
-        return 'ApiFail';
+        return 'ApiDescription';
     }
 }
