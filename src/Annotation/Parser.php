@@ -57,7 +57,7 @@ class Parser
         return $this->parser;
     }
 
-    function scanDir(string $path):array
+    function scanDir(string $path,bool $globalMerge = true):array
     {
         if(is_file($path)){
             $list = [$path];
@@ -73,7 +73,24 @@ class Parser
                 }
             }
         }
-        return $ret;
+        if($globalMerge){
+            $merge = [];
+            $group = [];
+            //先找去全部的group信息并合并
+            foreach ($ret as $classAnnotation){
+                if($classAnnotation->getApiGroup()){
+                    $group[$classAnnotation->getApiGroup()->groupName] = [
+                        'apiGroupDescription'=>$classAnnotation->getApiGroupDescription(),
+                    ];
+                    foreach ($classAnnotation->getApiGroupAuth() as $auth){
+                        $group[$classAnnotation->getApiGroup()->groupName]['auth'][$auth->name] = $auth;
+                    }
+                }
+            }
+            return $merge;
+        }else{
+            return $ret;
+        }
     }
 
     function annotations2Html(array $list)
