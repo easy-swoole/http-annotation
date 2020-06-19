@@ -26,6 +26,20 @@ class Parser
 {
     protected $parser;
 
+    function __construct()
+    {
+        static::preDefines([
+            "POST"=>"POST",
+            "GET"=>"GET",
+            'COOKIE'=>'COOKIE',
+            'HEADER'=>'HEADER',
+            'FILE'=>'FILE',
+            'DI'=>'DI',
+            'CONTEXT'=>'CONTEXT',
+            'RAW'=>'RAW'
+        ]);
+    }
+
     public static function preDefines($defines = [])
     {
         foreach ($defines as $key => $val){
