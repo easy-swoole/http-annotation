@@ -23,8 +23,8 @@ class AnnotationParserTest extends TestCase
 
     function run(TestResult $result = null): TestResult
     {
-        $this->resultA = (new Parser())->getClassAnnotation(ControllerA::class);
-        $this->resultB = (new Parser())->getClassAnnotation(ControllerB::class);
+        $this->resultA = (new Parser())->getObjectAnnotation(ControllerA::class);
+        $this->resultB = (new Parser())->getObjectAnnotation(ControllerB::class);
         return parent::run($result);
     }
 

@@ -19,6 +19,7 @@ use EasySwoole\HttpAnnotation\AnnotationTag\ApiRequestExample;
 use EasySwoole\HttpAnnotation\AnnotationTag\ApiResponseParam;
 use EasySwoole\HttpAnnotation\AnnotationTag\ApiSuccess;
 use EasySwoole\HttpAnnotation\AnnotationTag\Method;
+use EasySwoole\HttpAnnotation\Annotation\Method as MethodAnnotation;
 use EasySwoole\HttpAnnotation\AnnotationTag\Param;
 use EasySwoole\Utility\File;
 
@@ -73,69 +74,23 @@ class Parser
         return $this->parser;
     }
 
-    function scanDir(string $path,bool $globalMerge = true):array
+    function scanDir(string $path):array
     {
         if(is_file($path)){
             $list = [$path];
         }else{
             $list = File::scanDirectory($path)['files'];
         }
-        $ret = [];
+        $objectsAnnotation = [];
         if(!empty($list)){
             foreach ($list as $file){
                 $class = static::getFileDeclareClass($file);
                 if($class){
-                    $ret[] = $this->getClassAnnotation($class);
+                    $objectsAnnotation[] = $this->getObjectAnnotation($class);
                 }
             }
         }
-        if($globalMerge){
-            $group = [];
-            //先找去全部的group信息并合并
-            foreach ($ret as $classAnnotation){
-                $classGroup = null;
-                if($classAnnotation->getApiGroup()){
-                    $classGroup = $classAnnotation->getApiGroup()->groupName;
-                    $group[$classGroup] = [
-                        'apiGroupDescription'=>$classAnnotation->getApiGroupDescription(),
-                    ];
-                    foreach ($classAnnotation->getApiGroupAuth() as $auth){
-                        $group[$classGroup]['auth'][$auth->name] = $auth;
-                    }
-                    $group[$classGroup]['methods'] = [];
-                }
-                //找出方法注解内有没有定义group
-                /** @var Method $method */
-                foreach ($classAnnotation->getMethods() as $methodName => $method){
-                    $currentGroup = null;
-                    $api = $method->getAnnotationTag('Api',0);
-                    $methodGroup = $method->getAnnotationTag('ApiGroup',0);
-                    if($methodGroup){
-                        $currentGroup = $methodGroup->groupName;
-                    }else if($api && !empty($api->group)){
-                        $currentGroup = $api->group;
-                    }else{
-                        $currentGroup = $classGroup;
-                    }
-                    if(!empty($currentGroup)){
-                        $group[$classGroup]['methods'][$methodName] = $method;
-                        if(!isset($group[$currentGroup])){
-                            $group[$currentGroup] = [
-                                'apiGroupDescription'=>$method->getAnnotationTag('ApiGroupDescription',0),
-                            ];
-                        }
-                        if($method->getAnnotationTag('ApiGroupAuth')){
-                            foreach ($method->getAnnotationTag('ApiGroupAuth') as $tag){
-                                $group[$currentGroup][$tag->name] = $tag;
-                            }
-                        }
-                    }
-                }
-            }
-            return $group;
-        }else{
-            return $ret;
-        }
+        return $this->mergeObjectAnnotation($objectsAnnotation);
     }
 
     function annotations2Html(array $list)
@@ -144,7 +99,54 @@ class Parser
     }
 
 
-    function getClassAnnotation(string $class,?int $filterType = null):Object
+    function mergeObjectAnnotation(array $objectsAnnotation)
+    {
+        $group = [];
+        //先找去全部的group信息并合并
+        foreach ($objectsAnnotation as $classAnnotation){
+            $classGroup = null;
+            if($classAnnotation->getApiGroup()){
+                $classGroup = $classAnnotation->getApiGroup()->groupName;
+                $group[$classGroup] = [
+                    'apiGroupDescription'=>$classAnnotation->getApiGroupDescription(),
+                ];
+                foreach ($classAnnotation->getApiGroupAuth() as $auth){
+                    $group[$classGroup]['auth'][$auth->name] = $auth;
+                }
+                $group[$classGroup]['methods'] = [];
+            }
+            //找出方法注解内有没有定义group
+            /** @var MethodAnnotation $method */
+            foreach ($classAnnotation->getMethods() as $methodName => $method){
+                $currentGroup = null;
+                $api = $method->getAnnotationTag('Api',0);
+                $methodGroup = $method->getAnnotationTag('ApiGroup',0);
+                if($methodGroup){
+                    $currentGroup = $methodGroup->groupName;
+                }else if($api && !empty($api->group)){
+                    $currentGroup = $api->group;
+                }else{
+                    $currentGroup = $classGroup;
+                }
+                if(!empty($currentGroup)){
+                    $group[$classGroup]['methods'][$methodName] = $method;
+                    if(!isset($group[$currentGroup])){
+                        $group[$currentGroup] = [
+                            'apiGroupDescription'=>$method->getAnnotationTag('ApiGroupDescription',0),
+                        ];
+                    }
+                    if($method->getAnnotationTag('ApiGroupAuth')){
+                        foreach ($method->getAnnotationTag('ApiGroupAuth') as $tag){
+                            $group[$currentGroup][$tag->name] = $tag;
+                        }
+                    }
+                }
+            }
+        }
+        return $group;
+    }
+
+    function getObjectAnnotation(string $class, ?int $filterType = null):Object
     {
         $object = new Object();
         $ref = new \ReflectionClass($class);
