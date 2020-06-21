@@ -11,7 +11,7 @@ class Method
     /** @var string */
     protected $methodName;
     /** @var \ReflectionMethod */
-    protected $methodReflection;
+    protected $reflection;
     protected $annotation = [];
 
     function __construct(string $methodName)
@@ -29,14 +29,14 @@ class Method
         $this->annotation[$abstractAnnotationTag->tagName()][] = $abstractAnnotationTag;
     }
 
-    public function getMethodReflection(): \ReflectionMethod
+    public function getReflection(): \ReflectionMethod
     {
-        return $this->methodReflection;
+        return $this->reflection;
     }
 
-    public function setMethodReflection(\ReflectionMethod $methodReflection): void
+    public function setReflection(\ReflectionMethod $reflection): void
     {
-        $this->methodReflection = $methodReflection;
+        $this->reflection = $reflection;
     }
 
     public function getAnnotations(): array

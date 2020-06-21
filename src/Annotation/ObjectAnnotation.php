@@ -7,7 +7,7 @@ namespace EasySwoole\HttpAnnotation\Annotation;
 use EasySwoole\HttpAnnotation\AnnotationTag\ApiGroup;
 use EasySwoole\HttpAnnotation\AnnotationTag\ApiGroupDescription;
 
-class Object
+class ObjectAnnotation
 {
     /**
      * @var ApiGroup|null
@@ -22,6 +22,24 @@ class Object
 
     protected $methods = [];
     protected $properties = [];
+    /** @var \ReflectionClass */
+    protected $reflection;
+
+    /**
+     * @return \ReflectionClass
+     */
+    public function getReflection(): \ReflectionClass
+    {
+        return $this->reflection;
+    }
+
+    /**
+     * @param \ReflectionClass $reflection
+     */
+    public function setReflection(\ReflectionClass $reflection): void
+    {
+        $this->reflection = $reflection;
+    }
 
     /**
      * @return ApiGroup|null

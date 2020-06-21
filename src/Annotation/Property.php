@@ -8,7 +8,7 @@ class Property
 {
     protected $propertyName;
     /** @var \ReflectionProperty */
-    protected $methodReflection;
+    protected $reflection;
     protected $annotation = [];
 
     function __construct(string $name)
@@ -16,14 +16,14 @@ class Property
         $this->propertyName = $name;
     }
 
-    public function getMethodReflection(): \ReflectionProperty
+    public function getReflection(): \ReflectionProperty
     {
-        return $this->methodReflection;
+        return $this->reflection;
     }
 
-    public function setMethodReflection(\ReflectionProperty $methodReflection): void
+    public function setReflection(\ReflectionProperty $reflection): void
     {
-        $this->methodReflection = $methodReflection;
+        $this->reflection = $reflection;
     }
 
     public function getAnnotations(): array

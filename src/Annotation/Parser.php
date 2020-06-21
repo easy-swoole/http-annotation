@@ -21,6 +21,7 @@ use EasySwoole\HttpAnnotation\AnnotationTag\ApiSuccess;
 use EasySwoole\HttpAnnotation\AnnotationTag\Method;
 use EasySwoole\HttpAnnotation\Annotation\Method as MethodAnnotation;
 use EasySwoole\HttpAnnotation\AnnotationTag\Param;
+use EasySwoole\HttpAnnotation\Exception\Annotation\InvalidTag;
 use EasySwoole\Utility\File;
 
 class Parser
@@ -102,54 +103,45 @@ class Parser
     function mergeAnnotationGroup(array $objectsAnnotation)
     {
         $group = [];
-        //先找去全部的group信息并合并
-        foreach ($objectsAnnotation as $classAnnotation){
-            $classGroup = null;
-            if($classAnnotation->getApiGroup()){
-                $classGroup = $classAnnotation->getApiGroup()->groupName;
-                $group[$classGroup] = [
-                    'apiGroupDescription'=>$classAnnotation->getApiGroupDescription(),
-                ];
-                foreach ($classAnnotation->getApiGroupAuth() as $auth){
-                    $group[$classGroup]['auth'][$auth->name] = $auth;
-                }
-                $group[$classGroup]['methods'] = [];
-            }
-            //找出方法注解内有没有定义group
-            /** @var MethodAnnotation $method */
-            foreach ($classAnnotation->getMethods() as $methodName => $method){
-                $currentGroup = null;
-                $api = $method->getAnnotationTag('Api',0);
-                $methodGroup = $method->getAnnotationTag('ApiGroup',0);
-                if($methodGroup){
-                    $currentGroup = $methodGroup->groupName;
-                }else if($api && !empty($api->group)){
-                    $currentGroup = $api->group;
+        foreach ($objectsAnnotation as $objectAnnotation){
+            $apiGroup = 'default';
+            if($objectAnnotation->getApiGroup()){
+                $apiGroup = $objectAnnotation->getApiGroup()->groupName;
+                if(!empty($group[$apiGroup]['apiGroupDescription'])){
+                    throw new InvalidTag("your cannot redeclare ApiGroupDescription for group:{$apiGroup}");
                 }else{
-                    $currentGroup = $classGroup;
+                    $group[$apiGroup] = [
+                        'apiGroupDescription'=>$objectAnnotation->getApiGroupDescription(),
+                    ];
                 }
-                if(!empty($currentGroup)){
-                    $group[$classGroup]['methods'][$methodName] = $method;
-                    if(!isset($group[$currentGroup])){
-                        $group[$currentGroup] = [
-                            'apiGroupDescription'=>$method->getAnnotationTag('ApiGroupDescription',0),
-                        ];
-                    }
-                    if($method->getAnnotationTag('ApiGroupAuth')){
-                        foreach ($method->getAnnotationTag('ApiGroupAuth') as $tag){
-                            $group[$currentGroup][$tag->name] = $tag;
-                        }
-                    }
+                foreach ($objectAnnotation->getApiGroupAuth() as $auth){
+                    $group[$apiGroup]['auth'][$auth->name] = $auth;
                 }
+                $group[$apiGroup]['methods'] = [];
+            }
+            /** @var MethodAnnotation $method */
+            foreach ($objectAnnotation->getMethods() as $methodName => $method){
+                $apiName = null;
+                $api = $method->getAnnotationTag('Api',0);
+                if($api && empty($api->name)){
+                    $apiName = $methodName;
+                }else{
+                    $apiName = $api->name;
+                }
+                if(isset($group[$apiGroup][$apiName])){
+                    throw new InvalidTag("apiName {$apiName} for group {$group} is duplicate");
+                }
+                $group[$apiGroup][$apiName] = $method;
             }
         }
         return $group;
     }
 
-    function getObjectAnnotation(string $class, ?int $filterType = null):Object
+    function getObjectAnnotation(string $class, ?int $filterType = null):ObjectAnnotation
     {
-        $object = new Object();
+        $object = new ObjectAnnotation();
         $ref = new \ReflectionClass($class);
+        $object->setReflection($ref);
         $global = $this->getAnnotationParser()->getAnnotation($ref);
         foreach (['ApiGroup','ApiGroupDescription'] as $key){
             if(isset($global[$key])){
@@ -163,7 +155,7 @@ class Parser
         foreach ($ref->getMethods($filterType) as $method){
             $temp = $this->getAnnotationParser()->getAnnotation($method);
             $methodAnnotation = $object->addMethod($method->getName());
-            $methodAnnotation->setMethodReflection($method);
+            $methodAnnotation->setReflection($method);
             if(!empty($temp)){
                 $methodAnnotation->setAnnotation($temp);
             }
@@ -171,7 +163,7 @@ class Parser
 
         foreach ($ref->getProperties($filterType) as $property){
             $p = $object->addProperty($property->getName());
-            $p->setMethodReflection($property);
+            $p->setReflection($property);
             $temp = $this->getAnnotationParser()->getAnnotation($property);
             if(!empty($temp)){
                 $p->setAnnotation($temp);

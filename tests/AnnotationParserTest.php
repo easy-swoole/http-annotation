@@ -4,7 +4,7 @@
 namespace EasySwoole\HttpAnnotation\Tests;
 
 
-use EasySwoole\HttpAnnotation\Annotation\Object;
+use EasySwoole\HttpAnnotation\Annotation\ObjectAnnotation;
 use EasySwoole\HttpAnnotation\Annotation\Parser;
 use EasySwoole\HttpAnnotation\AnnotationTag\ApiGroup;
 use EasySwoole\HttpAnnotation\Tests\TestController\ControllerA;
@@ -15,10 +15,10 @@ use PHPUnit\Framework\TestResult;
 class AnnotationParserTest extends TestCase
 {
     /**
-     * @var Object
+     * @var ObjectAnnotation
      */
     protected $resultA;
-    /** @var Object */
+    /** @var ObjectAnnotation */
     protected $resultB;
 
     function run(TestResult $result = null): TestResult
