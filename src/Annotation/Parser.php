@@ -100,13 +100,18 @@ class Parser
     }
 
 
+
     function mergeAnnotationGroup(array $objectsAnnotation)
     {
         $group = [];
+        /** @var ObjectAnnotation $objectAnnotation */
         foreach ($objectsAnnotation as $objectAnnotation){
             $apiGroup = 'default';
             if($objectAnnotation->getApiGroup()){
                 $apiGroup = $objectAnnotation->getApiGroup()->groupName;
+            }
+            $desc = $objectAnnotation->getApiGroupDescription();
+            if($desc){
                 if(!empty($group[$apiGroup]['apiGroupDescription'])){
                     throw new InvalidTag("your cannot redeclare ApiGroupDescription for group:{$apiGroup}");
                 }else{
@@ -114,9 +119,11 @@ class Parser
                         'apiGroupDescription'=>$objectAnnotation->getApiGroupDescription(),
                     ];
                 }
-                foreach ($objectAnnotation->getApiGroupAuth() as $auth){
-                    $group[$apiGroup]['auth'][$auth->name] = $auth;
-                }
+            }
+            foreach ($objectAnnotation->getApiGroupAuth() as $auth){
+                $group[$apiGroup]['auth'][$auth->name] = $auth;
+            }
+            if(!isset($group[$apiGroup]['methods'])){
                 $group[$apiGroup]['methods'] = [];
             }
             /** @var MethodAnnotation $method */
