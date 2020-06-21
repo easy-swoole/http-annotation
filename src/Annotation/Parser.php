@@ -122,16 +122,19 @@ class Parser
             /** @var MethodAnnotation $method */
             foreach ($objectAnnotation->getMethods() as $methodName => $method){
                 $apiName = null;
+                $hasApiTag = false;
                 $api = $method->getAnnotationTag('Api',0);
-                if($api && empty($api->name)){
-                    $apiName = $methodName;
-                }else{
+                if($api){
                     $apiName = $api->name;
+                    $hasApiTag = true;
+                }else{
+                    $apiName = $methodName;
                 }
-                if(isset($group[$apiGroup][$apiName])){
+                //设置了Api tag的时候，name值禁止相同
+                if(isset($group[$apiGroup]['methods'][$apiName]) && $hasApiTag){
                     throw new InvalidTag("apiName {$apiName} for group {$group} is duplicate");
                 }
-                $group[$apiGroup][$apiName] = $method;
+                $group[$apiGroup]['methods'][$apiName] = $method;
             }
         }
         return $group;
