@@ -105,7 +105,7 @@ class Parser
                     $group[$classGroup]['methods'] = [];
                 }
                 //找出方法注解内有没有定义group
-                /** @var MethodAnnotation $method */
+                /** @var Method $method */
                 foreach ($classAnnotation->getMethods() as $methodName => $method){
                     $currentGroup = null;
                     $api = $method->getAnnotationTag('Api',0);
@@ -144,29 +144,39 @@ class Parser
     }
 
 
-    function getClassAnnotation(string $class,?int $methodType = null):ClassAnnotation
+    function getClassAnnotation(string $class,?int $filterType = null):Object
     {
-        $classAnnotation = new ClassAnnotation();
+        $object = new Object();
         $ref = new \ReflectionClass($class);
         $global = $this->getAnnotationParser()->getAnnotation($ref);
         foreach (['ApiGroup','ApiGroupDescription'] as $key){
             if(isset($global[$key])){
                 $method = "set{$key}";
-                $classAnnotation->$method($global[$key][0]);
+                $object->$method($global[$key][0]);
             }
         }
         if(isset($global['ApiGroupAuth'])){
-            $classAnnotation->setApiGroupAuth($global['ApiGroupAuth']);
+            $object->setApiGroupAuth($global['ApiGroupAuth']);
         }
-        foreach ($ref->getMethods($methodType) as $method){
+        foreach ($ref->getMethods($filterType) as $method){
             $temp = $this->getAnnotationParser()->getAnnotation($method);
-            $methodAnnotation = $classAnnotation->addMethod($method->getName());
+            $methodAnnotation = $object->addMethod($method->getName());
             $methodAnnotation->setMethodReflection($method);
             if(!empty($temp)){
                 $methodAnnotation->setAnnotation($temp);
             }
         }
-        return $classAnnotation;
+
+        foreach ($ref->getProperties($filterType) as $property){
+            $p = $object->addProperty($property->getName());
+            $p->setMethodReflection($property);
+            $temp = $this->getAnnotationParser()->getAnnotation($property);
+            if(!empty($temp)){
+                $p->setAnnotation($temp);
+            }
+        }
+
+        return $object;
     }
 
     public static function getFileDeclareClass(string $file):?string

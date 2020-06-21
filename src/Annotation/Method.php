@@ -6,7 +6,7 @@ namespace EasySwoole\HttpAnnotation\Annotation;
 
 use EasySwoole\Annotation\AbstractAnnotationTag;
 
-class MethodAnnotation
+class Method
 {
     /** @var string */
     protected $methodName;
