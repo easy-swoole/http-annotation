@@ -90,7 +90,7 @@ class Parser
                 }
             }
         }
-        return $this->mergeObjectAnnotation($objectsAnnotation);
+        return $this->mergeAnnotationGroup($objectsAnnotation);
     }
 
     function annotations2Html(array $list)
@@ -99,7 +99,7 @@ class Parser
     }
 
 
-    function mergeObjectAnnotation(array $objectsAnnotation)
+    function mergeAnnotationGroup(array $objectsAnnotation)
     {
         $group = [];
         //先找去全部的group信息并合并
