@@ -5,6 +5,7 @@ namespace EasySwoole\HttpAnnotation\Annotation;
 
 
 use EasySwoole\Annotation\Annotation;
+use EasySwoole\Http\UrlParser;
 use EasySwoole\HttpAnnotation\AnnotationTag\ApiDescription;
 use EasySwoole\HttpAnnotation\AnnotationTag\CircuitBreaker;
 use EasySwoole\HttpAnnotation\AnnotationTag\Context;
@@ -23,6 +24,7 @@ use EasySwoole\HttpAnnotation\Annotation\Method as MethodAnnotation;
 use EasySwoole\HttpAnnotation\AnnotationTag\Param;
 use EasySwoole\HttpAnnotation\Exception\Annotation\InvalidTag;
 use EasySwoole\Utility\File;
+use FastRoute\RouteCollector;
 
 class Parser
 {
@@ -87,19 +89,40 @@ class Parser
             foreach ($list as $file){
                 $class = static::getFileDeclareClass($file);
                 if($class){
-                    $objectsAnnotation[] = $this->getObjectAnnotation($class);
+                    $objectsAnnotation[$class] = $this->getObjectAnnotation($class);
                 }
             }
         }
         return $this->mergeAnnotationGroup($objectsAnnotation);
     }
 
-    function annotations2Html(array $list)
+    public function mappingRouter(RouteCollector $collector,string $controllerPath,string $controllerNameSpace = 'App\\HttpController\\'):void
     {
-
+        //用于psr规范去除命名空间
+        $prefixLen = strlen(trim($controllerNameSpace,'\\'));
+        $annotations = $this->scanDir($controllerPath);
+        /**
+         * @var  $class
+         * @var ObjectAnnotation $classAnnotation
+         */
+        foreach ($annotations as $class => $classAnnotation){
+            /** @var MethodAnnotation $method */
+            foreach ($classAnnotation->getMethods() as $methodName => $method){
+                /** @var Api $tag */
+                $tag = $method->getAnnotationTag('Api',0);
+                if($tag){
+                    $method = $method->getAnnotationTag('Method',0);
+                    if($method){
+                        $method = $method->allow;
+                    }else{
+                        $method = ['POST','GET','PUT','PATCH','DELETE','HEAD','OPTIONS'];
+                    }
+                    $realPath = '/'.substr($class,$prefixLen + 1).'/'.$methodName;
+                    $collector->addRoute($method,UrlParser::pathInfo($tag->path),$realPath);
+                }
+            }
+        }
     }
-
-
 
     function mergeAnnotationGroup(array $objectsAnnotation)
     {
