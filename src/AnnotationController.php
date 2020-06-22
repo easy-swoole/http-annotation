@@ -4,10 +4,10 @@
 namespace EasySwoole\HttpAnnotation;
 
 
-use EasySwoole\Annotation\Annotation;
 use EasySwoole\Component\Context\ContextManager;
 use EasySwoole\Component\Di as IOC;
 use EasySwoole\Http\AbstractInterface\Controller;
+use EasySwoole\HttpAnnotation\Annotation\Method;
 use EasySwoole\HttpAnnotation\Annotation\Parser;
 use EasySwoole\HttpAnnotation\AnnotationTag\Param;
 use EasySwoole\HttpAnnotation\Exception\Annotation\ActionTimeout;
@@ -32,6 +32,21 @@ class AnnotationController extends Controller
         }
         $this->parser = $parser;
         $info = $this->parser->getObjectAnnotation(static::class);
+        foreach ($info->getProperties() as $property => $item){
+            if(!empty($item->getAnnotations())){
+                $this->propertyAnnotations[$property] = $item->getAnnotations();
+            }
+        }
+
+        /**
+         * @var  $method
+         * @var Method $item
+         */
+        foreach ($info->getMethods() as $method => $item){
+            if(!empty($item->getAnnotations())){
+                $this->methodAnnotations[$method] = $item->getAnnotations();
+            }
+        }
     }
 
     protected function getAnnotationParser():Parser
@@ -175,6 +190,7 @@ class AnnotationController extends Controller
             }
             $actionArgs = [];
             $validate = new Validate();
+
             if(!empty($annotations['Param'])){
                 $params = $annotations['Param'];
                 /** @var Param $param */
