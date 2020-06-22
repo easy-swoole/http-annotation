@@ -8,9 +8,11 @@ use EasySwoole\Component\Context\ContextManager;
 use EasySwoole\Component\Di as IOC;
 use EasySwoole\Http\AbstractInterface\Controller;
 use EasySwoole\HttpAnnotation\Annotation\Method;
+use EasySwoole\HttpAnnotation\Annotation\ObjectAnnotation;
 use EasySwoole\HttpAnnotation\Annotation\Parser;
 use EasySwoole\HttpAnnotation\AnnotationTag\Param;
 use EasySwoole\HttpAnnotation\Exception\Annotation\ActionTimeout;
+use EasySwoole\HttpAnnotation\Exception\Annotation\InvalidTag;
 use EasySwoole\HttpAnnotation\Exception\Annotation\MethodNotAllow;
 use EasySwoole\HttpAnnotation\Exception\Annotation\ParamError;
 use EasySwoole\HttpAnnotation\Exception\Annotation\ParamValidateError;
@@ -23,6 +25,7 @@ class AnnotationController extends Controller
 {
     private $methodAnnotations = [];
     private $propertyAnnotations = [];
+    private $classAnnotation;
     private $parser;
     public function __construct(?Parser $parser = null)
     {
@@ -31,7 +34,7 @@ class AnnotationController extends Controller
             $parser = new Parser();
         }
         $this->parser = $parser;
-        $info = $this->parser->getObjectAnnotation(static::class);
+        $this->classAnnotation = $info = $this->parser->getObjectAnnotation(static::class);
         foreach ($info->getProperties() as $property => $item){
             if(!empty($item->getAnnotations())){
                 $this->propertyAnnotations[$property] = $item->getAnnotations();
@@ -52,6 +55,11 @@ class AnnotationController extends Controller
     protected function getAnnotationParser():Parser
     {
         return $this->parser;
+    }
+
+    protected function getClassAnnotation():ObjectAnnotation
+    {
+        return $this->classAnnotation;
     }
 
     protected function getMethodAnnotation(?string $method = null):?array
@@ -109,7 +117,7 @@ class AnnotationController extends Controller
         $forwardPath = null;
         try {
             $onRequestArgs = $this->__handleAnnotationParams('onRequest');
-            $ret = call_user_func([$this,'onRequest'],$actionName,...array_values($onRequestArgs));
+            $ret = call_user_func([$this,'onRequest'],$actionName);
             if ($ret !== false) {
                 if (isset($allowMethodReflections[$actionName])) {
                     $actionArgs = $this->__handleAnnotationParams($actionName);
@@ -123,7 +131,7 @@ class AnnotationController extends Controller
                              * 因为协程内的异常需要被外层捕获
                              */
                             try{
-                                $ret = $this->$actionName(...array_values($actionArgs));
+                                $ret = $this->$actionName();
                             }catch (\Throwable $exception){
                                 $ret = $exception;
                             }
@@ -189,100 +197,129 @@ class AnnotationController extends Controller
                 $filterEmpty = $annotations['InjectParamsContext'][0]->filterEmpty;
             }
             $actionArgs = [];
+            $params = [];
             $validate = new Validate();
-
+            //校验合并
             if(!empty($annotations['Param'])){
-                $params = $annotations['Param'];
-                /** @var Param $param */
-                foreach ($params as $param){
-                    $paramName = $param->name;
-                    if(empty($paramName)){
-                        throw new ParamError("param annotation error for action {$actionName} in class ".(static::class));
-                    }
-                    if(!empty($param->from)){
-                        $value = null;
-                        /*
-                         * 按照允许的列表顺序进行取值
-                         */
-                        foreach ($param->from as $from){
-                            switch ($from){
-                                case "POST":{
-                                    $value = $this->request()->getParsedBody($paramName);
-                                    break;
-                                }
-                                case "GET":{
-                                    $value = $this->request()->getQueryParam($paramName);
-                                    break;
-                                }
-                                case "COOKIE":{
-                                    $value = $this->request()->getCookieParams($paramName);
-                                    break;
-                                }
-                                case 'HEADER':{
-                                    $value = $this->request()->getHeader($paramName);
-                                    if(!empty($value)){
-                                        $value = $value[0];
-                                    }else{
-                                        $value = null;
-                                    }
-                                    break;
-                                }
-                                case 'FILE':{
-                                    $value = $this->request()->getUploadedFile($paramName);
-                                    break;
-                                }
-                                case 'DI':{
-                                    $value = IOC::getInstance()->get($paramName);
-                                    break;
-                                }
-                                case 'CONTEXT':{
-                                    $value = ContextManager::getInstance()->get($paramName);
-                                    break;
-                                }
-                                case 'RAW':{
-                                    $value = $this->request()->getBody()->__toString();
-                                    break;
-                                }
-                            }
-                            if($value !== null){
-                                break;
-                            }
-                        }
+                foreach ($annotations['Param'] as $param){
+                    if(!isset($params[$param->name])){
+                        $params[$param->name] = $param;
                     }else{
-                        $value = $this->request()->getRequestParam($paramName);
-                    }
-
-                    if($value === null && $param->defaultValue){
-                        $value = $param->defaultValue;
-                    }
-
-                    if($value !== null){
-                        $value = $param->typeCast($value);
-                    }
-
-                    if(!empty($param->preHandler)){
-                        if(is_callable($param->preHandler)){
-                            $value = call_user_func($param->preHandler,$value);
-                        }else{
-                            throw new Exception("annotation param: {$paramName} preHandler is not callable");
-                        }
-                    }
-
-                    /*
-                     * 注意，这边可能得到null数据，若要求某个数据不能为null,请用验证器柜子
-                     */
-                    $actionArgs[$paramName] = $value;
-                    if(!empty($param->validateRuleList)){
-                        foreach ($param->validateRuleList as $rule => $none){
-                            $validateArgs = $param->{$rule};
-                            if(!is_array($validateArgs)){
-                                $validateArgs = [$validateArgs];
-                            }
-                            $validate->addColumn($param->name,$param->alias)->{$rule}(...$validateArgs);
-                        }
+                        throw new InvalidTag("Param tag for name {$param->name} is duplicate");
                     }
                 }
             }
+
+            if(!empty($annotations['ApiAuth'])){
+                foreach ($annotations['ApiAuth'] as $param){
+                    if(!isset($params[$param->name])){
+                        $params[$param->name] = $param;
+                    }else{
+                        throw new InvalidTag("ApiAuth tag for name {$param->name} is duplicate");
+                    }
+                }
+            }
+
+            if(!empty($this->classAnnotation->getApiGroupAuth())){
+                foreach ($this->classAnnotation->getApiGroupAuth() as $param){
+                    if(!isset($params[$param->name])){
+                        $params[$param->name] = $param;
+                    }else{
+                        throw new InvalidTag("ApiGroupAuth tag for name {$param->name} is duplicate");
+                    }
+                }
+            }
+
+            /** @var Param $param */
+            foreach ($params as $param){
+                $paramName = $param->name;
+                if(empty($paramName)){
+                    throw new ParamError("param annotation error for action {$actionName} in class ".(static::class));
+                }
+                if(!empty($param->from)){
+                    $value = null;
+                    /*
+                     * 按照允许的列表顺序进行取值
+                     */
+                    foreach ($param->from as $from){
+                        switch ($from){
+                            case "POST":{
+                                $value = $this->request()->getParsedBody($paramName);
+                                break;
+                            }
+                            case "GET":{
+                                $value = $this->request()->getQueryParam($paramName);
+                                break;
+                            }
+                            case "COOKIE":{
+                                $value = $this->request()->getCookieParams($paramName);
+                                break;
+                            }
+                            case 'HEADER':{
+                                $value = $this->request()->getHeader($paramName);
+                                if(!empty($value)){
+                                    $value = $value[0];
+                                }else{
+                                    $value = null;
+                                }
+                                break;
+                            }
+                            case 'FILE':{
+                                $value = $this->request()->getUploadedFile($paramName);
+                                break;
+                            }
+                            case 'DI':{
+                                $value = IOC::getInstance()->get($paramName);
+                                break;
+                            }
+                            case 'CONTEXT':{
+                                $value = ContextManager::getInstance()->get($paramName);
+                                break;
+                            }
+                            case 'RAW':{
+                                $value = $this->request()->getBody()->__toString();
+                                break;
+                            }
+                        }
+                        if($value !== null){
+                            break;
+                        }
+                    }
+                }else{
+                    $value = $this->request()->getRequestParam($paramName);
+                }
+
+                if($value === null && $param->defaultValue){
+                    $value = $param->defaultValue;
+                }
+
+                if($value !== null){
+                    $value = $param->typeCast($value);
+                }
+
+                if(!empty($param->preHandler)){
+                    if(is_callable($param->preHandler)){
+                        $value = call_user_func($param->preHandler,$value);
+                    }else{
+                        throw new Exception("annotation param: {$paramName} preHandler is not callable");
+                    }
+                }
+
+                /*
+                 * 注意，这边可能得到null数据，若要求某个数据不能为null,请用验证器柜子
+                 */
+                $actionArgs[$paramName] = $value;
+                if(!empty($param->validateRuleList)){
+                    foreach ($param->validateRuleList as $rule => $none){
+                        $validateArgs = $param->{$rule};
+                        if(!is_array($validateArgs)){
+                            $validateArgs = [$validateArgs];
+                        }
+                        $validate->addColumn($param->name,$param->alias)->{$rule}(...$validateArgs);
+                    }
+                }
+            }
+
             if($injectKey){
                 if($filterNull){
                     foreach ($actionArgs as $key => $arg){
