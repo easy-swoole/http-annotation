@@ -79,12 +79,15 @@ class Parser
         return $this->parser;
     }
 
-    function scanDir(string $path):array
+    function scanDir(string $pathOrClass):array
     {
-        if(is_file($path)){
-            $list = [$path];
-        }else{
-            $list = File::scanDirectory($path)['files'];
+        if(is_file($pathOrClass)){
+            $list = [$pathOrClass];
+        }else if(is_dir($pathOrClass)){
+            $list = File::scanDirectory($pathOrClass)['files'];
+        }else if(class_exists($pathOrClass)){
+            $ref = new \ReflectionClass($pathOrClass);
+            $list = [$ref->getFileName()];
         }
         $objectsAnnotation = [];
         if(!empty($list)){
@@ -98,9 +101,9 @@ class Parser
         return $this->mergeAnnotationGroup($objectsAnnotation);
     }
 
-    function renderDoc(string $path)
+    function renderDoc(string $pathOrClass)
     {
-
+        $annotation = $this->scanDir($pathOrClass);
     }
 
 
