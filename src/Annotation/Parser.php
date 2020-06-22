@@ -98,6 +98,12 @@ class Parser
         return $this->mergeAnnotationGroup($objectsAnnotation);
     }
 
+    function renderDoc(string $path)
+    {
+
+    }
+
+
     public function mappingRouter(RouteCollector $collector,string $controllerPath,string $controllerNameSpace = 'App\\HttpController\\'):void
     {
         //用于psr规范去除命名空间
