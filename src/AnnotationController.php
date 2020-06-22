@@ -23,41 +23,20 @@ class AnnotationController extends Controller
 {
     private $methodAnnotations = [];
     private $propertyAnnotations = [];
-    private $annotation;
-
-    public function __construct(?Annotation $annotation = null)
+    private $parser;
+    public function __construct(?Parser $parser = null)
     {
         parent::__construct();
-        if($annotation == null){
-            $this->annotation = (new Parser())->getAnnotationParser();
-        }else{
-            $this->annotation = $annotation;
+        if($parser == null){
+            $parser = new Parser();
         }
-
-        foreach ($this->getAllowMethodReflections() as $name => $reflection){
-            $ret = $this->annotation->getAnnotation($reflection);
-            if(!empty($ret)){
-                $this->methodAnnotations[$name] = $ret;
-            }
-        }
-        //单独获取一次onRequest注解并加入
-        $ref = new \ReflectionClass(static::class);
-        $ret = $this->annotation->getAnnotation($ref->getMethod('onRequest'));
-        if(!empty($ret)){
-            $this->methodAnnotations['onRequest'] = $ret;
-        }
-
-        foreach ($this->getPropertyReflections() as $name => $reflection){
-            $ret = $this->annotation->getAnnotation($reflection);
-            if(!empty($ret)){
-                $this->propertyAnnotations[$name] = $ret;
-            }
-        }
+        $this->parser = $parser;
+        $info = $this->parser->getObjectAnnotation(static::class);
     }
 
-    protected function getAnnotation():Annotation
+    protected function getAnnotationParser():Parser
     {
-        return $this->annotation;
+        return $this->parser;
     }
 
     protected function getMethodAnnotation(?string $method = null):?array
