@@ -219,6 +219,12 @@ class Param extends AbstractAnnotationTag
         foreach ($this->allowValidateRule as $ruleName){
             if($this->$ruleName !== null){
                 $this->validateRuleList[$ruleName] = $this->$ruleName;
+                //对inArray 做特殊处理
+                if(in_array($ruleName,['inArray','notInArray'])){
+                    if(!is_array($this->$ruleName[0])){
+                        $this->$ruleName = [$this->$ruleName];
+                    }
+                }
             }
         }
     }
