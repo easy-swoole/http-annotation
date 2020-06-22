@@ -19,6 +19,7 @@ use EasySwoole\HttpAnnotation\AnnotationTag\ApiGroupDescription;
 use EasySwoole\HttpAnnotation\AnnotationTag\ApiRequestExample;
 use EasySwoole\HttpAnnotation\AnnotationTag\ApiResponseParam;
 use EasySwoole\HttpAnnotation\AnnotationTag\ApiSuccess;
+use EasySwoole\HttpAnnotation\AnnotationTag\InjectParamsContext;
 use EasySwoole\HttpAnnotation\AnnotationTag\Method;
 use EasySwoole\HttpAnnotation\Annotation\Method as MethodAnnotation;
 use EasySwoole\HttpAnnotation\AnnotationTag\Param;
@@ -57,11 +58,6 @@ class Parser
     {
         if(!$this->parser){
             $annotation = new Annotation();
-            $annotation->addParserTag(new Method());
-            $annotation->addParserTag(new Param());
-            $annotation->addParserTag(new Context());
-            $annotation->addParserTag(new Di());
-            $annotation->addParserTag(new CircuitBreaker());
             $annotation->addParserTag(new Api());
             $annotation->addParserTag(new ApiAuth());
             $annotation->addParserTag(new ApiDescription());
@@ -69,9 +65,15 @@ class Parser
             $annotation->addParserTag(new ApiGroup());
             $annotation->addParserTag(new ApiGroupAuth());
             $annotation->addParserTag(new ApiGroupDescription());
-            $annotation->addParserTag(new ApiSuccess());
             $annotation->addParserTag(new ApiRequestExample());
             $annotation->addParserTag(new ApiResponseParam());
+            $annotation->addParserTag(new ApiSuccess());
+            $annotation->addParserTag(new CircuitBreaker());
+            $annotation->addParserTag(new Context());
+            $annotation->addParserTag(new Di());
+            $annotation->addParserTag(new InjectParamsContext());
+            $annotation->addParserTag(new Method());
+            $annotation->addParserTag(new Param());
             $this->parser = $annotation;
         }
         return $this->parser;
