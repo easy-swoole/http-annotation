@@ -112,13 +112,9 @@ class Parser
             }
             $desc = $objectAnnotation->getApiGroupDescription();
             if($desc){
-                if(!empty($group[$apiGroup]['apiGroupDescription'])){
-                    throw new InvalidTag("your cannot redeclare ApiGroupDescription for group:{$apiGroup}");
-                }else{
-                    $group[$apiGroup] = [
-                        'apiGroupDescription'=>$objectAnnotation->getApiGroupDescription(),
-                    ];
-                }
+                $group[$apiGroup] = [
+                    'apiGroupDescription'=>$objectAnnotation->getApiGroupDescription(),
+                ];
             }
             foreach ($objectAnnotation->getApiGroupAuth() as $auth){
                 $group[$apiGroup]['auth'][$auth->name] = $auth;
