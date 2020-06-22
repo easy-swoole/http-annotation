@@ -116,22 +116,33 @@ class AnnotationController extends Controller
         $allowMethodReflections = $this->getAllowMethodReflections();
         $forwardPath = null;
         try {
-            $onRequestArgs = $this->__handleAnnotationParams('onRequest');
+            $this->__handleAnnotationParams('onRequest');
             $ret = call_user_func([$this,'onRequest'],$actionName);
             if ($ret !== false) {
                 if (isset($allowMethodReflections[$actionName])) {
                     $actionArgs = $this->__handleAnnotationParams($actionName);
+                    /** @var \ReflectionMethod $methodRef */
+                    $methodRef = $allowMethodReflections[$actionName];
+                    $runArg = [];
+                    foreach ($methodRef->getParameters() as $parameter){
+                        $name = $parameter->getName();
+                        if(isset($actionArgs[$name])){
+                            $runArg[] = $actionArgs[$name];
+                        }else{
+                            $runArg[] = $this->request()->getRequestParam($name);
+                        }
+                    }
                     if(isset($annotations['CircuitBreaker'])){
                         $breakerInfo = $annotations['CircuitBreaker'][0];
                         $timeout = $breakerInfo->timeout;
                         $failAction = $breakerInfo->failAction;
                         $channel = new Channel(1);
-                        Coroutine::create(function ()use($channel,$actionName,$actionArgs){
+                        Coroutine::create(function ()use($channel,$actionName,$runArg){
                             /*
                              * 因为协程内的异常需要被外层捕获
                              */
                             try{
-                                $ret = $this->$actionName();
+                                $ret = $this->$actionName(...array_values($runArg));
                             }catch (\Throwable $exception){
                                 $ret = $exception;
                             }
@@ -151,7 +162,7 @@ class AnnotationController extends Controller
                             $forwardPath = $ret;
                         }
                     }else{
-                        $forwardPath = $this->$actionName(...array_values($actionArgs));
+                        $forwardPath = $this->$actionName(...array_values($runArg));
                     }
                 } else {
                     $forwardPath = $this->actionNotFound($actionName);
