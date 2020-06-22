@@ -12,5 +12,8 @@ namespace EasySwoole\HttpAnnotation\AnnotationTag;
  */
 class ApiAuth extends Param
 {
-
+    public function tagName(): string
+    {
+        return 'ApiAuth';
+    }
 }
