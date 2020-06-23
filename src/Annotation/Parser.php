@@ -30,33 +30,34 @@ use FastRoute\RouteCollector;
 class Parser
 {
     protected $parser;
+    protected $CLRF = "\n";
 
     function __construct()
     {
         static::preDefines([
-            "POST"=>"POST",
-            "GET"=>"GET",
-            'COOKIE'=>'COOKIE',
-            'HEADER'=>'HEADER',
-            'FILE'=>'FILE',
-            'DI'=>'DI',
-            'CONTEXT'=>'CONTEXT',
-            'RAW'=>'RAW'
+            "POST" => "POST",
+            "GET" => "GET",
+            'COOKIE' => 'COOKIE',
+            'HEADER' => 'HEADER',
+            'FILE' => 'FILE',
+            'DI' => 'DI',
+            'CONTEXT' => 'CONTEXT',
+            'RAW' => 'RAW'
         ]);
     }
 
     public static function preDefines($defines = [])
     {
-        foreach ($defines as $key => $val){
-            if(!defined($key)){
-                define($key,$val);
+        foreach ($defines as $key => $val) {
+            if (!defined($key)) {
+                define($key, $val);
             }
         }
     }
 
-    public function getAnnotationParser():Annotation
+    public function getAnnotationParser(): Annotation
     {
-        if(!$this->parser){
+        if (!$this->parser) {
             $annotation = new Annotation();
             $annotation->addParserTag(new Api());
             $annotation->addParserTag(new ApiAuth());
@@ -79,21 +80,21 @@ class Parser
         return $this->parser;
     }
 
-    function scanDir(string $pathOrClass):array
+    function scanDir(string $pathOrClass): array
     {
-        if(is_file($pathOrClass)){
+        if (is_file($pathOrClass)) {
             $list = [$pathOrClass];
-        }else if(is_dir($pathOrClass)){
+        } else if (is_dir($pathOrClass)) {
             $list = File::scanDirectory($pathOrClass)['files'];
-        }else if(class_exists($pathOrClass)){
+        } else if (class_exists($pathOrClass)) {
             $ref = new \ReflectionClass($pathOrClass);
             $list = [$ref->getFileName()];
         }
         $objectsAnnotation = [];
-        if(!empty($list)){
-            foreach ($list as $file){
+        if (!empty($list)) {
+            foreach ($list as $file) {
                 $class = static::getFileDeclareClass($file);
-                if($class){
+                if ($class) {
                     $objectsAnnotation[$class] = $this->getObjectAnnotation($class);
                 }
             }
@@ -103,33 +104,121 @@ class Parser
 
     function renderToMd(string $pathOrClass)
     {
-        $annotation = $this->scanDir($pathOrClass);
+        $final = '';
+        $annotations = $this->scanDir($pathOrClass);
+        foreach ($annotations as $groupName => $group) {
+            $markdown = '';
+            $hasContent = false;
+            $markdown .= "<h1 class='group-title'>{$groupName}</h1>{$this->CLRF}";
+            if(isset($group['apiGroupAuth'])){
+                $hasContent = true;
+                $markdown .= "<h3 class='group-auth'>组权限说明</h3>{$this->CLRF}";
+            }
+            if (isset($group['apiGroupDescription'])) {
+                $hasContent = true;
+                $markdown .= "<h3 class='group-description'>组描述</h3>{$this->CLRF}";
+                $description = $group['apiGroupDescription'];
+                if ($description->type == 'file' && file_exists($description->value)) {
+                    $description = file_get_contents($description->value);
+                } else {
+                    $description = $description->value;
+                }
+                if(empty($description)){
+                    $description = "暂无描述";
+                }
+                $markdown .= $description;
+            }
+            $markdown .= "<hr class='group-hr'/>{$this->CLRF}";
+            /**
+             * @var string $methodName
+             * @var MethodAnnotation $method
+             */
+            foreach ($group['methods'] as $methodName => $method) {
+                /** @var Api $api */
+                $api = $method->getAnnotationTag('Api', 0);
+                if ($api) {
+                    $methodAnnotation = $method->getAnnotations();
+                    $hasContent = true;
+                    $deprecated = '';
+                    if($api->deprecated){
+                        $deprecated .= "<sup class='deprecated'>已废弃</sup>";
+                    }
+                    $markdown .= "<h2 class='api-method' id='{$groupName}-{$methodName}'>{$methodName}{$deprecated}</h2>{$this->CLRF}";
+                    /** @var ApiDescription $description */
+                    $description = $method->getAnnotationTag('ApiDescription',0);
+                    if($description){
+                        if($description->type == 'file' && file_exists($description->value)){
+                            $description = file_get_contents($description->value);
+                        }else{
+                            $description = $description->value;
+                        }
+                    }else{
+                        $description = $api->description;
+                    }
+                    $markdown .= "<h4 class='method-description'>接口说明</h4>{$this->CLRF}";
+                    $markdown .= "{$description}{$this->CLRF}";
+                    $allow = $method->getAnnotationTag('Method',0);
+                    if($allow){
+                        $allow = implode("|",$allow->allow);
+                    }else{
+                        $allow = '不限制';
+                    }
+                    $markdown .= "<h4 class='request-method'>请求方法:<span class='h4-span'>{$allow}</span></h4>{$this->CLRF}";
+                    $markdown .= "<h4 class='request-path'>请求路径:<span class='h4-span'>{$api->path}</span></h4>{$this->CLRF}";
+                    $params = $method->getAnnotationTag('Param');
+                    if (!empty($params)) {
+                        $markdown .= "<h4 class='request-params'>请求字段</h4> {$this->CLRF}";
+                        $markdown .= "|字段|类型|描述|验证规则|\n";
+                        $markdown .= "|----|----|----|----|\n";
+                        /** @var Param $param */
+                        foreach ($params as $param) {
+                            $rule = json_encode($param->validateRuleList, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
+                            $markdown .= "| {$param->name} | {$param->type} | {$param->description} | {$rule} |\n";
+                        }
+                        $markdown .= "\n\n";
+                    }
+                    if(isset($methodAnnotation['ApiRequestExample'])){
+                        $markdown .= "<h4 class='request-example'>请求示例</h4> {$this->CLRF}";
+                        $index = 1;
+                        foreach ($methodAnnotation['ApiRequestExample'] as $example){
+                            $content = static::contentFormat($example->getContent());
+                            $markdown .= "##### 请求示例{$index} \n\n";
+                            $markdown .= "```\n{$content}\n```\n";
+                        }
+                    }
+                }
+            }
+            if ($hasContent) {
+                $final .= $markdown;
+            }
+        }
+        return $final;
     }
 
 
-    public function mappingRouter(RouteCollector $collector,string $controllerPath,string $controllerNameSpace = 'App\\HttpController\\'):void
+    public function mappingRouter(RouteCollector $collector, string $controllerPath, string $controllerNameSpace = 'App\\HttpController\\'): void
     {
         //用于psr规范去除命名空间
-        $prefixLen = strlen(trim($controllerNameSpace,'\\'));
+        $prefixLen = strlen(trim($controllerNameSpace, '\\'));
         $annotations = $this->scanDir($controllerPath);
         /**
          * @var  $class
          * @var ObjectAnnotation $classAnnotation
          */
-        foreach ($annotations as $class => $classAnnotation){
+        foreach ($annotations as $class => $classAnnotation) {
             /** @var MethodAnnotation $method */
-            foreach ($classAnnotation->getMethods() as $methodName => $method){
+            foreach ($classAnnotation->getMethods() as $methodName => $method) {
                 /** @var Api $tag */
-                $tag = $method->getAnnotationTag('Api',0);
-                if($tag){
-                    $method = $method->getAnnotationTag('Method',0);
-                    if($method){
+                $tag = $method->getAnnotationTag('Api', 0);
+                if ($tag) {
+                    $method = $method->getAnnotationTag('Method', 0);
+                    if ($method) {
                         $method = $method->allow;
-                    }else{
-                        $method = ['POST','GET','PUT','PATCH','DELETE','HEAD','OPTIONS'];
+                    } else {
+                        $method = ['POST', 'GET', 'PUT', 'PATCH', 'DELETE', 'HEAD', 'OPTIONS'];
                     }
-                    $realPath = '/'.substr($class,$prefixLen + 1).'/'.$methodName;
-                    $collector->addRoute($method,UrlParser::pathInfo($tag->path),$realPath);
+                    $realPath = '/' . substr($class, $prefixLen + 1) . '/' . $methodName;
+                    $collector->addRoute($method, UrlParser::pathInfo($tag->path), $realPath);
                 }
             }
         }
@@ -139,36 +228,36 @@ class Parser
     {
         $group = [];
         /** @var ObjectAnnotation $objectAnnotation */
-        foreach ($objectsAnnotation as $objectAnnotation){
+        foreach ($objectsAnnotation as $objectAnnotation) {
             $apiGroup = 'default';
-            if($objectAnnotation->getApiGroup()){
+            if ($objectAnnotation->getApiGroup()) {
                 $apiGroup = $objectAnnotation->getApiGroup()->groupName;
             }
             $desc = $objectAnnotation->getApiGroupDescription();
-            if($desc){
+            if ($desc) {
                 $group[$apiGroup] = [
-                    'apiGroupDescription'=>$objectAnnotation->getApiGroupDescription(),
+                    'apiGroupDescription' => $objectAnnotation->getApiGroupDescription(),
                 ];
             }
-            foreach ($objectAnnotation->getApiGroupAuth() as $auth){
+            foreach ($objectAnnotation->getApiGroupAuth() as $auth) {
                 $group[$apiGroup]['apiGroupAuth'][$auth->name] = $auth;
             }
-            if(!isset($group[$apiGroup]['methods'])){
+            if (!isset($group[$apiGroup]['methods'])) {
                 $group[$apiGroup]['methods'] = [];
             }
             /** @var MethodAnnotation $method */
-            foreach ($objectAnnotation->getMethods() as $methodName => $method){
+            foreach ($objectAnnotation->getMethods() as $methodName => $method) {
                 $apiName = null;
                 $hasApiTag = false;
-                $api = $method->getAnnotationTag('Api',0);
-                if($api){
+                $api = $method->getAnnotationTag('Api', 0);
+                if ($api) {
                     $apiName = $api->name;
                     $hasApiTag = true;
-                }else{
+                } else {
                     $apiName = $methodName;
                 }
                 //设置了Api tag的时候，name值禁止相同
-                if(isset($group[$apiGroup]['methods'][$apiName]) && $hasApiTag){
+                if (isset($group[$apiGroup]['methods'][$apiName]) && $hasApiTag) {
                     throw new InvalidTag("apiName {$apiName} for group {$group} is duplicate");
                 }
                 $group[$apiGroup]['methods'][$apiName] = $method;
@@ -177,35 +266,35 @@ class Parser
         return $group;
     }
 
-    function getObjectAnnotation(string $class, ?int $filterType = null):ObjectAnnotation
+    function getObjectAnnotation(string $class, ?int $filterType = null): ObjectAnnotation
     {
         $object = new ObjectAnnotation();
         $ref = new \ReflectionClass($class);
         $object->setReflection($ref);
         $global = $this->getAnnotationParser()->getAnnotation($ref);
-        foreach (['ApiGroup','ApiGroupDescription'] as $key){
-            if(isset($global[$key])){
+        foreach (['ApiGroup', 'ApiGroupDescription'] as $key) {
+            if (isset($global[$key])) {
                 $method = "set{$key}";
                 $object->$method($global[$key][0]);
             }
         }
-        if(isset($global['ApiGroupAuth'])){
+        if (isset($global['ApiGroupAuth'])) {
             $object->setApiGroupAuth($global['ApiGroupAuth']);
         }
-        foreach ($ref->getMethods($filterType) as $method){
+        foreach ($ref->getMethods($filterType) as $method) {
             $temp = $this->getAnnotationParser()->getAnnotation($method);
             $methodAnnotation = $object->addMethod($method->getName());
             $methodAnnotation->setReflection($method);
-            if(!empty($temp)){
+            if (!empty($temp)) {
                 $methodAnnotation->setAnnotation($temp);
             }
         }
 
-        foreach ($ref->getProperties($filterType) as $property){
+        foreach ($ref->getProperties($filterType) as $property) {
             $p = $object->addProperty($property->getName());
             $p->setReflection($property);
             $temp = $this->getAnnotationParser()->getAnnotation($property);
-            if(!empty($temp)){
+            if (!empty($temp)) {
                 $p->setAnnotation($temp);
             }
         }
@@ -213,17 +302,17 @@ class Parser
         return $object;
     }
 
-    public static function getFileDeclareClass(string $file):?string
+    public static function getFileDeclareClass(string $file): ?string
     {
         $namespace = '';
         $class = NULL;
         $phpCode = file_get_contents($file);
         $tokens = token_get_all($phpCode);
-        for ($i=0;$i<count($tokens);$i++) {
+        for ($i = 0; $i < count($tokens); $i++) {
             if ($tokens[$i][0] === T_NAMESPACE) {
-                for ($j=$i+1;$j<count($tokens); $j++) {
+                for ($j = $i + 1; $j < count($tokens); $j++) {
                     if ($tokens[$j][0] === T_STRING) {
-                        $namespace .= '\\'.$tokens[$j][1];
+                        $namespace .= '\\' . $tokens[$j][1];
                     } else if ($tokens[$j] === '{' || $tokens[$j] === ';') {
                         break;
                     }
@@ -231,33 +320,33 @@ class Parser
             }
 
             if ($tokens[$i][0] === T_CLASS) {
-                for ($j=$i+1;$j<count($tokens);$j++) {
+                for ($j = $i + 1; $j < count($tokens); $j++) {
                     if ($tokens[$j] === '{') {
-                        $class = $tokens[$i+2][1];
+                        $class = $tokens[$i + 2][1];
                     }
                 }
             }
         }
-        if(!empty($class)){
-            if(!empty($namespace)){
+        if (!empty($class)) {
+            if (!empty($namespace)) {
                 //去除第一个\
-                $namespace = substr($namespace,1);
+                $namespace = substr($namespace, 1);
             }
-            return $namespace.'\\'.$class;
-        }else{
+            return $namespace . '\\' . $class;
+        } else {
             return null;
         }
     }
 
     protected static function contentFormat(string $content)
     {
-        $json = json_decode($content,true);
-        if($json){
-            $content = json_encode($json,JSON_UNESCAPED_SLASHES|JSON_UNESCAPED_UNICODE|JSON_PRETTY_PRINT);
-        }else{
+        $json = json_decode($content, true);
+        if ($json) {
+            $content = json_encode($json, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT);
+        } else {
             libxml_disable_entity_loader(true);
             $xml = simplexml_load_string($content, 'SimpleXMLElement', LIBXML_NOERROR | LIBXML_NOCDATA);
-            if($xml){
+            if ($xml) {
                 $content = $xml->saveXML();
             }
         }
