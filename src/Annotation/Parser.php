@@ -101,7 +101,7 @@ class Parser
         return $this->mergeAnnotationGroup($objectsAnnotation);
     }
 
-    function renderDoc(string $pathOrClass)
+    function renderToMd(string $pathOrClass)
     {
         $annotation = $this->scanDir($pathOrClass);
     }
