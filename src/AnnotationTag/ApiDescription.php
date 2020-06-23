@@ -12,11 +12,7 @@ use EasySwoole\Annotation\AbstractAnnotationTag;
  */
 class ApiDescription extends AbstractAnnotationTag
 {
-    /**
-     * @var string text|file
-     */
-    public $type = 'text';
-
+    public $type = 'text';//text|file
     public function tagName(): string
     {
         return 'ApiDescription';

@@ -465,8 +465,11 @@ class Parser
         return $this->contentFormat($ret);
     }
 
-    private function contentFormat(?string $content)
+    private function contentFormat($content)
     {
+        if(is_array($content)){
+            return json_encode($content,JSON_UNESCAPED_SLASHES|JSON_UNESCAPED_UNICODE|JSON_PRETTY_PRINT);
+        }
         $json = json_decode($content,true);
         if($json){
             $content = json_encode($json,JSON_UNESCAPED_SLASHES|JSON_UNESCAPED_UNICODE|JSON_PRETTY_PRINT);
