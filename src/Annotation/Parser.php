@@ -151,7 +151,7 @@ class Parser
                 ];
             }
             foreach ($objectAnnotation->getApiGroupAuth() as $auth){
-                $group[$apiGroup]['auth'][$auth->name] = $auth;
+                $group[$apiGroup]['apiGroupAuth'][$auth->name] = $auth;
             }
             if(!isset($group[$apiGroup]['methods'])){
                 $group[$apiGroup]['methods'] = [];
