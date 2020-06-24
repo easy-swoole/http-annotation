@@ -52,7 +52,7 @@ class Param extends AbstractAnnotationTag
         'notEmpty', 'numeric', 'notInArray', 'length', 'lengthMax', 'lengthMin',
         'betweenLen', 'money', 'max', 'min', 'regex', 'allDigital',
         'required', 'timestamp', 'timestampBeforeDate', 'timestampAfterDate',
-        'timestampBefore', 'timestampAfter', 'url','optional'
+        'timestampBefore', 'timestampAfter', 'url','optional','allowFile'
     ];
 
     /**
@@ -208,6 +208,11 @@ class Param extends AbstractAnnotationTag
      * @var string
      */
     public $optional;
+
+    /**
+     * @var string
+     */
+    public $allowFile;
 
     public function tagName(): string
     {
