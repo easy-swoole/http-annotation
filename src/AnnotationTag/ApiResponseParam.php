@@ -14,5 +14,4 @@ class ApiResponseParam extends Param
     {
         return 'ApiResponseParam';
     }
-
 }

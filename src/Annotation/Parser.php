@@ -264,18 +264,7 @@ class Parser
                         }
                         $markdown .= "\n\n";
                     }
-                    if(isset($methodAnnotation['ApiResponseParam'])){
-                        $markdown .= "<h4 class='response-example'>响应示例</h4> {$this->CLRF}";
-                        $index = 1;
-                        foreach ($methodAnnotation['ApiResponseParam'] as $example){
-                            $example = $this->getTagDescription($example);
-                            if(!empty($example)){
-                                $markdown .= "<h5 class='response-example'>响应示例{$index}</h5>{$this->CLRF}";
-                                $markdown .= "```\n{$example}\n```{$this->CLRF}";
-                                $index++;
-                            }
-                        }
-                    }
+
                     if(isset($methodAnnotation['ApiSuccess'])){
                         $markdown .= "<h4 class='api-success-example'>成功响应示例</h4> {$this->CLRF}";
                         $index = 1;
