@@ -110,12 +110,21 @@ class Parser
             $markdown = '';
             $hasContent = false;
             $markdown .= "<h1 class='group-title'>{$groupName}</h1>{$this->CLRF}";
+            if (isset($group['apiGroupDescription'])) {
+                $hasContent = true;
+                $markdown .= "<h3 class='group-description'>组描述</h3>{$this->CLRF}";
+                $description = $group['apiGroupDescription'];
+                $description = $this->getTagDescription($description);
+                if(empty($description)){
+                    $description = "暂无描述";
+                }
+                $markdown .= $description;
+            }
             if(isset($group['apiGroupAuth'])){
                 $hasContent = true;
                 $markdown .= "<h3 class='group-auth'>组权限说明</h3>{$this->CLRF}";
                 $params = $group['apiGroupAuth'];
                 if (!empty($params)) {
-                    $markdown .= "<h4 class='auth-params'>权限字段</h4> {$this->CLRF}";
                     $markdown .= "|字段|来源|类型|描述|验证规则|\n";
                     $markdown .= "|----|----|----|----|\n";
                     /** @var Param $param */
@@ -135,16 +144,6 @@ class Parser
                     }
                     $markdown .= "\n\n";
                 }
-            }
-            if (isset($group['apiGroupDescription'])) {
-                $hasContent = true;
-                $markdown .= "<h3 class='group-description'>组描述</h3>{$this->CLRF}";
-                $description = $group['apiGroupDescription'];
-                $description = $this->getTagDescription($description);
-                if(empty($description)){
-                    $description = "暂无描述";
-                }
-                $markdown .= $description;
             }
 
             $markdown .= "<hr class='group-hr'/>{$this->CLRF}";
@@ -264,7 +263,18 @@ class Parser
                         }
                         $markdown .= "\n\n";
                     }
-
+//                    if(isset($methodAnnotation['ApiResponseParam'])){
+//                        $markdown .= "<h4 class='response-example'>响应示例</h4> {$this->CLRF}";
+//                        $index = 1;
+//                        foreach ($methodAnnotation['ApiResponseParam'] as $example){
+//                            $example = $this->getTagDescription($example);
+//                            if(!empty($example)){
+//                                $markdown .= "<h5 class='response-example'>响应示例{$index}</h5>{$this->CLRF}";
+//                                $markdown .= "```\n{$example}\n```{$this->CLRF}";
+//                                $index++;
+//                            }
+//                        }
+//                    }
                     if(isset($methodAnnotation['ApiSuccess'])){
                         $markdown .= "<h4 class='api-success-example'>成功响应示例</h4> {$this->CLRF}";
                         $index = 1;
