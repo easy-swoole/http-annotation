@@ -210,7 +210,7 @@ class Param extends AbstractAnnotationTag
     public $optional;
 
     /**
-     * @var string
+     * @var array
      */
     public $allowFile;
 
@@ -225,7 +225,7 @@ class Param extends AbstractAnnotationTag
             if($this->$ruleName !== null){
                 $this->validateRuleList[$ruleName] = $this->$ruleName;
                 //对inArray 做特殊处理
-                if(in_array($ruleName,['inArray','notInArray'])){
+                if(in_array($ruleName,['inArray','notInArray','allowFile'])){
                     if(!is_array($this->$ruleName[0])){
                         $this->$ruleName = [$this->$ruleName];
                     }
