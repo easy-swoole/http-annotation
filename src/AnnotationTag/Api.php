@@ -5,6 +5,7 @@ namespace EasySwoole\HttpAnnotation\AnnotationTag;
 
 
 use EasySwoole\Annotation\AbstractAnnotationTag;
+use EasySwoole\HttpAnnotation\Exception\Annotation\InvalidTag;
 
 /**
  * Class Api
@@ -43,5 +44,15 @@ class Api extends AbstractAnnotationTag
     public function tagName(): string
     {
         return  'Api';
+    }
+
+    function __onParser()
+    {
+        if(empty($this->name)){
+            throw new InvalidTag("name for Api tag is require");
+        }
+        if(empty($this->path)){
+            throw new InvalidTag("path for Api tag is require");
+        }
     }
 }

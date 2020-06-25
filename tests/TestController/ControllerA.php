@@ -24,4 +24,12 @@ class ControllerA extends AnnotationController
     {
 
     }
+
+    /**
+     * @Api(path="")
+     */
+    function test2()
+    {
+
+    }
 }
