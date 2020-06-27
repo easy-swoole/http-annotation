@@ -52,7 +52,7 @@ class Param extends AbstractAnnotationTag
         'notEmpty', 'numeric', 'notInArray', 'length', 'lengthMax', 'lengthMin',
         'betweenLen', 'money', 'max', 'min', 'regex', 'allDigital',
         'required', 'timestamp', 'timestampBeforeDate', 'timestampAfterDate',
-        'timestampBefore', 'timestampAfter', 'url','optional'
+        'timestampBefore', 'timestampAfter', 'url','optional','allowFile'
     ];
 
     /**
@@ -209,6 +209,11 @@ class Param extends AbstractAnnotationTag
      */
     public $optional;
 
+    /**
+     * @var array
+     */
+    public $allowFile;
+
     public function tagName(): string
     {
         return 'Param';
@@ -220,7 +225,7 @@ class Param extends AbstractAnnotationTag
             if($this->$ruleName !== null){
                 $this->validateRuleList[$ruleName] = $this->$ruleName;
                 //对inArray 做特殊处理
-                if(in_array($ruleName,['inArray','notInArray'])){
+                if(in_array($ruleName,['inArray','notInArray','allowFile'])){
                     if(!is_array($this->$ruleName[0])){
                         $this->$ruleName = [$this->$ruleName];
                     }
