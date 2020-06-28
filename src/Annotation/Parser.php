@@ -122,11 +122,11 @@ class Parser
             }
             if(isset($group['apiGroupAuth'])){
                 $hasContent = true;
-                $markdown .= "<h3 class='group-auth'>组权限说明</h3>{$this->CLRF}";
+                $markdown .= "<h3 class='group-auth'>组权限说明</h3> {$this->CLRF}{$this->CLRF}";
                 $params = $group['apiGroupAuth'];
                 if (!empty($params)) {
-                    $markdown .= "|字段|来源|类型|描述|验证规则|\n";
-                    $markdown .= "|----|----|----|----|\n";
+                    $markdown .= "|字段|来源|类型|描述|验证规则|{$this->CLRF}";
+                    $markdown .= "|----|----|----|----|----|{$this->CLRF}";
                     /** @var Param $param */
                     foreach ($params as $param) {
                         if(!empty($param->type)){
@@ -142,7 +142,7 @@ class Parser
                         $rule = json_encode($param->validateRuleList, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
                         $markdown .= "| {$param->name} |  {$from}  | {$type} | {$param->description} | {$rule} |\n";
                     }
-                    $markdown .= "\n\n";
+                    $markdown .= "{$this->CLRF}{$this->CLRF}";
                 }
             }
 
@@ -185,9 +185,9 @@ class Parser
                     $markdown .= "<h4 class='request-path'>请求路径:<span class='h4-span'>{$api->path}</span></h4>{$this->CLRF}";
                     $params = $method->getAnnotationTag('ApiAuth');
                     if (!empty($params)) {
-                        $markdown .= "<h4 class='auth-params'>权限字段</h4> {$this->CLRF}";
-                        $markdown .= "|字段|来源|类型|描述|验证规则|\n";
-                        $markdown .= "|----|----|----|----|\n";
+                        $markdown .= "<h4 class='auth-params'>权限字段</h4> {$this->CLRF}{$this->CLRF}";
+                        $markdown .= "|字段|来源|类型|描述|验证规则|{$this->CLRF}";
+                        $markdown .= "|----|----|----|----|----|{$this->CLRF}";
                         /** @var Param $param */
                         foreach ($params as $param) {
                             if(!empty($param->type)){
@@ -203,13 +203,13 @@ class Parser
                             $rule = json_encode($param->validateRuleList, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
                             $markdown .= "| {$param->name} |  {$from}  | {$type} | {$param->description} | {$rule} |\n";
                         }
-                        $markdown .= "\n\n";
+                        $markdown .= "{$this->CLRF}{$this->CLRF}";
                     }
                     $params = $method->getAnnotationTag('Param');
                     if (!empty($params)) {
-                        $markdown .= "<h4 class='request-params'>请求字段</h4> {$this->CLRF}";
-                        $markdown .= "|字段|来源|类型|描述|验证规则|\n";
-                        $markdown .= "|----|----|----|----|\n";
+                        $markdown .= "<h4 class='request-params'>请求字段</h4> {$this->CLRF}{$this->CLRF}";
+                        $markdown .= "|字段|来源|类型|描述|验证规则|{$this->CLRF}";
+                        $markdown .= "|----|----|----|----|----|{$this->CLRF}";
                         /** @var Param $param */
                         foreach ($params as $param) {
                             if(!empty($param->type)){
@@ -225,7 +225,7 @@ class Parser
                             $rule = json_encode($param->validateRuleList, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
                             $markdown .= "| {$param->name} |  {$from}  | {$type} | {$param->description} | {$rule} |\n";
                         }
-                        $markdown .= "\n\n";
+                        $markdown .= "{$this->CLRF}{$this->CLRF}";
                     }
                     if(isset($methodAnnotation['ApiRequestExample'])){
                         $markdown .= "<h4 class='request-example'>请求示例</h4> {$this->CLRF}";
@@ -243,9 +243,9 @@ class Parser
                     $markdown .= "<h3 class='response-part'>响应</h3>{$this->CLRF}";
                     $params = $method->getAnnotationTag('ApiResponseParam');
                     if (!empty($params)) {
-                        $markdown .= "<h4 class='response-params'>响应字段</h4> {$this->CLRF}";
-                        $markdown .= "|字段|来源|类型|描述|验证规则|\n";
-                        $markdown .= "|----|----|----|----|\n";
+                        $markdown .= "<h4 class='response-params'>响应字段</h4> {$this->CLRF}{$this->CLRF}";
+                        $markdown .= "|字段|来源|类型|描述|验证规则|{$this->CLRF}";
+                        $markdown .= "|----|----|----|----|----|{$this->CLRF}";
                         /** @var Param $param */
                         foreach ($params as $param) {
                             if(!empty($param->type)){
@@ -261,20 +261,20 @@ class Parser
                             $rule = json_encode($param->validateRuleList, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
                             $markdown .= "| {$param->name} |  {$from}  | {$type} | {$param->description} | {$rule} |\n";
                         }
-                        $markdown .= "\n\n";
+                        $markdown .= "{$this->CLRF}{$this->CLRF}";
                     }
-//                    if(isset($methodAnnotation['ApiResponseParam'])){
-//                        $markdown .= "<h4 class='response-example'>响应示例</h4> {$this->CLRF}";
-//                        $index = 1;
-//                        foreach ($methodAnnotation['ApiResponseParam'] as $example){
-//                            $example = $this->getTagDescription($example);
-//                            if(!empty($example)){
-//                                $markdown .= "<h5 class='response-example'>响应示例{$index}</h5>{$this->CLRF}";
-//                                $markdown .= "```\n{$example}\n```{$this->CLRF}";
-//                                $index++;
-//                            }
-//                        }
-//                    }
+                    if(isset($methodAnnotation['ApiResponseParam'])){
+                        $markdown .= "<h4 class='response-example'>响应示例</h4> {$this->CLRF}";
+                        $index = 1;
+                        foreach ($methodAnnotation['ApiResponseParam'] as $example){
+                            $example = $this->getTagDescription($example);
+                            if(!empty($example)){
+                                $markdown .= "<h5 class='response-example'>响应示例{$index}</h5>{$this->CLRF}";
+                                $markdown .= "```\n{$example}\n```{$this->CLRF}";
+                                $index++;
+                            }
+                        }
+                    }
                     if(isset($methodAnnotation['ApiSuccess'])){
                         $markdown .= "<h4 class='api-success-example'>成功响应示例</h4> {$this->CLRF}";
                         $index = 1;
