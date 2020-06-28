@@ -118,7 +118,7 @@ class Parser
                 if(empty($description)){
                     $description = "暂无描述";
                 }
-                $markdown .= $description;
+                $markdown .= $description."{$this->CLRF}";
             }
             if(isset($group['apiGroupAuth'])){
                 $hasContent = true;
