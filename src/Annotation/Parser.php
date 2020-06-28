@@ -34,9 +34,6 @@ class Parser
     protected $parser;
     protected $CLRF = "\n\n";
 
-    protected $scanAnnotation = null;
-    protected $mergeAnnotation = null;
-
     function __construct()
     {
         static::preDefines([
@@ -87,8 +84,6 @@ class Parser
 
     function scanAnnotation(string $pathOrClass): array
     {
-        $this->scanAnnotation = null;
-        $this->mergeAnnotation = null;
         if (is_file($pathOrClass)) {
             $list = [$pathOrClass];
         } else if (is_dir($pathOrClass)) {
@@ -106,25 +101,7 @@ class Parser
                 }
             }
         }
-        $this->scanAnnotation = $objectsAnnotation;
-        $this->mergeAnnotation = $this->mergeAnnotationGroup($objectsAnnotation);
-        return $this->mergeAnnotation;
-    }
-
-    /**
-     * @return array
-     */
-    public function getScanAnnotation(): ?array
-    {
-        return $this->scanAnnotation;
-    }
-
-    /**
-     * @return array
-     */
-    public function getMergeAnnotation(): ?array
-    {
-        return $this->mergeAnnotation;
+        return $objectsAnnotation;
     }
 
     function scanToHtml(string $pathOrClass, ?string $extMd = null)
@@ -137,7 +114,7 @@ class Parser
     function scanToMd(string $pathOrClass)
     {
         $final = '';
-        $annotations = $this->scanAnnotation($pathOrClass);
+        $annotations = $this->mergeAnnotationGroup($this->scanAnnotation($pathOrClass));
         foreach ($annotations as $groupName => $group) {
             $markdown = '';
             $hasContent = false;
@@ -351,14 +328,11 @@ class Parser
     }
 
 
-    public function mappingRouter(RouteCollector $collector, string $controllerNameSpace = 'App\\HttpController\\'): void
+    public function mappingRouter(RouteCollector $collector,string $path, string $controllerNameSpace = 'App\\HttpController\\'): void
     {
         //用于psr规范去除命名空间
         $prefixLen = strlen(trim($controllerNameSpace, '\\'));
-        if($this->scanAnnotation === null){
-            throw new Exception('please scan an dir or controller class file');
-        }
-        $annotations = $this->scanAnnotation;
+        $annotations = $this->scanAnnotation($path);
         /**
          * @var  $class
          * @var ObjectAnnotation $classAnnotation
