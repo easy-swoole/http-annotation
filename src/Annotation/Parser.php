@@ -142,7 +142,7 @@ class Parser
                             $type = '默认';
                         }
                         if(!empty($param->from)){
-                            $from = implode("、",$param->from);
+                            $from = implode(",",$param->from);
                         }else{
                             $from = "不限";
                         }
@@ -189,7 +189,7 @@ class Parser
                     $markdown .= "<h3 class='request-part'>请求</h3>{$this->CLRF}";
                     $allow = $method->getAnnotationTag('Method',0);
                     if($allow){
-                        $allow = implode("、",$allow->allow);
+                        $allow = implode(",",$allow->allow);
                     }else{
                         $allow = '不限制';
                     }
@@ -208,7 +208,7 @@ class Parser
                                 $type = '默认';
                             }
                             if(!empty($param->from)){
-                                $from = implode("、",$param->from);
+                                $from = implode(",",$param->from);
                             }else{
                                 $from = "不限";
                             }
@@ -235,7 +235,7 @@ class Parser
                                 $type = '默认';
                             }
                             if(!empty($param->from)){
-                                $from = implode("、",$param->from);
+                                $from = implode(",",$param->from);
                             }else{
                                 $from = "不限";
                             }
@@ -276,7 +276,7 @@ class Parser
                                 $type = '默认';
                             }
                             if(!empty($param->from)){
-                                $from = implode("、",$param->from);
+                                $from = implode(",",$param->from);
                             }else{
                                 $from = "不限";
                             }
