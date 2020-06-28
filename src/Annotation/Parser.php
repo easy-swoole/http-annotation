@@ -102,6 +102,13 @@ class Parser
         return $this->mergeAnnotationGroup($objectsAnnotation);
     }
 
+    function renderToHtml(string $pathOrClass,?string $extMd = null)
+    {
+        $md = $this->renderToMd($pathOrClass);
+        $md = "{$extMd}{$this->CLRF}{$md}";
+        return str_replace('{$rawMd}',$md,file_get_contents(__DIR__."/docPage.tpl"));
+    }
+
     function renderToMd(string $pathOrClass)
     {
         $final = '';
