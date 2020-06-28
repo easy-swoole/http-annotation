@@ -35,12 +35,6 @@ class Api extends AbstractAnnotationTag
      */
     public $version = '1.0.0';
 
-
-    /**
-     * @var string
-     */
-    public $group;
-
     public function tagName(): string
     {
         return  'Api';
