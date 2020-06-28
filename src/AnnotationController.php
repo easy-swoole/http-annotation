@@ -5,6 +5,7 @@ namespace EasySwoole\HttpAnnotation;
 
 
 use EasySwoole\Component\Context\ContextManager;
+use EasySwoole\Component\Di;
 use EasySwoole\Component\Di as IOC;
 use EasySwoole\Http\AbstractInterface\Controller;
 use EasySwoole\HttpAnnotation\Annotation\Method;
@@ -27,13 +28,20 @@ class AnnotationController extends Controller
     private $propertyAnnotations = [];
     private $classAnnotation;
     private $parser;
+
+    static $ANNOTATION_PARSER = 'ANNOTATION_PARSER';
+
     public function __construct(?Parser $parser = null)
     {
         parent::__construct();
         if($parser == null){
-            $parser = new Parser();
+            $parser = Di::getInstance()->get(static::$ANNOTATION_PARSER);
+            if(!$parser instanceof Parser){
+                $parser = new Parser();
+            }
         }
         $this->parser = $parser;
+
         $this->classAnnotation = $info = $this->parser->getObjectAnnotation(static::class);
         foreach ($info->getProperties() as $property => $item){
             if(!empty($item->getAnnotations())){
