@@ -5,6 +5,7 @@ namespace EasySwoole\HttpAnnotation\Annotation;
 
 
 use EasySwoole\Annotation\Annotation;
+use EasySwoole\Http\Exception\RouterError;
 use EasySwoole\Http\UrlParser;
 use EasySwoole\HttpAnnotation\AnnotationTag\ApiDescription;
 use EasySwoole\HttpAnnotation\AnnotationTag\CircuitBreaker;
@@ -24,6 +25,7 @@ use EasySwoole\HttpAnnotation\AnnotationTag\Method;
 use EasySwoole\HttpAnnotation\Annotation\Method as MethodAnnotation;
 use EasySwoole\HttpAnnotation\AnnotationTag\Param;
 use EasySwoole\HttpAnnotation\Exception\Annotation\InvalidTag;
+use EasySwoole\HttpAnnotation\Exception\Exception;
 use EasySwoole\Utility\File;
 use FastRoute\RouteCollector;
 
@@ -31,6 +33,9 @@ class Parser
 {
     protected $parser;
     protected $CLRF = "\n\n";
+
+    protected $scanAnnotation = null;
+    protected $mergeAnnotation = null;
 
     function __construct()
     {
@@ -80,8 +85,10 @@ class Parser
         return $this->parser;
     }
 
-    function scanDir(string $pathOrClass,$autoMerge = true): array
+    function scanAnnotation(string $pathOrClass): array
     {
+        $this->scanAnnotation = null;
+        $this->mergeAnnotation = null;
         if (is_file($pathOrClass)) {
             $list = [$pathOrClass];
         } else if (is_dir($pathOrClass)) {
@@ -99,24 +106,38 @@ class Parser
                 }
             }
         }
-        if($autoMerge){
-            return $this->mergeAnnotationGroup($objectsAnnotation);
-        }else{
-            return $objectsAnnotation;
-        }
+        $this->scanAnnotation = $objectsAnnotation;
+        $this->mergeAnnotation = $this->mergeAnnotationGroup($objectsAnnotation);
+        return $this->mergeAnnotation;
     }
 
-    function renderToHtml(string $pathOrClass,?string $extMd = null)
+    /**
+     * @return array
+     */
+    public function getScanAnnotation(): ?array
     {
-        $md = $this->renderToMd($pathOrClass);
+        return $this->scanAnnotation;
+    }
+
+    /**
+     * @return array
+     */
+    public function getMergeAnnotation(): ?array
+    {
+        return $this->mergeAnnotation;
+    }
+
+    function scanToHtml(string $pathOrClass, ?string $extMd = null)
+    {
+        $md = $this->scanToMd($pathOrClass);
         $md = "{$extMd}{$this->CLRF}{$md}";
         return str_replace('{$rawMd}',$md,file_get_contents(__DIR__."/docPage.tpl"));
     }
 
-    function renderToMd(string $pathOrClass)
+    function scanToMd(string $pathOrClass)
     {
         $final = '';
-        $annotations = $this->scanDir($pathOrClass);
+        $annotations = $this->scanAnnotation($pathOrClass);
         foreach ($annotations as $groupName => $group) {
             $markdown = '';
             $hasContent = false;
@@ -330,11 +351,14 @@ class Parser
     }
 
 
-    public function mappingRouter(RouteCollector $collector, string $controllerPath, string $controllerNameSpace = 'App\\HttpController\\'): void
+    public function mappingRouter(RouteCollector $collector, string $controllerNameSpace = 'App\\HttpController\\'): void
     {
         //用于psr规范去除命名空间
         $prefixLen = strlen(trim($controllerNameSpace, '\\'));
-        $annotations = $this->scanDir($controllerPath,false);
+        if($this->scanAnnotation === null){
+            throw new Exception('please scan an dir or controller class file');
+        }
+        $annotations = $this->scanAnnotation;
         /**
          * @var  $class
          * @var ObjectAnnotation $classAnnotation

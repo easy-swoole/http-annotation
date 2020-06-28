@@ -29,7 +29,7 @@ if(!empty($extra) && is_file($extra)){
 }
 
 echo "scan dir: {$file}\n";
-$string = (new Parser())->renderToHtml($file,$extra);
+$string = (new Parser())->scanToHtml($file,$extra);
 
 if(!empty($string)){
     file_put_contents('easyDoc.html',$string);
