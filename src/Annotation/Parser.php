@@ -125,8 +125,8 @@ class Parser
                 $markdown .= "<h3 class='group-auth'>组权限说明</h3>{$this->CLRF}";
                 $params = $group['apiGroupAuth'];
                 if (!empty($params)) {
-                    $markdown .= "|字段|来源|类型|描述|验证规则|\n";
-                    $markdown .= "|----|----|----|----|----|\n";
+                    $markdown .= "| 字段 | 来源 | 类型 | 描述 | 验证规则 |\n";
+                    $markdown .= "| ---- | ---- | ---- | ---- | ---- |\n";
                     /** @var Param $param */
                     foreach ($params as $param) {
                         if(!empty($param->type)){
@@ -191,8 +191,8 @@ class Parser
                     $params = $method->getAnnotationTag('ApiAuth');
                     if (!empty($params)) {
                         $markdown .= "<h4 class='auth-params'>权限字段</h4> {$this->CLRF}";
-                        $markdown .= "|字段|来源|类型|描述|验证规则|\n";
-                        $markdown .= "|----|----|----|----|----|\n";
+                        $markdown .= "| 字段 | 来源 | 类型 | 描述 | 验证规则 |\n";
+                        $markdown .= "| ---- | ---- | ---- | ---- | ---- |\n";
                         /** @var Param $param */
                         foreach ($params as $param) {
                             if(!empty($param->type)){
@@ -218,8 +218,8 @@ class Parser
                     $params = $method->getAnnotationTag('Param');
                     if (!empty($params)) {
                         $markdown .= "<h4 class='request-params'>请求字段</h4> {$this->CLRF}";
-                        $markdown .= "|字段|来源|类型|描述|验证规则|\n";
-                        $markdown .= "|----|----|----|----|----|\n";
+                        $markdown .= "| 字段 | 来源 | 类型 | 描述 | 验证规则 |\n";
+                        $markdown .= "| ---- | ---- | ---- | ---- | ---- |\n";
                         /** @var Param $param */
                         foreach ($params as $param) {
                             if(!empty($param->type)){
@@ -259,8 +259,8 @@ class Parser
                     $params = $method->getAnnotationTag('ApiResponseParam');
                     if (!empty($params)) {
                         $markdown .= "<h4 class='response-params'>响应字段</h4> {$this->CLRF}";
-                        $markdown .= "|字段|来源|类型|描述|验证规则|\n";
-                        $markdown .= "|----|----|----|----|----|\n";
+                        $markdown .= "| 字段 | 来源 | 类型 | 描述 | 验证规则 |\n";
+                        $markdown .= "| ---- | ---- | ---- | ---- | ---- |\n";
                         /** @var Param $param */
                         foreach ($params as $param) {
                             if(!empty($param->type)){
