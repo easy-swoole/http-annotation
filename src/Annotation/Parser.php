@@ -390,6 +390,10 @@ class Parser
                 } else {
                     $apiName = $methodName;
                 }
+                $apiGroupTag = $method->getAnnotationTag('ApiGroup',0);
+                if($apiGroupTag){
+                    $apiGroup = $apiGroupTag->groupName;
+                }
                 //设置了Api tag的时候，name值禁止相同
                 if (isset($group[$apiGroup]['methods'][$apiName]) && $hasApiTag) {
                     throw new InvalidTag("apiName {$apiName} for group {$group} is duplicate");
