@@ -42,6 +42,6 @@
         }
     },
     "bin": [
-      "bin/doc-generator"
+      "bin/easy-doc"
     ]
 }
