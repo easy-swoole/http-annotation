@@ -80,7 +80,7 @@ class Parser
         return $this->parser;
     }
 
-    function scanDir(string $pathOrClass): array
+    function scanDir(string $pathOrClass,$autoMerge = true): array
     {
         if (is_file($pathOrClass)) {
             $list = [$pathOrClass];
@@ -99,7 +99,11 @@ class Parser
                 }
             }
         }
-        return $this->mergeAnnotationGroup($objectsAnnotation);
+        if($autoMerge){
+            return $this->mergeAnnotationGroup($objectsAnnotation);
+        }else{
+            return $objectsAnnotation;
+        }
     }
 
     function renderToHtml(string $pathOrClass,?string $extMd = null)
@@ -330,7 +334,7 @@ class Parser
     {
         //用于psr规范去除命名空间
         $prefixLen = strlen(trim($controllerNameSpace, '\\'));
-        $annotations = $this->scanDir($controllerPath);
+        $annotations = $this->scanDir($controllerPath,false);
         /**
          * @var  $class
          * @var ObjectAnnotation $classAnnotation
