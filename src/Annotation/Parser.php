@@ -109,7 +109,7 @@ class Parser
         foreach ($annotations as $groupName => $group) {
             $markdown = '';
             $hasContent = false;
-            $markdown .= "<h1 class='group-title'>{$groupName}</h1>{$this->CLRF}";
+            $markdown .= "<h1 class='group-title' id='{$groupName}'>{$groupName}</h1>{$this->CLRF}";
             if (isset($group['apiGroupDescription'])) {
                 $hasContent = true;
                 $markdown .= "<h3 class='group-description'>组描述</h3>{$this->CLRF}";
