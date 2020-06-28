@@ -168,7 +168,7 @@ class Parser
                     if($api->deprecated){
                         $deprecated .= "<sup class='deprecated'>已废弃</sup>";
                     }
-                    $markdown .= "<h2 class='api-method' id='{$groupName}-{$methodName}'>{$methodName}{$deprecated}</h2>{$this->CLRF}";
+                    $markdown .= "<h2 class='api-method {$groupName}' id='{$groupName}-{$methodName}'>{$methodName}{$deprecated}</h2>{$this->CLRF}";
                     /** @var ApiDescription $description */
                     $description = $method->getAnnotationTag('ApiDescription',0);
                     if($description){
