@@ -1,9 +1,19 @@
 #!/usr/bin/env php
 <?php
 
-use EasySwoole\HttpAnnotation\DocGenerator\Utility;
+$file = null;
+foreach ([ __DIR__ . '/../../../autoload.php', __DIR__ . '/../vendor/autoload.php' ] as $file) {
+    if (file_exists($file)) {
+        require $file;
+        break;
+    }
+}
+if(!file_exists($file)){
+    die("include composer autoload.php fail\n");
+}
 
-require_once getcwd().'/vendor/autoload.php';
+
+use EasySwoole\HttpAnnotation\Annotation\Parser;
 
 $array = $argv;
 array_shift($array);
@@ -11,7 +21,6 @@ $file = array_shift($array);
 if(empty($file)){
     $file = 'App/HttpController';
 }
-
 $extra = array_shift($array);
 if(!empty($extra) && is_file($extra)){
     $extra = file_get_contents($extra);
@@ -20,11 +29,11 @@ if(!empty($extra) && is_file($extra)){
 }
 
 echo "scan dir: {$file}\n";
-$string = Utility::renderDir($file,$extra);
+$string = (new Parser())->renderToHtml($file,$extra);
 
 if(!empty($string)){
-    file_put_contents('easy_doc.html',$string);
-    echo "extra to  file: easy_doc.html\n";
+    file_put_contents('easyDoc.html',$string);
+    echo "extra to  file: easyDoc.html\n";
 }else{
     echo "no any api doc found\n";
 }
