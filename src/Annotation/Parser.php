@@ -109,7 +109,7 @@ class Parser implements ParserInterface
         return $this->parser;
     }
 
-    function scanAnnotation(string $pathOrClass): array
+    function scanAnnotation(string $pathOrClass,$merge = true): array
     {
         if (is_file($pathOrClass)) {
             $list = [$pathOrClass];
@@ -126,6 +126,15 @@ class Parser implements ParserInterface
                 if ($class) {
                     $objectsAnnotation[$class] = $this->getObjectAnnotation($class);
                 }
+            }
+        }
+        //此处的合并是为了自动合并全局的注解
+        if($merge){
+            $this->mergeAnnotationGroup($objectsAnnotation);
+        }
+        if($this->cache){
+            foreach ($objectsAnnotation as $class => $item){
+                $this->cache()->set($class,$item);
             }
         }
         return $objectsAnnotation;
@@ -198,6 +207,7 @@ class Parser implements ParserInterface
                 /** @var Api $api */
                 $api = $method->getAnnotationTag('Api', 0);
                 if ($api) {
+                    $methodName = $api->name;
                     $methodAnnotation = $method->getAnnotations();
                     $hasContent = true;
                     $deprecated = '';
@@ -383,7 +393,7 @@ class Parser implements ParserInterface
         }
     }
 
-    function mergeAnnotationGroup(array $objectsAnnotation)
+    protected function mergeAnnotationGroup(array $objectsAnnotation)
     {
         $allMethods = [];
         $groupList = [];

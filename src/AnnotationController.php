@@ -214,32 +214,24 @@ class AnnotationController extends Controller
             $params = [];
             $validate = new Validate();
             //校验合并
-            if(!empty($annotations['Param'])){
-                foreach ($annotations['Param'] as $param){
+            if(!empty($this->classAnnotation->getMethod($actionName)->getGroupInfo()->getApiGroupAuthTags())){
+                foreach ($this->classAnnotation->getMethod($actionName)->getGroupInfo()->getApiGroupAuthTags() as $param){
                     if(!isset($params[$param->name])){
                         $params[$param->name] = $param;
-                    }else{
-                        throw new InvalidTag("Param tag for name {$param->name} is duplicate");
                     }
                 }
             }
-
             if(!empty($annotations['ApiAuth'])){
                 foreach ($annotations['ApiAuth'] as $param){
                     if(!isset($params[$param->name])){
                         $params[$param->name] = $param;
-                    }else{
-                        throw new InvalidTag("ApiAuth tag for name {$param->name} is duplicate");
                     }
                 }
             }
-
-            if(!empty($this->classAnnotation->getGroupInfo()->getApiGroupAuthTags())){
-                foreach ($this->classAnnotation->getGroupInfo()->getApiGroupAuthTags() as $param){
+            if(!empty($annotations['Param'])){
+                foreach ($annotations['Param'] as $param){
                     if(!isset($params[$param->name])){
                         $params[$param->name] = $param;
-                    }else{
-                        throw new InvalidTag("ApiGroupAuth tag for name {$param->name} is duplicate");
                     }
                 }
             }
