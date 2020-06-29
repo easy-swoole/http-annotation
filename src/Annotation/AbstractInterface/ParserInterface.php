@@ -13,7 +13,5 @@ interface ParserInterface
 
     public function getAnnotationParser(): Annotation;
 
-    function scanAnnotation(string $pathOrClass,bool $cache = true): array;
-
     function getObjectAnnotation(string $class, ?int $filterType = null): ObjectAnnotation;
 }

@@ -6,6 +6,7 @@ namespace EasySwoole\HttpAnnotation\Annotation;
 
 use EasySwoole\Annotation\Annotation;
 use EasySwoole\Http\UrlParser;
+use EasySwoole\HttpAnnotation\Annotation\AbstractInterface\CacheInterface;
 use EasySwoole\HttpAnnotation\Annotation\AbstractInterface\ParserInterface;
 use EasySwoole\HttpAnnotation\AnnotationTag\ApiDescription;
 use EasySwoole\HttpAnnotation\AnnotationTag\CircuitBreaker;
@@ -32,6 +33,23 @@ class Parser implements ParserInterface
 {
     protected $parser;
     protected $CLRF = "\n\n";
+    protected $cache = true;
+
+    /**
+     * @return bool
+     */
+    public function isCache(): bool
+    {
+        return $this->cache;
+    }
+
+    /**
+     * @param bool $cache
+     */
+    public function setCache(bool $cache): void
+    {
+        $this->cache = $cache;
+    }
 
     function __construct()
     {
@@ -51,7 +69,7 @@ class Parser implements ParserInterface
      * @return Cache
      * 默认的Cache为单例模式
      */
-    function cache():Cache
+    function cache():CacheInterface
     {
         return Cache::getInstance();
     }
@@ -90,9 +108,8 @@ class Parser implements ParserInterface
         return $this->parser;
     }
 
-    function scanAnnotation(string $pathOrClass,bool $cache = true): array
+    function scanAnnotation(string $pathOrClass): array
     {
-        $this->cache()->flush();
         if (is_file($pathOrClass)) {
             $list = [$pathOrClass];
         } else if (is_dir($pathOrClass)) {
@@ -413,6 +430,12 @@ class Parser implements ParserInterface
 
     function getObjectAnnotation(string $class, ?int $filterType = null): ObjectAnnotation
     {
+        if($this->cache){
+            $object = $this->cache()->get($class);
+            if($object instanceof ObjectAnnotation){
+                return $object;
+            }
+        }
         $object = new ObjectAnnotation();
         $ref = new \ReflectionClass($class);
         $object->setReflection($ref);
@@ -442,6 +465,10 @@ class Parser implements ParserInterface
             if (!empty($temp)) {
                 $p->setAnnotation($temp);
             }
+        }
+
+        if($this->cache){
+            $this->cache()->set($class,$object);
         }
 
         return $object;
