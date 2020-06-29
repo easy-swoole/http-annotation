@@ -389,16 +389,16 @@ class Parser implements ParserInterface
         /** @var ObjectAnnotation $objectAnnotation */
         foreach ($objectsAnnotation as $objectAnnotation) {
             $apiGroup = $this->defaultGroupName;
-            if ($objectAnnotation->getApiGroup()) {
-                $apiGroup = $objectAnnotation->getApiGroup()->groupName;
+            if ($objectAnnotation->getGroupInfo()->getApiGroup()) {
+                $apiGroup = $objectAnnotation->getGroupInfo()->getApiGroup()->groupName;
             }
-            $desc = $objectAnnotation->getApiGroupDescription();
+            $desc = $objectAnnotation->getGroupInfo()->getApiGroupDescription();
             if ($desc) {
                 $group[$apiGroup] = [
-                    'apiGroupDescription' => $objectAnnotation->getApiGroupDescription(),
+                    'apiGroupDescription' => $objectAnnotation->getGroupInfo()->getApiGroupDescription(),
                 ];
             }
-            foreach ($objectAnnotation->getApiGroupAuth() as $auth) {
+            foreach ($objectAnnotation->getGroupInfo()->getApiGroupAuth() as $auth) {
                 $group[$apiGroup]['apiGroupAuth'][$auth->name] = $auth;
             }
             if (!isset($group[$apiGroup]['methods'])) {
