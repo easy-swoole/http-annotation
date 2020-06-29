@@ -36,7 +36,7 @@ class AnnotationController extends Controller
             $parser = new Parser();
         }
         $this->parser = $parser;
-        $this->classAnnotation =  $info = $this->parser->getObjectAnnotation(static::class);
+        $this->classAnnotation = $info = $this->parser->getObjectAnnotation(static::class);
 
         foreach ($info->getProperties() as $property => $item){
             if(!empty($item->getAnnotations())){
@@ -234,8 +234,8 @@ class AnnotationController extends Controller
                 }
             }
 
-            if(!empty($this->classAnnotation->getApiGroupAuth())){
-                foreach ($this->classAnnotation->getApiGroupAuth() as $param){
+            if(!empty($this->classAnnotation->getGroupInfo()->getApiGroupAuth())){
+                foreach ($this->classAnnotation->getGroupInfo()->getApiGroupAuth() as $param){
                     if(!isset($params[$param->name])){
                         $params[$param->name] = $param;
                     }else{

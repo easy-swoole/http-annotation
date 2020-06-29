@@ -4,12 +4,27 @@
 namespace EasySwoole\HttpAnnotation\Annotation;
 
 
-class ObjectAnnotation extends ApiGroup
+class ObjectAnnotation
 {
     protected $methods = [];
     protected $properties = [];
     /** @var \ReflectionClass */
     protected $reflection;
+
+    protected $groupInfo;
+
+    function __construct()
+    {
+        $this->groupInfo = new GroupInfo();
+    }
+
+    /**
+     * @return GroupInfo
+     */
+    public function getGroupInfo(): GroupInfo
+    {
+        return $this->groupInfo;
+    }
 
     /**
      * @return \ReflectionClass

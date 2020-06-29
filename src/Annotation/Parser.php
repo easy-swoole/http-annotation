@@ -34,6 +34,7 @@ class Parser implements ParserInterface
     protected $parser;
     protected $CLRF = "\n\n";
     protected $cache = true;
+    protected $defaultGroupName = 'default';
 
     /**
      * @return bool
@@ -387,7 +388,7 @@ class Parser implements ParserInterface
         $group = [];
         /** @var ObjectAnnotation $objectAnnotation */
         foreach ($objectsAnnotation as $objectAnnotation) {
-            $apiGroup = 'default';
+            $apiGroup = $this->defaultGroupName;
             if ($objectAnnotation->getApiGroup()) {
                 $apiGroup = $objectAnnotation->getApiGroup()->groupName;
             }
@@ -440,20 +441,49 @@ class Parser implements ParserInterface
         $ref = new \ReflectionClass($class);
         $object->setReflection($ref);
         $global = $this->getAnnotationParser()->getAnnotation($ref);
-        foreach (['ApiGroup', 'ApiGroupDescription'] as $key) {
-            if (isset($global[$key])) {
-                $method = "set{$key}";
-                $object->$method($global[$key][0]);
-            }
+        if(isset($global['ApiGroup'])){
+            $object->getGroupInfo()->setApiGroup($global['ApiGroup'][0]);
+        }else{
+            $g = new ApiGroup();
+            $g->groupName = $this->defaultGroupName;
+            $object->getGroupInfo()->setApiGroup($g);
+        }
+        if(isset($global['ApiGroupDescription'])){
+            $object->getGroupInfo()->setApiGroupDescription($global['ApiGroupDescription'][0]);
         }
         if (isset($global['ApiGroupAuth'])) {
-            $object->setApiGroupAuth($global['ApiGroupAuth']);
+            $object->getGroupInfo()->setApiGroupAuth($global['ApiGroupAuth']);
         }
         foreach ($ref->getMethods($filterType) as $method) {
             $temp = $this->getAnnotationParser()->getAnnotation($method);
             $methodAnnotation = $object->addMethod($method->getName());
             $methodAnnotation->setReflection($method);
-            if (!empty($temp)) {
+            if(isset($temp['ApiGroup'])){
+                $gTag = $temp['ApiGroup'][0];
+                unset($temp['ApiGroup']);
+            }elseif(!empty($object->getGroupInfo()->getApiGroup())){
+                $gTag = $object->getGroupInfo()->getApiGroup();
+            }else{
+                $gTag = new ApiGroup();
+                $gTag->groupName = $this->defaultGroupName;
+            }
+            $methodAnnotation->getGroupInfo()->setApiGroup($gTag);
+            if($gTag->groupName == $object->getGroupInfo()->getApiGroup()){
+                $methodAnnotation->getGroupInfo()->setApiGroupDescription($object->getGroupInfo()->getApiGroupDescription());
+            }else if(isset($temp['ApiGroupDescription'])){
+                $methodAnnotation->getGroupInfo()->setApiGroupDescription($temp['ApiGroupDescription'][0]);
+            }
+            if($gTag->groupName == $object->getGroupInfo()->getApiGroup()){
+                foreach ($object->getGroupInfo()->getApiGroupAuth() as $auth){
+                    $methodAnnotation->getGroupInfo()->addApiGroupAuth($auth);
+                }
+            }
+            if(isset($temp['ApiGroupAuth'])){
+                foreach ($temp['ApiGroupAuth'] as $auth){
+                    $methodAnnotation->getGroupInfo()->addApiGroupAuth($auth);
+                }
+            }
+            if(!empty($temp)){
                 $methodAnnotation->setAnnotation($temp);
             }
         }

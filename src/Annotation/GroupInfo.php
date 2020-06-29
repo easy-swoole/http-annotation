@@ -4,13 +4,14 @@
 namespace EasySwoole\HttpAnnotation\Annotation;
 
 
+use EasySwoole\HttpAnnotation\AnnotationTag\ApiGroup;
 use EasySwoole\HttpAnnotation\AnnotationTag\ApiGroupAuth;
 use EasySwoole\HttpAnnotation\AnnotationTag\ApiGroupDescription;
 
-class ApiGroup
+class GroupInfo
 {
     /**
-     * @var \EasySwoole\HttpAnnotation\AnnotationTag\ApiGroup|null
+     * @var ApiGroup|null
      */
     protected $apiGroup;
     /**
@@ -24,7 +25,7 @@ class ApiGroup
 
 
     /**
-     * @return \EasySwoole\HttpAnnotation\AnnotationTag\ApiGroup|null
+     * @return ApiGroup|null
      */
     public function getApiGroup(): ?ApiGroup
     {
@@ -69,5 +70,4 @@ class ApiGroup
     {
         $this->apiGroupAuth[$apiGroupAuth->name] = $apiGroupAuth;
     }
-
 }
