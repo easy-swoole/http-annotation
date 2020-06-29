@@ -385,48 +385,60 @@ class Parser implements ParserInterface
 
     function mergeAnnotationGroup(array $objectsAnnotation)
     {
-        $group = [];
+        $allMethods = [];
+        $groupList = [];
+        //先处理合并全部的group信息
         /** @var ObjectAnnotation $objectAnnotation */
         foreach ($objectsAnnotation as $objectAnnotation) {
+            //class 头部定义
             $apiGroup = $this->defaultGroupName;
             if ($objectAnnotation->getGroupInfo()->getApiGroup()) {
                 $apiGroup = $objectAnnotation->getGroupInfo()->getApiGroup()->groupName;
             }
             $desc = $objectAnnotation->getGroupInfo()->getApiGroupDescription();
             if ($desc) {
-                $group[$apiGroup] = [
+                $groupList[$apiGroup] = [
                     'apiGroupDescription' => $objectAnnotation->getGroupInfo()->getApiGroupDescription(),
                 ];
             }
-            foreach ($objectAnnotation->getGroupInfo()->getApiGroupAuth() as $auth) {
-                $group[$apiGroup]['apiGroupAuth'][$auth->name] = $auth;
+            foreach ($objectAnnotation->getGroupInfo()->getApiGroupAuthTags() as $auth) {
+                $groupList[$apiGroup]['apiGroupAuth'][$auth->name] = $auth;
             }
-            if (!isset($group[$apiGroup]['methods'])) {
-                $group[$apiGroup]['methods'] = [];
-            }
+            //方法中可能单独定义分组信息
             /** @var MethodAnnotation $method */
             foreach ($objectAnnotation->getMethods() as $methodName => $method) {
-                $apiName = null;
-                $hasApiTag = false;
-                $api = $method->getAnnotationTag('Api', 0);
-                if ($api) {
-                    $apiName = $api->name;
-                    $hasApiTag = true;
-                } else {
-                    $apiName = $methodName;
+                $allMethods[] = $method;
+                $apiGroup = $method->getGroupInfo()->getApiGroup()->groupName;
+                foreach ($method->getGroupInfo()->getApiGroupAuthTags() as $auth){
+                    //分组内的优先级不能覆盖全局的
+                    if(!isset($groupList[$apiGroup]['apiGroupAuth'][$auth->name])){
+                        $groupList[$apiGroup]['apiGroupAuth'][$auth->name] = $auth;
+                    }
                 }
-                $apiGroupTag = $method->getAnnotationTag('ApiGroup',0);
-                if($apiGroupTag){
-                    $apiGroup = $apiGroupTag->groupName;
+                $desc = $method->getGroupInfo()->getApiGroupDescription();
+                if(empty($groupList[$apiGroup]['apiGroupDescription'])){
+                    $groupList[$apiGroup]['apiGroupDescription'] = $desc;
                 }
-                //设置了Api tag的时候，name值禁止相同
-                if (isset($group[$apiGroup]['methods'][$apiName]) && $hasApiTag) {
-                    throw new InvalidTag("apiName {$apiName} for group {$group} is duplicate");
-                }
-                $group[$apiGroup]['methods'][$apiName] = $method;
+            }
+            if (!isset($groupList[$apiGroup]['methods'])) {
+                $groupList[$apiGroup]['methods'] = [];
             }
         }
-        return $group;
+        //处理全部的methods
+        /** @var MethodAnnotation $method */
+        foreach ($allMethods as $method){
+            $methodGroup = $method->getGroupInfo()->getApiGroup()->groupName;
+            $groupList[$methodGroup]['methods'][] = $method;
+            //合并apiGroupAuth
+            if(!empty($groupList[$methodGroup]['apiGroupAuth'])){
+                foreach ($groupList[$methodGroup]['apiGroupAuth'] as $auth){
+                    if(!$method->getGroupInfo()->getApiGroupAuth($auth->name)){
+                        $method->getGroupInfo()->addApiGroupAuth($auth);
+                    }
+                }
+            }
+        }
+        return $groupList;
     }
 
     function getObjectAnnotation(string $class, ?int $filterType = null): ObjectAnnotation
@@ -452,7 +464,7 @@ class Parser implements ParserInterface
             $object->getGroupInfo()->setApiGroupDescription($global['ApiGroupDescription'][0]);
         }
         if (isset($global['ApiGroupAuth'])) {
-            $object->getGroupInfo()->setApiGroupAuth($global['ApiGroupAuth']);
+            $object->getGroupInfo()->setApiGroupAuthTags($global['ApiGroupAuth']);
         }
         foreach ($ref->getMethods($filterType) as $method) {
             $temp = $this->getAnnotationParser()->getAnnotation($method);
@@ -473,8 +485,9 @@ class Parser implements ParserInterface
             }else if(isset($temp['ApiGroupDescription'])){
                 $methodAnnotation->getGroupInfo()->setApiGroupDescription($temp['ApiGroupDescription'][0]);
             }
+            unset($temp['ApiGroupDescription']);
             if($gTag->groupName == $object->getGroupInfo()->getApiGroup()){
-                foreach ($object->getGroupInfo()->getApiGroupAuth() as $auth){
+                foreach ($object->getGroupInfo()->getApiGroupAuthTags() as $auth){
                     $methodAnnotation->getGroupInfo()->addApiGroupAuth($auth);
                 }
             }
@@ -482,6 +495,7 @@ class Parser implements ParserInterface
                 foreach ($temp['ApiGroupAuth'] as $auth){
                     $methodAnnotation->getGroupInfo()->addApiGroupAuth($auth);
                 }
+                unset($temp['ApiGroupAuth']);
             }
             if(!empty($temp)){
                 $methodAnnotation->setAnnotation($temp);

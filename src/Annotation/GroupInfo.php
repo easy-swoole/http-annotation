@@ -21,7 +21,7 @@ class GroupInfo
     /**
      * @var array
      */
-    protected $apiGroupAuth = [];
+    protected $apiGroupAuthTags = [];
 
 
     /**
@@ -56,18 +56,26 @@ class GroupInfo
         $this->apiGroupDescription = $apiGroupDescription;
     }
 
-    public function getApiGroupAuth():array
+    public function getApiGroupAuthTags():array
     {
-        return $this->apiGroupAuth;
+        return $this->apiGroupAuthTags;
     }
 
-    public function setApiGroupAuth(array $array): void
+    public function setApiGroupAuthTags(array $array): void
     {
-        $this->apiGroupAuth = $array;
+        $this->apiGroupAuthTags = $array;
     }
 
     public function addApiGroupAuth(ApiGroupAuth $apiGroupAuth)
     {
-        $this->apiGroupAuth[$apiGroupAuth->name] = $apiGroupAuth;
+        $this->apiGroupAuthTags[$apiGroupAuth->name] = $apiGroupAuth;
+    }
+
+    public function getApiGroupAuth(string $name):?ApiGroupAuth
+    {
+        if(isset($this->apiGroupAuthTags[$name])){
+            return $this->apiGroupAuthTags[$name];
+        }
+        return null;
     }
 }

@@ -234,8 +234,8 @@ class AnnotationController extends Controller
                 }
             }
 
-            if(!empty($this->classAnnotation->getGroupInfo()->getApiGroupAuth())){
-                foreach ($this->classAnnotation->getGroupInfo()->getApiGroupAuth() as $param){
+            if(!empty($this->classAnnotation->getGroupInfo()->getApiGroupAuthTags())){
+                foreach ($this->classAnnotation->getGroupInfo()->getApiGroupAuthTags() as $param){
                     if(!isset($params[$param->name])){
                         $params[$param->name] = $param;
                     }else{
