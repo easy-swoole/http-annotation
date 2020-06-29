@@ -13,10 +13,23 @@ class Method
     /** @var \ReflectionMethod */
     protected $reflection;
     protected $annotation = [];
+    /**
+     * @var ApiGroup
+     */
+    protected $apiGroup;
 
     function __construct(string $methodName)
     {
+        $this->apiGroup = new ApiGroup();
         $this->methodName = $methodName;
+    }
+
+    /**
+     * @return ApiGroup
+     */
+    public function getApiGroup(): ApiGroup
+    {
+        return $this->apiGroup;
     }
 
     public function getMethodName(): string
