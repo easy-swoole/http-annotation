@@ -5,8 +5,8 @@ namespace EasySwoole\HttpAnnotation\Annotation;
 
 
 use EasySwoole\Annotation\Annotation;
-use EasySwoole\Http\Exception\RouterError;
 use EasySwoole\Http\UrlParser;
+use EasySwoole\HttpAnnotation\Annotation\AbstractInterface\ParserInterface;
 use EasySwoole\HttpAnnotation\AnnotationTag\ApiDescription;
 use EasySwoole\HttpAnnotation\AnnotationTag\CircuitBreaker;
 use EasySwoole\HttpAnnotation\AnnotationTag\Context;
@@ -25,11 +25,10 @@ use EasySwoole\HttpAnnotation\AnnotationTag\Method;
 use EasySwoole\HttpAnnotation\Annotation\Method as MethodAnnotation;
 use EasySwoole\HttpAnnotation\AnnotationTag\Param;
 use EasySwoole\HttpAnnotation\Exception\Annotation\InvalidTag;
-use EasySwoole\HttpAnnotation\Exception\Exception;
 use EasySwoole\Utility\File;
 use FastRoute\RouteCollector;
 
-class Parser
+class Parser implements ParserInterface
 {
     protected $parser;
     protected $CLRF = "\n\n";
@@ -46,6 +45,15 @@ class Parser
             'CONTEXT' => 'CONTEXT',
             'RAW' => 'RAW'
         ]);
+    }
+
+    /**
+     * @return Cache
+     * 默认的Cache为单例模式
+     */
+    function cache():Cache
+    {
+        return Cache::getInstance();
     }
 
     public static function preDefines($defines = [])
@@ -82,8 +90,9 @@ class Parser
         return $this->parser;
     }
 
-    function scanAnnotation(string $pathOrClass): array
+    function scanAnnotation(string $pathOrClass,bool $cache = true): array
     {
+        $this->cache()->flush();
         if (is_file($pathOrClass)) {
             $list = [$pathOrClass];
         } else if (is_dir($pathOrClass)) {

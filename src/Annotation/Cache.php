@@ -5,8 +5,9 @@ namespace EasySwoole\HttpAnnotation\Annotation;
 
 
 use EasySwoole\Component\Singleton;
+use EasySwoole\HttpAnnotation\Annotation\AbstractInterface\CacheInterface;
 
-class Cache
+class Cache implements CacheInterface
 {
     private $data = [];
 
