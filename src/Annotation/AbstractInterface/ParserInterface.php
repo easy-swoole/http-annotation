@@ -4,7 +4,7 @@
 namespace EasySwoole\HttpAnnotation\Annotation\AbstractInterface;
 
 
-use EasySwoole\Annotation\Annotation;
+
 use EasySwoole\HttpAnnotation\Annotation\ObjectAnnotation;
 
 interface ParserInterface
