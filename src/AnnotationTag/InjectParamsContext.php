@@ -15,7 +15,7 @@ class InjectParamsContext extends AbstractAnnotationTag
     /**
      * @var bool
      */
-    public $filterNull = false;
+    public $filterNull = true;
 
     /**
      * @var bool
