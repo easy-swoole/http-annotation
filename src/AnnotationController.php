@@ -295,7 +295,7 @@ class AnnotationController extends Controller
                     $value = $this->request()->getRequestParam($paramName);
                 }
 
-                if($value === null && $param->defaultValue){
+                if(($value === null) && ($param->defaultValue !== null)){
                     $value = $param->defaultValue;
                 }
 
