@@ -51,7 +51,7 @@
                 $(window).scroll(function () {
                     var lenToc = document.getElementById('tocnav').className
                     var wst = $(window).scrollTop()
-                    for (i = 1; i < lenToc; i++) {
+                    for (i = 0; i < lenToc; i++) {
                         var lenTop = Math.floor($("#tip" + i).offset().top)
                         if (lenTop <= wst) {
                             $('#tocnav li').removeClass("active");
