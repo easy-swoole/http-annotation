@@ -216,23 +216,19 @@ class AnnotationController extends Controller
             //校验合并
             if(!empty($this->classAnnotation->getMethod($actionName)->getGroupInfo()->getApiGroupAuthTags())){
                 foreach ($this->classAnnotation->getMethod($actionName)->getGroupInfo()->getApiGroupAuthTags() as $param){
-                    if(!isset($params[$param->name])){
-                        $params[$param->name] = $param;
-                    }
+                    $params[$param->name] = $param;
                 }
             }
             if(!empty($annotations['ApiAuth'])){
                 foreach ($annotations['ApiAuth'] as $param){
-                    if(!isset($params[$param->name])){
-                        $params[$param->name] = $param;
-                    }
+                    $params[$param->name] = $param;
                 }
             }
+            $realParamsKey = [];
             if(!empty($annotations['Param'])){
                 foreach ($annotations['Param'] as $param){
-                    if(!isset($params[$param->name])){
-                        $params[$param->name] = $param;
-                    }
+                    $params[$param->name] = $param;
+                    $realParamsKey[$param->name];
                 }
             }
 
