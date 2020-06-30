@@ -224,11 +224,11 @@ class AnnotationController extends Controller
                     $params[$param->name] = $param;
                 }
             }
-            $realParamsKey = [];
+            $realParams = [];
             if(!empty($annotations['Param'])){
                 foreach ($annotations['Param'] as $param){
                     $params[$param->name] = $param;
-                    $realParamsKey[$param->name];
+                    $realParams[$param->name] = null;
                 }
             }
 
@@ -319,27 +319,6 @@ class AnnotationController extends Controller
                 }
             }
 
-            if($injectKey){
-                if($filterNull){
-                    foreach ($actionArgs as $key => $arg){
-                        if($arg === null){
-                            unset($actionArgs[$key]);
-                        }else if($filterEmpty){
-                            if(empty($arg)){
-                                unset($actionArgs[$key]);
-                            }
-                        }
-
-                    }
-                }else if($filterEmpty){
-                    foreach ($actionArgs as $key => $arg){
-                        if(empty($arg)){
-                            unset($actionArgs[$key]);
-                        }
-                    }
-                }
-                ContextManager::getInstance()->set($injectKey,$actionArgs);
-            }
             //合并参数
             $data = $actionArgs + $this->request()->getRequestParam();
             if(!$validate->validate($data)){
@@ -347,7 +326,32 @@ class AnnotationController extends Controller
                 $ex->setValidate($validate);
                 throw $ex;
             }
-            return $actionArgs;
+            //仅仅返回@Param所指定的参数
+            foreach ($realParams as $key => $value){
+                $realParams[$key] = $actionArgs[$key];
+            }
+            if($injectKey){
+                if($filterNull){
+                    foreach ($realParams as $key => $arg){
+                        if($arg === null){
+                            unset($realParams[$key]);
+                        }else if($filterEmpty){
+                            if(empty($arg)){
+                                unset($realParams[$key]);
+                            }
+                        }
+
+                    }
+                }else if($filterEmpty){
+                    foreach ($actionArgs as $key => $arg){
+                        if(empty($arg)){
+                            unset($realParams[$key]);
+                        }
+                    }
+                }
+                ContextManager::getInstance()->set($injectKey,$realParams);
+            }
+            return $realParams;
         }
         return [];
     }
