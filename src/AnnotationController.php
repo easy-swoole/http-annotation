@@ -295,7 +295,7 @@ class AnnotationController extends Controller
                     $value = $this->request()->getRequestParam($paramName);
                 }
 
-                if(($value === null) && ($param->defaultValue !== null)){
+                if($value === null){
                     $value = $param->defaultValue;
                 }
 
@@ -303,17 +303,14 @@ class AnnotationController extends Controller
                     $value = $param->typeCast($value);
                 }
 
-                if(!empty($param->preHandler)){
+                //如果参数不为null,执行预处理，并设置进去参数
+                if(!empty($param->preHandler) && $value !== null){
                     if(is_callable($param->preHandler)){
                         $value = call_user_func($param->preHandler,$value);
                     }else{
                         throw new Exception("annotation param: {$paramName} preHandler is not callable");
                     }
                 }
-
-                /*
-                 * 注意，这边可能得到null数据，若要求某个数据不能为null,请用验证器柜子
-                 */
                 $actionArgs[$paramName] = $value;
                 if(!empty($param->validateRuleList)){
                     foreach ($param->validateRuleList as $rule => $none){
