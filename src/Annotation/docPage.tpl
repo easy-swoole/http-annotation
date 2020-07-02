@@ -9,12 +9,20 @@
     <meta name="viewport"
           content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0" />
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/docsify-themeable@0/dist/css/theme-simple.css" />
+    <link rel="stylesheet" href="//cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.0.0/build/styles/default.min.css">
 </head>
 
 <body>
 <div id="app"></div>
 <div id="toc" style="position: fixed; top: 0; right: 0;"></div>
+<script type="text/plain" id="rawMd">
+{$rawMd}
+</script>
+
 <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+<script src="https://code.jquery.com/jquery-3.4.1.min.js" type="text/javascript" charset="utf-8"></script>
+<script src="//cdn.jsdelivr.net/npm/docsify/lib/docsify.min.js"></script>
+<script src="//cdn.jsdelivr.net/npm/docsify-themeable@0"></script>
 
 <script>
     window.$docsify = {
@@ -29,13 +37,12 @@
             placeholder: "搜索...",
         },
     };
-
     localStorage.removeItem('docsify.search.index');
     localStorage.removeItem('docsify.search.expires');
-
 </script>
 <script>
     window.onload = function () {
+        window.countClick = 0
         setTimeout(function () {
             var html = document.getElementById('rawMd').innerHTML
             document.getElementById('main').innerHTML = marked(html)
@@ -48,14 +55,17 @@
                 'targetId': 'toc'
             });
             $(function () {
+                var lenToc = document.getElementById('tocnav').className
+                window.lenTop = []
+                for (i = 0; i < lenToc; i++) {
+                    window.lenTop[i] = Math.floor($("#tip" + i).offset().top)
+                }
                 $(window).scroll(function () {
-                    var lenToc = document.getElementById('tocnav').className
                     var wst = $(window).scrollTop()
                     for (i = 0; i < lenToc; i++) {
-                        var lenTop = Math.floor($("#tip" + i).offset().top)
-                        if (lenTop <= wst) {
+                        if (lenTop[i] <= wst) {
                             $('#tocnav li').removeClass("active");
-                            $("#tip" + i + i).addClass("active");
+                            $("#tipp" + i + i).addClass("active");
                         }
                     }
                 })
@@ -63,34 +73,11 @@
         }, 1000)
     }
 </script>
-
-<script src="https://code.jquery.com/jquery-3.4.1.min.js" type="text/javascript" charset="utf-8"></script>
-<script src="//cdn.jsdelivr.net/npm/docsify/lib/docsify.min.js"></script>
-<script src="//cdn.jsdelivr.net/npm/docsify-themeable@0"></script>
 <script>
     (function () {
-        /**
-         * Converts a colon formatted string to a object with properties.
-         *
-         * This is process a provided string and look for any tokens in the format
-         * of `:name[=value]` and then convert it to a object and return.
-         * An example of this is ':include :type=code :fragment=demo' is taken and
-         * then converted to:
-         *
-         * ```
-         * {
-         *  include: '',
-         *  type: 'code',
-         *  fragment: 'demo'
-         * }
-         * ```
-         *
-         * @param {string}   str   The string to parse.
-         *
-         * @return {object}  The original string and parsed object, { str, config }.
-         */
+
         function getAndRemoveConfig(str) {
-            if ( str === void 0 ) str = '';
+            if (str === void 0) str = '';
 
             var config = {};
 
@@ -170,7 +157,7 @@
         function getTableData(token) {
             if (!token.text && token.type === 'table') {
                 token.text = token.cells
-                    .map(function(rows) {
+                    .map(function (rows) {
                         return rows.join(' | ');
                     })
                     .join(' |\n ');
@@ -184,7 +171,7 @@
         }
 
         function genIndex(path, content, router, depth) {
-            if ( content === void 0 ) content = '';
+            if (content === void 0) content = '';
 
             var tokens = window.marked.lexer(content);
             var slugify = window.Docsify.slugify;
@@ -192,25 +179,13 @@
             var slug;
             var htmlIndex = 0
             tokens.forEach(function (token) {
-                if (token.type === 'html' && token.text.slice(2,3) < 3) {
-                    // var ref = getAndRemoveConfig(token.text);
-                    // var str = ref.str;
-                    // var config = ref.config;
-
-                    // if (config.id) {
-                    //   slug = router.toURL('', { id: slugify(config.id) });
-
-                    // } else {
+                if (token.type === 'html' && token.text.slice(2, 3) < 3) {
                     var re = />.*?</;
                     var found = token.text.match(re);
 
                     var idid = found[0].slice(1, -1)
                     slug = router.toURL('', { id: 'tip' + htmlIndex });
-                    htmlIndex ++;
-
-
-                    // }
-
+                    htmlIndex++;
                     index[slug] = { slug: slug, title: idid, body: '' };
 
                 } else {
@@ -255,7 +230,7 @@
             }
 
 
-            var loop = function ( i ) {
+            var loop = function (i) {
                 var post = data[i];
                 var matchesScore = 0;
                 var resultStr = '';
@@ -315,7 +290,7 @@
                     }
                 }
             };
-            for (var i = 0; i < data.length; i++) loop( i );
+            for (var i = 0; i < data.length; i++) loop(i);
 
             return matchingResults.sort(function (r1, r2) { return r2.score - r1.score; });
         }
@@ -339,7 +314,7 @@
             var paths = isAuto ? getAllPaths(vm.router) : config.paths;
             var len = paths.length;
             var count = 0;
-            setTimeout(function() {
+            setTimeout(function () {
                 paths.forEach(function (path) {
                     if (INDEXS[path]) {
                         return count++;
@@ -373,7 +348,7 @@
         }
 
         function tpl(defaultValue) {
-            if ( defaultValue === void 0 ) defaultValue = '';
+            if (defaultValue === void 0) defaultValue = '';
 
             var html = "<div class=\"input-wrap\">\n      <input type=\"search\" value=\"" + defaultValue + "\" aria-label=\"Search text\" />\n      <div class=\"clear-button\">\n        <svg width=\"26\" height=\"24\">\n          <circle cx=\"12\" cy=\"12\" r=\"11\" fill=\"#ccc\" />\n          <path stroke=\"white\" stroke-width=\"2\" d=\"M8.25,8.25,15.75,15.75\" />\n          <path stroke=\"white\" stroke-width=\"2\"d=\"M8.25,15.75,15.75,8.25\" />\n        </svg>\n      </div>\n    </div>\n    <div class=\"results-panel\"></div>\n    </div>";
             var el = Docsify.dom.create('div', html);
@@ -435,8 +410,10 @@
             Docsify.dom.on(
                 $search,
                 'click',
-                function (e) { return ['A', 'H2', 'P', 'EM'].indexOf(e.target.tagName) === -1 &&
-                    e.stopPropagation(); }
+                function (e) {
+                    return ['A', 'H2', 'P', 'EM'].indexOf(e.target.tagName) === -1 &&
+                        e.stopPropagation();
+                }
             );
             Docsify.dom.on($input, 'input', function (e) {
                 clearTimeout(timeId);
@@ -507,7 +484,7 @@
             namespace: undefined,
         };
 
-        var install = function(hook, vm) {
+        var install = function (hook, vm) {
             var util = Docsify.util;
             var opts = vm.config.search || CONFIG;
 
@@ -540,12 +517,6 @@
 
     }());
 
-</script>
-<script src="//cdn.jsdelivr.net/npm/prismjs/components/prism-json.min.js"></script>
-<script src="//cdn.jsdelivr.net/npm/prismjs/components/prism-bash.min.js"></script>
-<script src="//cdn.jsdelivr.net/npm/prismjs/components/prism-php.min.js"></script>
-<script type="text/plain" id="rawMd">
-{$rawMd}
 </script>
 <script>
     (function (window) {
@@ -600,7 +571,7 @@
                 this._elTitleElementName = this._elTitleElement.tagName;
                 this._elTitleElementText = this._elTitleElement.innerHTML;
                 this._elTitleElement.setAttribute('id', 'tip' + i);
-                this.tocContent += '<li id="' + 'tip' + i + i + '"><a class="section-link" href="' + '#/?id=' + 'tip' + i + '">' + this._elTitleElementText + '</a>';
+                this.tocContent += '<li id="' + 'tipp' + i + i + '"><a class="section-link" href="' + '#/?id=' + 'tip' + i + '">' + this._elTitleElementText + '</a>';
 
 
                 if (j != this._elTitleElementsLen) {
@@ -649,8 +620,6 @@
     })(window);
 
 </script>
-
-
 </body>
 
 </html>
