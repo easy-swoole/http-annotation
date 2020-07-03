@@ -549,8 +549,11 @@ class Parser implements ParserInterface
                 for ($j = $i + 1; $j < count($tokens); $j++) {
                     if ($tokens[$j] === '{') {
                         $class = $tokens[$i + 2][1];
+                        break;
                     }
                 }
+            }elseif ($class){
+                break;
             }
         }
         if (!empty($class)) {
