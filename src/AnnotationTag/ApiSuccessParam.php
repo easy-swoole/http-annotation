@@ -8,10 +8,10 @@ namespace EasySwoole\HttpAnnotation\AnnotationTag;
  * @package EasySwoole\HttpAnnotation\AnnotationTag
  * @Annotation
  */
-class ApiResponseParam extends Param
+class ApiSuccessParam extends Param
 {
     public function tagName(): string
     {
-        return 'ApiResponseParam';
+        return 'ApiSuccessParam';
     }
 }

@@ -9,6 +9,7 @@ use EasySwoole\Http\UrlParser;
 use EasySwoole\HttpAnnotation\Annotation\AbstractInterface\CacheInterface;
 use EasySwoole\HttpAnnotation\Annotation\AbstractInterface\ParserInterface;
 use EasySwoole\HttpAnnotation\AnnotationTag\ApiDescription;
+use EasySwoole\HttpAnnotation\AnnotationTag\ApiFailParam;
 use EasySwoole\HttpAnnotation\AnnotationTag\CircuitBreaker;
 use EasySwoole\HttpAnnotation\AnnotationTag\Context;
 use EasySwoole\HttpAnnotation\AnnotationTag\Di;
@@ -19,7 +20,7 @@ use EasySwoole\HttpAnnotation\AnnotationTag\ApiGroup;
 use EasySwoole\HttpAnnotation\AnnotationTag\ApiGroupAuth;
 use EasySwoole\HttpAnnotation\AnnotationTag\ApiGroupDescription;
 use EasySwoole\HttpAnnotation\AnnotationTag\ApiRequestExample;
-use EasySwoole\HttpAnnotation\AnnotationTag\ApiResponseParam;
+use EasySwoole\HttpAnnotation\AnnotationTag\ApiSuccessParam;
 use EasySwoole\HttpAnnotation\AnnotationTag\ApiSuccess;
 use EasySwoole\HttpAnnotation\AnnotationTag\InjectParamsContext;
 use EasySwoole\HttpAnnotation\AnnotationTag\Method;
@@ -92,11 +93,12 @@ class Parser implements ParserInterface
             $annotation->addParserTag(new ApiAuth());
             $annotation->addParserTag(new ApiDescription());
             $annotation->addParserTag(new ApiFail());
+            $annotation->addParserTag(new ApiFailParam());
             $annotation->addParserTag(new ApiGroup());
             $annotation->addParserTag(new ApiGroupAuth());
             $annotation->addParserTag(new ApiGroupDescription());
             $annotation->addParserTag(new ApiRequestExample());
-            $annotation->addParserTag(new ApiResponseParam());
+            $annotation->addParserTag(new ApiSuccessParam());
             $annotation->addParserTag(new ApiSuccess());
             $annotation->addParserTag(new CircuitBreaker());
             $annotation->addParserTag(new Context());
@@ -169,31 +171,7 @@ class Parser implements ParserInterface
                 $hasContent = true;
                 $markdown .= "<h3 class='group-auth'>组权限说明</h3>{$this->CLRF}";
                 $params = $group['apiGroupAuth'];
-                if (!empty($params)) {
-                    $markdown .= "| 字段 | 来源 | 类型 | 描述 | 验证规则 |\n";
-                    $markdown .= "| ---- | ---- | ---- | ---- | ---- |\n";
-                    /** @var Param $param */
-                    foreach ($params as $param) {
-                        if(!empty($param->type)){
-                            $type = $param->type;
-                        }else{
-                            $type = '默认';
-                        }
-                        if(!empty($param->from)){
-                            $from = implode(",",$param->from);
-                        }else{
-                            $from = "不限";
-                        }
-                        if(!empty($param->description)){
-                            $description = $param->description;
-                        }else{
-                            $description = '-';
-                        }
-                        $rule = json_encode($param->validateRuleList, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
-                        $markdown .= "| {$param->name} |  {$from}  | {$type} | {$description} | {$rule} |\n";
-                    }
-                    $markdown .= "\n\n";
-                }
+                $markdown .= $this->buildParamMarkdown($params);
             }
 
             $markdown .= "<hr class='group-hr'/>{$this->CLRF}";
@@ -237,56 +215,12 @@ class Parser implements ParserInterface
                     $params = $method->getAnnotationTag('ApiAuth');
                     if (!empty($params)) {
                         $markdown .= "<h4 class='auth-params'>权限字段</h4> {$this->CLRF}";
-                        $markdown .= "| 字段 | 来源 | 类型 | 描述 | 验证规则 |\n";
-                        $markdown .= "| ---- | ---- | ---- | ---- | ---- |\n";
-                        /** @var Param $param */
-                        foreach ($params as $param) {
-                            if(!empty($param->type)){
-                                $type = $param->type;
-                            }else{
-                                $type = '默认';
-                            }
-                            if(!empty($param->from)){
-                                $from = implode(",",$param->from);
-                            }else{
-                                $from = "不限";
-                            }
-                            if(!empty($param->description)){
-                                $description = $param->description;
-                            }else{
-                                $description = '-';
-                            }
-                            $rule = json_encode($param->validateRuleList, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
-                            $markdown .= "| {$param->name} |  {$from}  | {$type} | {$description} | {$rule} |\n";
-                        }
-                        $markdown .= "\n\n";
+                        $markdown .= $this->buildParamMarkdown($params);
                     }
                     $params = $method->getAnnotationTag('Param');
                     if (!empty($params)) {
                         $markdown .= "<h4 class='request-params'>请求字段</h4> {$this->CLRF}";
-                        $markdown .= "| 字段 | 来源 | 类型 | 描述 | 验证规则 |\n";
-                        $markdown .= "| ---- | ---- | ---- | ---- | ---- |\n";
-                        /** @var Param $param */
-                        foreach ($params as $param) {
-                            if(!empty($param->type)){
-                                $type = $param->type;
-                            }else{
-                                $type = '默认';
-                            }
-                            if(!empty($param->from)){
-                                $from = implode(",",$param->from);
-                            }else{
-                                $from = "不限";
-                            }
-                            if(!empty($param->description)){
-                                $description = $param->description;
-                            }else{
-                                $description = '-';
-                            }
-                            $rule = json_encode($param->validateRuleList, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
-                            $markdown .= "| {$param->name} |  {$from}  | {$type} | {$description} | {$rule} |\n";
-                        }
-                        $markdown .= "\n\n";
+                        $markdown .= $this->buildParamMarkdown($params);
                     }
                     if(isset($methodAnnotation['ApiRequestExample'])){
                         $markdown .= "<h4 class='request-example'>请求示例</h4> {$this->CLRF}";
@@ -302,32 +236,10 @@ class Parser implements ParserInterface
                     }
 
                     $markdown .= "<h3 class='response-part'>响应</h3>{$this->CLRF}";
-                    $params = $method->getAnnotationTag('ApiResponseParam');
+                    $params = $method->getAnnotationTag('ApiSuccessParam');
                     if (!empty($params)) {
-                        $markdown .= "<h4 class='response-params'>响应字段</h4> {$this->CLRF}";
-                        $markdown .= "| 字段 | 来源 | 类型 | 描述 | 验证规则 |\n";
-                        $markdown .= "| ---- | ---- | ---- | ---- | ---- |\n";
-                        /** @var Param $param */
-                        foreach ($params as $param) {
-                            if(!empty($param->type)){
-                                $type = $param->type;
-                            }else{
-                                $type = '默认';
-                            }
-                            if(!empty($param->from)){
-                                $from = implode(",",$param->from);
-                            }else{
-                                $from = "不限";
-                            }
-                            if(!empty($param->description)){
-                                $description = $param->description;
-                            }else{
-                                $description = '-';
-                            }
-                            $rule = json_encode($param->validateRuleList, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
-                            $markdown .= "| {$param->name} |  {$from}  | {$type} | {$description} | {$rule} |\n";
-                        }
-                        $markdown .= "\n\n";
+                        $markdown .= "<h4 class='response-params'>成功响应字段</h4> {$this->CLRF}";
+                        $markdown .= $this->buildParamMarkdown($params);
                     }
                     if(isset($methodAnnotation['ApiSuccess'])){
                         $markdown .= "<h4 class='api-success-example'>成功响应示例</h4> {$this->CLRF}";
@@ -341,7 +253,11 @@ class Parser implements ParserInterface
                             }
                         }
                     }
-
+                    $params = $method->getAnnotationTag('ApiFailParam');
+                    if (!empty($params)) {
+                        $markdown .= "<h4 class='response-params'>失败响应字段</h4> {$this->CLRF}";
+                        $markdown .= $this->buildParamMarkdown($params);
+                    }
                     if(isset($methodAnnotation['ApiFail'])){
                         $markdown .= "<h4 class='api-fail-example'>失败响应示例</h4> {$this->CLRF}";
                         $index = 1;
@@ -594,5 +510,36 @@ class Parser implements ParserInterface
             }
         }
         return $content;
+    }
+
+    private function buildParamMarkdown($params)
+    {
+        $markdown = '';
+        if (!empty($params)) {
+            $markdown .= "| 字段 | 来源 | 类型 | 描述 | 验证规则 |\n";
+            $markdown .= "| ---- | ---- | ---- | ---- | ---- |\n";
+            /** @var Param $param */
+            foreach ($params as $param) {
+                if(!empty($param->type)){
+                    $type = $param->type;
+                }else{
+                    $type = '默认';
+                }
+                if(!empty($param->from)){
+                    $from = implode(",",$param->from);
+                }else{
+                    $from = "不限";
+                }
+                if(!empty($param->description)){
+                    $description = $param->description;
+                }else{
+                    $description = '-';
+                }
+                $rule = json_encode($param->validateRuleList, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
+                $markdown .= "| {$param->name} |  {$from}  | {$type} | {$description} | {$rule} |\n";
+            }
+            $markdown .= "\n\n";
+        }
+        return $markdown;
     }
 }
