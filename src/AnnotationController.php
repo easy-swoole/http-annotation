@@ -8,7 +8,7 @@ use EasySwoole\Component\Context\ContextManager;
 use EasySwoole\Component\Di as IOC;
 use EasySwoole\Http\AbstractInterface\Controller;
 use EasySwoole\HttpAnnotation\Annotation\AbstractInterface\ParserInterface;
-use EasySwoole\HttpAnnotation\Annotation\Method;
+use EasySwoole\HttpAnnotation\Annotation\MethodAnnotation;
 use EasySwoole\HttpAnnotation\Annotation\ObjectAnnotation;
 use EasySwoole\HttpAnnotation\Annotation\Parser;
 use EasySwoole\HttpAnnotation\AnnotationTag\Param;
@@ -46,7 +46,7 @@ class AnnotationController extends Controller
 
         /**
          * @var  $method
-         * @var Method $item
+         * @var MethodAnnotation $item
          */
         foreach ($info->getMethods() as $method => $item){
             if(!empty($item->getAnnotations())){

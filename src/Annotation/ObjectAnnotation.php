@@ -4,103 +4,100 @@
 namespace EasySwoole\HttpAnnotation\Annotation;
 
 
+use EasySwoole\HttpAnnotation\AnnotationTag\ApiGroup;
+use EasySwoole\HttpAnnotation\AnnotationTag\ApiGroupAuth;
+use EasySwoole\HttpAnnotation\AnnotationTag\ApiGroupDescription;
+
 class ObjectAnnotation
 {
+    /** @var ApiGroup|null */
+    protected $apiGroup;
+    /** @var ApiGroupDescription|null */
+    protected $apiGroupDescription;
+
+    protected $groupAuth = [];
+
     protected $methods = [];
+
     protected $properties = [];
-    /** @var \ReflectionClass */
-    protected $reflection;
 
-    protected $groupInfo;
 
-    function __construct()
+
+
+    function addGroupAuth(ApiGroupAuth $apiGroupAuth):ObjectAnnotation
     {
-        $this->groupInfo = new GroupInfo();
+        $this->groupAuth[$apiGroupAuth->name] = $apiGroupAuth;
+        return $this;
     }
 
-    /**
-     * @return GroupInfo
-     */
-    public function getGroupInfo(): GroupInfo
+    function getGroupAuth(?string $paramName = null)
     {
-        return $this->groupInfo;
-    }
-
-    /**
-     * @return \ReflectionClass
-     */
-    public function getReflection(): \ReflectionClass
-    {
-        return $this->reflection;
-    }
-
-    /**
-     * @param \ReflectionClass $reflection
-     */
-    public function setReflection(\ReflectionClass $reflection): void
-    {
-        $this->reflection = $reflection;
-    }
-
-    /**
-     * @return array
-     */
-    public function getMethods(): array
-    {
-        return $this->methods;
-    }
-
-    /**
-     * @param array $methods
-     */
-    public function setMethods(array $methods): void
-    {
-        $this->methods = $methods;
-    }
-
-    function getMethod(string $name):?Method
-    {
-        if(isset($this->methods[$name])){
-            return $this->methods[$name];
+        if($paramName && isset($this->groupAuth[$paramName])){
+            return $this->groupAuth[$paramName];
+        }else{
+            return $this->groupAuth;
         }
-        return null;
     }
 
-    function addMethod(string $name):Method
+    function addMethod(MethodAnnotation $method)
     {
-        $instance = new Method($name);
-        $this->methods[$name] = $instance;
-        return $instance;
+        $this->methods[$method->getName()] = $method;
+        return $this;
     }
 
-    /**
-     * @return array
-     */
-    public function getProperties(): array
+    function addProperty(PropertyAnnotation $annotation)
     {
-        return $this->properties;
+        $this->properties[$annotation->getName()] = $annotation;
+        return $this;
     }
 
-    /**
-     * @param array $properties
-     */
-    public function setProperties(array $properties): void
+    function getProperty(?string $name = null)
     {
-        $this->properties = $properties;
-    }
-
-    public function addProperty(string $name)
-    {
-        $instance = new Property($name);
-        $this->properties[$name] = $instance;
-        return $instance;
-    }
-
-    public function getProperty(string $name):?Property
-    {
-        if(isset($this->properties[$name])){
+        if($name && isset($this->properties[$name])){
             return $this->properties[$name];
+        }else{
+            return $this->properties;
         }
-        return null;
+    }
+
+    function getMethod(?string $name = null)
+    {
+        if($name && isset($this->methods[$name])){
+            return $this->methods[$name];
+        }else{
+            return $this->methods;
+        }
+    }
+
+    /**
+     * @return ApiGroup|null
+     */
+    public function getApiGroup(): ?ApiGroup
+    {
+        return $this->apiGroup;
+    }
+
+    /**
+     * @param ApiGroup|null $apiGroup
+     */
+    public function setApiGroup(?ApiGroup $apiGroup): void
+    {
+        $this->apiGroup = $apiGroup;
+    }
+
+    /**
+     * @return ApiGroupDescription|null
+     */
+    public function getApiGroupDescription(): ?ApiGroupDescription
+    {
+        return $this->apiGroupDescription;
+    }
+
+    /**
+     * @param ApiGroupDescription|null $apiGroupDescription
+     */
+    public function setApiGroupDescription(?ApiGroupDescription $apiGroupDescription): void
+    {
+        $this->apiGroupDescription = $apiGroupDescription;
     }
 }

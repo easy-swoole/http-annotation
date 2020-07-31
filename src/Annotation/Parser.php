@@ -24,7 +24,7 @@ use EasySwoole\HttpAnnotation\AnnotationTag\ApiSuccessParam;
 use EasySwoole\HttpAnnotation\AnnotationTag\ApiSuccess;
 use EasySwoole\HttpAnnotation\AnnotationTag\InjectParamsContext;
 use EasySwoole\HttpAnnotation\AnnotationTag\Method;
-use EasySwoole\HttpAnnotation\Annotation\Method as MethodAnnotation;
+use EasySwoole\HttpAnnotation\Annotation\MethodAnnotation as MethodAnnotation;
 use EasySwoole\HttpAnnotation\AnnotationTag\Param;
 use EasySwoole\HttpAnnotation\Exception\Annotation\InvalidTag;
 use EasySwoole\Utility\File;
