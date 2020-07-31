@@ -4,6 +4,7 @@
 namespace EasySwoole\HttpAnnotation\Annotation;
 
 
+use EasySwoole\Annotation\Annotation;
 use EasySwoole\HttpAnnotation\AnnotationTag\ApiGroup;
 use EasySwoole\HttpAnnotation\AnnotationTag\ApiGroupAuth;
 use EasySwoole\HttpAnnotation\AnnotationTag\ApiGroupDescription;
@@ -21,8 +22,17 @@ class ObjectAnnotation
 
     protected $properties = [];
 
+    private $annotation;
 
+    function __construct(Annotation $annotation)
+    {
+        $this->annotation = $annotation;
+    }
 
+    function parse(\ReflectionClass $reflection)
+    {
+
+    }
 
     function addGroupAuth(ApiGroupAuth $apiGroupAuth):ObjectAnnotation
     {
