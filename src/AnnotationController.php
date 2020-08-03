@@ -10,7 +10,7 @@ use EasySwoole\Http\AbstractInterface\Controller;
 use EasySwoole\HttpAnnotation\Annotation\AbstractInterface\ParserInterface;
 use EasySwoole\HttpAnnotation\Annotation\MethodAnnotation;
 use EasySwoole\HttpAnnotation\Annotation\ObjectAnnotation;
-use EasySwoole\HttpAnnotation\Annotation\Parser;
+use EasySwoole\HttpAnnotation\Annotation\Parser3;
 use EasySwoole\HttpAnnotation\AnnotationTag\Param;
 use EasySwoole\HttpAnnotation\Exception\Annotation\ActionTimeout;
 use EasySwoole\HttpAnnotation\Exception\Annotation\InvalidTag;
@@ -33,7 +33,7 @@ class AnnotationController extends Controller
     {
         parent::__construct();
         if($parser == null){
-            $parser = new Parser();
+            $parser = new Parser3();
         }
         $this->parser = $parser;
         $this->classAnnotation = $info = $this->parser->getObjectAnnotation(static::class);
@@ -55,7 +55,7 @@ class AnnotationController extends Controller
         }
     }
 
-    protected function getAnnotationParser():Parser
+    protected function getAnnotationParser():Parser3
     {
         return $this->parser;
     }

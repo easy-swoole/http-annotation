@@ -5,7 +5,7 @@ namespace EasySwoole\HttpAnnotation\Tests;
 
 
 use EasySwoole\HttpAnnotation\Annotation\ObjectAnnotation;
-use EasySwoole\HttpAnnotation\Annotation\Parser;
+use EasySwoole\HttpAnnotation\Annotation\Parser3;
 use EasySwoole\HttpAnnotation\AnnotationTag\ApiGroup;
 use EasySwoole\HttpAnnotation\Tests\TestController\ControllerA;
 use EasySwoole\HttpAnnotation\Tests\TestController\ControllerB;
@@ -23,8 +23,8 @@ class AnnotationParserTest extends TestCase
 
     function run(TestResult $result = null): TestResult
     {
-        $this->resultA = (new Parser())->getObjectAnnotation(ControllerA::class);
-        $this->resultB = (new Parser())->getObjectAnnotation(ControllerB::class);
+        $this->resultA = (new Parser3())->getObjectAnnotation(ControllerA::class);
+        $this->resultB = (new Parser3())->getObjectAnnotation(ControllerB::class);
         return parent::run($result);
     }
 

@@ -13,7 +13,7 @@ if(!file_exists($file)){
 }
 
 
-use EasySwoole\HttpAnnotation\Annotation\Parser;
+use EasySwoole\HttpAnnotation\Annotation\Parser3;
 
 $array = $argv;
 array_shift($array);
@@ -29,7 +29,7 @@ if(!empty($extra) && is_file($extra)){
 }
 
 echo "scan dir: {$file}\n";
-$string = (new Parser())->scanToHtml($file,$extra);
+$string = (new Parser3())->scanToHtml($file,$extra);
 
 if(!empty($string)){
     file_put_contents('easyDoc.html',$string);
