@@ -23,7 +23,6 @@ use EasySwoole\HttpAnnotation\AnnotationTag\Di;
 use EasySwoole\HttpAnnotation\AnnotationTag\InjectParamsContext;
 use EasySwoole\HttpAnnotation\AnnotationTag\Method;
 use EasySwoole\HttpAnnotation\AnnotationTag\Param;
-use phpDocumentor\Reflection\DocBlock\Tags\Property;
 
 class Parser implements ParserInterface
 {
