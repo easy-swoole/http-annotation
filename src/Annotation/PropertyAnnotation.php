@@ -8,7 +8,7 @@ use EasySwoole\HttpAnnotation\AnnotationTag\Context;
 use EasySwoole\HttpAnnotation\AnnotationTag\Di;
 use EasySwoole\HttpAnnotation\AnnotationTag\InjectParamsContext;
 
-class PropertyAnnotation
+class PropertyAnnotation extends AnnotationBean
 {
     protected $name;
     /** @var Di|null */

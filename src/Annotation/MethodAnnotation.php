@@ -3,7 +3,7 @@
 
 namespace EasySwoole\HttpAnnotation\Annotation;
 
-class MethodAnnotation
+class MethodAnnotation extends AnnotationBean
 {
     protected $name;
 

@@ -23,6 +23,7 @@ use EasySwoole\HttpAnnotation\AnnotationTag\Di;
 use EasySwoole\HttpAnnotation\AnnotationTag\InjectParamsContext;
 use EasySwoole\HttpAnnotation\AnnotationTag\Method;
 use EasySwoole\HttpAnnotation\AnnotationTag\Param;
+use phpDocumentor\Reflection\DocBlock\Tags\Property;
 
 class Parser2 implements ParserInterface
 {
@@ -66,6 +67,31 @@ class Parser2 implements ParserInterface
     function parseObject(\ReflectionClass $reflectionClass): ObjectAnnotation
     {
         $objectAnnotation = new ObjectAnnotation();
+
+        $tagList = $this->parser->getAnnotation($reflectionClass);
+        array_walk_recursive($tagList,function ($item)use($objectAnnotation){
+            $objectAnnotation->addAnnotationTag($item);
+        });
+
+        foreach ($reflectionClass->getMethods() as $methodName => $method){
+            $tagList = $this->parser->getAnnotation($method);
+            $method = new MethodAnnotation($methodName);
+            array_walk_recursive($tagList,function ($item)use($method){
+                $method->addAnnotationTag($item);
+            });
+            $objectAnnotation->addMethod($method);
+        }
+
+        foreach ($reflectionClass->getProperties() as $propertyName => $property)
+        {
+            $tagList = $this->parser->getAnnotation($property);
+            $property = new PropertyAnnotation($propertyName);
+            array_walk_recursive($tagList,function ($item)use($property){
+                $property->addAnnotationTag($item);
+            });
+            $objectAnnotation->addProperty($property);
+        }
+
         return $objectAnnotation;
     }
 

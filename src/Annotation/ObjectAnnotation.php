@@ -7,7 +7,7 @@ use EasySwoole\HttpAnnotation\AnnotationTag\ApiGroup;
 use EasySwoole\HttpAnnotation\AnnotationTag\ApiGroupAuth;
 use EasySwoole\HttpAnnotation\AnnotationTag\ApiGroupDescription;
 
-class ObjectAnnotation
+class ObjectAnnotation extends AnnotationBean
 {
     /** @var ApiGroup|null */
     protected $apiGroup;
@@ -16,9 +16,9 @@ class ObjectAnnotation
 
     protected $groupAuth = [];
 
-    protected $methods = [];
+    protected $__methods = [];
 
-    protected $properties = [];
+    protected $__properties = [];
 
     function addGroupAuth(ApiGroupAuth $apiGroupAuth):ObjectAnnotation
     {
@@ -37,31 +37,31 @@ class ObjectAnnotation
 
     function addMethod(MethodAnnotation $method)
     {
-        $this->methods[$method->getName()] = $method;
+        $this->__methods[$method->getName()] = $method;
         return $this;
     }
 
     function addProperty(PropertyAnnotation $annotation)
     {
-        $this->properties[$annotation->getName()] = $annotation;
+        $this->__properties[$annotation->getName()] = $annotation;
         return $this;
     }
 
     function getProperty(?string $name = null)
     {
-        if($name && isset($this->properties[$name])){
-            return $this->properties[$name];
+        if($name && isset($this->__properties[$name])){
+            return $this->__properties[$name];
         }else{
-            return $this->properties;
+            return $this->__properties;
         }
     }
 
     function getMethod(?string $name = null)
     {
-        if($name && isset($this->methods[$name])){
-            return $this->methods[$name];
+        if($name && isset($this->__methods[$name])){
+            return $this->__methods[$name];
         }else{
-            return $this->methods;
+            return $this->__methods;
         }
     }
 
@@ -97,3 +97,4 @@ class ObjectAnnotation
         $this->apiGroupDescription = $apiGroupDescription;
     }
 }
+

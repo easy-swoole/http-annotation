@@ -18,7 +18,7 @@ use EasySwoole\HttpAnnotation\AnnotationTag\ApiGroupDescription;
 class ControllerA extends AnnotationController
 {
     /**
-     * @Api(path="/A/test")
+     * @Api(path="/A/test",name="a")
      */
     function test()
     {
@@ -26,7 +26,7 @@ class ControllerA extends AnnotationController
     }
 
     /**
-     * @Api(path="")
+     * @Api(path="/",name="22")
      */
     function test2()
     {
