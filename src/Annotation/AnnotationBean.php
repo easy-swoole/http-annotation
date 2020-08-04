@@ -14,7 +14,7 @@ class AnnotationBean
     {
         $propertyName = lcfirst($annotationTag->tagName());
         if(property_exists($this,$propertyName)){
-            if(!empty($this->{$propertyName})){
+            if(empty($this->{$propertyName})){
                 if(is_array($this->{$propertyName})){
                     $this->{$propertyName}[] = $annotationTag;
                 }else{

@@ -37,7 +37,7 @@ class ObjectAnnotation extends AnnotationBean
 
     function addMethod(MethodAnnotation $method)
     {
-        $this->__methods[$method->getName()] = $method;
+        $this->__methods[$method->getMethodName()] = $method;
         return $this;
     }
 
