@@ -56,11 +56,14 @@ class MethodAnnotation extends AnnotationBean
         return $this->method;
     }
 
-    /**
-     * @return array
-     */
-    public function getApiAuth(): array
+    public function getApiAuth(?string $name = null)
     {
+        if($name){
+            if(isset($this->apiAuth[$name])){
+                return $this->apiAuth[$name];
+            }
+            return null;
+        }
         return $this->apiAuth;
     }
 

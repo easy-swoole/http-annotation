@@ -7,6 +7,8 @@ namespace EasySwoole\HttpAnnotation\Tests;
 use EasySwoole\HttpAnnotation\Annotation\MethodAnnotation;
 use EasySwoole\HttpAnnotation\Annotation\ObjectAnnotation;
 use EasySwoole\HttpAnnotation\Annotation\Parser;
+use EasySwoole\HttpAnnotation\AnnotationTag\Api;
+use EasySwoole\HttpAnnotation\AnnotationTag\ApiAuth;
 use EasySwoole\HttpAnnotation\AnnotationTag\ApiGroupDescription;
 use EasySwoole\HttpAnnotation\Tests\TestController\ApiGroup;
 use PHPUnit\Framework\TestCase;
@@ -53,10 +55,23 @@ class AnnotationParserTest extends TestCase
     {
         $this->assertEquals(null,$this->apiGroup->getMethod('noneFunc'));
         $this->assertInstanceOf(MethodAnnotation::class,$this->apiGroup->getMethod('func'));
+        $this->assertEquals('func',$this->apiGroup->getMethod('func')->getMethodName());
     }
 
     function testApi()
     {
+        /** @var MethodAnnotation $func */
+        $func = $this->apiGroup->getMethod('func');
+        $this->assertInstanceOf(Api::class,$func->getApiTag());
+        $this->assertEquals('func',$func->getApiTag()->name);
+        $this->assertEquals('/apiGroup/func',$func->getApiTag()->path);
+    }
 
+    function testApiAuth()
+    {
+        /** @var MethodAnnotation $func */
+        $func = $this->apiGroup->getMethod('func');
+        $this->assertEquals(2,count($func->getApiAuth()));
+        $this->assertInstanceOf(ApiAuth::class,$func->getApiAuth('apiAuth1'));
     }
 }
