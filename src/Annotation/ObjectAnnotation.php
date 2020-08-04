@@ -14,7 +14,7 @@ class ObjectAnnotation extends AnnotationBean
     /** @var ApiGroupDescription|null */
     protected $apiGroupDescription;
 
-    protected $groupAuth = [];
+    protected $apiGroupAuth = [];
 
     protected $__methods = [];
 
@@ -22,16 +22,19 @@ class ObjectAnnotation extends AnnotationBean
 
     function addGroupAuthTag(ApiGroupAuth $apiGroupAuth):ObjectAnnotation
     {
-        $this->groupAuth[$apiGroupAuth->name] = $apiGroupAuth;
+        $this->apiGroupAuth[$apiGroupAuth->name] = $apiGroupAuth;
         return $this;
     }
 
     function getGroupAuthTag(?string $paramName = null)
     {
-        if($paramName && isset($this->groupAuth[$paramName])){
-            return $this->groupAuth[$paramName];
+        if($paramName){
+            if(isset($this->apiGroupAuth[$paramName])){
+                return $this->apiGroupAuth[$paramName];
+            }
+            return null;
         }else{
-            return $this->groupAuth;
+            return $this->apiGroupAuth;
         }
     }
 
@@ -49,8 +52,11 @@ class ObjectAnnotation extends AnnotationBean
 
     function getProperty(?string $name = null)
     {
-        if($name && isset($this->__properties[$name])){
-            return $this->__properties[$name];
+        if($name){
+            if(isset($this->__properties[$name])){
+                return $this->__properties[$name];
+            }
+            return null;
         }else{
             return $this->__properties;
         }
@@ -58,8 +64,11 @@ class ObjectAnnotation extends AnnotationBean
 
     function getMethod(?string $name = null)
     {
-        if($name && isset($this->__methods[$name])){
-            return $this->__methods[$name];
+        if($name){
+            if(isset($this->__methods[$name])){
+                return $this->__methods[$name];
+            }
+            return null;
         }else{
             return $this->__methods;
         }

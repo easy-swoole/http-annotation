@@ -72,9 +72,9 @@ class Parser implements ParserInterface
             $objectAnnotation->addAnnotationTag($item);
         });
 
-        foreach ($reflectionClass->getMethods() as $methodName => $method){
+        foreach ($reflectionClass->getMethods()  as $method){
             $tagList = $this->parser->getAnnotation($method);
-            $method = new MethodAnnotation($methodName);
+            $method = new MethodAnnotation($method->getName());
             array_walk_recursive($tagList,function ($item)use($method){
                 $method->addAnnotationTag($item);
             });

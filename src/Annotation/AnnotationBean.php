@@ -5,6 +5,7 @@ namespace EasySwoole\HttpAnnotation\Annotation;
 
 
 use EasySwoole\Annotation\AbstractAnnotationTag;
+use EasySwoole\HttpAnnotation\AnnotationTag\Param;
 
 class AnnotationBean
 {
@@ -16,12 +17,20 @@ class AnnotationBean
         if(property_exists($this,$propertyName)){
             if(empty($this->{$propertyName})){
                 if(is_array($this->{$propertyName})){
-                    $this->{$propertyName}[] = $annotationTag;
+                    if($annotationTag instanceof Param){
+                        $this->{$propertyName}[$annotationTag->name] = $annotationTag;
+                    }else{
+                        $this->{$propertyName}[] = $annotationTag;
+                    }
                 }else{
                     $this->{$propertyName} = $annotationTag;
                 }
             }else if(is_array($this->{$propertyName})){
-                $this->{$propertyName}[] = $annotationTag;
+                if($annotationTag instanceof Param){
+                    $this->{$propertyName}[$annotationTag->name] = $annotationTag;
+                }else{
+                    $this->{$propertyName}[] = $annotationTag;
+                }
             }
         }else{
             $this->__otherTags[$annotationTag->tagName()][] = $annotationTag;
