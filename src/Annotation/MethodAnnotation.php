@@ -75,11 +75,15 @@ class MethodAnnotation extends AnnotationBean
         return $this->apiFail;
     }
 
-    /**
-     * @return array
-     */
-    public function getApiFailParam(): array
+
+    public function getApiFailParam(?string $name = null)
     {
+        if($name){
+            if(isset($this->apiFailParam[$name])){
+                return $this->apiFailParam[$name];
+            }
+            return null;
+        }
         return $this->apiFailParam;
     }
 

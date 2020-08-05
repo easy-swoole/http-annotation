@@ -9,6 +9,9 @@ use EasySwoole\HttpAnnotation\Annotation\ObjectAnnotation;
 use EasySwoole\HttpAnnotation\Annotation\Parser;
 use EasySwoole\HttpAnnotation\AnnotationTag\Api;
 use EasySwoole\HttpAnnotation\AnnotationTag\ApiAuth;
+use EasySwoole\HttpAnnotation\AnnotationTag\ApiDescription;
+use EasySwoole\HttpAnnotation\AnnotationTag\ApiFail;
+use EasySwoole\HttpAnnotation\AnnotationTag\ApiFailParam;
 use EasySwoole\HttpAnnotation\AnnotationTag\ApiGroupDescription;
 use EasySwoole\HttpAnnotation\Tests\TestController\ApiGroup;
 use PHPUnit\Framework\TestCase;
@@ -73,5 +76,31 @@ class AnnotationParserTest extends TestCase
         $func = $this->apiGroup->getMethod('func');
         $this->assertEquals(2,count($func->getApiAuth()));
         $this->assertInstanceOf(ApiAuth::class,$func->getApiAuth('apiAuth1'));
+    }
+
+    function testApiDescription()
+    {
+        /** @var MethodAnnotation $func */
+        $func = $this->apiGroup->getMethod('func');
+        $this->assertInstanceOf(ApiDescription::class,$func->getApiDescriptionTag());
+        $this->assertEquals('func desc',$func->getApiDescriptionTag()->value);
+    }
+
+    function testApiFail()
+    {
+        /** @var MethodAnnotation $func */
+        $func = $this->apiGroup->getMethod('func');
+        $this->assertEquals(2,count($func->getApiFail()));
+        $this->assertInstanceOf(ApiFail::class,$func->getApiFail()[0]);
+        $this->assertEquals('func fail example1',$func->getApiFail()[0]->value);
+    }
+
+    function testApiFailParam()
+    {
+        /** @var MethodAnnotation $func */
+        $func = $this->apiGroup->getMethod('func');
+        $this->assertEquals(2,count($func->getApiFailParam()));
+        $this->assertInstanceOf(ApiFailParam::class,$func->getApiFailParam('failParam1'));
+        $this->assertEquals('failParam1',$func->getApiFailParam('failParam1')->name);
     }
 }
