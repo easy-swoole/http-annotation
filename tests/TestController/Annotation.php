@@ -32,7 +32,7 @@ use EasySwoole\HttpAnnotation\Exception\Annotation\ParamValidateError;
  * @ApiGroupAuth(name="groupParamA",required="")
  * @ApiGroupAuth(name="groupParamB",required="")
  */
-class ApiGroup extends AnnotationController
+class Annotation extends AnnotationController
 {
 
     /**

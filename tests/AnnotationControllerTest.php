@@ -9,17 +9,17 @@ use EasySwoole\Component\Di;
 use EasySwoole\Http\Request;
 use EasySwoole\Http\Response;
 use EasySwoole\HttpAnnotation\Exception\Annotation\MethodNotAllow;
-use EasySwoole\HttpAnnotation\Tests\TestController\ApiGroup;
+use EasySwoole\HttpAnnotation\Tests\TestController\Annotation;
 use PHPUnit\Framework\TestCase;
 
-class ControllerTest extends TestCase
+class AnnotationControllerTest extends TestCase
 {
     protected $controller;
 
     function setUp()
     {
         parent::setUp();
-        $this->controller = new ApiGroup();
+        $this->controller = new Annotation();
         ContextManager::getInstance()->set("context",'context data');
         Di::getInstance()->set('di','di data');
     }

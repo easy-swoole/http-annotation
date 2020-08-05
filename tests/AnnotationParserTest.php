@@ -23,7 +23,7 @@ use EasySwoole\HttpAnnotation\AnnotationTag\Di;
 use EasySwoole\HttpAnnotation\AnnotationTag\InjectParamsContext;
 use EasySwoole\HttpAnnotation\AnnotationTag\Method;
 use EasySwoole\HttpAnnotation\AnnotationTag\Param;
-use EasySwoole\HttpAnnotation\Tests\TestController\ApiGroup;
+use EasySwoole\HttpAnnotation\Tests\TestController\Annotation;
 use PHPUnit\Framework\TestCase;
 use PHPUnit\Framework\TestResult;
 use EasySwoole\HttpAnnotation\AnnotationTag\ApiGroup as ApiGroupTag;
@@ -40,7 +40,7 @@ class AnnotationParserTest extends TestCase
     function run(TestResult $result = null): TestResult
     {
         $parse = new Parser();
-        $this->apiGroup = $parse->parseObject(new \ReflectionClass(ApiGroup::class));
+        $this->apiGroup = $parse->parseObject(new \ReflectionClass(Annotation::class));
         return parent::run($result);
     }
 
