@@ -92,6 +92,25 @@ class ApiGroup extends AnnotationController
         }
     }
 
+    /**
+     * @Param(name="param1",required="",integer="")
+     */
+    function param1()
+    {
+        $this->response()->write($this->request()->getRequestParam('param1'));
+    }
+
+    /**
+     * @Param(name="param1",required="",integer="")
+     * @Param(name="param2",required="",integer="")
+     */
+    function param2()
+    {
+        $p1 = $this->request()->getRequestParam('param1');
+        $p2 = $this->request()->getRequestParam('param2');
+        $this->response()->write($p1 + $p2);
+    }
+
     protected function gc()
     {
         //不调用父类重置成员属性，方便单元测试

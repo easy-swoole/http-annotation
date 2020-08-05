@@ -50,6 +50,29 @@ class ControllerTest extends TestCase
         $this->assertEquals('index',$response->getBody()->__tostring());
     }
 
+
+    function testParam1()
+    {
+        $response = $this->fakeResponse();
+        $this->controller->__hook('param1',$this->fakeRequest('/',null),$response);
+        $this->assertEquals('PE-param1',$response->getBody()->__tostring());
+
+        $response = $this->fakeResponse();
+        $this->controller->__hook('param1',$this->fakeRequest('/',null,['param1'=>520]),$response);
+        $this->assertEquals(520,$response->getBody()->__tostring());
+    }
+
+    function testParam2()
+    {
+        $response = $this->fakeResponse();
+        $this->controller->__hook('param2',$this->fakeRequest('/',null),$response);
+        $this->assertEquals('PE-param1',$response->getBody()->__tostring());
+
+        $response = $this->fakeResponse();
+        $this->controller->__hook('param2',$this->fakeRequest('/',null,['param1'=>520,'param2'=>520]),$response);
+        $this->assertEquals(1040,$response->getBody()->__tostring());
+    }
+
     function testAllowPostMethod()
     {
         try {
