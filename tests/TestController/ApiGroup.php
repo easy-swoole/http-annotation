@@ -22,6 +22,7 @@ use EasySwoole\HttpAnnotation\AnnotationTag\Di;
 use EasySwoole\HttpAnnotation\AnnotationTag\InjectParamsContext;
 use EasySwoole\HttpAnnotation\AnnotationTag\Method;
 use EasySwoole\HttpAnnotation\AnnotationTag\Param;
+use EasySwoole\HttpAnnotation\Exception\Annotation\ParamValidateError;
 
 /**
  * Class ControllerA
@@ -82,6 +83,14 @@ class ApiGroup extends AnnotationController
         $this->response()->write('allowPostMethod');
     }
 
+    function onException(\Throwable $throwable): void
+    {
+        if($throwable instanceof ParamValidateError){
+            $this->response()->write("PE-{$throwable->getValidate()->getError()->getField()}");
+        }else{
+            throw $throwable;
+        }
+    }
 
     protected function gc()
     {

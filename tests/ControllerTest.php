@@ -39,6 +39,17 @@ class ControllerTest extends TestCase
         $this->controller->context = null;
     }
 
+    function testGroupAuth()
+    {
+        $response = $this->fakeResponse();
+        $this->controller->__hook('index',$this->fakeRequest('/',[]),$response);
+        $this->assertEquals('PE-groupParamA',$response->getBody()->__tostring());
+
+        $response = $this->fakeResponse();
+        $this->controller->__hook('index',$this->fakeRequest('/',null),$response);
+        $this->assertEquals('index',$response->getBody()->__tostring());
+    }
+
     function testAllowPostMethod()
     {
         try {
@@ -48,18 +59,25 @@ class ControllerTest extends TestCase
         }
 
         $response = $this->fakeResponse();
-        $request =  $this->fakeRequest('/allowPostMethod',[],['data'=>1]);
+        $request =  $this->fakeRequest('/allowPostMethod',null,['data'=>1]);
         $this->controller->__hook('allowPostMethod', $request, $response);
         $this->assertEquals('allowPostMethod',$response->getBody()->__tostring());
     }
 
 
-    protected function fakeRequest(string $requestPath = '/',array $query = [],array $post = []):Request
+    protected function fakeRequest(string $requestPath = '/',array $query = null,array $post = []):Request
     {
-        $query = $query + [
+        if($query === null){
+            $query = [
                 "groupParamA"=>"groupParamA",
                 'groupParamB'=>"groupParamB"
-        ];
+            ];
+        }else if(!empty($query)){
+            $query = $query + [
+                    "groupParamA"=>"groupParamA",
+                    'groupParamB'=>"groupParamB"
+                ];
+        }
         $request = new Request();
         $request->getUri()->withPath($requestPath);
         //全局的参数
