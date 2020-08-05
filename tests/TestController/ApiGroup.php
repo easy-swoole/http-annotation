@@ -17,6 +17,8 @@ use EasySwoole\HttpAnnotation\AnnotationTag\ApiRequestExample;
 use EasySwoole\HttpAnnotation\AnnotationTag\ApiSuccess;
 use EasySwoole\HttpAnnotation\AnnotationTag\ApiSuccessParam;
 use EasySwoole\HttpAnnotation\AnnotationTag\CircuitBreaker;
+use EasySwoole\HttpAnnotation\AnnotationTag\Context;
+use EasySwoole\HttpAnnotation\AnnotationTag\Di;
 use EasySwoole\HttpAnnotation\AnnotationTag\InjectParamsContext;
 use EasySwoole\HttpAnnotation\AnnotationTag\Method;
 use EasySwoole\HttpAnnotation\AnnotationTag\Param;
@@ -31,6 +33,16 @@ use EasySwoole\HttpAnnotation\AnnotationTag\Param;
  */
 class ApiGroup extends AnnotationController
 {
+
+    /**
+     * @Di(key="di")
+     */
+    protected $di;
+    /**
+     * @Context(key="context")
+     */
+    protected $context;
+
     /**
      * @Api(path="/apiGroup/func",name="func")
      * @ApiAuth(name="apiAuth1")
