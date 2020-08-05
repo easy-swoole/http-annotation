@@ -73,6 +73,17 @@ class ControllerTest extends TestCase
         $this->assertEquals(1040,$response->getBody()->__tostring());
     }
 
+    function testParam3()
+    {
+        $response = $this->fakeResponse();
+        $this->controller->__hook('param3',$this->fakeRequest('/',null),$response);
+        $this->assertEquals('PE-groupParamA',$response->getBody()->__tostring());
+
+        $response = $this->fakeResponse();
+        $this->controller->__hook('param3',$this->fakeRequest('/',null,['param1'=>520,'groupParamA'=>520]),$response);
+        $this->assertEquals(1040,$response->getBody()->__tostring());
+    }
+
     function testAllowPostMethod()
     {
         try {

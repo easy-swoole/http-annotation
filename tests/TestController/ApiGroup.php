@@ -111,6 +111,18 @@ class ApiGroup extends AnnotationController
         $this->response()->write($p1 + $p2);
     }
 
+    /**
+     * @Param(name="param1",required="",integer="")
+     * @Param(name="groupParamA",required="",integer="")
+     */
+    function param3()
+    {
+        //测试与api group的合并
+        $p1 = $this->request()->getRequestParam('param1');
+        $p2 = $this->request()->getRequestParam('groupParamA');
+        $this->response()->write($p1 + $p2);
+    }
+
     protected function gc()
     {
         //不调用父类重置成员属性，方便单元测试
