@@ -84,6 +84,20 @@ class AnnotationControllerTest extends TestCase
         $this->assertEquals(1040,$response->getBody()->__tostring());
     }
 
+    function testParamExport1()
+    {
+        $response = $this->fakeResponse();
+        $this->controller->__hook('paramExport1',$this->fakeRequest('/',null),$response);
+        $this->assertEquals('groupParamA',$response->getBody()->__tostring());
+    }
+
+    function testParamExport2()
+    {
+        $response = $this->fakeResponse();
+        $this->controller->__hook('paramExport2',$this->fakeRequest('/',null,['exp'=>"exp"]),$response);
+        $this->assertEquals('exp',$response->getBody()->__tostring());
+    }
+
     function testAllowPostMethod()
     {
         try {

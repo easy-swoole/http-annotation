@@ -260,22 +260,13 @@ class AnnotationController extends Controller
             }
             //仅仅返回所指定的注解参数
             if($injectKey){
-                if($filterNull){
-                    foreach ($allParamsData as $key => $arg){
-                        if($arg === null){
-                            unset($allParamsData[$key]);
-                        }else if($filterEmpty){
-                            if(empty($arg)){
-                                unset($allParamsData[$key]);
-                            }
-                        }
-
+                foreach ($allParamsData as $key => $arg){
+                    if($filterNull && $arg === null){
+                        unset($allParamsData[$key]);
+                        continue;
                     }
-                }else if($filterEmpty){
-                    foreach ($allParamsData as $key => $arg){
-                        if(empty($arg)){
-                            unset($allParamsData[$key]);
-                        }
+                    if($filterEmpty && empty($allParamsData[$key])){
+                        unset($allParamsData[$key]);
                     }
                 }
                 ContextManager::getInstance()->set($injectKey,$allParamsData);

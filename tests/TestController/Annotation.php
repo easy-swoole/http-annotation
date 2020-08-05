@@ -123,6 +123,19 @@ class Annotation extends AnnotationController
         $this->response()->write($p1 + $p2);
     }
 
+    function paramExport1($groupParamA)
+    {
+        $this->response()->write($groupParamA);
+    }
+
+    /**
+     * @Param(name="exp")
+     */
+    function paramExport2($groupParamA,$exp)
+    {
+        $this->response()->write($exp);
+    }
+
     protected function gc()
     {
         //不调用父类重置成员属性，方便单元测试
