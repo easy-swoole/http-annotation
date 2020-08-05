@@ -5,20 +5,19 @@ namespace EasySwoole\HttpAnnotation\Annotation;
 
 
 use EasySwoole\Component\Singleton;
-use EasySwoole\HttpAnnotation\Annotation\AbstractInterface\CacheInterface;
 
-class Cache implements CacheInterface
+class Cache
 {
     private $data = [];
 
     use Singleton;
 
-    function set(string $class,$data)
+    function set(string $class,ObjectAnnotation $data)
     {
-        $this->data[md5($class)] =$data;
+        $this->data[md5($class)] = $data;
     }
 
-    function get(string $class)
+    function get(string $class):?ObjectAnnotation
     {
         $key = md5($class);
         if(isset($this->data[$key])){

@@ -1,12 +1,10 @@
 <?php
 
 
-namespace EasySwoole\HttpAnnotation\Annotation\AbstractInterface;
-
+namespace EasySwoole\HttpAnnotation\Annotation;
 
 
 use EasySwoole\Annotation\Annotation;
-use EasySwoole\HttpAnnotation\Annotation\ObjectAnnotation;
 
 interface ParserInterface
 {

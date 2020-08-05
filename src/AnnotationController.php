@@ -7,13 +7,11 @@ namespace EasySwoole\HttpAnnotation;
 use EasySwoole\Component\Context\ContextManager;
 use EasySwoole\Component\Di as IOC;
 use EasySwoole\Http\AbstractInterface\Controller;
-use EasySwoole\HttpAnnotation\Annotation\AbstractInterface\ParserInterface;
-use EasySwoole\HttpAnnotation\Annotation\MethodAnnotation;
-use EasySwoole\HttpAnnotation\Annotation\ObjectAnnotation;
-use EasySwoole\HttpAnnotation\Annotation\Parser3;
+use EasySwoole\HttpAnnotation\Annotation\Parser;
+use EasySwoole\HttpAnnotation\Annotation\ParserInterface;
+use EasySwoole\HttpAnnotation\Annotation\PropertyAnnotation;
 use EasySwoole\HttpAnnotation\AnnotationTag\Param;
 use EasySwoole\HttpAnnotation\Exception\Annotation\ActionTimeout;
-use EasySwoole\HttpAnnotation\Exception\Annotation\InvalidTag;
 use EasySwoole\HttpAnnotation\Exception\Annotation\MethodNotAllow;
 use EasySwoole\HttpAnnotation\Exception\Annotation\ParamError;
 use EasySwoole\HttpAnnotation\Exception\Annotation\ParamValidateError;
@@ -24,69 +22,16 @@ use Swoole\Coroutine\Channel;
 
 class AnnotationController extends Controller
 {
-    private $methodAnnotations = [];
-    private $propertyAnnotations = [];
     private $classAnnotation;
-    private $parser;
 
     public function __construct(?ParserInterface $parser = null)
     {
         parent::__construct();
         if($parser == null){
-            $parser = new Parser3();
-        }
-        $this->parser = $parser;
-        $this->classAnnotation = $info = $this->parser->getObjectAnnotation(static::class);
-
-        foreach ($info->getProperties() as $property => $item){
-            if(!empty($item->getAnnotations())){
-                $this->propertyAnnotations[$property] = $item->getAnnotations();
-            }
+            $parser = new Parser();
         }
 
-        /**
-         * @var  $method
-         * @var MethodAnnotation $item
-         */
-        foreach ($info->getMethods() as $method => $item){
-            if(!empty($item->getAnnotations())){
-                $this->methodAnnotations[$method] = $item->getAnnotations();
-            }
-        }
-    }
-
-    protected function getAnnotationParser():Parser3
-    {
-        return $this->parser;
-    }
-
-    protected function getClassAnnotation():ObjectAnnotation
-    {
-        return $this->classAnnotation;
-    }
-
-    protected function getMethodAnnotation(?string $method = null):?array
-    {
-        if($method === null){
-            return $this->methodAnnotations;
-        }
-        if(isset($this->methodAnnotations[$method])){
-            return $this->methodAnnotations[$method];
-        }else{
-            return null;
-        }
-    }
-
-    protected function getPropertyAnnotation(?string $property = null):?array
-    {
-        if($property === null){
-            return $this->propertyAnnotations;
-        }
-        if(isset($this->propertyAnnotations[$property])){
-            return $this->propertyAnnotations[$property];
-        }else{
-            return null;
-        }
+        $this->classAnnotation = $parser->parseObject(new \ReflectionClass(static::class));
     }
 
     protected function __exec()
@@ -94,24 +39,15 @@ class AnnotationController extends Controller
         /*
            执行成员属性解析
         */
-        foreach ($this->propertyAnnotations as $name => $propertyAnnotation){
-            /*
-             * 判断上下文注解
-             */
-            if(!empty($propertyAnnotation['Context'])){
-                $context = $propertyAnnotation['Context'][0]->key;
-                if(!empty($context)){
-                    $this->{$name} = ContextManager::getInstance()->get($context);
-                }
+        foreach ($this->classAnnotation->getProperty() as $name => $propertyAnnotation){
+            /** @var $propertyAnnotation PropertyAnnotation */
+            if($propertyAnnotation->getContextTag()){
+                $contextKey = $propertyAnnotation->getContextTag()->key;
+                $this->{$name} = ContextManager::getInstance()->get($contextKey);
             }
-            /*
-             * 判断Di注入
-             */
-            if(!empty($propertyAnnotation['Di'])){
-                $key = $propertyAnnotation['Di'][0]->key;
-                if(!empty($key)){
-                    $this->{$name} = IOC::getInstance()->get($key);
-                }
+            if($propertyAnnotation->getDiTag()){
+                $key = $propertyAnnotation->getDiTag()->key;
+                $this->{$name} = IOC::getInstance()->get($key);
             }
         }
         //执行

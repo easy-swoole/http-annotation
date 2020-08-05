@@ -5,7 +5,6 @@ namespace EasySwoole\HttpAnnotation\Annotation;
 
 
 use EasySwoole\Annotation\Annotation;
-use EasySwoole\HttpAnnotation\Annotation\AbstractInterface\ParserInterface;
 use EasySwoole\HttpAnnotation\AnnotationTag\Api;
 use EasySwoole\HttpAnnotation\AnnotationTag\ApiAuth;
 use EasySwoole\HttpAnnotation\AnnotationTag\ApiDescription;
@@ -65,6 +64,10 @@ class Parser implements ParserInterface
 
     function parseObject(\ReflectionClass $reflectionClass): ObjectAnnotation
     {
+        $cache  = Cache::getInstance()->get($reflectionClass->getName());
+        if($cache){
+            return $cache;
+        }
         $objectAnnotation = new ObjectAnnotation();
 
         $tagList = $this->parser->getAnnotation($reflectionClass);
@@ -90,7 +93,7 @@ class Parser implements ParserInterface
             });
             $objectAnnotation->addProperty($property);
         }
-
+        Cache::getInstance()->set($reflectionClass->getName(),$objectAnnotation);
         return $objectAnnotation;
     }
 
