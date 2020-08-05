@@ -13,6 +13,13 @@ use EasySwoole\HttpAnnotation\AnnotationTag\ApiDescription;
 use EasySwoole\HttpAnnotation\AnnotationTag\ApiFail;
 use EasySwoole\HttpAnnotation\AnnotationTag\ApiFailParam;
 use EasySwoole\HttpAnnotation\AnnotationTag\ApiGroupDescription;
+use EasySwoole\HttpAnnotation\AnnotationTag\ApiRequestExample;
+use EasySwoole\HttpAnnotation\AnnotationTag\ApiSuccess;
+use EasySwoole\HttpAnnotation\AnnotationTag\ApiSuccessParam;
+use EasySwoole\HttpAnnotation\AnnotationTag\CircuitBreaker;
+use EasySwoole\HttpAnnotation\AnnotationTag\InjectParamsContext;
+use EasySwoole\HttpAnnotation\AnnotationTag\Method;
+use EasySwoole\HttpAnnotation\AnnotationTag\Param;
 use EasySwoole\HttpAnnotation\Tests\TestController\ApiGroup;
 use PHPUnit\Framework\TestCase;
 use PHPUnit\Framework\TestResult;
@@ -54,7 +61,7 @@ class AnnotationParserTest extends TestCase
         $this->assertEquals('groupParamB',$this->apiGroup->getGroupAuthTag('groupParamB')->name);
     }
 
-    function testMethod()
+    function testAnnotationMethod()
     {
         $this->assertEquals(null,$this->apiGroup->getMethod('noneFunc'));
         $this->assertInstanceOf(MethodAnnotation::class,$this->apiGroup->getMethod('func'));
@@ -102,5 +109,67 @@ class AnnotationParserTest extends TestCase
         $this->assertEquals(2,count($func->getApiFailParam()));
         $this->assertInstanceOf(ApiFailParam::class,$func->getApiFailParam('failParam1'));
         $this->assertEquals('failParam1',$func->getApiFailParam('failParam1')->name);
+    }
+
+    function testApiRequestExample()
+    {
+        /** @var MethodAnnotation $func */
+        $func = $this->apiGroup->getMethod('func');
+        $this->assertEquals(2,count($func->getApiRequestExample()));
+        $this->assertInstanceOf(ApiRequestExample::class,$func->getApiRequestExample()[0]);
+        $this->assertEquals('func request example1',$func->getApiRequestExample()[0]->value);
+    }
+
+
+    function testApiSuccess()
+    {
+        /** @var MethodAnnotation $func */
+        $func = $this->apiGroup->getMethod('func');
+        $this->assertEquals(2,count($func->getApiSuccess()));
+        $this->assertInstanceOf(ApiSuccess::class,$func->getApiSuccess()[0]);
+        $this->assertEquals('func success example1',$func->getApiSuccess()[0]->value);
+    }
+
+
+    function testApiSuccessParam()
+    {
+        /** @var MethodAnnotation $func */
+        $func = $this->apiGroup->getMethod('func');
+        $this->assertEquals(2,count($func->getApiSuccessParam()));
+        $this->assertInstanceOf(ApiSuccessParam::class,$func->getApiSuccessParam('successParam1'));
+        $this->assertEquals('successParam1',$func->getApiSuccessParam('successParam1')->name);
+    }
+
+    function testCircuitBreaker()
+    {
+        /** @var MethodAnnotation $func */
+        $func = $this->apiGroup->getMethod('func');
+        $this->assertInstanceOf(CircuitBreaker::class,$func->getCircuitBreakerTag());
+        $this->assertEquals(5.0,$func->getCircuitBreakerTag()->timeout);
+    }
+
+    function testInjectParamsContext()
+    {
+        /** @var MethodAnnotation $func */
+        $func = $this->apiGroup->getMethod('func');
+        $this->assertInstanceOf(InjectParamsContext::class,$func->getInjectParamsContextTag());
+        $this->assertEquals('requestData',$func->getInjectParamsContextTag()->key);
+    }
+
+    function testMethod()
+    {
+        /** @var MethodAnnotation $func */
+        $func = $this->apiGroup->getMethod('func');
+        $this->assertInstanceOf(Method::class,$func->getMethodTag());
+        $this->assertEquals(['POST','GET'],$func->getMethodTag()->allow);
+    }
+
+    function testParam()
+    {
+        /** @var MethodAnnotation $func */
+        $func = $this->apiGroup->getMethod('func');
+        $this->assertEquals(2,count($func->getParamTag()));
+        $this->assertInstanceOf(Param::class,$func->getParamTag('param1'));
+        $this->assertEquals('param1',$func->getParamTag('param1')->name);
     }
 }

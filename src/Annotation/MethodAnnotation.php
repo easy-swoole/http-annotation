@@ -46,7 +46,7 @@ class MethodAnnotation extends AnnotationBean
         return $this->circuitBreaker;
     }
 
-    function getInjectParamsContext():?InjectParamsContext
+    function getInjectParamsContextTag():?InjectParamsContext
     {
         return $this->injectParamsContext;
     }
@@ -103,19 +103,26 @@ class MethodAnnotation extends AnnotationBean
         return $this->apiSuccess;
     }
 
-    /**
-     * @return array
-     */
-    public function getApiSuccessParam(): array
+
+    public function getApiSuccessParam(?string $name = null)
     {
+        if($name){
+            if(isset($this->apiSuccessParam[$name])){
+                return $this->apiSuccessParam[$name];
+            }
+            return null;
+        }
         return $this->apiSuccessParam;
     }
 
-    /**
-     * @return array
-     */
-    public function getParam(): array
+    public function getParamTag(?string $name = null)
     {
+        if($name){
+            if(isset($this->param[$name])){
+                return $this->param[$name];
+            }
+            return null;
+        }
         return $this->param;
     }
 
