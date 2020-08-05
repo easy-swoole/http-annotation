@@ -7,6 +7,7 @@ namespace EasySwoole\HttpAnnotation;
 use EasySwoole\Component\Context\ContextManager;
 use EasySwoole\Component\Di as IOC;
 use EasySwoole\Http\AbstractInterface\Controller;
+use EasySwoole\HttpAnnotation\Annotation\MethodAnnotation;
 use EasySwoole\HttpAnnotation\Annotation\Parser;
 use EasySwoole\HttpAnnotation\Annotation\ParserInterface;
 use EasySwoole\HttpAnnotation\Annotation\PropertyAnnotation;
@@ -52,18 +53,20 @@ class AnnotationController extends Controller
         }
         //执行
         $actionName = $this->getActionName();
-        $allowMethodReflections = $this->getAllowMethodReflections();
+
         $forwardPath = null;
-        try {
-            $this->__handleAnnotationParams('onRequest');
+        try{
+            //执行一次onRequest
+            $this->__handleMethodAnnotation('onRequest');
             $ret = call_user_func([$this,'onRequest'],$actionName);
             if ($ret !== false) {
-                if (isset($allowMethodReflections[$actionName])) {
-                    $actionArgs = $this->__handleAnnotationParams($actionName);
-                    /** @var \ReflectionMethod $methodRef */
-                    $methodRef = $allowMethodReflections[$actionName];
+                $actionArgs = $this->__handleMethodAnnotation($actionName);
+                $allowMethodReflections = $this->getAllowMethodReflections();
+                if(isset($allowMethodReflections[$actionName])){
+                    /** @var \ReflectionMethod $ref */
+                    $ref = $this->getAllowMethodReflections()[$actionName];
                     $runArg = [];
-                    foreach ($methodRef->getParameters() as $parameter){
+                    foreach ($ref->getParameters() as $parameter){
                         $name = $parameter->getName();
                         if(isset($actionArgs[$name])){
                             $runArg[] = $actionArgs[$name];
@@ -71,10 +74,11 @@ class AnnotationController extends Controller
                             $runArg[] = $this->request()->getRequestParam($name);
                         }
                     }
-                    if(isset($annotations['CircuitBreaker'])){
-                        $breakerInfo = $annotations['CircuitBreaker'][0];
-                        $timeout = $breakerInfo->timeout;
-                        $failAction = $breakerInfo->failAction;
+                    /** @var MethodAnnotation $methodAnnotation */
+                    $methodAnnotation = $this->classAnnotation->getMethod($actionName);
+                    if($methodAnnotation->getCircuitBreakerTag()){
+                        $timeout = $methodAnnotation->getCircuitBreakerTag()->timeout;
+                        $failAction = $methodAnnotation->getCircuitBreakerTag()->failAction;
                         $channel = new Channel(1);
                         Coroutine::create(function ()use($channel,$actionName,$runArg){
                             /*
@@ -93,7 +97,7 @@ class AnnotationController extends Controller
                         }
                         if($ret === false){
                             if($failAction){
-                                $forwardPath =  $this->$failAction();
+                                $forwardPath = $this->$failAction();
                             }else{
                                 throw new ActionTimeout("action:{$actionName} timeout");
                             }
@@ -103,11 +107,11 @@ class AnnotationController extends Controller
                     }else{
                         $forwardPath = $this->$actionName(...array_values($runArg));
                     }
-                } else {
+                }else{
                     $forwardPath = $this->actionNotFound($actionName);
                 }
             }
-        } catch (\Throwable $throwable) {
+        }catch (\Throwable $throwable){
             //若没有重构onException，直接抛出给上层
             $this->onException($throwable);
         } finally {
@@ -126,54 +130,47 @@ class AnnotationController extends Controller
         return $forwardPath;
     }
 
-    protected function __handleAnnotationParams(?string $actionName):array
+    protected function __handleMethodAnnotation(?string $methodName):array
     {
-        if(isset($this->methodAnnotations[$actionName])){
-            $annotations = $this->methodAnnotations[$actionName];
-            //request method check
-            if(!empty($annotations['Method'])){
-                $method = $annotations['Method'][0]->allow;
-                if(!in_array($this->request()->getMethod(),$method)){
-                    throw new MethodNotAllow("request method {$this->request()->getMethod()} is not allow for action {$actionName} in class ".(static::class) );
+        $methodAnnotation = $this->classAnnotation->getMethod($methodName);
+        if($methodAnnotation instanceof MethodAnnotation){
+            //判断请求方法
+            if($methodAnnotation->getMethodTag()){
+                if(!in_array($this->request()->getMethod(),$methodAnnotation->getMethodTag()->allow)){
+                    throw new MethodNotAllow("request method {$this->request()->getMethod()} is not allow for action {$methodName} in class ".(static::class) );
                 }
             }
-            //params handler
+            //判断InjectParamsContext
             $injectKey = null;
             $filterNull = false;
             $filterEmpty = false;
-            if(!empty($annotations['InjectParamsContext'])){
-                $injectKey = $annotations['InjectParamsContext'][0]->key;
-                $filterNull = $annotations['InjectParamsContext'][0]->filterNull;
-                $filterEmpty = $annotations['InjectParamsContext'][0]->filterEmpty;
-            }
-            $actionArgs = [];
-            $params = [];
-            $validate = new Validate();
-            //校验合并
-            if(!empty($this->classAnnotation->getMethod($actionName)->getGroupInfo()->getApiGroupAuthTags())){
-                foreach ($this->classAnnotation->getMethod($actionName)->getGroupInfo()->getApiGroupAuthTags() as $param){
-                    $params[$param->name] = $param;
-                }
-            }
-            if(!empty($annotations['ApiAuth'])){
-                foreach ($annotations['ApiAuth'] as $param){
-                    $params[$param->name] = $param;
-                }
-            }
-            $realParams = [];
-            if(!empty($annotations['Param'])){
-                foreach ($annotations['Param'] as $param){
-                    $params[$param->name] = $param;
-                    $realParams[$param->name] = null;
-                }
+            if($methodAnnotation->getInjectParamsContextTag()){
+                $injectKey = $methodAnnotation->getInjectParamsContextTag()->key;
+                $filterNull = $methodAnnotation->getInjectParamsContextTag()->filterNull;
+                $filterEmpty = $methodAnnotation->getInjectParamsContextTag()->filterEmpty;
             }
 
+            //处理需要校验的参数
+            $allParamsData = [];
+            $validate = new Validate();
+            $validateParams = [];
+            //先找全局的权限定义
+            foreach ($this->classAnnotation->getGroupAuthTag() as $param){
+                $validateParams[$param->name] = $param;
+            }
+            //找出方法的apiAuth标签
+            foreach ($methodAnnotation->getApiAuth() as $param){
+                $validateParams[$param->name] = $param;
+            }
+            //找出方法的param标签
+            foreach ($methodAnnotation->getParamTag() as $param){
+                $validateParams[$param->name] = $param;
+            }
+            //进行校验
             /** @var Param $param */
-            foreach ($params as $param){
+            foreach ($validateParams as $param)
+            {
                 $paramName = $param->name;
-                if(empty($paramName)){
-                    throw new ParamError("param annotation error for action {$actionName} in class ".(static::class));
-                }
                 if(!empty($param->from)){
                     $value = null;
                     /*
@@ -234,7 +231,6 @@ class AnnotationController extends Controller
                 if($value !== null){
                     $value = $param->typeCast($value);
                 }
-
                 //如果参数不为null,执行预处理，并设置进去参数
                 if(!empty($param->preHandler) && $value !== null){
                     if(is_callable($param->preHandler)){
@@ -243,7 +239,7 @@ class AnnotationController extends Controller
                         throw new Exception("annotation param: {$paramName} preHandler is not callable");
                     }
                 }
-                $actionArgs[$paramName] = $value;
+                $allParamsData[$paramName] = $value;
                 if(!empty($param->validateRuleList)){
                     foreach ($param->validateRuleList as $rule => $none){
                         $validateArgs = $param->{$rule};
@@ -254,40 +250,37 @@ class AnnotationController extends Controller
                     }
                 }
             }
-
+            //执行校验
             //合并参数
-            $data = $actionArgs + $this->request()->getRequestParam();
+            $data = $allParamsData + $this->request()->getRequestParam();
             if(!$validate->validate($data)){
                 $ex = new ParamValidateError("validate fail for column {$validate->getError()->getField()}");
                 $ex->setValidate($validate);
                 throw $ex;
             }
-            //仅仅返回@Param所指定的参数
-            foreach ($realParams as $key => $value){
-                $realParams[$key] = $actionArgs[$key];
-            }
+            //仅仅返回所指定的注解参数
             if($injectKey){
                 if($filterNull){
-                    foreach ($realParams as $key => $arg){
+                    foreach ($allParamsData as $key => $arg){
                         if($arg === null){
-                            unset($realParams[$key]);
+                            unset($allParamsData[$key]);
                         }else if($filterEmpty){
                             if(empty($arg)){
-                                unset($realParams[$key]);
+                                unset($allParamsData[$key]);
                             }
                         }
 
                     }
                 }else if($filterEmpty){
-                    foreach ($actionArgs as $key => $arg){
+                    foreach ($allParamsData as $key => $arg){
                         if(empty($arg)){
-                            unset($realParams[$key]);
+                            unset($allParamsData[$key]);
                         }
                     }
                 }
-                ContextManager::getInstance()->set($injectKey,$realParams);
+                ContextManager::getInstance()->set($injectKey,$allParamsData);
             }
-            return $realParams;
+            return $allParamsData;
         }
         return [];
     }

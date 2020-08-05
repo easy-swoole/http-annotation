@@ -28,8 +28,8 @@ use EasySwoole\HttpAnnotation\AnnotationTag\Param;
  * @package EasySwoole\HttpAnnotation\Tests\TestController
  * @ApiGroupTag(groupName="GroupA")
  * @ApiGroupDescription("GroupA desc")
- * @ApiGroupAuth(name="groupParamA")
- * @ApiGroupAuth(name="groupParamB")
+ * @ApiGroupAuth(name="groupParamA",required="")
+ * @ApiGroupAuth(name="groupParamB",required="")
  */
 class ApiGroup extends AnnotationController
 {
@@ -68,6 +68,20 @@ class ApiGroup extends AnnotationController
     {
 
     }
+
+    function index()
+    {
+        $this->response()->write('index');
+    }
+
+    /**
+     * @Method(allow={POST})
+     */
+    function allowPostMethod()
+    {
+        $this->response()->write('allowPostMethod');
+    }
+
 
     protected function gc()
     {
