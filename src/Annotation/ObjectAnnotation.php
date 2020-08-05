@@ -20,11 +20,6 @@ class ObjectAnnotation extends AnnotationBean
 
     protected $__properties = [];
 
-    function addGroupAuthTag(ApiGroupAuth $apiGroupAuth):ObjectAnnotation
-    {
-        $this->apiGroupAuth[$apiGroupAuth->name] = $apiGroupAuth;
-        return $this;
-    }
 
     function getGroupAuthTag(?string $paramName = null)
     {
@@ -38,11 +33,7 @@ class ObjectAnnotation extends AnnotationBean
         }
     }
 
-    function addMethod(MethodAnnotation $method)
-    {
-        $this->__methods[$method->getMethodName()] = $method;
-        return $this;
-    }
+
 
     function addProperty(PropertyAnnotation $annotation)
     {
@@ -74,6 +65,12 @@ class ObjectAnnotation extends AnnotationBean
         }
     }
 
+    function addMethod(MethodAnnotation $method)
+    {
+        $this->__methods[$method->getMethodName()] = $method;
+        return $this;
+    }
+
     /**
      * @return ApiGroup|null
      */
@@ -83,27 +80,11 @@ class ObjectAnnotation extends AnnotationBean
     }
 
     /**
-     * @param ApiGroup|null $apiGroup
-     */
-    public function setApiGroupTag(?ApiGroup $apiGroup): void
-    {
-        $this->apiGroup = $apiGroup;
-    }
-
-    /**
      * @return ApiGroupDescription|null
      */
     public function getApiGroupDescriptionTag(): ?ApiGroupDescription
     {
         return $this->apiGroupDescription;
-    }
-
-    /**
-     * @param ApiGroupDescription|null $apiGroupDescription
-     */
-    public function setApiGroupDescriptionTag(?ApiGroupDescription $apiGroupDescription): void
-    {
-        $this->apiGroupDescription = $apiGroupDescription;
     }
 }
 

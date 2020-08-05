@@ -81,10 +81,10 @@ class Parser implements ParserInterface
             $objectAnnotation->addMethod($method);
         }
 
-        foreach ($reflectionClass->getProperties() as $propertyName => $property)
+        foreach ($reflectionClass->getProperties() as $property)
         {
             $tagList = $this->parser->getAnnotation($property);
-            $property = new PropertyAnnotation($propertyName);
+            $property = new PropertyAnnotation($property->getName());
             array_walk_recursive($tagList,function ($item)use($property){
                 $property->addAnnotationTag($item);
             });

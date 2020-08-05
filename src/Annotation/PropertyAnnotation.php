@@ -6,15 +6,12 @@ namespace EasySwoole\HttpAnnotation\Annotation;
 
 use EasySwoole\HttpAnnotation\AnnotationTag\Context;
 use EasySwoole\HttpAnnotation\AnnotationTag\Di;
-use EasySwoole\HttpAnnotation\AnnotationTag\InjectParamsContext;
 
 class PropertyAnnotation extends AnnotationBean
 {
     protected $name;
     /** @var Di|null */
     protected $di;
-    /** @var InjectParamsContext|null */
-    protected $injectParamsContext;
     /** @var Context|null */
     protected $context;
 
@@ -34,48 +31,18 @@ class PropertyAnnotation extends AnnotationBean
     /**
      * @return Di|null
      */
-    public function getDi(): ?Di
+    public function getDiTag(): ?Di
     {
         return $this->di;
     }
 
-    /**
-     * @param Di|null $di
-     */
-    public function setDi(?Di $di): void
-    {
-        $this->di = $di;
-    }
-
-    /**
-     * @return InjectParamsContext|null
-     */
-    public function getInjectParamsContext(): ?InjectParamsContext
-    {
-        return $this->injectParamsContext;
-    }
-
-    /**
-     * @param InjectParamsContext|null $injectParamsContext
-     */
-    public function setInjectParamsContext(?InjectParamsContext $injectParamsContext): void
-    {
-        $this->injectParamsContext = $injectParamsContext;
-    }
 
     /**
      * @return Context|null
      */
-    public function getContext(): ?Context
+    public function getContextTag(): ?Context
     {
         return $this->context;
     }
 
-    /**
-     * @param Context|null $context
-     */
-    public function setContext(?Context $context): void
-    {
-        $this->context = $context;
-    }
 }

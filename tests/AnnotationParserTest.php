@@ -7,6 +7,7 @@ namespace EasySwoole\HttpAnnotation\Tests;
 use EasySwoole\HttpAnnotation\Annotation\MethodAnnotation;
 use EasySwoole\HttpAnnotation\Annotation\ObjectAnnotation;
 use EasySwoole\HttpAnnotation\Annotation\Parser;
+use EasySwoole\HttpAnnotation\Annotation\PropertyAnnotation;
 use EasySwoole\HttpAnnotation\AnnotationTag\Api;
 use EasySwoole\HttpAnnotation\AnnotationTag\ApiAuth;
 use EasySwoole\HttpAnnotation\AnnotationTag\ApiDescription;
@@ -17,6 +18,8 @@ use EasySwoole\HttpAnnotation\AnnotationTag\ApiRequestExample;
 use EasySwoole\HttpAnnotation\AnnotationTag\ApiSuccess;
 use EasySwoole\HttpAnnotation\AnnotationTag\ApiSuccessParam;
 use EasySwoole\HttpAnnotation\AnnotationTag\CircuitBreaker;
+use EasySwoole\HttpAnnotation\AnnotationTag\Context;
+use EasySwoole\HttpAnnotation\AnnotationTag\Di;
 use EasySwoole\HttpAnnotation\AnnotationTag\InjectParamsContext;
 use EasySwoole\HttpAnnotation\AnnotationTag\Method;
 use EasySwoole\HttpAnnotation\AnnotationTag\Param;
@@ -171,5 +174,34 @@ class AnnotationParserTest extends TestCase
         $this->assertEquals(2,count($func->getParamTag()));
         $this->assertInstanceOf(Param::class,$func->getParamTag('param1'));
         $this->assertEquals('param1',$func->getParamTag('param1')->name);
+    }
+
+    function testProperty()
+    {
+        /** @var PropertyAnnotation $di */
+        $di = $this->apiGroup->getProperty('di');
+        $this->assertInstanceOf(PropertyAnnotation::class,$di);
+        $this->assertEquals('di',$di->getName());
+
+        /** @var PropertyAnnotation $context */
+        $context = $this->apiGroup->getProperty('context');
+        $this->assertInstanceOf(PropertyAnnotation::class,$context);
+        $this->assertEquals('context',$context->getName());
+    }
+
+    function testDi()
+    {
+        /** @var PropertyAnnotation $di */
+        $di = $this->apiGroup->getProperty('di');
+        $this->assertInstanceOf(Di::class,$di->getDiTag());
+        $this->assertEquals('di',$di->getDiTag()->key);
+    }
+
+    function testContext()
+    {
+        /** @var PropertyAnnotation $context */
+        $context = $this->apiGroup->getProperty('context');
+        $this->assertInstanceOf(Context::class,$context->getContextTag());
+        $this->assertEquals('context',$context->getContextTag()->key);
     }
 }
