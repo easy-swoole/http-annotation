@@ -37,11 +37,11 @@ class ApiGroup extends AnnotationController
     /**
      * @Di(key="di")
      */
-    protected $di;
+    public $di;
     /**
      * @Context(key="context")
      */
-    protected $context;
+    public $context;
 
     /**
      * @Api(path="/apiGroup/func",name="func")
@@ -67,5 +67,10 @@ class ApiGroup extends AnnotationController
     function func()
     {
 
+    }
+
+    protected function gc()
+    {
+        //不调用父类重置成员属性，方便单元测试
     }
 }
