@@ -14,7 +14,6 @@ use EasySwoole\HttpAnnotation\Annotation\PropertyAnnotation;
 use EasySwoole\HttpAnnotation\AnnotationTag\Param;
 use EasySwoole\HttpAnnotation\Exception\Annotation\ActionTimeout;
 use EasySwoole\HttpAnnotation\Exception\Annotation\MethodNotAllow;
-use EasySwoole\HttpAnnotation\Exception\Annotation\ParamError;
 use EasySwoole\HttpAnnotation\Exception\Annotation\ParamValidateError;
 use EasySwoole\HttpAnnotation\Exception\Exception;
 use EasySwoole\Validate\Validate;
