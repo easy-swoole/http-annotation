@@ -98,6 +98,11 @@ class AnnotationControllerTest extends TestCase
         $this->assertEquals('exp',$response->getBody()->__tostring());
     }
 
+    function testInjectParam()
+    {
+
+    }
+
     function testAllowPostMethod()
     {
         try {
