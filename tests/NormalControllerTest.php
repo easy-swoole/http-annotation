@@ -4,11 +4,10 @@
 namespace EasySwoole\HttpAnnotation\Tests;
 
 
-use EasySwoole\HttpAnnotation\AnnotationTag\Di;
-use EasySwoole\HttpAnnotation\Tests\TestController\NoneAnnotation;
+use EasySwoole\HttpAnnotation\Tests\TestController\Normal;
 use PHPUnit\Framework\TestCase;
 
-class NoneAnnotationControllerTest extends TestCase
+class NormalControllerTest extends TestCase
 {
     use ControllerBase;
 
@@ -17,7 +16,7 @@ class NoneAnnotationControllerTest extends TestCase
     function setUp()
     {
         parent::setUp();
-        $this->controller = new NoneAnnotation();
+        $this->controller = new Normal();
     }
 
     function testIndex()
@@ -85,5 +84,4 @@ class NoneAnnotationControllerTest extends TestCase
         \EasySwoole\Component\Di::getInstance()->set('afterAction',null);
 
     }
-
 }

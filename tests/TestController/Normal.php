@@ -5,9 +5,9 @@ namespace EasySwoole\HttpAnnotation\Tests\TestController;
 
 
 use EasySwoole\Component\Di;
-use EasySwoole\HttpAnnotation\AnnotationController;
+use EasySwoole\Http\AbstractInterface\Controller;
 
-class NoneAnnotation extends AnnotationController
+class Normal extends Controller
 {
     public $gc = 1;
 

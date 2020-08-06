@@ -14,6 +14,8 @@ use PHPUnit\Framework\TestCase;
 
 class AnnotationControllerTest extends TestCase
 {
+    use ControllerBase;
+
     protected $controller;
 
     function setUp()
@@ -124,37 +126,6 @@ class AnnotationControllerTest extends TestCase
         $request =  $this->fakeRequest('/allowPostMethod',null,['data'=>1]);
         $this->controller->__hook('allowPostMethod', $request, $response);
         $this->assertEquals('allowPostMethod',$response->getBody()->__tostring());
-    }
-
-
-    protected function fakeRequest(string $requestPath = '/',array $query = null,array $post = []):Request
-    {
-        if($query === null){
-            $query = [
-                "groupParamA"=>"groupParamA",
-                'groupParamB'=>"groupParamB"
-            ];
-        }else if(!empty($query)){
-            $query = $query + [
-                    "groupParamA"=>"groupParamA",
-                    'groupParamB'=>"groupParamB"
-                ];
-        }
-        $request = new Request();
-        $request->getUri()->withPath($requestPath);
-        //全局的参数
-        $request->withQueryParams($query);
-        if(!empty($post)){
-            $request->withMethod('POST')->withParsedBody($post);
-        }else{
-            $request->withMethod('GET');
-        }
-        return $request;
-    }
-
-    protected function fakeResponse():Response
-    {
-        return new Response();
     }
 
 }
