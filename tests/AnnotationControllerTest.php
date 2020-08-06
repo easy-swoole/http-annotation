@@ -98,9 +98,18 @@ class AnnotationControllerTest extends TestCase
         $this->assertEquals('exp',$response->getBody()->__tostring());
     }
 
-    function testInjectParam()
+    function testInjectParam1()
     {
+        $response = $this->fakeResponse();
+        $this->controller->__hook('injectParam1',$this->fakeRequest('/',null,['param1'=>"param1"]),$response);
+        $this->assertEquals('groupParamA|groupParamB|param1',$response->getBody()->__tostring());
+    }
 
+    function testInjectParam2()
+    {
+        $response = $this->fakeResponse();
+        $this->controller->__hook('injectParam2',$this->fakeRequest('/',null,['param1'=>"param1"]),$response);
+        $this->assertEquals('param1',$response->getBody()->__tostring());
     }
 
     function testAllowPostMethod()

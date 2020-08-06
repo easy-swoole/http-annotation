@@ -143,10 +143,13 @@ class AnnotationController extends Controller
             $injectKey = null;
             $filterNull = false;
             $filterEmpty = false;
+            $onlyParamTag = true;
+            $methodParams = [];
             if($methodAnnotation->getInjectParamsContextTag()){
                 $injectKey = $methodAnnotation->getInjectParamsContextTag()->key;
                 $filterNull = $methodAnnotation->getInjectParamsContextTag()->filterNull;
                 $filterEmpty = $methodAnnotation->getInjectParamsContextTag()->filterEmpty;
+                $onlyParamTag = $methodAnnotation->getInjectParamsContextTag()->onlyParamTag;
             }
 
             //处理需要校验的参数
@@ -164,6 +167,7 @@ class AnnotationController extends Controller
             //找出方法的param标签
             foreach ($methodAnnotation->getParamTag() as $param){
                 $validateParams[$param->name] = $param;
+                $methodParams[$param->name] = true;
             }
             //进行校验
             /** @var Param $param */
@@ -260,6 +264,10 @@ class AnnotationController extends Controller
             //仅仅返回所指定的注解参数
             if($injectKey){
                 foreach ($allParamsData as $key => $arg){
+                    if($onlyParamTag && (!isset($methodParams[$key]))){
+                        unset($allParamsData[$key]);
+                        continue;
+                    }
                     if($filterNull && $arg === null){
                         unset($allParamsData[$key]);
                         continue;
@@ -270,6 +278,7 @@ class AnnotationController extends Controller
                 }
                 ContextManager::getInstance()->set($injectKey,$allParamsData);
             }
+
             return $allParamsData;
         }
         return [];

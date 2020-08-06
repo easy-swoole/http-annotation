@@ -4,6 +4,7 @@
 namespace EasySwoole\HttpAnnotation\Tests\TestController;
 
 
+use EasySwoole\Component\Context\ContextManager;
 use EasySwoole\HttpAnnotation\AnnotationController;
 use EasySwoole\HttpAnnotation\AnnotationTag\Api;
 use EasySwoole\HttpAnnotation\AnnotationTag\ApiAuth;
@@ -134,6 +135,24 @@ class Annotation extends AnnotationController
     function paramExport2($groupParamA,$exp)
     {
         $this->response()->write($exp);
+    }
+
+    /**
+     * @Param(name="param1",required="")
+     * @InjectParamsContext(key="data",onlyParamTag=false);
+     */
+    function injectParam1()
+    {
+        $this->response()->write(implode("|",ContextManager::getInstance()->get('data')));
+    }
+
+    /**
+     * @Param(name="param1",required="")
+     * @InjectParamsContext(key="data");
+     */
+    function injectParam2()
+    {
+        $this->response()->write(implode("|",ContextManager::getInstance()->get('data')));
     }
 
     protected function gc()

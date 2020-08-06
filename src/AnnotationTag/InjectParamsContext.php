@@ -12,6 +12,9 @@ use EasySwoole\Annotation\AbstractAnnotationTag;
 class InjectParamsContext extends AbstractAnnotationTag
 {
     public $key = 'INJECT_PARAMS';
+
+    public $onlyParamTag = true;
+
     /**
      * @var bool
      */
