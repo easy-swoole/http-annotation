@@ -26,6 +26,11 @@ class Scanner
         return $this->parser->parseObject($ref);
     }
 
+    function annotationToMd(ObjectAnnotation  $annotation):string
+    {
+
+    }
+
     public static function getFileDeclaredClass(string $file):?string
     {
         $namespace = '';
