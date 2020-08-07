@@ -7,6 +7,7 @@ namespace EasySwoole\HttpAnnotation\Utility;
 use EasySwoole\HttpAnnotation\Annotation\ObjectAnnotation;
 use EasySwoole\HttpAnnotation\Annotation\Parser;
 use EasySwoole\HttpAnnotation\Annotation\ParserInterface;
+use FastRoute\RouteCollector;
 
 class Scanner
 {
@@ -26,9 +27,32 @@ class Scanner
         return $this->parser->parseObject($ref);
     }
 
-    function annotationToMd(ObjectAnnotation  $annotation):string
+    function mappingRouter(RouteCollector $routeCollector,string $controllerPath,string $controllerNameSpace = 'App\\HttpController\\')
     {
+        //用于psr规范去除命名空间
+//        $prefixLen = strlen(trim($controllerNameSpace,'\\'));
+//        $annotations = static::getPathAllAnnotations($controllerPath);
+//        foreach ($annotations as $class => $classAnnotation){
+//            foreach ($classAnnotation as $methodName => $annotation){
+//                if(isset($annotation['Api'][0]) && !empty($annotation['Api'][0]->path)){
+//                    /** @var Api $api */
+//                    $api = $annotation['Api'][0];
+//                    if(isset($annotation['Method'][0])){
+//                        $method = $annotation['Method'][0]->allow;
+//                    }else{
+//                        $method = ['POST','GET','PUT','PATCH','DELETE','HEAD','OPTIONS'];
+//                    }
+//                    $realPath = '/'.substr($class,$prefixLen + 1).'/'.$methodName;
+//                    $collector->addRoute($method,UrlParser::pathInfo($api->path),$realPath);
+//                }
+//            }
+//        }
+    }
 
+    function scanAnnotations(string $pathOrFile):array
+    {
+        $ret = [];
+        return $ret;
     }
 
     public static function getFileDeclaredClass(string $file):?string
