@@ -49,6 +49,11 @@ class Normal extends Controller
         new AAAAAAAAAAA();
     }
 
+    protected function classParser()
+    {
+        $this->response()->write(Annotation::class);
+    }
+
 
     protected function onException(\Throwable $throwable): void
     {
