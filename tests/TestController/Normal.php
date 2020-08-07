@@ -51,7 +51,12 @@ class Normal extends Controller
 
     protected function classParser()
     {
-        $this->response()->write(Annotation::class);
+        $class = Annotation::class;
+        if($class){
+            $this->response()->write($class);
+        }
+        $this->response()->write('none');
+
     }
 
 

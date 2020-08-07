@@ -4,8 +4,28 @@
 namespace EasySwoole\HttpAnnotation\Utility;
 
 
+use EasySwoole\HttpAnnotation\Annotation\ObjectAnnotation;
+use EasySwoole\HttpAnnotation\Annotation\Parser;
+use EasySwoole\HttpAnnotation\Annotation\ParserInterface;
+
 class Scanner
 {
+    protected $parser;
+
+    function __construct(ParserInterface $parser = null)
+    {
+        if(!$parser){
+            $parser = new Parser();
+        }
+        $this->parser = $parser;
+    }
+
+    function getObjectAnnotation(string $class):ObjectAnnotation
+    {
+        $ref = new \ReflectionClass($class);
+        return $this->parser->parseObject($ref);
+    }
+
     public static function getFileDeclaredClass(string $file):?string
     {
         $namespace = '';
