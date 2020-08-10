@@ -45,8 +45,5 @@ class Api extends AbstractAnnotationTag
         if(empty($this->name)){
             throw new InvalidTag("name for Api tag is require");
         }
-        if(empty($this->path)){
-            throw new InvalidTag("path for Api tag is require");
-        }
     }
 }
