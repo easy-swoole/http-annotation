@@ -31,6 +31,9 @@ class AnnotationDoc
                 $group = 'default';
             }
             $groupList[$group] = [];
+            if(!isset($groupList[$groupList])){
+
+            }
         }
     }
 }
