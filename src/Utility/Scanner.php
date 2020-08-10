@@ -16,7 +16,7 @@ class Scanner
 {
     protected $parser;
 
-    function __construct(ParserInterface $parser = null)
+    function __construct(?ParserInterface $parser = null)
     {
         if(!$parser){
             $parser = new Parser();
@@ -60,14 +60,14 @@ class Scanner
         }
     }
 
-    function scanAnnotations(string $pathOrFile):array
+    function scanAnnotations(string $dirOrFile):array
     {
         $ret = [];
         $files = [];
-        if(!is_dir($pathOrFile)){
-            $files[] = $pathOrFile;
+        if(!is_dir($dirOrFile)){
+            $files[] = $dirOrFile;
         }else{
-            $files = File::scanDirectory($pathOrFile)['files'];
+            $files = File::scanDirectory($dirOrFile)['files'];
         }
         foreach ($files as $file)
         {
