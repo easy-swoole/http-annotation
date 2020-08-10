@@ -6,6 +6,7 @@ namespace EasySwoole\HttpAnnotation\Tests\TestController;
 
 use EasySwoole\Component\Di;
 use EasySwoole\HttpAnnotation\AnnotationController;
+use EasySwoole\HttpAnnotation\AnnotationTag\Api;
 
 class NoneAnnotation extends AnnotationController
 {
@@ -43,6 +44,9 @@ class NoneAnnotation extends AnnotationController
         $this->response()->write(404);
     }
 
+    /**
+     * @Api(path="/testR",name="exec")
+     */
     function exception()
     {
         $this->gc = time();

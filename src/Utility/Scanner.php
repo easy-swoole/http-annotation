@@ -64,7 +64,7 @@ class Scanner
     {
         $ret = [];
         $files = [];
-        if(file_exists($pathOrFile)){
+        if(!is_dir($pathOrFile)){
             $files[] = $pathOrFile;
         }else{
             $files = File::scanDirectory($pathOrFile)['files'];
@@ -93,7 +93,6 @@ class Scanner
                     }
                 }
             }
-
             if ($tokens[$i][0] === T_CLASS) {
                 for ($j = $i + 1; $j < count($tokens); $j++) {
                     if ($tokens[$j] === '{') {
