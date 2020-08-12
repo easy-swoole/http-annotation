@@ -24,6 +24,11 @@ class Api extends AbstractAnnotationTag
     public $name;
 
     /**
+     * @var string
+     */
+    public $description;
+
+    /**
      * @var bool
      */
     public $deprecated;

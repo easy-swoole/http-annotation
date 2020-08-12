@@ -84,7 +84,13 @@ class AnnotationDoc
                     $markdown .= "<h2 class='api-method {$currentGroupName}' id='{$currentGroupName}-{$methodName}'>{$methodName}{$deprecated}</h2>{$this->CLRF}";
 
                     $markdown .= "<h4 class='method-description'>接口说明</h4>{$this->CLRF}";
-                    $description = $this->parseDescTagContent($method->getApiDescriptionTag());
+                    //兼容api指定
+                    if($method->getApiDescriptionTag()){
+                        $description = $this->parseDescTagContent($method->getApiDescriptionTag());
+                    }else{
+                        $description = $apiTag->description;
+                    }
+
                     $markdown .= "{$description}{$this->CLRF}";
 
                     $markdown .= "<h3 class='request-part'>请求</h3>{$this->CLRF}";
