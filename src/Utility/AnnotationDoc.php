@@ -224,7 +224,7 @@ class AnnotationDoc
                 }else{
                     $description = '-';
                 }
-                $rule = json_encode($param->validateRuleList, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
+                $rule = implode(',',array_keys($param->validateRuleList));
                 $markdown .= "| {$param->name} |  {$from}  | {$type} | {$description} | {$rule} |\n";
             }
             $markdown .= "\n\n";
