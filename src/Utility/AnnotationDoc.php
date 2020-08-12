@@ -87,8 +87,11 @@ class AnnotationDoc
                     //兼容api指定
                     if($method->getApiDescriptionTag()){
                         $description = $this->parseDescTagContent($method->getApiDescriptionTag());
-                    }else{
+                    }else if(!empty($apiTag->description)){
+                        trigger_error('@Api tag description property is deprecated,use @ApiDescription tag instead',E_USER_DEPRECATED);
                         $description = $apiTag->description;
+                    }else{
+                        $description = '暂无描述';
                     }
 
                     $markdown .= "{$description}{$this->CLRF}";
