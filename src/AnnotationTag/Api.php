@@ -22,10 +22,7 @@ class Api extends AbstractAnnotationTag
      * @var string
      */
     public $name;
-    /**
-     * @var string
-     */
-    public $description;
+
     /**
      * @var bool
      */
