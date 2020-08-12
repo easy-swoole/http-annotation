@@ -4,7 +4,6 @@
 namespace EasySwoole\HttpAnnotation\Annotation;
 
 use EasySwoole\HttpAnnotation\AnnotationTag\ApiGroup;
-use EasySwoole\HttpAnnotation\AnnotationTag\ApiGroupAuth;
 use EasySwoole\HttpAnnotation\AnnotationTag\ApiGroupDescription;
 
 class ObjectAnnotation extends AnnotationBean

@@ -102,6 +102,7 @@ class Annotation extends AnnotationController
     }
 
     /**
+     * @Api(name="param2",path="/param2")
      * @Param(name="param1",required="",integer="")
      * @Param(name="param2",required="",integer="")
      */

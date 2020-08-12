@@ -9,18 +9,31 @@ use EasySwoole\HttpAnnotation\Annotation\ObjectAnnotation;
 use EasySwoole\HttpAnnotation\Annotation\ParserInterface;
 use EasySwoole\HttpAnnotation\AnnotationTag\ApiDescription;
 use EasySwoole\HttpAnnotation\AnnotationTag\Param;
+use EasySwoole\HttpAnnotation\Exception\Exception;
 
 class AnnotationDoc
 {
     private $scanner;
-    private $CLRF = '\n\n';
+    private $CLRF = "\n\n";
 
     function __construct(?ParserInterface $parser = null)
     {
         $this->scanner = new Scanner($parser);
     }
 
-    function render2Markdown($dirOrFile):array
+    function scan2Html(string $dirOrFile,?string $extMd = null)
+    {
+        $info = $this->scan2Markdown($dirOrFile);
+        if(empty($info)){
+            throw new Exception('none doc info');
+        }else{
+            $md = $info['markdown'];
+            $md = "{$extMd}{$this->CLRF}{$md}";
+            return str_replace('{$rawMd}',$md,file_get_contents(__DIR__ . "/docPage.tpl"));
+        }
+    }
+
+    function scan2Markdown(string $dirOrFile):array
     {
         $groupList = [];
         $list = $this->scanner->scanAnnotations($dirOrFile);
