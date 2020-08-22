@@ -214,8 +214,8 @@ class AnnotationDoc
     {
         $markdown = '';
         if (!empty($params)) {
-            $markdown .= "| 字段 | 来源 | 类型 | 描述 | 验证规则 |\n";
-            $markdown .= "| ---- | ---- | ---- | ---- | ---- |\n";
+            $markdown .= "| 字段 | 来源 | 类型 | 描述 | 验证规则 | 忽略Action |\n";
+            $markdown .= "| ---- | ---- | ---- | ---- | ---- | ---- |\n";
             /** @var Param $param */
             foreach ($params as $param) {
                 if(!empty($param->type)){
@@ -234,7 +234,14 @@ class AnnotationDoc
                     $description = '-';
                 }
                 $rule = implode(',',array_keys($param->validateRuleList));
-                $markdown .= "| {$param->name} |  {$from}  | {$type} | {$description} | {$rule} |\n";
+                if(empty($rule)){
+                    $rule = '-';
+                }
+                $ingoreAction = implode(',',$param->ignoreAction);
+                if(empty($ingoreAction)){
+                    $ingoreAction = '-';
+                }
+                $markdown .= "| {$param->name} |  {$from}  | {$type} | {$description} | {$rule} | {$ingoreAction} |\n";
             }
             $markdown .= "\n\n";
         }
