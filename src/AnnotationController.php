@@ -173,6 +173,9 @@ class AnnotationController extends Controller
             /** @var Param $param */
             foreach ($validateParams as $param)
             {
+                if(in_array($methodName,$param->ignoreAction)){
+                    continue;
+                }
                 $paramName = $param->name;
                 if(!empty($param->from)){
                     $value = null;
