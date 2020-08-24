@@ -34,6 +34,11 @@ class Parser implements ParserInterface
             static::preDefines([
                 "POST" => "POST",
                 "GET" => "GET",
+                "PUT" => "PUT",
+                "DELETE" => "DELETE",
+                "PATCH" => "PATCH",
+                "HEAD" => "HEAD",
+                "OPTIONS" => "OPTIONS",
                 'COOKIE' => 'COOKIE',
                 'HEADER' => 'HEADER',
                 'FILE' => 'FILE',
