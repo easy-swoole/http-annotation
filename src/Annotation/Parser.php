@@ -19,6 +19,7 @@ use EasySwoole\HttpAnnotation\AnnotationTag\ApiSuccessParam;
 use EasySwoole\HttpAnnotation\AnnotationTag\CircuitBreaker;
 use EasySwoole\HttpAnnotation\AnnotationTag\Context;
 use EasySwoole\HttpAnnotation\AnnotationTag\Di;
+use EasySwoole\HttpAnnotation\AnnotationTag\Inject;
 use EasySwoole\HttpAnnotation\AnnotationTag\InjectParamsContext;
 use EasySwoole\HttpAnnotation\AnnotationTag\Method;
 use EasySwoole\HttpAnnotation\AnnotationTag\Param;
@@ -60,6 +61,7 @@ class Parser implements ParserInterface
             $annotation->addParserTag(new CircuitBreaker());
             $annotation->addParserTag(new Context());
             $annotation->addParserTag(new Di());
+            $annotation->addParserTag(new Inject());
             $annotation->addParserTag(new InjectParamsContext());
             $annotation->addParserTag(new Method());
             $annotation->addParserTag(new Param());

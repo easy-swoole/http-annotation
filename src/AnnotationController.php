@@ -44,10 +44,11 @@ class AnnotationController extends Controller
             if($propertyAnnotation->getContextTag()){
                 $contextKey = $propertyAnnotation->getContextTag()->key;
                 $this->{$name} = ContextManager::getInstance()->get($contextKey);
-            }
-            if($propertyAnnotation->getDiTag()){
+            }else if($propertyAnnotation->getDiTag()){
                 $key = $propertyAnnotation->getDiTag()->key;
                 $this->{$name} = IOC::getInstance()->get($key);
+            }else if($propertyAnnotation->getInjectTag()){
+                var_dump($propertyAnnotation->getInjectTag());
             }
         }
         //执行

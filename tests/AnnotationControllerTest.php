@@ -18,7 +18,7 @@ class AnnotationControllerTest extends TestCase
 
     protected $controller;
 
-    function setUp()
+    protected function setUp():void
     {
         parent::setUp();
         $this->controller = new Annotation();

@@ -6,6 +6,7 @@ namespace EasySwoole\HttpAnnotation\Annotation;
 
 use EasySwoole\HttpAnnotation\AnnotationTag\Context;
 use EasySwoole\HttpAnnotation\AnnotationTag\Di;
+use EasySwoole\HttpAnnotation\AnnotationTag\Inject;
 
 class PropertyAnnotation extends AnnotationBean
 {
@@ -14,6 +15,11 @@ class PropertyAnnotation extends AnnotationBean
     protected $di;
     /** @var Context|null */
     protected $context;
+
+    /**
+     * @var Inject|null
+     */
+    protected $inject;
 
     function __construct(string $name)
     {
@@ -34,6 +40,11 @@ class PropertyAnnotation extends AnnotationBean
     public function getDiTag(): ?Di
     {
         return $this->di;
+    }
+
+    public function getInjectTag():?Inject
+    {
+        return $this->inject;
     }
 
 
