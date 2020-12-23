@@ -81,7 +81,7 @@ class AnnotationDoc
                     if($apiTag->deprecated){
                         $deprecated .= "<sup class='deprecated'>已废弃</sup>";
                     }
-                    $markdown .= "<h2 class='api-method {$currentGroupName}' id='{$currentGroupName}-{$methodName}'>{$methodName}{$deprecated}</h2>{$this->CLRF}";
+                    $markdown .= "<h2 class='api-method {$currentGroupName}' id='{$currentGroupName}-{$methodName}'>{$apiTag->name}{$deprecated}</h2>{$this->CLRF}";
 
                     $markdown .= "<h4 class='method-description'>接口说明</h4>{$this->CLRF}";
                     //兼容api指定
