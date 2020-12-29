@@ -48,7 +48,8 @@ class AnnotationController extends Controller
                 $key = $propertyAnnotation->getDiTag()->key;
                 $this->{$name} = IOC::getInstance()->get($key);
             }else if($propertyAnnotation->getInjectTag()){
-                var_dump($propertyAnnotation->getInjectTag());
+                $injectTag = $propertyAnnotation->getInjectTag();
+                $this->{$name} = new $injectTag->className(...$injectTag->args);
             }
         }
         //执行

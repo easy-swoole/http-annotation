@@ -47,7 +47,8 @@ class Annotation extends AnnotationController
     public $context;
 
     /**
-     * @Inject()
+     * @var Test $inject
+     * @Inject(className="\EasySwoole\HttpAnnotation\Tests\TestController\Test", args={1,{1,2}})
      */
     public $inject;
 
@@ -160,6 +161,21 @@ class Annotation extends AnnotationController
     function injectParam2()
     {
         $this->response()->write(implode("|",ContextManager::getInstance()->get('data')));
+    }
+
+    public function inject()
+    {
+        $this->response()->write($this->inject->index());
+    }
+
+    public function injectGetString()
+    {
+        $this->response()->write($this->inject->getString());
+    }
+
+    public function injectGetArray()
+    {
+        $this->response()->write(json_encode($this->inject->getArray()));
     }
 
     protected function gc()
