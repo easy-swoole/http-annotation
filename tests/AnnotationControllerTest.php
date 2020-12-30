@@ -141,7 +141,7 @@ class AnnotationControllerTest extends TestCase
 
         $response = $this->fakeResponse();
         $this->controller->__hook('injectGetArray', $this->fakeRequest(), $response);
-        $this->assertEquals(1, $response->getBody()->__tostring());
+        $this->assertEquals('[1,2]', $response->getBody()->__tostring());
     }
 
 }
