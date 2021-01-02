@@ -22,6 +22,7 @@
         "easyswoole/http": "^1.7",
         "easyswoole/annotation": "^2.0",
         "easyswoole/parsedown": "^1.0",
+        "easyswoole/component": "^2.2",
         "ext-json": "*",
         "easyswoole/validate": "^1.2",
         "ext-libxml": "*",

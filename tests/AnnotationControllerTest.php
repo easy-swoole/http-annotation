@@ -117,15 +117,31 @@ class AnnotationControllerTest extends TestCase
     function testAllowPostMethod()
     {
         try {
-            $this->controller->__hook('allowPostMethod',$this->fakeRequest(),$this->fakeResponse());
-        }catch (\Throwable $throwable){
-            $this->assertInstanceOf(MethodNotAllow::class,$throwable);
+            $this->controller->__hook('allowPostMethod', $this->fakeRequest(), $this->fakeResponse());
+        } catch (\Throwable $throwable) {
+            $this->assertInstanceOf(MethodNotAllow::class, $throwable);
         }
 
         $response = $this->fakeResponse();
-        $request =  $this->fakeRequest('/allowPostMethod',null,['data'=>1]);
+        $request = $this->fakeRequest('/allowPostMethod', null, ['data' => 1]);
         $this->controller->__hook('allowPostMethod', $request, $response);
-        $this->assertEquals('allowPostMethod',$response->getBody()->__tostring());
+        $this->assertEquals('allowPostMethod', $response->getBody()->__tostring());
+    }
+
+    function testInject()
+    {
+        $response = $this->fakeResponse();
+        $this->controller->__hook('inject', $this->fakeRequest(), $response);
+        $this->assertEquals('inject test class -> index',$response->getBody()->__toString());
+
+        $response = $this->fakeResponse();
+        $this->controller->__hook('injectGetString', $this->fakeRequest(), $response);
+        $this->assertEquals(1, $response->getBody()->__tostring());
+
+
+        $response = $this->fakeResponse();
+        $this->controller->__hook('injectGetArray', $this->fakeRequest(), $response);
+        $this->assertEquals('[1,2]', $response->getBody()->__tostring());
     }
 
 }
