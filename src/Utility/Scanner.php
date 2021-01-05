@@ -71,7 +71,17 @@ class Scanner
         }
         foreach ($files as $file)
         {
+            $fileExtension = pathinfo($file)['extension'] ?? '';
+
+            if (!$fileExtension || $fileExtension !== 'php') {
+                continue;
+            }
+
             $class = static::getFileDeclaredClass($file);
+            if (!$class) {
+                continue;
+            }
+
             $ret[$class] = $this->getObjectAnnotation($class);
         }
         return $ret;
