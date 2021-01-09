@@ -46,27 +46,33 @@ class AnnotationDoc
             }else{
                 $currentGroupName = 'default';
             }
-            //第一次构建分组信息
+            //第一次构建分全局信息
             if(!isset($groupList[$currentGroupName])){
                 $groupList[$currentGroupName] = [];
                 $markdown .= "<h1 class='group-title' id='{$currentGroupName}'>{$currentGroupName}</h1>{$this->CLRF}";
                 $groupDescTag = $objectAnnotation->getApiGroupDescriptionTag();
                 if($groupDescTag){
-                    $markdown .= "<h3 class='group-description'>组描述</h3>{$this->CLRF}";
+                    $markdown .= "<h3 class='group-description'>全局描述</h3>{$this->CLRF}";
                     $description = $this->parseDescTagContent($groupDescTag);
                     $markdown .= $description."{$this->CLRF}";
                 }
-
+                
+                
+                $onRequest = $objectAnnotation->getMethod('onRequest');
                 $groupAuthTagList = $objectAnnotation->getGroupAuthTag();
+                $paramTags = $objectAnnotation->getParamTag();
+                if($onRequest instanceof MethodAnnotation){
+                    //TODO 合并onRequest中的ApiAuth与Param标签到下面的$groupAuthTagList与$paramTags
+                }
+                
                 if(!empty($groupAuthTagList)){
-                    $markdown .= "<h3 class='group-auth'>组权限说明</h3>{$this->CLRF}";
+                    $markdown .= "<h3 class='group-auth'>全局权限说明</h3>{$this->CLRF}";
                     $markdown .= $this->buildParamMarkdown($groupAuthTagList);
                 }
-
-                $params = $objectAnnotation->getParamTag();
-                if(!empty($params)){
-                    $markdown .= "<h3 class='group-param'>参数说明</h3>{$this->CLRF}";
-                    $markdown .= $this->buildParamMarkdown($params);
+                
+                if(!empty($paramTags)){
+                    $markdown .= "<h3 class='group-param'>全局参数说明</h3>{$this->CLRF}";
+                    $markdown .= $this->buildParamMarkdown($paramTags);
                 }
 
                 $markdown .= "<hr class='group-hr'/>{$this->CLRF}";
