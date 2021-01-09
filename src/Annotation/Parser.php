@@ -45,7 +45,8 @@ class Parser implements ParserInterface
                 'FILE' => 'FILE',
                 'DI' => 'DI',
                 'CONTEXT' => 'CONTEXT',
-                'RAW' => 'RAW'
+                'RAW' => 'RAW',
+                'JSON'=>'JSON'
             ]);
             $annotation->addParserTag(new Api());
             $annotation->addParserTag(new ApiAuth());
