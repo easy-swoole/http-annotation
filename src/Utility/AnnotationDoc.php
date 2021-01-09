@@ -63,6 +63,12 @@ class AnnotationDoc
                     $markdown .= $this->buildParamMarkdown($groupAuthTagList);
                 }
 
+                $params = $objectAnnotation->getParamTag();
+                if(!empty($params)){
+                    $markdown .= "<h3 class='group-param'>参数说明</h3>{$this->CLRF}";
+                    $markdown .= $this->buildParamMarkdown($params);
+                }
+
                 $markdown .= "<hr class='group-hr'/>{$this->CLRF}";
             }
 
