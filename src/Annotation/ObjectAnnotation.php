@@ -15,6 +15,8 @@ class ObjectAnnotation extends AnnotationBean
 
     protected $apiGroupAuth = [];
 
+    protected $param = [];
+
     protected $__methods = [];
 
     protected $__properties = [];
@@ -32,7 +34,17 @@ class ObjectAnnotation extends AnnotationBean
         }
     }
 
-
+    public function getParamTag(?string $paramName = null)
+    {
+        if($paramName){
+            if(isset($this->param[$paramName])){
+                return $this->param[$paramName];
+            }
+            return null;
+        }else{
+            return $this->param;
+        }
+    }
 
     function addProperty(PropertyAnnotation $annotation)
     {
