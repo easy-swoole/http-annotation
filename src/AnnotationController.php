@@ -172,6 +172,7 @@ class AnnotationController extends Controller
                 $methodParams[$param->name] = true;
             }
             //进行校验
+            $requestJson = null;
             /** @var Param $param */
             foreach ($validateParams as $param)
             {
@@ -222,6 +223,17 @@ class AnnotationController extends Controller
                             case 'RAW':{
                                 $value = $this->request()->getBody()->__toString();
                                 break;
+                            }
+                            case 'JSON':{
+                                if($requestJson === null){
+                                    $requestJson = json_decode($this->request()->getBody()->__toString(),true);
+                                    if(!is_array($requestJson)){
+                                        $requestJson = [];
+                                    }
+                                }
+                                if(isset($requestJson[$paramName])){
+                                    $value = $requestJson[$paramName];
+                                }
                             }
                         }
                         if($value !== null){
