@@ -20,6 +20,7 @@ use EasySwoole\HttpAnnotation\AnnotationTag\ApiSuccessParam;
 use EasySwoole\HttpAnnotation\AnnotationTag\CircuitBreaker;
 use EasySwoole\HttpAnnotation\AnnotationTag\Context;
 use EasySwoole\HttpAnnotation\AnnotationTag\Di;
+use EasySwoole\HttpAnnotation\AnnotationTag\Inject;
 use EasySwoole\HttpAnnotation\AnnotationTag\InjectParamsContext;
 use EasySwoole\HttpAnnotation\AnnotationTag\Method;
 use EasySwoole\HttpAnnotation\AnnotationTag\Param;
@@ -203,5 +204,14 @@ class AnnotationParserTest extends TestCase
         $context = $this->apiGroup->getProperty('context');
         $this->assertInstanceOf(Context::class,$context->getContextTag());
         $this->assertEquals('context',$context->getContextTag()->key);
+    }
+
+    function testInject()
+    {
+        /** @var PropertyAnnotation $inject */
+        $inject = $this->apiGroup->getProperty('inject');
+        $this->assertInstanceOf(Inject::class,$inject->getInjectTag());
+        $this->assertEquals('\EasySwoole\HttpAnnotation\Tests\TestController\Test',$inject->getInjectTag()->className);
+        $this->assertEquals([1,[1,2]],$inject->getInjectTag()->args);
     }
 }
