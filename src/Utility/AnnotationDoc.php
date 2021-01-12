@@ -62,7 +62,8 @@ class AnnotationDoc
                 $groupAuthTagList = $objectAnnotation->getGroupAuthTag();
                 $paramTags = $objectAnnotation->getParamTag();
                 if($onRequest instanceof MethodAnnotation){
-                    //TODO 合并onRequest中的ApiAuth与Param标签到下面的$groupAuthTagList与$paramTags
+                    $groupAuthTagList = array_merge($groupAuthTagList,$onRequest->getApiAuth());
+                    $paramTags = array_merge($paramTags,$onRequest->getParamTag());
                 }
                 
                 if(!empty($groupAuthTagList)){
