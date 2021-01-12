@@ -159,10 +159,10 @@ class AnnotationController extends Controller
             $validate = new Validate();
             $validateParams = [];
             //先找全局的权限定义
-            foreach ($this->classAnnotation->getParamTag() as $param){
+            foreach ($this->classAnnotation->getGroupAuthTag() as $param){
                 $validateParams[$param->name] = $param;
             }
-            foreach ($this->classAnnotation->getGroupAuthTag() as $param){
+            foreach ($this->classAnnotation->getParamTag() as $param){
                 $validateParams[$param->name] = $param;
             }
             //找出方法的apiAuth标签
