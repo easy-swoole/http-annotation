@@ -52,8 +52,9 @@ class Param extends AbstractAnnotationTag
 
     private $allowValidateRule = [
         'activeUrl', 'alpha', 'alphaNum', 'alphaDash', 'between', 'bool',
-        'decimal', 'dateBefore', 'dateAfter', 'equal', 'different', 'equalWithColumn',
-        'differentWithColumn', 'float', 'func', 'inArray', 'integer', 'isIp',
+        'decimal', 'dateBefore', 'dateAfter', 'equal', 'different',
+        'equalWithColumn', 'differentWithColumn', 'lessThanWithColumn', 'greaterThanWithColumn',
+        'float', 'func', 'inArray', 'integer', 'isIp',
         'notEmpty', 'numeric', 'notInArray', 'length', 'lengthMax', 'lengthMin',
         'betweenLen', 'money', 'max', 'min', 'regex', 'allDigital',
         'required', 'timestamp', 'timestampBeforeDate', 'timestampAfterDate',
@@ -112,6 +113,14 @@ class Param extends AbstractAnnotationTag
      * @var string
      */
     public $differentWithColumn;
+    /**
+     * @var string
+     */
+    public $lessThanWithColumn;
+    /**
+     * @var string
+     */
+    public $greaterThanWithColumn;
     /**
      * @var string
      */
