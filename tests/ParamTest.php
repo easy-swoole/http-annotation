@@ -91,4 +91,38 @@ class ParamTest extends TestCase
             ]),
             $response->getBody()->__toString());
     }
+
+    public function testLessThanWithColumn()
+    {
+        $response = $this->fakeResponse();
+        $this->controller->__hook('lessThanWithColumn', $this->fakeRequest('/',
+            ['groupAuth' => 1, 'groupParam' => 1, 'onRequestAuth' => 1, 'onRequestParam' => 1, 'auth' => 1, 'param' => 1, 'foo' => 1, 'bar' => 2]
+        ), $response);
+        $this->assertTrue(true);
+
+        $this->expectException(\Exception::class);
+        $this->expectExceptionMessage("foo必须小于'bar'的值");
+        $this->controller->__hook('lessThanWithColumn', $this->fakeRequest('/',
+            ['groupAuth' => 1, 'groupParam' => 1, 'onRequestAuth' => 1, 'onRequestParam' => 1, 'auth' => 1, 'param' => 1, 'foo' => 3, 'bar' => 2]
+        ), $response);
+
+        $this->fail('test lessThanWithColumn fail');
+    }
+
+    public function testGreaterThanWithColumn()
+    {
+        $response = $this->fakeResponse();
+        $this->controller->__hook('greaterThanWithColumn', $this->fakeRequest('/',
+            ['groupAuth' => 1, 'groupParam' => 1, 'onRequestAuth' => 1, 'onRequestParam' => 1, 'auth' => 1, 'param' => 1, 'foo' => 3, 'bar' => 2]
+        ), $response);
+        $this->assertTrue(true);
+
+        $this->expectException(\Exception::class);
+        $this->expectExceptionMessage("foo必须大于'bar'的值");
+        $this->controller->__hook('greaterThanWithColumn', $this->fakeRequest('/',
+            ['groupAuth' => 1, 'groupParam' => 1, 'onRequestAuth' => 1, 'onRequestParam' => 1, 'auth' => 1, 'param' => 1, 'foo' => 1, 'bar' => 2]
+        ), $response);
+
+        $this->fail('test lessThanWithColumn fail');
+    }
 }
