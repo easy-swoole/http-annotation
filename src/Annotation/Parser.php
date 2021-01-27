@@ -46,7 +46,8 @@ class Parser implements ParserInterface
                 'DI' => 'DI',
                 'CONTEXT' => 'CONTEXT',
                 'RAW' => 'RAW',
-                'JSON'=>'JSON'
+                'JSON'=>'JSON',
+                'SESSION'=>'SESSION'
             ]);
             $annotation->addParserTag(new Api());
             $annotation->addParserTag(new ApiAuth());

@@ -7,6 +7,7 @@ namespace EasySwoole\HttpAnnotation;
 use EasySwoole\Component\Context\ContextManager;
 use EasySwoole\Component\Di as IOC;
 use EasySwoole\Http\AbstractInterface\Controller;
+use EasySwoole\Http\GlobalParam\Hook;
 use EasySwoole\HttpAnnotation\Annotation\MethodAnnotation;
 use EasySwoole\HttpAnnotation\Annotation\Parser;
 use EasySwoole\HttpAnnotation\Annotation\ParserInterface;
@@ -16,6 +17,7 @@ use EasySwoole\HttpAnnotation\Exception\Annotation\ActionTimeout;
 use EasySwoole\HttpAnnotation\Exception\Annotation\MethodNotAllow;
 use EasySwoole\HttpAnnotation\Exception\Annotation\ParamValidateError;
 use EasySwoole\HttpAnnotation\Exception\Exception;
+use EasySwoole\Session\Context;
 use EasySwoole\Validate\Validate;
 use Swoole\Coroutine;
 use Swoole\Coroutine\Channel;
@@ -237,6 +239,14 @@ class AnnotationController extends Controller
                                 if(isset($requestJson[$paramName])){
                                     $value = $requestJson[$paramName];
                                 }
+                                break;
+                            }
+                            case 'SESSION':{
+                                $context = ContextManager::getInstance()->get(Hook::SESSION_CONTEXT);
+                                if($context instanceof Context){
+                                    $value = $context->get($paramName);
+                                }
+                                break;
                             }
                         }
                         if($value !== null){
