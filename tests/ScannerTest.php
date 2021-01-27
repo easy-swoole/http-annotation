@@ -15,22 +15,22 @@ class ScannerTest extends TestCase
 {
     function testGetFileDeclaredClass()
     {
-        $class = Scanner::getFileDeclaredClass(__DIR__.'/TestController/Normal.php');
-        $this->assertEquals(Normal::class,$class);
+        $class = Scanner::getFileDeclaredClass(__DIR__ . '/TestController/Normal.php');
+        $this->assertEquals(Normal::class, $class);
     }
 
     function testScanAnnotations()
     {
         $scan = new Scanner();
-        $array = $scan->scanAnnotations(__DIR__.'/TestController');
-        $this->assertEquals(3,count($array));
+        $array = $scan->scanAnnotations(__DIR__ . '/TestController');
+        $this->assertEquals(5, count($array));
     }
 
     function testRouter()
     {
         $scan = new Scanner();
-        $col = new RouteCollector(new Std(),new GroupCountBased());
-        $scan->mappingRouter($col,__DIR__.'/TestController','EasySwoole\HttpAnnotation\Tests\TestController');
-        $this->assertEquals('/NoneAnnotation/exception',$col->getData()[0]['GET']['/testR']);
+        $col = new RouteCollector(new Std(), new GroupCountBased());
+        $scan->mappingRouter($col, __DIR__ . '/TestController', 'EasySwoole\HttpAnnotation\Tests\TestController');
+        $this->assertEquals('/NoneAnnotation/exception', $col->getData()[0]['GET']['/testR']);
     }
 }
