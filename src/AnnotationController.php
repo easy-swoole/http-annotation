@@ -32,7 +32,6 @@ class AnnotationController extends Controller
         if($parser == null){
             $parser = new Parser();
         }
-
         $this->classAnnotation = $parser->parseObject(new \ReflectionClass(static::class));
     }
 
