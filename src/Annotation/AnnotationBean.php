@@ -37,7 +37,7 @@ class AnnotationBean
         }
     }
 
-    function getOtherTags()
+    function getOtherTags():array
     {
         return $this->__otherTags;
     }
