@@ -10,6 +10,7 @@ use EasySwoole\HttpAnnotation\Annotation\ParserInterface;
 use EasySwoole\HttpAnnotation\AnnotationTag\ApiDescription;
 use EasySwoole\HttpAnnotation\AnnotationTag\Param;
 use EasySwoole\HttpAnnotation\Exception\Exception;
+use EasySwoole\Validate\Error;
 
 class AnnotationDoc
 {
@@ -246,9 +247,22 @@ class AnnotationDoc
                 }else{
                     $description = '-';
                 }
-                $rule = implode(',',array_keys($param->validateRuleList));
-                if(empty($rule)){
+                if(empty($param->validateRuleList)){
                     $rule = '-';
+                }else{
+                    $rule = '';
+                    foreach ($param->validateRuleList as $ruleName => $conf){
+                        $arrayCheckFunc = ['inArray', 'notInArray', 'allowFile', 'allowFileType'];
+                        if (in_array($ruleName, $arrayCheckFunc)) {
+                            if(!is_array($conf[0])){
+                                $conf = [$conf];
+                            }
+                        }
+                        $err = new Error($param->name,null,null,$ruleName,null,$conf);
+                        $temp = $err->__toString();
+                        $temp = "{$ruleName}: ".substr($temp,strlen($param->name));
+                        $rule .= $temp." </br>";
+                    }
                 }
                 $ingoreAction = implode(',',$param->ignoreAction);
                 if(empty($ingoreAction)){
