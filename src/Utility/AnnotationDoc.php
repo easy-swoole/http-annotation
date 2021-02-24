@@ -57,8 +57,8 @@ class AnnotationDoc
                     $description = $this->parseDescTagContent($groupDescTag);
                     $markdown .= $description."{$this->CLRF}";
                 }
-                
-                
+
+
                 $onRequest = $objectAnnotation->getMethod('onRequest');
                 $groupAuthTagList = $objectAnnotation->getGroupAuthTag();
                 $paramTags = $objectAnnotation->getParamTag();
@@ -66,12 +66,12 @@ class AnnotationDoc
                     $groupAuthTagList = array_merge($groupAuthTagList,$onRequest->getApiAuth());
                     $paramTags = array_merge($paramTags,$onRequest->getParamTag());
                 }
-                
+
                 if(!empty($groupAuthTagList)){
                     $markdown .= "<h3 class='group-auth'>全局权限说明</h3>{$this->CLRF}";
                     $markdown .= $this->buildParamMarkdown($groupAuthTagList);
                 }
-                
+
                 if(!empty($paramTags)){
                     $markdown .= "<h3 class='group-param'>全局参数说明</h3>{$this->CLRF}";
                     $markdown .= $this->buildParamMarkdown($paramTags);
@@ -228,25 +228,39 @@ class AnnotationDoc
     {
         $markdown = '';
         if (!empty($params)) {
-            $markdown .= "| 字段 | 来源 | 类型 | 描述 | 验证规则 | 忽略Action |\n";
-            $markdown .= "| ---- | ---- | ---- | ---- | ---- | ---- |\n";
+            $markdown .= "| 字段 | 来源 | 类型 | 默认值 | 描述 | 验证规则 | 忽略Action |\n";
+            $markdown .= "| ---- | ---- | ---- | ---- | ---- | ---- | ---- |\n";
             /** @var Param $param */
             foreach ($params as $param) {
+                // 类型
                 if(!empty($param->type)){
                     $type = $param->type;
                 }else{
                     $type = '默认';
                 }
+
+                // 来源
                 if(!empty($param->from)){
                     $from = implode(",",$param->from);
                 }else{
                     $from = "不限";
                 }
+
+                // 默认值
+                if($param->defaultValue !== null){
+                    $defaultValue = $param->defaultValue;
+                }else{
+                    $defaultValue = '-';
+                }
+
+                // 描述
                 if(!empty($param->description)){
                     $description = $param->description;
                 }else{
                     $description = '-';
                 }
+
+                // 验证规则
                 if(empty($param->validateRuleList)){
                     $rule = '-';
                 }else{
@@ -264,11 +278,13 @@ class AnnotationDoc
                         $rule .= $temp." </br>";
                     }
                 }
+
+                //忽略action
                 $ingoreAction = implode(',',$param->ignoreAction);
                 if(empty($ingoreAction)){
                     $ingoreAction = '-';
                 }
-                $markdown .= "| {$param->name} |  {$from}  | {$type} | {$description} | {$rule} | {$ingoreAction} |\n";
+                $markdown .= "| {$param->name} |  {$from}  | {$type} | {$defaultValue} | {$description} | {$rule} | {$ingoreAction} |\n";
             }
             $markdown .= "\n\n";
         }
