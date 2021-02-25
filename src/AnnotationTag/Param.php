@@ -32,10 +32,6 @@ class Param extends AbstractAnnotationTag
      */
     public $from = [];
 
-    /**
-     * @var array
-     */
-    public $ignoreAction = [];
 
     public $defaultValue = null;
 

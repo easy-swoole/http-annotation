@@ -9,6 +9,11 @@ namespace EasySwoole\HttpAnnotation\AnnotationTag;
  */
 class ApiGroupAuth extends Param
 {
+    /**
+     * @var array
+     */
+    public $ignoreAction = [];
+
     public function tagName(): string
     {
         return 'ApiGroupAuth';
