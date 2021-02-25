@@ -8,6 +8,7 @@ use EasySwoole\HttpAnnotation\Annotation\MethodAnnotation;
 use EasySwoole\HttpAnnotation\Annotation\ObjectAnnotation;
 use EasySwoole\HttpAnnotation\Annotation\ParserInterface;
 use EasySwoole\HttpAnnotation\AnnotationTag\ApiDescription;
+use EasySwoole\HttpAnnotation\AnnotationTag\ApiGroupAuth;
 use EasySwoole\HttpAnnotation\AnnotationTag\Param;
 use EasySwoole\HttpAnnotation\Exception\Exception;
 use EasySwoole\Validate\Error;
@@ -77,7 +78,7 @@ class AnnotationDoc
                     $markdown .= $this->buildParamMarkdown($paramTags);
                 }
 
-                $markdown .= "<hr class='group-hr'/>{$this->CLRF}";
+                // $markdown .= "<hr class='group-hr'/>{$this->CLRF}";
             }
 
             //遍历全部方法
@@ -97,7 +98,7 @@ class AnnotationDoc
                     }
                     $markdown .= "<h2 class='api-method {$currentGroupName}' id='{$currentGroupName}-{$methodName}'>{$apiTag->name}{$deprecated}</h2>{$this->CLRF}";
 
-                    $markdown .= "<h4 class='method-description'>接口说明</h4>{$this->CLRF}";
+                    $markdown .= "<h3 class='method-description'>基本信息</h3>{$this->CLRF}";
                     //兼容api指定
                     if($method->getApiDescriptionTag()){
                         $description = $this->parseDescTagContent($method->getApiDescriptionTag());
@@ -108,37 +109,41 @@ class AnnotationDoc
                         $description = '暂无描述';
                     }
 
-                    $markdown .= "{$description}{$this->CLRF}";
+                    // 请求路径
+                    $markdown .= "<p><strong>Path：</strong> {$apiTag->path}</p>{$this->CLRF}";
 
-                    $markdown .= "<h3 class='request-part'>请求</h3>{$this->CLRF}";
+                    // 请求方法
                     $allow = $method->getMethodTag();
                     if($allow){
                         $allow = implode(",",$allow->allow);
                     }else{
                         $allow = '不限制';
                     }
-                    $markdown .= "<h4 class='request-method'>请求方法:<span class='h4-span'>{$allow}</span></h4>{$this->CLRF}";
-                    $markdown .= "<h4 class='request-path'>请求路径:<span class='h4-span'>{$apiTag->path}</span></h4>{$this->CLRF}";
+                    $markdown .= "<p><strong>Method：</strong> {$allow}</p>{$this->CLRF}";
+
+                    // 接口描述
+                    $markdown .= "<p><strong>接口描述：</strong> {$description}</p>{$this->CLRF}";
+
 
                     $authParams = $method->getApiAuth();
                     if (!empty($authParams)) {
-                        $markdown .= "<h4 class='auth-params'>权限字段</h4> {$this->CLRF}";
+                        $markdown .= "<h3 class='auth-params'>权限字段</h3> {$this->CLRF}";
                         $markdown .= $this->buildParamMarkdown($authParams);
                     }
 
                     $requestParams = $method->getParamTag();
                     if (!empty($requestParams)) {
-                        $markdown .= "<h4 class='request-params'>请求字段</h4> {$this->CLRF}";
+                        $markdown .= "<h3 class='request-params'>请求字段</h3> {$this->CLRF}";
                         $markdown .= $this->buildParamMarkdown($requestParams);
                     }
 
                     if(!empty($method->getApiRequestExample())){
-                        $markdown .= "<h4 class='request-example'>请求示例</h4> {$this->CLRF}";
+                        $markdown .= "<h3 class='request-example'>请求示例</h3> {$this->CLRF}";
                         $index = 1;
                         foreach ($method->getApiRequestExample() as $example){
                             $example = $this->parseDescTagContent($example);
                             if(!empty($example)){
-                                $markdown .= "<h5 class='request-example'>请求示例{$index}</h5>{$this->CLRF}";
+                                $markdown .= "<p><strong>请求示例{$index}</strong></p>{$this->CLRF}";
                                 $markdown .= "```\n{$example}\n```{$this->CLRF}";
                                 $index++;
                             }
@@ -157,7 +162,7 @@ class AnnotationDoc
                         foreach ($method->getApiSuccess() as $example){
                             $example = $this->parseDescTagContent($example);
                             if(!empty($example)){
-                                $markdown .= "<h5 class='api-success-example'>成功响应示例{$index}</h5>{$this->CLRF}";
+                                $markdown .= "<p><strong>成功响应示例{$index}</strong></p>{$this->CLRF}";
                                 $markdown .= "```\n{$example}\n```{$this->CLRF}";
                                 $index++;
                             }
@@ -175,7 +180,7 @@ class AnnotationDoc
                         foreach ($method->getApiFail() as $example){
                             $example = $this->parseDescTagContent($example);
                             if(!empty($example)){
-                                $markdown .= "<h5 class='api-fail-example'>失败响应示例{$index}</h5>{$this->CLRF}";
+                                $markdown .= "<p><strong>失败响应示例{$index}</strong></p>{$this->CLRF}";
                                 $markdown .= "```\n{$example}\n```{$this->CLRF}";
                                 $index++;
                             }
@@ -228,8 +233,19 @@ class AnnotationDoc
     {
         $markdown = '';
         if (!empty($params)) {
-            $markdown .= "| 字段 | 来源 | 类型 | 默认值 | 描述 | 验证规则 | 忽略Action |\n";
-            $markdown .= "| ---- | ---- | ---- | ---- | ---- | ---- | ---- |\n";
+
+            // 判断是否属于 ApiGroupAuth
+            $firstParams = $params[array_keys($params)[0]];
+            $isApiGroupAuth = false;
+            if ($firstParams instanceof ApiGroupAuth) {
+                $isApiGroupAuth = true;
+                $markdown .= "| 字段 | 来源 | 类型 | 默认值 | 描述 | 验证规则 | 忽略Action |\n";
+                $markdown .= "| ---- | ---- | ---- | ---- | ---- | ---- | ---- |\n";
+            } else {
+                $markdown .= "| 字段 | 来源 | 类型 | 默认值 | 描述 | 验证规则 |\n";
+                $markdown .= "| ---- | ---- | ---- | ---- | ---- | ---- |\n";
+            }
+
             /** @var Param $param */
             foreach ($params as $param) {
                 // 类型
@@ -280,11 +296,16 @@ class AnnotationDoc
                 }
 
                 //忽略action
-                $ingoreAction = implode(',',$param->ignoreAction);
-                if(empty($ingoreAction)){
-                    $ingoreAction = '-';
+                if ($isApiGroupAuth) {
+                    $ingoreAction = implode(',',$param->ignoreAction);
+                    if(empty($ingoreAction)){
+                        $ingoreAction = '-';
+                    }
+                    $markdown .= "| {$param->name} |  {$from}  | {$type} | {$defaultValue} | {$description} | {$rule} | {$ingoreAction} |\n";
+                } else {
+                    $markdown .= "| {$param->name} |  {$from}  | {$type} | {$defaultValue} | {$description} | {$rule} |\n";
                 }
-                $markdown .= "| {$param->name} |  {$from}  | {$type} | {$defaultValue} | {$description} | {$rule} | {$ingoreAction} |\n";
+
             }
             $markdown .= "\n\n";
         }
