@@ -12,6 +12,7 @@ use EasySwoole\HttpAnnotation\Annotation\MethodAnnotation;
 use EasySwoole\HttpAnnotation\Annotation\Parser;
 use EasySwoole\HttpAnnotation\Annotation\ParserInterface;
 use EasySwoole\HttpAnnotation\Annotation\PropertyAnnotation;
+use EasySwoole\HttpAnnotation\AnnotationTag\ApiGroupAuth;
 use EasySwoole\HttpAnnotation\AnnotationTag\Param;
 use EasySwoole\HttpAnnotation\Exception\Annotation\ActionTimeout;
 use EasySwoole\HttpAnnotation\Exception\Annotation\MethodNotAllow;
@@ -180,8 +181,10 @@ class AnnotationController extends Controller
             /** @var Param $param */
             foreach ($validateParams as $param)
             {
-                if(in_array($methodName,$param->ignoreAction)){
-                    continue;
+                if($param instanceof ApiGroupAuth){
+                    if(in_array($methodName,$param->ignoreAction)){
+                        continue;
+                    }
                 }
                 $paramName = $param->name;
                 if(!empty($param->from)){
