@@ -239,11 +239,13 @@ class AnnotationDoc
             $isApiGroupAuth = false;
             if ($firstParams instanceof ApiGroupAuth) {
                 $isApiGroupAuth = true;
-                $markdown .= "| 字段 | 来源 | 类型 | 默认值 | 描述 | 验证规则 | 忽略Action |\n";
-                $markdown .= "| ---- | ---- | ---- | ---- | ---- | ---- | ---- |\n";
+                // $markdown .= "| 字段 | 来源 | 类型 | 默认值 | 描述 | 验证规则 | 忽略Action |\n";
+                // $markdown .= "| ---- | ---- | ---- | ---- | ---- | ---- | ---- |\n";
+                $markdown .= "<table><thead><tr><th>字段</th><th>来源</th><th>类型</th><th>默认值</th><th>描述</th><th>验证规则</th><th>忽略Action</th></tr></thead><tbody>\n";
             } else {
-                $markdown .= "| 字段 | 来源 | 类型 | 默认值 | 描述 | 验证规则 |\n";
-                $markdown .= "| ---- | ---- | ---- | ---- | ---- | ---- |\n";
+                // $markdown .= "| 字段 | 来源 | 类型 | 默认值 | 描述 | 验证规则 |\n";
+                // $markdown .= "| ---- | ---- | ---- | ---- | ---- | ---- |\n";
+                $markdown .= "<table><thead><tr><th>字段</th><th>来源</th><th>类型</th><th>默认值</th><th>描述</th><th>验证规则</th></tr></thead><tbody>\n";
             }
 
             /** @var Param $param */
@@ -301,13 +303,15 @@ class AnnotationDoc
                     if(empty($ingoreAction)){
                         $ingoreAction = '-';
                     }
-                    $markdown .= "| {$param->name} |  {$from}  | {$type} | {$defaultValue} | {$description} | {$rule} | {$ingoreAction} |\n";
+                    // $markdown .= "| {$param->name} |  {$from}  | {$type} | {$defaultValue} | {$description} | {$rule} | {$ingoreAction} |\n";
+                    $markdown .= "<tr><td>{$param->name}</td><td>{$from}</td><td>{$type}</td><td>{$defaultValue}</td><td>{$description}</td><td>{$rule}</td><td>{$ingoreAction}</td></tr>\n";
                 } else {
-                    $markdown .= "| {$param->name} |  {$from}  | {$type} | {$defaultValue} | {$description} | {$rule} |\n";
+                    // $markdown .= "| {$param->name} |  {$from}  | {$type} | {$defaultValue} | {$description} | {$rule} |\n";
+                    $markdown .= "<tr><td>{$param->name}</td><td>{$from}</td><td>{$type}</td><td>{$defaultValue}</td><td>{$description}</td><td>{$rule}</td></tr>\n";
                 }
 
             }
-            $markdown .= "\n\n";
+            $markdown .= "</tbody></table>\n\n";
         }
         return $markdown;
     }

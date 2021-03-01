@@ -3,7 +3,7 @@
 
 <head>
     <meta charset="UTF-8" />
-    <title>EasySwool Api 文档</title>
+    <title>EasySwoole Api 文档</title>
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
     <meta name="description" content="Description" />
     <meta name="viewport"
