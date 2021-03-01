@@ -14,30 +14,22 @@ class AnnotationBean
     public function addAnnotationTag(AbstractAnnotationTag $annotationTag)
     {
         $propertyName = lcfirst($annotationTag->tagName());
-        if(property_exists($this,$propertyName)){
-            if(empty($this->{$propertyName})){
-                if(is_array($this->{$propertyName})){
-                    if($annotationTag instanceof Param){
-                        $this->{$propertyName}[$annotationTag->name] = $annotationTag;
-                    }else{
-                        $this->{$propertyName}[] = $annotationTag;
-                    }
-                }else{
-                    $this->{$propertyName} = $annotationTag;
-                }
-            }else if(is_array($this->{$propertyName})){
-                if($annotationTag instanceof Param){
-                    $this->{$propertyName}[$annotationTag->name] = $annotationTag;
-                }else{
+        if (property_exists($this, $propertyName)) {
+            if (is_array($this->{$propertyName})) {
+                if ($annotationTag instanceof Param) {
+                    $annotationTag->name && $this->{$propertyName}[$annotationTag->name] = $annotationTag;
+                } else {
                     $this->{$propertyName}[] = $annotationTag;
                 }
+            } else {
+                $this->{$propertyName} = $annotationTag;
             }
-        }else{
+        } else {
             $this->__otherTags[$annotationTag->tagName()][] = $annotationTag;
         }
     }
 
-    function getOtherTags():array
+    function getOtherTags(): array
     {
         return $this->__otherTags;
     }
