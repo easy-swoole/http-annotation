@@ -275,6 +275,7 @@
             line-height: 16px;
             font-size: 11px;
             border: 1px solid #d9d9d9;
+            border-radius: 4px !important;
             white-space: pre-wrap;
             word-wrap: break-word;
             background: #f6f6f6;
@@ -288,7 +289,7 @@
         }
 
         sup {
-            font-size: 0.83em;
+            font-size: 0.72em;
             vertical-align: super;
             line-height: 0;
         }

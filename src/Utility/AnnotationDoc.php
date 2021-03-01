@@ -7,6 +7,7 @@ namespace EasySwoole\HttpAnnotation\Utility;
 use EasySwoole\HttpAnnotation\Annotation\MethodAnnotation;
 use EasySwoole\HttpAnnotation\Annotation\ObjectAnnotation;
 use EasySwoole\HttpAnnotation\Annotation\ParserInterface;
+use EasySwoole\HttpAnnotation\AnnotationTag\ApiAuth;
 use EasySwoole\HttpAnnotation\AnnotationTag\ApiDescription;
 use EasySwoole\HttpAnnotation\AnnotationTag\ApiGroupAuth;
 use EasySwoole\HttpAnnotation\AnnotationTag\Param;
@@ -70,15 +71,13 @@ class AnnotationDoc
 
                 if(!empty($groupAuthTagList)){
                     $markdown .= "<h3 class='group-auth'>全局权限说明</h3>{$this->CLRF}";
-                    $markdown .= $this->buildParamMarkdown($groupAuthTagList);
+                    $markdown .= $this->buildClassParam($groupAuthTagList);
                 }
 
                 if(!empty($paramTags)){
                     $markdown .= "<h3 class='group-param'>全局参数说明</h3>{$this->CLRF}";
-                    $markdown .= $this->buildParamMarkdown($paramTags);
+                    $markdown .= $this->buildClassParam($paramTags);
                 }
-
-                // $markdown .= "<hr class='group-hr'/>{$this->CLRF}";
             }
 
             //遍历全部方法
@@ -128,13 +127,13 @@ class AnnotationDoc
                     $authParams = $method->getApiAuth();
                     if (!empty($authParams)) {
                         $markdown .= "<h3 class='auth-params'>权限字段</h3> {$this->CLRF}";
-                        $markdown .= $this->buildParamMarkdown($authParams);
+                        $markdown .= $this->buildMethodParams($authParams);
                     }
 
                     $requestParams = $method->getParamTag();
                     if (!empty($requestParams)) {
                         $markdown .= "<h3 class='request-params'>请求字段</h3> {$this->CLRF}";
-                        $markdown .= $this->buildParamMarkdown($requestParams);
+                        $markdown .= $this->buildMethodParams($requestParams);
                     }
 
                     if(!empty($method->getApiRequestExample())){
@@ -144,7 +143,7 @@ class AnnotationDoc
                             $example = $this->parseDescTagContent($example);
                             if(!empty($example)){
                                 $markdown .= "<p><strong>请求示例{$index}</strong></p>{$this->CLRF}";
-                                $markdown .= "```\n{$example}\n```{$this->CLRF}";
+                                $markdown .= "<pre><code class='lang-'>{$example}</code></pre>{$this->CLRF}";
                                 $index++;
                             }
                         }
@@ -154,7 +153,7 @@ class AnnotationDoc
                     $params = $method->getApiSuccessParam();
                     if (!empty($params)) {
                         $markdown .= "<h4 class='response-params'>成功响应字段</h4> {$this->CLRF}";
-                        $markdown .= $this->buildParamMarkdown($params);
+                        $markdown .= $this->buildMethodParams($params);
                     }
                     if(!empty($method->getApiSuccess())){
                         $markdown .= "<h4 class='api-success-example'>成功响应示例</h4> {$this->CLRF}";
@@ -163,7 +162,7 @@ class AnnotationDoc
                             $example = $this->parseDescTagContent($example);
                             if(!empty($example)){
                                 $markdown .= "<p><strong>成功响应示例{$index}</strong></p>{$this->CLRF}";
-                                $markdown .= "```\n{$example}\n```{$this->CLRF}";
+                                $markdown .= "<pre><code class='lang-'>{$example}</code></pre>{$this->CLRF}";
                                 $index++;
                             }
                         }
@@ -171,7 +170,7 @@ class AnnotationDoc
                     $params = $method->getApiFailParam();
                     if (!empty($params)) {
                         $markdown .= "<h4 class='response-params'>失败响应字段</h4> {$this->CLRF}";
-                        $markdown .= $this->buildParamMarkdown($params);
+                        $markdown .= $this->buildMethodParams($params);
                     }
 
                     if(!empty($method->getApiFail())){
@@ -181,7 +180,7 @@ class AnnotationDoc
                             $example = $this->parseDescTagContent($example);
                             if(!empty($example)){
                                 $markdown .= "<p><strong>失败响应示例{$index}</strong></p>{$this->CLRF}";
-                                $markdown .= "```\n{$example}\n```{$this->CLRF}";
+                                $markdown .= "<pre><code class='lang-'>{$example}</code></pre>{$this->CLRF}";
                                 $index++;
                             }
                         }
@@ -229,89 +228,184 @@ class AnnotationDoc
         return $content;
     }
 
-    private function buildParamMarkdown($params)
+    private function buildClassParam($params)
     {
         $markdown = '';
         if (!empty($params)) {
-
-            // 判断是否属于 ApiGroupAuth
-            $firstParams = $params[array_keys($params)[0]];
-            $isApiGroupAuth = false;
-            if ($firstParams instanceof ApiGroupAuth) {
-                $isApiGroupAuth = true;
-                // $markdown .= "| 字段 | 来源 | 类型 | 默认值 | 描述 | 验证规则 | 忽略Action |\n";
-                // $markdown .= "| ---- | ---- | ---- | ---- | ---- | ---- | ---- |\n";
-                $markdown .= "<table><thead><tr><th>字段</th><th>来源</th><th>类型</th><th>默认值</th><th>描述</th><th>验证规则</th><th>忽略Action</th></tr></thead><tbody>\n";
-            } else {
-                // $markdown .= "| 字段 | 来源 | 类型 | 默认值 | 描述 | 验证规则 |\n";
-                // $markdown .= "| ---- | ---- | ---- | ---- | ---- | ---- |\n";
-                $markdown .= "<table><thead><tr><th>字段</th><th>来源</th><th>类型</th><th>默认值</th><th>描述</th><th>验证规则</th></tr></thead><tbody>\n";
-            }
-
+            $markdown .= <<<HTML
+<table>
+    <thead>
+    <tr>
+        <th>字段</th>
+        <th>来源</th>
+        <th>类型</th>
+        <th>默认值</th>
+        <th>描述</th>
+        <th>验证规则</th>
+        <th>忽略Action</th>
+    </tr>
+    </thead>
+    <tbody>\n
+HTML;
             /** @var Param $param */
             foreach ($params as $param) {
                 // 类型
-                if(!empty($param->type)){
+                if (!empty($param->type)) {
                     $type = $param->type;
-                }else{
+                } else {
                     $type = '默认';
                 }
 
                 // 来源
-                if(!empty($param->from)){
-                    $from = implode(",",$param->from);
-                }else{
+                if (!empty($param->from)) {
+                    $from = implode(",", $param->from);
+                } else {
                     $from = "不限";
                 }
 
                 // 默认值
-                if($param->defaultValue !== null){
+                if ($param->defaultValue !== null) {
                     $defaultValue = $param->defaultValue;
-                }else{
+                } else {
                     $defaultValue = '-';
                 }
 
                 // 描述
-                if(!empty($param->description)){
+                if (!empty($param->description)) {
                     $description = $param->description;
-                }else{
+                } else {
                     $description = '-';
                 }
 
                 // 验证规则
-                if(empty($param->validateRuleList)){
+                if (empty($param->validateRuleList)) {
                     $rule = '-';
-                }else{
+                } else {
                     $rule = '';
-                    foreach ($param->validateRuleList as $ruleName => $conf){
+                    foreach ($param->validateRuleList as $ruleName => $conf) {
                         $arrayCheckFunc = ['inArray', 'notInArray', 'allowFile', 'allowFileType'];
                         if (in_array($ruleName, $arrayCheckFunc)) {
-                            if(!is_array($conf[0])){
+                            if (!is_array($conf[0])) {
                                 $conf = [$conf];
                             }
                         }
-                        $err = new Error($param->name,null,null,$ruleName,null,$conf);
+                        $err = new Error($param->name, null, null, $ruleName, null, $conf);
                         $temp = $err->__toString();
-                        $temp = "{$ruleName}: ".substr($temp,strlen($param->name));
-                        $rule .= $temp." </br>";
+                        $temp = "{$ruleName}: " . substr($temp, strlen($param->name));
+                        $rule .= $temp . " <br />";
                     }
                 }
 
-                //忽略action
-                if ($isApiGroupAuth) {
-                    $ingoreAction = implode(',',$param->ignoreAction);
-                    if(empty($ingoreAction)){
-                        $ingoreAction = '-';
-                    }
-                    //$markdown .= "| {$param->name} |  {$from}  | {$type} | {$defaultValue} | {$description} | {$rule} | {$ingoreAction} |\n";
-                    $markdown .= "<tr><td>{$param->name}</td><td>{$from}</td><td>{$type}</td><td>{$defaultValue}</td><td>{$description}</td><td>{$rule}</td><td>{$ingoreAction}</td></tr>\n";
-                } else {
-                    //$markdown .= "| {$param->name} |  {$from}  | {$type} | {$defaultValue} | {$description} | {$rule} |\n";
-                    $markdown .= "<tr><td>{$param->name}</td><td>{$from}</td><td>{$type}</td><td>{$defaultValue}</td><td>{$description}</td><td>{$rule}</td></tr>\n";
+                $ignoreAction = implode(',', $param->ignoreAction);
+                if (empty($ignoreAction)) {
+                    $ignoreAction = '-';
                 }
-
+                $markdown .= <<<HTML
+    <tr>
+        <td>{$param->name}</td>
+        <td>{$from}</td>
+        <td>{$type}</td>
+        <td>{$defaultValue}</td>
+        <td>{$description}</td>
+        <td>{$rule}</td>
+        <td>{$ignoreAction}</td>
+    </tr>\n
+HTML;
             }
-            $markdown .= "\n\n";
+            $markdown .= <<<HTML
+    </tbody>
+</table>\n\n
+HTML;
+        }
+        return $markdown;
+    }
+
+    /**
+     * 方法仅仅执行@Param()   @ApiAuth()
+     */
+    private function buildMethodParams($params):string
+    {
+        $markdown = '';
+        if (!empty($params)) {
+            $markdown .= <<<HTML
+<table>
+    <thead>
+    <tr>
+        <th>字段</th>
+        <th>来源</th>
+        <th>类型</th>
+        <th>默认值</th>
+        <th>描述</th>
+        <th>验证规则</th>
+    </tr>
+    </thead>
+    <tbody>\n
+HTML;
+            /** @var Param $param */
+            foreach ($params as $param) {
+                if($param instanceof Param || $param instanceof ApiAuth){
+                    // 类型
+                    if(!empty($param->type)){
+                        $type = $param->type;
+                    }else{
+                        $type = '默认';
+                    }
+
+                    // 来源
+                    if(!empty($param->from)){
+                        $from = implode(",",$param->from);
+                    }else{
+                        $from = "不限";
+                    }
+
+                    // 默认值
+                    if($param->defaultValue !== null){
+                        $defaultValue = $param->defaultValue;
+                    }else{
+                        $defaultValue = '-';
+                    }
+
+                    // 描述
+                    if(!empty($param->description)){
+                        $description = $param->description;
+                    }else{
+                        $description = '-';
+                    }
+
+                    // 验证规则
+                    if(empty($param->validateRuleList)){
+                        $rule = '-';
+                    }else{
+                        $rule = '';
+                        foreach ($param->validateRuleList as $ruleName => $conf){
+                            $arrayCheckFunc = ['inArray', 'notInArray', 'allowFile', 'allowFileType'];
+                            if (in_array($ruleName, $arrayCheckFunc)) {
+                                if(!is_array($conf[0])){
+                                    $conf = [$conf];
+                                }
+                            }
+                            $err = new Error($param->name,null,null,$ruleName,null,$conf);
+                            $temp = $err->__toString();
+                            $temp = "{$ruleName}: ".substr($temp,strlen($param->name));
+                            $rule .= $temp." <br />";
+                        }
+                    }
+                    $markdown .= <<<HTML
+    <tr>
+        <td>{$param->name}</td>
+        <td>{$from}</td>
+        <td>{$type}</td>
+        <td>{$defaultValue}</td>
+        <td>{$description}</td>
+        <td>{$rule}</td>
+    </tr>\n
+HTML;
+                }
+            }
+            $markdown .= <<<HTML
+    </tbody>
+</table>\n\n
+HTML;
         }
         return $markdown;
     }
