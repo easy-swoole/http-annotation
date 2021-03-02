@@ -17,10 +17,17 @@ class AnnotationDoc
 {
     private $scanner;
     private $CLRF = "\n\n";
+    private $projectName = 'API 接口文档';
 
     function __construct(?ParserInterface $parser = null)
     {
         $this->scanner = new Scanner($parser);
+    }
+
+    function setProjectName(string $name):AnnotationDoc
+    {
+        $this->projectName = $name;
+        return $this;
     }
 
     function scan2Html(string $dirOrFile,?string $extMd = null)
@@ -34,8 +41,10 @@ class AnnotationDoc
         $ret = file_get_contents(__DIR__ . "/docPage.tpl");
         $ret = str_replace('{{$extra}}',$extMd,$ret);
 
+        $ret = str_replace('{{$projectName}}',$this->projectName,$ret);
+
         $info = $this->buildAnnotationHtml($dirOrFile);
-        //TODO: 通过methodGroup构造菜单栏，而非在JS中构造。
+
         $navArr = $info['methodGroup'];
         // 处理导航
         $nav = '<ul>';

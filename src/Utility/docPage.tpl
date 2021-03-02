@@ -2,7 +2,7 @@
 <html>
 <head>
     <meta charset="UTF-8"/>
-    <title>EasySwoole Api 文档</title>
+    <title>{{$projectName}}</title>
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"/>
     <meta name="description" content="Description"/>
     <meta name="viewport"
@@ -316,7 +316,6 @@
             background: #32363a;
             height: 56px;
             line-height: 56px;
-            padding-left: 60px;
             display: flex;
             align-items: center;
             position: fixed;
@@ -380,8 +379,7 @@
 </head>
 <body>
 <div class="m-header">
-    <!--<a href="#" style="display: inherit;">EasySwoole-logo</a>-->
-    <a href="#"><h1 class="title">EasySwoole API 接口文档</h1></a>
+    <a href="#"><h1 class="title">{{$projectName}}</h1></a>
     <div class="nav">
         <a href="https://www.easyswoole.com">EasySwoole</a>
     </div>
