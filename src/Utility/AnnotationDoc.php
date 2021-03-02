@@ -37,7 +37,6 @@ class AnnotationDoc
         $info = $this->buildAnnotationHtml($dirOrFile);
         //TODO: 通过methodGroup构造菜单栏，而非在JS中构造。
         $navArr = $info['methodGroup'];
-
         // 处理导航
         $nav = '<ul>';
         foreach ($navArr as $fNavK => $fNavV) {
