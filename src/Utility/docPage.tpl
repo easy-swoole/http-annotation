@@ -396,57 +396,6 @@
         </footer>
     </div>
 </div>
-<script>
-    window.onload = function () {
-        // 处理一级导航
-        var newUl = document.createElement('ul');
-        var h1Nodes = document.getElementsByTagName('h1');
-        for (var i = 0; i < h1Nodes.length; i++) {
-            if (h1Nodes[i].className === 'group-title') {
-                var h1Content = h1Nodes[i].innerHTML;
-                var tempLi = document.createElement('li');
-                var aNode = document.createElement('a');
-                var text = document.createTextNode(h1Content);
-                var sUlNode = document.createElement('ul')
-                aNode.setAttribute('href', '#' + h1Content);
-                aNode.appendChild(text);
-                tempLi.appendChild(aNode);
-                sUlNode.setAttribute('class', h1Content + '-ul');
-                tempLi.appendChild(sUlNode);
-                newUl.appendChild(tempLi)
-            }
-        }
-        document.getElementsByClassName("table-of-contents")[0].appendChild(newUl);
 
-        // 处理二级导航
-        var h2Nodes = document.getElementsByTagName('h2');
-        for (var j = 0; j < h2Nodes.length; j++) {
-            var h2Content = h2Nodes[j].innerHTML;
-            var sTextNode = '';
-            var sClassName = h2Nodes[j].className;
-            var classArr = sClassName.split('api-method ');
-            if (h2Content) {
-                var sLiNode = document.createElement('li');
-                var sANode = document.createElement('a');
-                sANode.setAttribute('href', '#' + h2Nodes[j].id);
-                var supPosition = h2Content.indexOf('sup');
-                if (supPosition >= 0) {
-                    // 属于废弃
-                    var sSupNode = document.createElement('sup');
-                    sSupNode.setAttribute('class', 'deprecated');
-                    sSupNode.innerHTML = '已废弃';
-                    sTextNode = document.createTextNode(h2Content.substr(0, supPosition - 1));
-                    sANode.appendChild(sTextNode);
-                    sANode.appendChild(sSupNode);
-                } else {
-                    sTextNode = document.createTextNode(h2Content);
-                    sANode.appendChild(sTextNode);
-                }
-                sLiNode.appendChild(sANode);
-                document.getElementsByClassName(classArr[1] + '-ul')[0].appendChild(sLiNode);
-            }
-        }
-    }
-</script>
 </body>
 </html>
