@@ -8,7 +8,6 @@
     <meta name="viewport"
           content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0"/>
     <style>
-        @charset "UTF-8";
         html,
         body,
         h1,
@@ -389,11 +388,11 @@
 </div>
 <div class="es-doc">
     <div class="table-of-contents">
+        {{$nav}}
     </div>
     <div id="right" class="content-right">
-        <h1 class="curproject-name"> EasySwoole 开放 api </h1>
-        <p></p>
-        {$rawMd}
+        <div id="extra">{{$extra}}</div>
+        <div id="">{{$apiDoc}}</div>
         <footer class="m-footer">
             <p>Build by <a href="https://www.easyswoole.com/">EasySwoole</a></p>
         </footer>

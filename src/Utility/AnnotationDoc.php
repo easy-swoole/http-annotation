@@ -9,9 +9,8 @@ use EasySwoole\HttpAnnotation\Annotation\ObjectAnnotation;
 use EasySwoole\HttpAnnotation\Annotation\ParserInterface;
 use EasySwoole\HttpAnnotation\AnnotationTag\ApiAuth;
 use EasySwoole\HttpAnnotation\AnnotationTag\ApiDescription;
-use EasySwoole\HttpAnnotation\AnnotationTag\ApiGroupAuth;
 use EasySwoole\HttpAnnotation\AnnotationTag\Param;
-use EasySwoole\HttpAnnotation\Exception\Exception;
+use EasySwoole\ParserDown\ParserDown;
 use EasySwoole\Validate\Error;
 
 class AnnotationDoc
@@ -26,21 +25,29 @@ class AnnotationDoc
 
     function scan2Html(string $dirOrFile,?string $extMd = null)
     {
-        $info = $this->scan2Markdown($dirOrFile);
-        if(empty($info)){
-            throw new Exception('none doc info');
+        if($extMd){
+            $md = new ParserDown();
+            $extMd = $md->text($extMd);
         }else{
-            $md = $info['markdown'];
-            $md = "{$extMd}{$this->CLRF}{$md}";
-            return str_replace('{$rawMd}',$md,file_get_contents(__DIR__ . "/docPage.tpl"));
+            $extMd = '';
         }
+        $ret = file_get_contents(__DIR__ . "/docPage.tpl");
+        $ret = str_replace('{{$extra}}',$extMd,$ret);
+
+        $info = $this->buildAnnotationHtml($dirOrFile);
+        //TODO: 通过methodGroup构造菜单栏，而非在JS中构造。
+        $navArr = $info['methodGroup'];
+        $nav = '';
+
+        $ret = str_replace('{{$nav}}',$nav,$ret);
+        return str_replace('{{$apiDoc}}',$info['html'],$ret);
     }
 
-    function scan2Markdown(string $dirOrFile):array
+    function buildAnnotationHtml(string $dirOrFile):array
     {
         $groupList = [];
         $list = $this->scanner->scanAnnotations($dirOrFile);
-        $markdown = '';
+        $html = '';
         /** @var ObjectAnnotation $objectAnnotation */
         foreach ($list as $objectAnnotation)
         {
@@ -52,12 +59,12 @@ class AnnotationDoc
             //第一次构建分全局信息
             if(!isset($groupList[$currentGroupName])){
                 $groupList[$currentGroupName] = [];
-                $markdown .= "<h1 class='group-title' id='{$currentGroupName}'>{$currentGroupName}</h1>{$this->CLRF}";
+                $html .= "<h1 class='group-title' id='{$currentGroupName}'>{$currentGroupName}</h1>{$this->CLRF}";
                 $groupDescTag = $objectAnnotation->getApiGroupDescriptionTag();
                 if($groupDescTag){
-                    $markdown .= "<h3 class='group-description'>全局描述</h3>{$this->CLRF}";
+                    $html .= "<h3 class='group-description'>全局描述</h3>{$this->CLRF}";
                     $description = $this->parseDescTagContent($groupDescTag);
-                    $markdown .= $description."{$this->CLRF}";
+                    $html .= $description."{$this->CLRF}";
                 }
 
 
@@ -70,13 +77,13 @@ class AnnotationDoc
                 }
 
                 if(!empty($groupAuthTagList)){
-                    $markdown .= "<h3 class='group-auth'>全局权限说明</h3>{$this->CLRF}";
-                    $markdown .= $this->buildClassParam($groupAuthTagList);
+                    $html .= "<h3 class='group-auth'>全局权限说明</h3>{$this->CLRF}";
+                    $html .= $this->buildClassParam($groupAuthTagList);
                 }
 
                 if(!empty($paramTags)){
-                    $markdown .= "<h3 class='group-param'>全局参数说明</h3>{$this->CLRF}";
-                    $markdown .= $this->buildClassParam($paramTags);
+                    $html .= "<h3 class='group-param'>全局参数说明</h3>{$this->CLRF}";
+                    $html .= $this->buildClassParam($paramTags);
                 }
             }
 
@@ -95,9 +102,9 @@ class AnnotationDoc
                     if($apiTag->deprecated){
                         $deprecated .= "<sup class='deprecated'>已废弃</sup>";
                     }
-                    $markdown .= "<h2 class='api-method {$currentGroupName}' id='{$currentGroupName}-{$methodName}'>{$apiTag->name}{$deprecated}</h2>{$this->CLRF}";
+                    $html .= "<h2 class='api-method {$currentGroupName}' id='{$currentGroupName}-{$methodName}'>{$apiTag->name}{$deprecated}</h2>{$this->CLRF}";
 
-                    $markdown .= "<h3 class='method-description'>基本信息</h3>{$this->CLRF}";
+                    $html .= "<h3 class='method-description'>基本信息</h3>{$this->CLRF}";
                     //兼容api指定
                     if($method->getApiDescriptionTag()){
                         $description = $this->parseDescTagContent($method->getApiDescriptionTag());
@@ -109,7 +116,7 @@ class AnnotationDoc
                     }
 
                     // 请求路径
-                    $markdown .= "<p><strong>Path：</strong> {$apiTag->path}</p>{$this->CLRF}";
+                    $html .= "<p><strong>Path：</strong> {$apiTag->path}</p>{$this->CLRF}";
 
                     // 请求方法
                     $allow = $method->getMethodTag();
@@ -118,69 +125,69 @@ class AnnotationDoc
                     }else{
                         $allow = '不限制';
                     }
-                    $markdown .= "<p><strong>Method：</strong> {$allow}</p>{$this->CLRF}";
+                    $html .= "<p><strong>Method：</strong> {$allow}</p>{$this->CLRF}";
 
                     // 接口描述
-                    $markdown .= "<p><strong>接口描述：</strong> {$description}</p>{$this->CLRF}";
+                    $html .= "<p><strong>接口描述：</strong> {$description}</p>{$this->CLRF}";
 
 
                     $authParams = $method->getApiAuth();
                     if (!empty($authParams)) {
-                        $markdown .= "<h3 class='auth-params'>权限字段</h3> {$this->CLRF}";
-                        $markdown .= $this->buildMethodParams($authParams);
+                        $html .= "<h3 class='auth-params'>权限字段</h3> {$this->CLRF}";
+                        $html .= $this->buildMethodParams($authParams);
                     }
 
                     $requestParams = $method->getParamTag();
                     if (!empty($requestParams)) {
-                        $markdown .= "<h3 class='request-params'>请求字段</h3> {$this->CLRF}";
-                        $markdown .= $this->buildMethodParams($requestParams);
+                        $html .= "<h3 class='request-params'>请求字段</h3> {$this->CLRF}";
+                        $html .= $this->buildMethodParams($requestParams);
                     }
 
                     if(!empty($method->getApiRequestExample())){
-                        $markdown .= "<h3 class='request-example'>请求示例</h3> {$this->CLRF}";
+                        $html .= "<h3 class='request-example'>请求示例</h3> {$this->CLRF}";
                         $index = 1;
                         foreach ($method->getApiRequestExample() as $example){
                             $example = $this->parseDescTagContent($example);
                             if(!empty($example)){
-                                $markdown .= "<p><strong>请求示例{$index}</strong></p>{$this->CLRF}";
-                                $markdown .= "<pre><code class='lang-'>{$example}</code></pre>{$this->CLRF}";
+                                $html .= "<p><strong>请求示例{$index}</strong></p>{$this->CLRF}";
+                                $html .= "<pre><code class='lang-'>{$example}</code></pre>{$this->CLRF}";
                                 $index++;
                             }
                         }
                     }
 
-                    $markdown .= "<h3 class='response-part'>响应</h3>{$this->CLRF}";
+                    $html .= "<h3 class='response-part'>响应</h3>{$this->CLRF}";
                     $params = $method->getApiSuccessParam();
                     if (!empty($params)) {
-                        $markdown .= "<h4 class='response-params'>成功响应字段</h4> {$this->CLRF}";
-                        $markdown .= $this->buildMethodParams($params);
+                        $html .= "<h4 class='response-params'>成功响应字段</h4> {$this->CLRF}";
+                        $html .= $this->buildMethodParams($params);
                     }
                     if(!empty($method->getApiSuccess())){
-                        $markdown .= "<h4 class='api-success-example'>成功响应示例</h4> {$this->CLRF}";
+                        $html .= "<h4 class='api-success-example'>成功响应示例</h4> {$this->CLRF}";
                         $index = 1;
                         foreach ($method->getApiSuccess() as $example){
                             $example = $this->parseDescTagContent($example);
                             if(!empty($example)){
-                                $markdown .= "<p><strong>成功响应示例{$index}</strong></p>{$this->CLRF}";
-                                $markdown .= "<pre><code class='lang-'>{$example}</code></pre>{$this->CLRF}";
+                                $html .= "<p><strong>成功响应示例{$index}</strong></p>{$this->CLRF}";
+                                $html .= "<pre><code class='lang-'>{$example}</code></pre>{$this->CLRF}";
                                 $index++;
                             }
                         }
                     }
                     $params = $method->getApiFailParam();
                     if (!empty($params)) {
-                        $markdown .= "<h4 class='response-params'>失败响应字段</h4> {$this->CLRF}";
-                        $markdown .= $this->buildMethodParams($params);
+                        $html .= "<h4 class='response-params'>失败响应字段</h4> {$this->CLRF}";
+                        $html .= $this->buildMethodParams($params);
                     }
 
                     if(!empty($method->getApiFail())){
-                        $markdown .= "<h4 class='api-fail-example'>失败响应示例</h4> {$this->CLRF}";
+                        $html .= "<h4 class='api-fail-example'>失败响应示例</h4> {$this->CLRF}";
                         $index = 1;
                         foreach ($method->getApiFail() as $example){
                             $example = $this->parseDescTagContent($example);
                             if(!empty($example)){
-                                $markdown .= "<p><strong>失败响应示例{$index}</strong></p>{$this->CLRF}";
-                                $markdown .= "<pre><code class='lang-'>{$example}</code></pre>{$this->CLRF}";
+                                $html .= "<p><strong>失败响应示例{$index}</strong></p>{$this->CLRF}";
+                                $html .= "<pre><code class='lang-'>{$example}</code></pre>{$this->CLRF}";
                                 $index++;
                             }
                         }
@@ -189,7 +196,7 @@ class AnnotationDoc
             }
 
         }
-        return ['markdown'=>$markdown,'methodGroup'=>$groupList];
+        return ['html'=>$html,'methodGroup'=>$groupList];
     }
 
     private function parseDescTagContent(?ApiDescription $apiDescription = null)
@@ -230,9 +237,9 @@ class AnnotationDoc
 
     private function buildClassParam($params)
     {
-        $markdown = '';
+        $html = '';
         if (!empty($params)) {
-            $markdown .= <<<HTML
+            $html .= <<<HTML
 <table>
     <thead>
     <tr>
@@ -296,11 +303,17 @@ HTML;
                     }
                 }
 
-                $ignoreAction = implode(',', $param->ignoreAction);
-                if (empty($ignoreAction)) {
+                if(isset($param->ignoreAction)){
+                    $ignoreAction = implode(',', $param->ignoreAction);
+                    if (empty($ignoreAction)) {
+                        $ignoreAction = '-';
+                    }
+                }else{
                     $ignoreAction = '-';
                 }
-                $markdown .= <<<HTML
+
+
+                $html .= <<<HTML
     <tr>
         <td>{$param->name}</td>
         <td>{$from}</td>
@@ -312,12 +325,12 @@ HTML;
     </tr>\n
 HTML;
             }
-            $markdown .= <<<HTML
+            $html .= <<<HTML
     </tbody>
 </table>\n\n
 HTML;
         }
-        return $markdown;
+        return $html;
     }
 
     /**
