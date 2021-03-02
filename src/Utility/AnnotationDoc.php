@@ -97,7 +97,7 @@ class AnnotationDoc
                 //仅仅渲染有api标记的方法
                 $apiTag = $method->getApiTag();
                 if($apiTag){
-                    $groupList[$currentGroupName] = $method->getMethodName();
+                    $groupList[$currentGroupName][$method->getMethodName()] = $method;
                     $deprecated = '';
                     if($apiTag->deprecated){
                         $deprecated .= "<sup class='deprecated'>已废弃</sup>";
