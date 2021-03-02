@@ -49,25 +49,23 @@ class Scanner
              */
             foreach ($classAnnotation->getMethod() as $methodName => $method) {
                 $apiTag = $method->getApiTag();
-                if (!$apiTag && empty($apiTag->path)) {
-                    continue;
+                if ($apiTag && !empty($apiTag->path)) {
+                    $allow = $method->getMethodTag();
+                    if (!empty($allow->allow)) {
+                        $allow = $allow->allow;
+                    } else {
+                        $allow = ['POST', 'GET', 'PUT', 'PATCH', 'DELETE', 'HEAD', 'OPTIONS'];
+                    }
+                    if ($apiTag->deprecated !== true) {
+                        $handler = '/' . substr($class, $prefixLen + 1) . '/' . $methodName;
+                    } else {
+                        $handler = function (Request $request, Response $response) {
+                            $response->withStatus(Status::CODE_LOCKED);
+                            return false;
+                        };
+                    }
+                    $routeCollector->addRoute($allow, UrlParser::pathInfo($apiTag->path), $handler);
                 }
-
-                $allow = $method->getMethodTag();
-                if (!empty($allow->allow)) {
-                    $allow = $allow->allow;
-                } else {
-                    $allow = ['POST', 'GET', 'PUT', 'PATCH', 'DELETE', 'HEAD', 'OPTIONS'];
-                }
-                if ($apiTag->deprecated !== true) {
-                    $handler = '/' . substr($class, $prefixLen + 1) . '/' . $methodName;
-                } else {
-                    $handler = function (Request $request, Response $response) {
-                        $response->withStatus(Status::CODE_LOCKED);
-                        return false;
-                    };
-                }
-                $routeCollector->addRoute($allow, UrlParser::pathInfo($apiTag->path), $handler);
             }
         }
     }
