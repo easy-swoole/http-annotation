@@ -51,8 +51,12 @@ class AnnotationDoc
         foreach ($navArr as $fNavK => $fNavV) {
             $tempNav = "<li><a href='#{$fNavK}'>{$fNavK}</a><ul>%secondNav%</ul></li>";
             $secondNav = '';
+            /**
+             * @var string $sk
+             * @var MethodAnnotation $sv
+             */
             foreach ($fNavV as $sk => $sv) {
-                $secondNav .= "<li><a href='#{$fNavK}-{$sk}'>{$sk}</a></li>";
+                $secondNav .= "<li><a href='#{$fNavK}-{$sk}'>{$sv->getApiTag()->name}</a></li>";
             }
             $nav .= str_replace('%secondNav%', $secondNav, $tempNav);
         }
