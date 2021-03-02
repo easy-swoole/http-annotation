@@ -143,7 +143,7 @@ class AnnotationDoc
                             $example = $this->parseDescTagContent($example);
                             if(!empty($example)){
                                 $markdown .= "<p><strong>请求示例{$index}</strong></p>{$this->CLRF}";
-                                $markdown .= "```\n{$example}\n```{$this->CLRF}";
+                                $markdown .= "<pre><code class='lang-'>{$example}</code></pre>{$this->CLRF}";
                                 $index++;
                             }
                         }
@@ -162,7 +162,7 @@ class AnnotationDoc
                             $example = $this->parseDescTagContent($example);
                             if(!empty($example)){
                                 $markdown .= "<p><strong>成功响应示例{$index}</strong></p>{$this->CLRF}";
-                                $markdown .= "```\n{$example}\n```{$this->CLRF}";
+                                $markdown .= "<pre><code class='lang-'>{$example}</code></pre>{$this->CLRF}";
                                 $index++;
                             }
                         }
@@ -180,7 +180,7 @@ class AnnotationDoc
                             $example = $this->parseDescTagContent($example);
                             if(!empty($example)){
                                 $markdown .= "<p><strong>失败响应示例{$index}</strong></p>{$this->CLRF}";
-                                $markdown .= "```\n{$example}\n```{$this->CLRF}";
+                                $markdown .= "<pre><code class='lang-'>{$example}</code></pre>{$this->CLRF}";
                                 $index++;
                             }
                         }
@@ -232,64 +232,90 @@ class AnnotationDoc
     {
         $markdown = '';
         if (!empty($params)) {
-            $markdown .= "| 字段 | 来源 | 类型 | 默认值 | 描述 | 验证规则 | 忽略Action |\n";
-            $markdown .= "| ---- | ---- | ---- | ---- | ---- | ---- | ---- |\n";
+            $markdown .= <<<HTML
+<table>
+    <thead>
+    <tr>
+        <th>字段</th>
+        <th>来源</th>
+        <th>类型</th>
+        <th>默认值</th>
+        <th>描述</th>
+        <th>验证规则</th>
+        <th>忽略Action</th>
+    </tr>
+    </thead>
+    <tbody>\n
+HTML;
             /** @var Param $param */
             foreach ($params as $param) {
                 // 类型
-                if(!empty($param->type)){
+                if (!empty($param->type)) {
                     $type = $param->type;
-                }else{
+                } else {
                     $type = '默认';
                 }
 
                 // 来源
-                if(!empty($param->from)){
-                    $from = implode(",",$param->from);
-                }else{
+                if (!empty($param->from)) {
+                    $from = implode(",", $param->from);
+                } else {
                     $from = "不限";
                 }
 
                 // 默认值
-                if($param->defaultValue !== null){
+                if ($param->defaultValue !== null) {
                     $defaultValue = $param->defaultValue;
-                }else{
+                } else {
                     $defaultValue = '-';
                 }
 
                 // 描述
-                if(!empty($param->description)){
+                if (!empty($param->description)) {
                     $description = $param->description;
-                }else{
+                } else {
                     $description = '-';
                 }
 
                 // 验证规则
-                if(empty($param->validateRuleList)){
+                if (empty($param->validateRuleList)) {
                     $rule = '-';
-                }else{
+                } else {
                     $rule = '';
-                    foreach ($param->validateRuleList as $ruleName => $conf){
+                    foreach ($param->validateRuleList as $ruleName => $conf) {
                         $arrayCheckFunc = ['inArray', 'notInArray', 'allowFile', 'allowFileType'];
                         if (in_array($ruleName, $arrayCheckFunc)) {
-                            if(!is_array($conf[0])){
+                            if (!is_array($conf[0])) {
                                 $conf = [$conf];
                             }
                         }
-                        $err = new Error($param->name,null,null,$ruleName,null,$conf);
+                        $err = new Error($param->name, null, null, $ruleName, null, $conf);
                         $temp = $err->__toString();
-                        $temp = "{$ruleName}: ".substr($temp,strlen($param->name));
-                        $rule .= $temp." </br>";
+                        $temp = "{$ruleName}: " . substr($temp, strlen($param->name));
+                        $rule .= $temp . " <br />";
                     }
                 }
 
-                $ignoreAction = implode(',',$param->ignoreAction);
-                if(empty($ignoreAction)){
+                $ignoreAction = implode(',', $param->ignoreAction);
+                if (empty($ignoreAction)) {
                     $ignoreAction = '-';
                 }
-                $markdown .= "| {$param->name} |  {$from}  | {$type} | {$defaultValue} | {$description} | {$rule} | {$ignoreAction} |\n";
+                $markdown .= <<<HTML
+    <tr>
+        <td>{$param->name}</td>
+        <td>{$from}</td>
+        <td>{$type}</td>
+        <td>{$defaultValue}</td>
+        <td>{$description}</td>
+        <td>{$rule}</td>
+        <td>{$ignoreAction}</td>
+    </tr>\n
+HTML;
             }
-            $markdown .= "\n\n";
+            $markdown .= <<<HTML
+    </tbody>
+</table>\n\n
+HTML;
         }
         return $markdown;
     }
@@ -301,8 +327,20 @@ class AnnotationDoc
     {
         $markdown = '';
         if (!empty($params)) {
-            $markdown .= "| 字段 | 来源 | 类型 | 默认值 | 描述 | 验证规则 |\n";
-            $markdown .= "| ---- | ---- | ---- | ---- | ---- | ---- |\n";
+            $markdown .= <<<HTML
+<table>
+    <thead>
+    <tr>
+        <th>字段</th>
+        <th>来源</th>
+        <th>类型</th>
+        <th>默认值</th>
+        <th>描述</th>
+        <th>验证规则</th>
+    </tr>
+    </thead>
+    <tbody>\n
+HTML;
             /** @var Param $param */
             foreach ($params as $param) {
                 if($param instanceof Param || $param instanceof ApiAuth){
@@ -349,13 +387,25 @@ class AnnotationDoc
                             $err = new Error($param->name,null,null,$ruleName,null,$conf);
                             $temp = $err->__toString();
                             $temp = "{$ruleName}: ".substr($temp,strlen($param->name));
-                            $rule .= $temp." </br>";
+                            $rule .= $temp." <br />";
                         }
                     }
-                    $markdown .= "| {$param->name} |  {$from}  | {$type} | {$defaultValue} | {$description} | {$rule} |\n";
+                    $markdown .= <<<HTML
+    <tr>
+        <td>{$param->name}</td>
+        <td>{$from}</td>
+        <td>{$type}</td>
+        <td>{$defaultValue}</td>
+        <td>{$description}</td>
+        <td>{$rule}</td>
+    </tr>\n
+HTML;
                 }
             }
-            $markdown .= "\n\n";
+            $markdown .= <<<HTML
+    </tbody>
+</table>\n\n
+HTML;
         }
         return $markdown;
     }
