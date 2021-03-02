@@ -56,7 +56,11 @@ class AnnotationDoc
              * @var MethodAnnotation $sv
              */
             foreach ($fNavV as $sk => $sv) {
-                $secondNav .= "<li><a href='#{$fNavK}-{$sk}'>{$sv->getApiTag()->name}</a></li>";
+                if ($sv->getApiTag()->deprecated) {
+                    $secondNav .= "<li><a href='#{$fNavK}-{$sk}'>{$sv->getApiTag()->name}<sup class='deprecated'>已废弃</sup></a></li>";
+                } else {
+                    $secondNav .= "<li><a href='#{$fNavK}-{$sk}'>{$sv->getApiTag()->name}</a></li>";
+                }
             }
             $nav .= str_replace('%secondNav%', $secondNav, $tempNav);
         }

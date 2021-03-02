@@ -55,12 +55,14 @@
         }
 
         table {
+            width: 624px !important;
             margin: 10px 0 15px 0;
             border-collapse: collapse;
         }
 
         td,
         th {
+            text-align: center;
             border: 1px solid #ddd;
             padding: 3px 10px;
         }
@@ -372,6 +374,37 @@
             border-left: 3px solid #FFB800;
             padding-left: 8px;
             font-size: 16px;
+        }
+
+        #extra > p {
+            margin-bottom: 9px;
+            margin-top: 9px;
+            padding-left: 0;
+            font-size: 16px;
+        }
+
+        blockquote {
+            overflow: visible;
+            margin: 20px 0 !important;
+            padding: 16px !important;
+            border-width: 0 0 0 4px;
+            border-left: 3px solid #59d69d;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Helvetica, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", SimSun, sans-serif;
+            font-size: 16px;
+            line-height: 25px;
+            color: #393838;
+            background: #f6f6f6;
+        }
+
+        blockquote  p {
+            font-style: normal !important;
+            font-weight: 400 !important;
+            font-size: 16px !important;
+            padding-left: 0 !important;
+        }
+
+        #extra a {
+            text-decoration: underline;
         }
 
         /*# sourceMappingURL=defaultTheme.css.map */
