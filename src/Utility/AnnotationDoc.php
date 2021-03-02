@@ -37,7 +37,18 @@ class AnnotationDoc
         $info = $this->buildAnnotationHtml($dirOrFile);
         //TODO: 通过methodGroup构造菜单栏，而非在JS中构造。
         $navArr = $info['methodGroup'];
-        $nav = '';
+
+        // 处理导航
+        $nav = '<ul>';
+        foreach ($navArr as $fNavK => $fNavV) {
+            $tempNav = "<li><a href='#{$fNavK}'>{$fNavK}</a><ul>%secondNav%</ul></li>";
+            $secondNav = '';
+            foreach ($fNavV as $sk => $sv) {
+                $secondNav .= "<li><a href='#{$fNavK}-{$sk}'>{$sk}</a></li>";
+            }
+            $nav .= str_replace('%secondNav%', $secondNav, $tempNav);
+        }
+        $nav .= '</ul>';
 
         $ret = str_replace('{{$nav}}',$nav,$ret);
         return str_replace('{{$apiDoc}}',$info['html'],$ret);
