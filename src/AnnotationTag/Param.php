@@ -41,6 +41,11 @@ class Param extends AbstractAnnotationTag
     public $alias = null;
 
     /**
+     * @var bool
+     */
+    public $deprecated;
+
+    /**
      * 以下为校验规则
      */
 
