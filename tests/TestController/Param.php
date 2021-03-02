@@ -50,6 +50,22 @@ class Param extends AnnotationController
 
     }
 
+    /**
+     * @\EasySwoole\HttpAnnotation\AnnotationTag\Param(name="foo",required="",notEmpty="",deprecated=true)
+     */
+    public function deprecated()
+    {
+
+    }
+
+    /**
+     * @\EasySwoole\HttpAnnotation\AnnotationTag\Param(name="foo",required="",notEmpty="")
+     */
+    public function notDeprecated()
+    {
+
+    }
+
     protected function onException(\Throwable $throwable): void
     {
         if ($throwable instanceof ParamValidateError) {
