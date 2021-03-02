@@ -122,7 +122,7 @@ class Annotation extends AnnotationController
     }
 
     /**
-     * @Api(name="param2",path="/param2")
+     * @Api(name="param2",path="/param2",deprecated=true)
      * @Param(name="param1",required="",integer="")
      * @Param(name="param2",required="",integer="")
      */
