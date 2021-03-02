@@ -134,4 +134,21 @@ class ParamTest extends TestCase
 
         $this->fail('test lessThanWithColumn fail');
     }
+
+    public function testDeprecated()
+    {
+        $response = $this->fakeResponse();
+        $this->controller->__hook('deprecated', $this->fakeRequest('/',
+            ['groupAuth' => 1, 'groupParam' => 1, 'onRequestAuth' => 1, 'onRequestParam' => 1, 'auth' => 1, 'param' => 1]
+        ), $response);
+
+        $response = $this->fakeResponse();
+        $this->expectException(ParamValidateError::class);
+        $this->expectExceptionMessage('validate fail for column foo');
+        $this->controller->__hook('notDeprecated', $this->fakeRequest('/',
+            ['groupAuth' => 1, 'groupParam' => 1, 'onRequestAuth' => 1, 'onRequestParam' => 1, 'auth' => 1, 'param' => 1]
+        ), $response);
+
+        $this->fail('test deprecated fail');
+    }
 }

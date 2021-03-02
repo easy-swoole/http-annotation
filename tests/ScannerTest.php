@@ -33,4 +33,12 @@ class ScannerTest extends TestCase
         $scan->mappingRouter($col, __DIR__ . '/TestController', 'EasySwoole\HttpAnnotation\Tests\TestController');
         $this->assertEquals('/NoneAnnotation/exception', $col->getData()[0]['GET']['/testR']);
     }
+
+    function testDeprecated()
+    {
+        $scan = new Scanner();
+        $col = new RouteCollector(new Std(), new GroupCountBased());
+        $scan->mappingRouter($col, __DIR__ . '/TestController', 'EasySwoole\HttpAnnotation\Tests\TestController');
+        $this->assertArrayNotHasKey('/deprecated', $col->getData()[0]['GET']);
+    }
 }

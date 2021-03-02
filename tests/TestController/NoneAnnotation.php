@@ -21,7 +21,7 @@ class NoneAnnotation extends AnnotationController
 
     protected function onRequest(?string $action): ?bool
     {
-        if($action == 'testOnRequest'){
+        if ($action == 'testOnRequest') {
             $this->response()->write('testOnRequest');
             return false;
         }
@@ -31,7 +31,7 @@ class NoneAnnotation extends AnnotationController
 
     function afterAction(?string $actionName): void
     {
-        Di::getInstance()->set("afterAction",'afterAction');
+        Di::getInstance()->set("afterAction", 'afterAction');
     }
 
     protected function noneAction()
@@ -51,6 +51,14 @@ class NoneAnnotation extends AnnotationController
     {
         $this->gc = time();
         new AAAAAAAAAAA();
+    }
+
+    /**
+     * @Api(name="deprecated",path="/testDeprecated",deprecated=true)
+     */
+    public function testDeprecated()
+    {
+
     }
 
 

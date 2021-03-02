@@ -12,6 +12,7 @@ use EasySwoole\HttpAnnotation\Annotation\MethodAnnotation;
 use EasySwoole\HttpAnnotation\Annotation\Parser;
 use EasySwoole\HttpAnnotation\Annotation\ParserInterface;
 use EasySwoole\HttpAnnotation\Annotation\PropertyAnnotation;
+use EasySwoole\HttpAnnotation\AnnotationTag\ApiAuth;
 use EasySwoole\HttpAnnotation\AnnotationTag\ApiGroupAuth;
 use EasySwoole\HttpAnnotation\AnnotationTag\Param;
 use EasySwoole\HttpAnnotation\Exception\Annotation\ActionTimeout;
@@ -161,17 +162,22 @@ class AnnotationController extends Controller
             $validate = new Validate();
             $validateParams = [];
             //先找全局的权限定义
+            /** @var ApiGroupAuth $param */
             foreach ($this->classAnnotation->getGroupAuthTag() as $param){
                 $validateParams[$param->name] = $param;
             }
+
+            /** @var Param $param */
             foreach ($this->classAnnotation->getParamTag() as $param){
                 $validateParams[$param->name] = $param;
             }
             //找出方法的apiAuth标签
+            /** @var ApiAuth $param */
             foreach ($methodAnnotation->getApiAuth() as $param){
                 $validateParams[$param->name] = $param;
             }
             //找出方法的param标签
+            /** @var Param $param */
             foreach ($methodAnnotation->getParamTag() as $param){
                 $validateParams[$param->name] = $param;
                 $methodParams[$param->name] = true;
@@ -181,6 +187,10 @@ class AnnotationController extends Controller
             /** @var Param $param */
             foreach ($validateParams as $param)
             {
+                if ($param->deprecated === true) {
+                    continue;
+                }
+
                 if($param instanceof ApiGroupAuth){
                     if(in_array($methodName,$param->ignoreAction)){
                         continue;

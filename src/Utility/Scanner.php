@@ -46,7 +46,7 @@ class Scanner
              */
             foreach ($classAnnotation->getMethod() as $methodName => $method){
                 $apiTag = $method->getApiTag();
-                if($apiTag && !empty($apiTag->path)){
+                if($apiTag && !empty($apiTag->path) && $apiTag->deprecated !== true){
                     $allow = $method->getMethodTag();
                     if(!empty($allow->allow)){
                         $allow = $allow->allow;
