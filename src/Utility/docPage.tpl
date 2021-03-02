@@ -237,8 +237,8 @@
             top: 61px;
             left: 0;
             bottom: 0;
-            overflow-x: hidden;
-            overflow-y: auto;
+            /*overflow-x: hidden;*/
+            /*overflow-y: auto;*/
             width: 260px;
         }
 
