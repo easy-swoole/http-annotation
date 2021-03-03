@@ -12,28 +12,13 @@ if(!file_exists($file)){
     die("include composer autoload.php fail\n");
 }
 
+$command = new \EasySwoole\HttpAnnotation\Utility\DocCommand();
+\EasySwoole\Command\CommandManager::getInstance()->addCommand($command);
 
-use EasySwoole\HttpAnnotation\Utility\AnnotationDoc;
-
-$array = $argv;
-array_shift($array);
-$file = array_shift($array);
-if(empty($file)){
-    $file = 'App/HttpController';
-}
-$extra = array_shift($array);
-if(!empty($extra) && is_file($extra)){
-    $extra = file_get_contents($extra);
-}else{
-    $extra = null;
-}
-
-echo "scan dir: {$file}\n";
-$string = (new AnnotationDoc())->scan2Html($file,$extra);
-
-if(!empty($string)){
-    file_put_contents('easyDoc.html',$string);
-    echo "extra to  file: easyDoc.html\n";
-}else{
-    echo "no any api doc found\n";
-}
+array_splice($argv, 1, 0, $command->commandName());
+$caller = new \EasySwoole\Command\Caller();
+$caller->setScript(current($argv));
+$caller->setCommand(next($argv));
+$caller->setParams($argv);
+reset($argv);
+echo \EasySwoole\Command\CommandManager::getInstance()->run($caller);
