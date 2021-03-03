@@ -46,9 +46,14 @@ class AnnotationDoc
         $info = $this->buildAnnotationHtml($dirOrFile);
 
         $navArr = $info['methodGroup'];
+        ksort($navArr);
         // 处理导航
         $nav = '<ul>';
         foreach ($navArr as $fNavK => $fNavV) {
+            if(empty($fNavV)){
+                continue;
+            }
+            ksort($fNavV);
             $tempNav = "<li><a href='#{$fNavK}'>{$fNavK}</a><ul>%secondNav%</ul></li>";
             $secondNav = '';
             /**
