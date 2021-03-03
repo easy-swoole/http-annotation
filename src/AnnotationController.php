@@ -6,6 +6,7 @@ namespace EasySwoole\HttpAnnotation;
 
 use EasySwoole\Component\Context\ContextManager;
 use EasySwoole\Component\Di as IOC;
+use EasySwoole\Http\AbstractInterface\AbstractRouter;
 use EasySwoole\Http\AbstractInterface\Controller;
 use EasySwoole\Http\GlobalParam\Hook;
 use EasySwoole\HttpAnnotation\Annotation\MethodAnnotation;
@@ -257,6 +258,13 @@ class AnnotationController extends Controller
                                 $context = ContextManager::getInstance()->get(Hook::SESSION_CONTEXT);
                                 if($context instanceof Context){
                                     $value = $context->get($paramName);
+                                }
+                                break;
+                            }
+                            case 'ROUTER_PARAMS':{
+                                $context = ContextManager::getInstance()->get(AbstractRouter::PARSE_PARAMS_CONTEXT_KEY);
+                                if(isset($context[$paramName])){
+                                    $value = $context[$paramName];
                                 }
                                 break;
                             }
