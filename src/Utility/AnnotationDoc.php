@@ -283,6 +283,13 @@ class AnnotationDoc
 HTML;
             /** @var Param $param */
             foreach ($params as $param) {
+                // 已废弃字段处理
+                if ($param->deprecated) {
+                    $name = $param->name . "<sup class='deprecated'>已废弃</sup>";
+                } else {
+                    $name = $param->name;
+                }
+
                 // 类型
                 if (!empty($param->type)) {
                     $type = $param->type;
@@ -342,7 +349,7 @@ HTML;
 
                 $html .= <<<HTML
     <tr>
-        <td>{$param->name}</td>
+        <td>{$name}</td>
         <td>{$from}</td>
         <td>{$type}</td>
         <td>{$defaultValue}</td>
@@ -384,6 +391,13 @@ HTML;
             /** @var Param $param */
             foreach ($params as $param) {
                 if($param instanceof Param || $param instanceof ApiAuth){
+                    // 已废弃字段处理
+                    if ($param->deprecated) {
+                        $name = $param->name . "<sup class='deprecated'>已废弃</sup>";
+                    } else {
+                        $name = $param->name;
+                    }
+
                     // 类型
                     if(!empty($param->type)){
                         $type = $param->type;
@@ -432,7 +446,7 @@ HTML;
                     }
                     $markdown .= <<<HTML
     <tr>
-        <td>{$param->name}</td>
+        <td>{$name}</td>
         <td>{$from}</td>
         <td>{$type}</td>
         <td>{$defaultValue}</td>

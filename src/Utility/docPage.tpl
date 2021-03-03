@@ -407,6 +407,14 @@
             text-decoration: underline;
         }
 
+        sup.deprecated {
+            color: red;
+        }
+
+        h2 > sup.deprecated {
+            font-size: 14px;
+        }
+
         /*# sourceMappingURL=defaultTheme.css.map */
     </style>
 </head>
