@@ -55,7 +55,7 @@
         }
 
         table {
-            width: 624px !important;
+            width: 700px !important;
             margin: 10px 0 15px 0;
             border-collapse: collapse;
         }
