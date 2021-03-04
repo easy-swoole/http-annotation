@@ -17,6 +17,7 @@ use FastRoute\RouteCollector;
 
 class Scanner
 {
+    /** @var Parser|ParserInterface|null */
     protected $parser;
 
     function __construct(?ParserInterface $parser = null)
@@ -25,6 +26,14 @@ class Scanner
             $parser = new Parser();
         }
         $this->parser = $parser;
+    }
+
+    /**
+     * @return Parser|ParserInterface|null
+     */
+    public function getParser()
+    {
+        return $this->parser;
     }
 
     function getObjectAnnotation(string $class): ObjectAnnotation
