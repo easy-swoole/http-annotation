@@ -276,6 +276,10 @@
             flex-grow: 1;
         }
 
+        .content-right h1:target {
+            padding-top: 80px;
+        }
+
         .content-right h2:target {
             padding-top: 80px;
         }
