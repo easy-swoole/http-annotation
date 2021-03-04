@@ -1,6 +1,10 @@
 #!/usr/bin/env php
 <?php
 
+use EasySwoole\Command\Caller;
+use EasySwoole\Command\CommandManager;
+use EasySwoole\HttpAnnotation\Utility\DocCommand;
+
 $file = null;
 foreach ([ __DIR__ . '/../../../autoload.php', __DIR__ . '/../vendor/autoload.php' ] as $file) {
     if (file_exists($file)) {
@@ -12,13 +16,13 @@ if(!file_exists($file)){
     die("include composer autoload.php fail\n");
 }
 
-$command = new \EasySwoole\HttpAnnotation\Utility\DocCommand();
-\EasySwoole\Command\CommandManager::getInstance()->addCommand($command);
+$command = new DocCommand();
+CommandManager::getInstance()->addCommand($command);
 
 array_splice($argv, 1, 0, $command->commandName());
-$caller = new \EasySwoole\Command\Caller();
+$caller = new Caller();
 $caller->setScript(current($argv));
 $caller->setCommand(next($argv));
 $caller->setParams($argv);
 reset($argv);
-echo \EasySwoole\Command\CommandManager::getInstance()->run($caller);
+echo CommandManager::getInstance()->run($caller);
