@@ -27,11 +27,11 @@ use EasySwoole\HttpAnnotation\AnnotationTag\Param;
 
 class Parser implements ParserInterface
 {
-    private $parser;
+    private $annotation;
 
     function __construct(?Annotation $annotation = null)
     {
-        if($annotation == null){
+        if ($annotation == null) {
             $annotation = new Annotation();
             static::preDefines([
                 "POST" => "POST",
@@ -47,9 +47,9 @@ class Parser implements ParserInterface
                 'DI' => 'DI',
                 'CONTEXT' => 'CONTEXT',
                 'RAW' => 'RAW',
-                'JSON'=>'JSON',
-                'SESSION'=>'SESSION',
-                'ROUTER_PARAMS'=>'ROUTER_PARAMS'
+                'JSON' => 'JSON',
+                'SESSION' => 'SESSION',
+                'ROUTER_PARAMS' => 'ROUTER_PARAMS'
             ]);
             $annotation->addParserTag(new Api());
             $annotation->addParserTag(new ApiAuth());
@@ -70,79 +70,86 @@ class Parser implements ParserInterface
             $annotation->addParserTag(new Method());
             $annotation->addParserTag(new Param());
         }
-        $this->parser = $annotation;
+        $this->annotation = $annotation;
+    }
+
+    /**
+     * @return Annotation|null
+     */
+    public function getAnnotation(): Annotation
+    {
+        return $this->annotation;
     }
 
     function parseObject(\ReflectionClass $reflectionClass): ObjectAnnotation
     {
         $parent = $reflectionClass->getParentClass();
-        if($parent && $parent->getName() !== AnnotationController::class){
-            if(Cache::getInstance()->get($parent->getName())){
+        if ($parent && $parent->getName() !== AnnotationController::class) {
+            if (Cache::getInstance()->get($parent->getName())) {
                 $parent = Cache::getInstance()->get($parent->getName());
-            }else{
+            } else {
                 $parent = $this->parseObject($parent);
             }
         }
-        $cache  = Cache::getInstance()->get($reflectionClass->getName());
-        if($cache){
+        $cache = Cache::getInstance()->get($reflectionClass->getName());
+        if ($cache) {
             return $cache;
         }
         $objectAnnotation = new ObjectAnnotation();
 
-        if($parent instanceof ObjectAnnotation){
-            if($parent->getApiGroupTag()){
+        if ($parent instanceof ObjectAnnotation) {
+            if ($parent->getApiGroupTag()) {
                 $objectAnnotation->addAnnotationTag($parent->getApiGroupTag());
             }
-            if($parent->getApiGroupDescriptionTag()){
+            if ($parent->getApiGroupDescriptionTag()) {
                 $objectAnnotation->addAnnotationTag($parent->getApiGroupDescriptionTag());
             }
-            foreach ($parent->getGroupAuthTag() as $tag){
+            foreach ($parent->getGroupAuthTag() as $tag) {
                 $objectAnnotation->addAnnotationTag($tag);
             }
-            foreach ($parent->getParamTag() as $tag){
+            foreach ($parent->getParamTag() as $tag) {
                 $objectAnnotation->addAnnotationTag($tag);
             }
-            foreach ($parent->getOtherTags() as $otherTag){
+            foreach ($parent->getOtherTags() as $otherTag) {
                 $objectAnnotation->addAnnotationTag($otherTag);
             }
         }
         //获取class的标签注解
-        $tagList = $this->parser->getAnnotation($reflectionClass);
-        array_walk_recursive($tagList,function ($item)use($objectAnnotation){
+        $tagList = $this->annotation->getAnnotation($reflectionClass);
+        array_walk_recursive($tagList, function ($item) use ($objectAnnotation) {
             $objectAnnotation->addAnnotationTag($item);
         });
 
         //获取class的方法注解
-        if($parent instanceof ObjectAnnotation){
-            foreach ($parent->getMethod() as $method){
+        if ($parent instanceof ObjectAnnotation) {
+            foreach ($parent->getMethod() as $method) {
                 $objectAnnotation->addMethod($method);
             }
         }
-        foreach ($reflectionClass->getMethods()  as $method){
-            $tagList = $this->parser->getAnnotation($method);
+        foreach ($reflectionClass->getMethods() as $method) {
+            $tagList = $this->annotation->getAnnotation($method);
             $method = new MethodAnnotation($method->getName());
-            array_walk_recursive($tagList,function ($item)use($method){
+            array_walk_recursive($tagList, function ($item) use ($method) {
                 $method->addAnnotationTag($item);
             });
             $objectAnnotation->addMethod($method);
         }
 
         //获取class的成员属性注解
-        if($parent instanceof ObjectAnnotation){
-            foreach ($parent->getProperty() as $property){
+        if ($parent instanceof ObjectAnnotation) {
+            foreach ($parent->getProperty() as $property) {
                 $objectAnnotation->addProperty($property);
             }
         }
-        foreach ($reflectionClass->getProperties() as $property)
-        {
-            $tagList = $this->parser->getAnnotation($property);
+        foreach ($reflectionClass->getProperties() as $property) {
+            $tagList = $this->annotation->getAnnotation($property);
             $property = new PropertyAnnotation($property->getName());
-            array_walk_recursive($tagList,function ($item)use($property){
+            array_walk_recursive($tagList, function ($item) use ($property) {
                 $property->addAnnotationTag($item);
             });
             $objectAnnotation->addProperty($property);
         }
-        Cache::getInstance()->set($reflectionClass->getName(),$objectAnnotation);
+        Cache::getInstance()->set($reflectionClass->getName(), $objectAnnotation);
         return $objectAnnotation;
     }
 
