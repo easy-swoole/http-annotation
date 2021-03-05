@@ -231,7 +231,12 @@ class AnnotationDoc
                     }
                 }
             }
-            $htmls[$currentGroupName] = $html;
+
+            if (array_key_exists($currentGroupName, $htmls)) {
+                $htmls[$currentGroupName] .= $html;
+            } else {
+                $htmls[$currentGroupName] = $html;
+            }
         }
 
         ksort($htmls);
