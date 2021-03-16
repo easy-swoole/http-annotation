@@ -276,7 +276,7 @@ class Param extends AbstractAnnotationTag
                 return json_decode($val);
             }
             case 'array':{
-                return json_encode($val);
+                return (array)$val;
             }
             default:{
                 return $val;

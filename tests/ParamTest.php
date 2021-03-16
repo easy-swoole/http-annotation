@@ -151,4 +151,20 @@ class ParamTest extends TestCase
 
         $this->fail('test deprecated fail');
     }
+
+    public function testParamType()
+    {
+        $response = $this->fakeResponse();
+        $this->controller->__hook('paramType', $this->fakeRequest('/',
+            ['groupAuth' => 1, 'groupParam' => 1, 'onRequestAuth' => 1, 'onRequestParam' => 1, 'auth' => 1, 'param' => 1,
+                'string' => 1,
+                'int' => '1',
+                'float' => '1',
+                'bool' => 1,
+                'object' => json_encode(['a' => 1, 'b' => 2]),
+                'array' => []
+            ]
+        ), $response);
+        $this->assertEquals('success', $response->getBody()->__toString());
+    }
 }
