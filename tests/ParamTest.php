@@ -161,7 +161,7 @@ class ParamTest extends TestCase
                 'int' => '1',
                 'float' => '1',
                 'bool' => 1,
-                'object' => json_encode(['a' => 1, 'b' => 2]),
+                'json' => json_encode(['a' => 1, 'b' => 2]),
                 'array' => []
             ]
         ), $response);

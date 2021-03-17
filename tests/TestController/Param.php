@@ -71,16 +71,16 @@ class Param extends AnnotationController
      * @\EasySwoole\HttpAnnotation\AnnotationTag\Param(name="int",type="int")
      * @\EasySwoole\HttpAnnotation\AnnotationTag\Param(name="float",type="float")
      * @\EasySwoole\HttpAnnotation\AnnotationTag\Param(name="bool",type="bool")
-     * @\EasySwoole\HttpAnnotation\AnnotationTag\Param(name="object",type="object")
+     * @\EasySwoole\HttpAnnotation\AnnotationTag\Param(name="json",type="json")
      * @\EasySwoole\HttpAnnotation\AnnotationTag\Param(name="array",type="array")
      */
-    public function paramType(string $string, int $int, float $float, bool $bool, \stdClass $object, array $array)
+    public function paramType(string $string, int $int, float $float, bool $bool, \stdClass $json, array $array)
     {
         if (gettype($string) !== 'string' ||
             gettype($int) !== 'integer' ||
             gettype($float) !== 'double' ||
             gettype($bool) !== 'boolean' ||
-            gettype($object) !== 'object' ||
+            gettype($json) !== 'object' ||
             gettype($array) !== 'array'
 
         ) {
