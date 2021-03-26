@@ -23,7 +23,7 @@ class ScannerTest extends TestCase
     {
         $scan = new Scanner();
         $array = $scan->scanAnnotations(__DIR__ . '/TestController');
-        $this->assertEquals(5, count($array));
+        $this->assertEquals(7, count($array));
     }
 
     function testRouter()

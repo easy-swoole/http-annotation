@@ -125,6 +125,7 @@ class AnnotationDoc
              */
             $methods = $objectAnnotation->getMethod();
             ksort($methods);
+            $controllerAnnotation = $objectAnnotation->getController();
             foreach ($methods as $methodName => $method) {
                 //仅仅渲染有api标记的方法
                 $apiTag = $method->getApiTag();
@@ -152,8 +153,9 @@ class AnnotationDoc
                         $description = '暂无描述';
                     }
 
+                    $path = Scanner::getRoutePath($controllerAnnotation, $apiTag);
                     // 请求路径
-                    $html .= "<p><strong>Path：</strong> {$apiTag->path}</p>{$this->CLRF}";
+                    $html .= "<p><strong>Path：</strong> {$path}</p>{$this->CLRF}";
 
                     // 请求方法
                     $allow = $method->getMethodTag();
