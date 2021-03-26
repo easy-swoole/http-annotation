@@ -5,6 +5,7 @@ namespace EasySwoole\HttpAnnotation\Annotation;
 
 use EasySwoole\HttpAnnotation\AnnotationTag\ApiGroup;
 use EasySwoole\HttpAnnotation\AnnotationTag\ApiGroupDescription;
+use EasySwoole\HttpAnnotation\AnnotationTag\Controller;
 
 class ObjectAnnotation extends AnnotationBean
 {
@@ -12,6 +13,8 @@ class ObjectAnnotation extends AnnotationBean
     protected $apiGroup;
     /** @var ApiGroupDescription|null */
     protected $apiGroupDescription;
+    /** @var Controller|null */
+    protected $controller;
 
     protected $apiGroupAuth = [];
 
@@ -96,6 +99,14 @@ class ObjectAnnotation extends AnnotationBean
     public function getApiGroupDescriptionTag(): ?ApiGroupDescription
     {
         return $this->apiGroupDescription;
+    }
+
+    /**
+     * @return Controller|null
+     */
+    public function getController(): ?Controller
+    {
+        return $this->controller;
     }
 }
 

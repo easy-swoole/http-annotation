@@ -12,6 +12,8 @@ use EasySwoole\HttpAnnotation\Annotation\MethodAnnotation;
 use EasySwoole\HttpAnnotation\Annotation\ObjectAnnotation;
 use EasySwoole\HttpAnnotation\Annotation\Parser;
 use EasySwoole\HttpAnnotation\Annotation\ParserInterface;
+use EasySwoole\HttpAnnotation\AnnotationTag\Api;
+use EasySwoole\HttpAnnotation\AnnotationTag\Controller;
 use EasySwoole\Utility\File;
 use FastRoute\RouteCollector;
 
@@ -52,6 +54,7 @@ class Scanner
          * @var ObjectAnnotation $classAnnotation
          */
         foreach ($annotations as $class => $classAnnotation) {
+            $controllerAnnotation = $classAnnotation->getController();
             /**
              * @var  $methodName
              * @var MethodAnnotation $method
@@ -73,7 +76,7 @@ class Scanner
                             return false;
                         };
                     }
-                    $routeCollector->addRoute($allow, UrlParser::pathInfo($apiTag->path), $handler);
+                    $routeCollector->addRoute($allow, UrlParser::pathInfo(self::getRoutePath($controllerAnnotation, $apiTag)), $handler);
                 }
             }
         }
@@ -103,6 +106,25 @@ class Scanner
             $ret[$class] = $this->getObjectAnnotation($class);
         }
         return $ret;
+    }
+
+    public static function getRoutePath(?Controller $controller = null, ?Api $api = null): ?string
+    {
+        $prefix = $controller ? $controller->prefix : null;
+        $path = $api ? $api->path : null;
+        if (!$prefix && !$path) {
+            return '';
+        }
+
+        if ($prefix && !$path) {
+            return $prefix;
+        }
+
+        if (!$prefix && $path) {
+            return $path;
+        }
+
+        return $prefix . $path;
     }
 
     public static function getFileDeclaredClass(string $file): ?string
