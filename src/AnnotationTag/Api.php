@@ -37,6 +37,11 @@ class Api extends AbstractAnnotationTag
      */
     public $version = '1.0.0';
 
+    /**
+     * @var bool
+     */
+    public $ignorePrefix = false;
+
     public function tagName(): string
     {
         return  'Api';

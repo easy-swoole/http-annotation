@@ -30,4 +30,12 @@ class RouterPath extends AnnotationController
     {
         $this->response()->write('none');
     }
+
+    /**
+     * @Api(name="ignorePrefix",path="/ignore",ignorePrefix=true)
+     */
+    public function ignore()
+    {
+        $this->response()->write('ignorePrefix');
+    }
 }

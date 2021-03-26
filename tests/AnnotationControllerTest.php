@@ -162,6 +162,11 @@ class AnnotationControllerTest extends TestCase
         $dispatcher = new Dispatcher('EasySwoole\HttpAnnotation\Tests\TestController');
         $dispatcher->dispatch($this->fakeRequest('/Router/aa'), $response);
         $this->assertEquals('not found!', $response->getBody()->__toString());
+
+        $response = $this->fakeResponse();
+        $dispatcher = new Dispatcher('EasySwoole\HttpAnnotation\Tests\TestController');
+        $dispatcher->dispatch($this->fakeRequest('/ignore'), $response);
+        $this->assertEquals('ignorePrefix', $response->getBody()->__toString());
     }
 
 }
