@@ -124,6 +124,10 @@ class Scanner
             return $path;
         }
 
+        if ($api->ignorePrefix === true) {
+            return $path;
+        }
+
         return $prefix . $path;
     }
 
