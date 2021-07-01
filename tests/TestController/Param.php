@@ -43,6 +43,17 @@ class Param extends AnnotationController
     }
 
     /**
+     * @\EasySwoole\HttpAnnotation\AnnotationTag\Param(name="columnA",betweenMbLen={3,5})
+     * @\EasySwoole\HttpAnnotation\AnnotationTag\Param(name="columnB",mbLength="3")
+     * @\EasySwoole\HttpAnnotation\AnnotationTag\Param(name="columnC",mbLengthMax="3")
+     * @\EasySwoole\HttpAnnotation\AnnotationTag\Param(name="columnD",mbLengthMin="1")
+     */
+    public function mbLengthWithColumn()
+    {
+
+    }
+
+    /**
      * @\EasySwoole\HttpAnnotation\AnnotationTag\Param(name="foo",greaterThanWithColumn="bar")
      */
     public function greaterThanWithColumn()
@@ -96,7 +107,7 @@ class Param extends AnnotationController
         if ($throwable instanceof ParamValidateError) {
             $validate = $throwable->getValidate();
             $rule = $validate->getError()->getErrorRule();
-            if (in_array($rule, ['lessThanWithColumn', 'greaterThanWithColumn',])) {
+            if (in_array($rule, ['lessThanWithColumn', 'greaterThanWithColumn',"betweenMbLen","mbLength","mbLengthMax","mbLengthMin"])) {
                 throw new \Exception($validate->getError()->__toString());
             }
         }

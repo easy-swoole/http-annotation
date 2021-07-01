@@ -58,8 +58,8 @@ class Param extends AbstractAnnotationTag
         'decimal', 'dateBefore', 'dateAfter', 'equal', 'different',
         'equalWithColumn', 'differentWithColumn', 'lessThanWithColumn', 'greaterThanWithColumn',
         'func', 'inArray', 'notInArray', 'isIp',
-        'integer', 'numeric', 'float', 'length', 'lengthMax', 'lengthMin',
-        'betweenLen', 'money', 'max', 'min', 'regex', 'allDigital',
+        'integer', 'numeric', 'float', 'length', 'lengthMax', 'lengthMin', 'mbLength', 'mbLengthMax', 'mbLengthMin',
+        'betweenLen', 'betweenMbLen', 'money', 'max', 'min', 'regex', 'allDigital',
         'timestamp', 'timestampBeforeDate', 'timestampAfterDate',
         'timestampBefore', 'timestampAfter', 'url', 'allowFile', 'allowFileType'
     ];
@@ -163,15 +163,31 @@ class Param extends AbstractAnnotationTag
     /**
      * @var string
      */
+    public $mbLength;
+    /**
+     * @var string
+     */
     public $lengthMax;
+    /**
+     * @var string
+     */
+    public $mbLengthMax;
     /**
      * @var string
      */
     public $lengthMin;
     /**
+     * @var string
+     */
+    public $mbLengthMin;
+    /**
      * @var array
      */
     public $betweenLen;
+    /**
+     * @var array
+     */
+    public $betweenMbLen;
     /**
      * @var string
      */

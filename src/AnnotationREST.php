@@ -11,7 +11,7 @@ class AnnotationREST extends AnnotationController
 {
     /*
        *支持方法
-        'GET',      // 从服务器取出资源（一项或多项）
+       'GET',      // 从服务器取出资源（一项或多项）
        'POST',     // 在服务器新建一个资源
        'PUT',      // 在服务器更新资源（客户端提供改变后的完整资源）
        'PATCH',    // 在服务器更新资源（客户端提供改变的属性）

@@ -89,14 +89,14 @@ class ParamTest extends TestCase
         ), $response);
         $this->assertEquals(
             json_encode([
-                'groupAuth' => 1,
-                'groupParam' => 1,
-                'onRequestAuth' => 1,
+                'groupAuth'      => 1,
+                'groupParam'     => 1,
+                'onRequestAuth'  => 1,
                 'onRequestParam' => 1,
-                'auth' => 1,
-                'param' => 1,
-                'groupParamA' => 'groupParamA',
-                'groupParamB' => 'groupParamB'
+                'auth'           => 1,
+                'param'          => 1,
+                'groupParamA'    => 'groupParamA',
+                'groupParamB'    => 'groupParamB'
             ]),
             $response->getBody()->__toString());
     }
@@ -116,6 +116,21 @@ class ParamTest extends TestCase
         ), $response);
 
         $this->fail('test lessThanWithColumn fail');
+    }
+
+    public function testMbLengthWithColumn()
+    {
+        $response = $this->fakeResponse();
+        $this->controller->__hook('mbLengthWithColumn', $this->fakeRequest('/',
+            [
+                'groupAuth' => 1, 'groupParam' => 1, 'onRequestAuth' => 1, 'onRequestParam' => 1, 'auth' => 1,
+                'columnA'=>'仙士可',
+                'columnB'=>'仙士3',
+                'columnC'=>'先12',
+                'columnD'=>'仙士4',
+            ]
+        ), $response);
+        $this->assertTrue(true);
     }
 
     public function testGreaterThanWithColumn()
@@ -157,12 +172,12 @@ class ParamTest extends TestCase
         $response = $this->fakeResponse();
         $this->controller->__hook('paramType', $this->fakeRequest('/',
             ['groupAuth' => 1, 'groupParam' => 1, 'onRequestAuth' => 1, 'onRequestParam' => 1, 'auth' => 1, 'param' => 1,
-                'string' => 1,
-                'int' => '1',
-                'float' => '1',
-                'bool' => 1,
-                'json' => json_encode(['a' => 1, 'b' => 2]),
-                'array' => []
+             'string'    => 1,
+             'int'       => '1',
+             'float'     => '1',
+             'bool'      => 1,
+             'json'      => json_encode(['a' => 1, 'b' => 2]),
+             'array'     => []
             ]
         ), $response);
         $this->assertEquals('success', $response->getBody()->__toString());
