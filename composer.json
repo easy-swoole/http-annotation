@@ -26,7 +26,7 @@
         "easyswoole/annotation": "^2.0",
         "easyswoole/parsedown": "^1.0",
         "easyswoole/component": "^2.2",
-        "easyswoole/validate": "2.1.0",
+        "easyswoole/validate": "^2.1",
         "easyswoole/command": "^1.1"
     },
     "require-dev": {
