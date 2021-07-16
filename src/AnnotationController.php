@@ -198,6 +198,7 @@ class AnnotationController extends Controller
                     }
                 }
                 $paramName = $param->name;
+                $errMsg = $param->errMsg;
                 if(!empty($param->from)){
                     $value = null;
                     /*
@@ -293,11 +294,18 @@ class AnnotationController extends Controller
                     }
                 }
                 $allParamsData[$paramName] = $value;
-                if(!empty($param->validateRuleList)){
-                    foreach ($param->validateRuleList as $rule => $none){
+                if(!empty($param->_validateRuleList)){
+                    foreach ($param->_validateRuleList as $rule => $none){
                         $validateArgs = $param->{$rule};
                         if(!is_array($validateArgs)){
                             $validateArgs = [$validateArgs];
+                        }
+                        if(is_array($errMsg)){
+                            if(isset($errMsg[$rule])){
+                                $validateArgs[] = $errMsg[$rule];
+                            }
+                        }else{
+                            $validateArgs[] = $errMsg;
                         }
                         $validate->addColumn($param->name,$param->alias)->{$rule}(...$validateArgs);
                     }

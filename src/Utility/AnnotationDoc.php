@@ -343,11 +343,11 @@ HTML;
                 }
 
                 // 验证规则
-                if (empty($param->validateRuleList)) {
+                if (empty($param->_validateRuleList)) {
                     $rule = '-';
                 } else {
                     $rule = '';
-                    foreach ($param->validateRuleList as $ruleName => $conf) {
+                    foreach ($param->_validateRuleList as $ruleName => $conf) {
                         $arrayCheckFunc = ['inArray', 'notInArray', 'allowFile', 'allowFileType'];
                         if (in_array($ruleName, $arrayCheckFunc)) {
                             if (!is_array($conf[0])) {
@@ -451,11 +451,11 @@ HTML;
                     }
 
                     // 验证规则
-                    if (empty($param->validateRuleList)) {
+                    if (empty($param->_validateRuleList)) {
                         $rule = '-';
                     } else {
                         $rule = '';
-                        foreach ($param->validateRuleList as $ruleName => $conf) {
+                        foreach ($param->_validateRuleList as $ruleName => $conf) {
                             $arrayCheckFunc = ['inArray', 'notInArray', 'allowFile', 'allowFileType'];
                             if (in_array($ruleName, $arrayCheckFunc)) {
                                 if (!is_array($conf[0])) {

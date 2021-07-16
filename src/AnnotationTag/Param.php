@@ -55,7 +55,7 @@ class Param extends AbstractAnnotationTag
      * 以下为校验规则
      */
 
-    public $validateRuleList = [];
+    public $_validateRuleList = [];
 
     private $allowValidateRule = [
         'required', 'notEmpty', 'optional',
@@ -266,7 +266,7 @@ class Param extends AbstractAnnotationTag
     {
         foreach ($this->allowValidateRule as $ruleName) {
             if ($this->$ruleName !== null) {
-                $this->validateRuleList[$ruleName] = $this->$ruleName;
+                $this->_validateRuleList[$ruleName] = $this->$ruleName;
                 //对inArray 做特殊处理
                 if (in_array($ruleName, ['inArray', 'notInArray', 'allowFile', 'allowFileType'])) {
                     if (!is_array($this->$ruleName[0])) {
