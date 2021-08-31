@@ -113,7 +113,7 @@ class AnnotationController extends Controller
                         $forwardPath = $this->$actionName(...array_values($runArg));
                     }
                 }else{
-                    $forwardPath = $this->actionNotFound($actionName);
+                    $this->actionNotFound($actionName);
                 }
             }
         }catch (\Throwable $throwable){
@@ -129,6 +129,9 @@ class AnnotationController extends Controller
                     $this->gc();
                 } catch (\Throwable $throwable) {
                     $this->onException($throwable);
+                }finally {
+                    $this->request()->__destruct();
+                    $this->response()->__destruct();
                 }
             }
         }
