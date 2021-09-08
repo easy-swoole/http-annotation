@@ -46,9 +46,6 @@ class Param extends AbstractAnnotationTag
      */
     public $deprecated;
 
-    /**
-     * @var string|array
-     */
     public $errMsg;
 
     /**

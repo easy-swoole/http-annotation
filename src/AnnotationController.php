@@ -21,6 +21,7 @@ use EasySwoole\HttpAnnotation\Exception\Annotation\MethodNotAllow;
 use EasySwoole\HttpAnnotation\Exception\Annotation\ParamValidateError;
 use EasySwoole\HttpAnnotation\Exception\Exception;
 use EasySwoole\Session\Context;
+use EasySwoole\Validate\Rule;
 use EasySwoole\Validate\Validate;
 use Swoole\Coroutine;
 use Swoole\Coroutine\Channel;
@@ -303,14 +304,15 @@ class AnnotationController extends Controller
                         if(!is_array($validateArgs)){
                             $validateArgs = [$validateArgs];
                         }
+                        $ruleIns = $validate->addColumn($param->name,$param->alias);
+                        $ruleIns->{$rule}(...$validateArgs);
                         if(is_array($errMsg)){
                             if(isset($errMsg[$rule])){
-                                $validateArgs[] = $errMsg[$rule];
+                                $ruleIns->setRuleMsg($rule,$errMsg[$rule]);
                             }
                         }else{
-                            $validateArgs[] = $errMsg;
+                            $ruleIns->setRuleMsg($rule,$errMsg);
                         }
-                        $validate->addColumn($param->name,$param->alias)->{$rule}(...$validateArgs);
                     }
                 }
             }
