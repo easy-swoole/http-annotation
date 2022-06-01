@@ -17,17 +17,8 @@
         }
     ],
     "require": {
-        "php": ">=7.1.0",
-        "ext-json": "*",
-        "ext-swoole": ">=4.4.7",
-        "ext-libxml": "*",
-        "ext-simplexml": "*",
-        "easyswoole/http": "^2.0",
-        "easyswoole/annotation": "^2.0",
-        "easyswoole/parsedown": "^1.0",
-        "easyswoole/component": "^2.2",
-        "easyswoole/validate": "^2.1",
-        "easyswoole/command": "^1.1"
+        "php": ">=8.1",
+        "ext-json": "*"
     },
     "require-dev": {
         "easyswoole/phpunit": "^1.0",
