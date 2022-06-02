@@ -2,6 +2,7 @@
 
 namespace EasySwoole\HttpAnnotation\Attributes\Validator;
 
+use EasySwoole\HttpAnnotation\Attributes\Param;
 use Psr\Http\Message\ServerRequestInterface;
 
 abstract class AbstractValidator
@@ -11,7 +12,15 @@ abstract class AbstractValidator
      */
     protected $errorMsg;
 
-    abstract function validate($data,ServerRequestInterface $request):bool;
+    protected Param $param;
+
+    abstract function validate($column,ServerRequestInterface $request):bool;
+
+    function setParam(Param $param):AbstractValidator
+    {
+        $this->param = $param;
+        return $this;
+    }
 
     function getErrorMsg():?string
     {

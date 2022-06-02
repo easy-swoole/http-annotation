@@ -15,7 +15,7 @@ class MaxLen extends AbstractValidator
         $this->errorMsg = $errorMsg;
     }
 
-    function validate($data, ServerRequestInterface $request): bool
+    function validate($column, ServerRequestInterface $request): bool
     {
         return  true;
     }
