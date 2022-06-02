@@ -15,5 +15,5 @@ class Param
     const CONTEXT = "CONTEXT";
     const DI = "DI";
 
-    public function __construct(string $name,?string $alias = null,array $from = ["GET","POST"],?array $validate = []){}
+    public function __construct(string $name,?string $alias = null,array $from = ["GET","POST"],?array $validate = [],?Description $description = null,$value = null){}
 }
