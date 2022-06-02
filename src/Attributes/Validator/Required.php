@@ -14,6 +14,12 @@ class Required extends AbstractValidator
 
     function validate($column, ServerRequestInterface $request): bool
     {
+        if($this->isIgnoreCheck()){
+            return true;
+        }
+        if((!$this->param->isNullData()) && ($this->param->parsedValue() === null)){
+            return false;
+        }
         return true;
     }
 

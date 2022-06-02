@@ -2,6 +2,7 @@
 
 namespace EasySwoole\HttpAnnotation\Attributes;
 
+use EasySwoole\HttpAnnotation\Attributes\Validator\Optional;
 use Psr\Http\Message\ServerRequestInterface;
 
 #[\Attribute(\Attribute::TARGET_ALL|\Attribute::IS_REPEATABLE)]
@@ -19,9 +20,7 @@ class Param
 
     private bool $isParsed = false;
     private bool|null $isOptional = null;
-
-
-    public bool $isNullData = false;
+    private bool $isNullData = false;
 
     public function __construct(
         public string $name,
@@ -64,16 +63,29 @@ class Param
                 }
             }
             $this->isParsed = true;
+            if($hit && ($this->value === null)){
+                $this->isNullData = true;
+            }
         }
         return $this->value;
     }
 
-    public function isOptional()
+    public function isOptional(): bool
     {
         if($this->isOptional === null){
             foreach ($this->validate as $rule){
-
+                if($rule instanceof Optional){
+                    $this->isOptional = true;
+                    return $this->isOptional;
+                }
             }
+            $this->isOptional = false;
         }
+        return $this->isOptional;
+    }
+
+    public function isNullData(): bool
+    {
+        return $this->isNullData;
     }
 }
