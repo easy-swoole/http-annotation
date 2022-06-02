@@ -2,6 +2,7 @@
 
 namespace EasySwoole\HttpAnnotation\Attributes\Validator;
 
+use EasySwoole\HttpAnnotation\Attributes\Api;
 use EasySwoole\HttpAnnotation\Attributes\Param;
 use Psr\Http\Message\ServerRequestInterface;
 
@@ -14,11 +15,19 @@ abstract class AbstractValidator
 
     protected Param $param;
 
+    protected Api $api;
+
     abstract function validate(ServerRequestInterface $request):bool;
 
-    function setParam(Param $param):AbstractValidator
+    function setParamAttr(Param $param):AbstractValidator
     {
         $this->param = $param;
+        return $this;
+    }
+
+    function setApiAttr(Api $api):AbstractValidator
+    {
+        $this->api = $api;
         return $this;
     }
 

@@ -7,9 +7,9 @@ use Psr\Http\Message\ServerRequestInterface;
 #[\Attribute]
 class MaxLen extends AbstractValidator
 {
-    protected int $maxLen;
+    protected $maxLen;
 
-    function __construct(int $maxLen,?string $errorMsg = null)
+    function __construct(callable|int $maxLen,?string $errorMsg = null)
     {
         $this->maxLen = $maxLen;
         $this->errorMsg = $errorMsg;
@@ -20,11 +20,16 @@ class MaxLen extends AbstractValidator
         if($this->isIgnoreCheck()){
             return true;
         }
+        if(is_callable($this->maxLen)){
+            $compare = call_user_func($this->maxLen);
+        }else{
+            $compare = $this->maxLen;
+        }
         $data = $this->param->parsedValue();
         if (is_numeric($data) || is_string($data)) {
-            return strlen($data) <= $this->maxLen;
+            return strlen($data) <= $compare;
         }
-        if (is_array($data) && (count($data) <= $this->maxLen)) {
+        if (is_array($data) && (count($data) <= $compare)) {
             return true;
         }
         return  false;
