@@ -12,7 +12,7 @@ class Required extends AbstractValidator
         $this->errorMsg = $errorMsg;
     }
 
-    function validate($column, ServerRequestInterface $request): bool
+    function validate(ServerRequestInterface $request): bool
     {
         if($this->isIgnoreCheck()){
             return true;

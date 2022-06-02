@@ -7,7 +7,7 @@ use Psr\Http\Message\ServerRequestInterface;
 #[\Attribute]
 class Optional extends AbstractValidator
 {
-    function validate($column, ServerRequestInterface $request): bool
+    function validate(ServerRequestInterface $request): bool
     {
         return true;
     }

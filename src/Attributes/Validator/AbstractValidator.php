@@ -14,7 +14,7 @@ abstract class AbstractValidator
 
     protected Param $param;
 
-    abstract function validate($column,ServerRequestInterface $request):bool;
+    abstract function validate(ServerRequestInterface $request):bool;
 
     function setParam(Param $param):AbstractValidator
     {
