@@ -11,7 +11,7 @@ class Api
     function __construct(
         public string $requestPath,
         public string $apiName,
-        public string $apiGroup,
+        public ?string $apiGroup = null,
         public bool $registerRouter = false,
         public array $allow = [Api::GET,Api::POST],
         public array $params = [],
