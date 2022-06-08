@@ -28,25 +28,6 @@ class AttributeCache
         return $this->apiGroup;
     }
 
-    function addReflection(\ReflectionClass $reflectionClass):AttributeCache
-    {
-        $key = md5($reflectionClass->name);
-        $this->classReflection[$key] = $reflectionClass;
-        return $this;
-    }
 
-    function getClassReflections():array
-    {
-        return $this->classReflection;
-    }
-
-    function getClassReflection(string $class):?\ReflectionClass
-    {
-        $key = md5($class);
-        if(isset( $this->classReflection[$key])){
-            return $this->classReflection[$key];
-        }
-        return null;
-    }
 
 }
