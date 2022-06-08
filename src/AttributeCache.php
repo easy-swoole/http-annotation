@@ -11,8 +11,6 @@ class AttributeCache
 
     protected array $apiGroup = [];
 
-    protected array $classReflection = [];
-
     function addApiGroup(ApiGroup $apiGroup):bool
     {
         if(isset($this->apiGroup[$apiGroup->name])){
@@ -27,7 +25,4 @@ class AttributeCache
     {
         return $this->apiGroup;
     }
-
-
-
 }
