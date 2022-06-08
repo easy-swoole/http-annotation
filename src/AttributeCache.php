@@ -10,6 +10,7 @@ class AttributeCache
     use Singleton;
 
     protected array $apiGroup = [];
+    protected array $methodAnnotation = [];
 
     function addApiGroup(ApiGroup $apiGroup):bool
     {
