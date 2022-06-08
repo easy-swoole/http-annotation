@@ -24,7 +24,6 @@ class Param
 
     public function __construct(
         public string $name,
-        public ?string $alias = null,
         public array $from = ["GET","POST"],
         public ?array $validate = [],
         public ?Description $description = null,

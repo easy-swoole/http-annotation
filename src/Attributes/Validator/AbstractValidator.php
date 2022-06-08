@@ -11,35 +11,95 @@ abstract class AbstractValidator
     /**
      * @var string|null
      */
-    protected $errorMsg;
+    private ?string $errorMsg;
 
-    protected Param $param;
+    protected array $params = [];
 
-    protected Api $api;
+    protected ?Param $param = null;
 
-    abstract function validate(ServerRequestInterface $request):bool;
+    protected ?ServerRequestInterface $request = null;
 
-    function setParamAttr(Param $param):AbstractValidator
+    protected $args = null;
+
+    function execute(Param $param,ServerRequestInterface $request):bool
     {
         $this->param = $param;
-        return $this;
+        $this->request = $request;
+        return $this->validate($param,$request);
     }
 
-    function setApiAttr(Api $api):AbstractValidator
+    /**
+     * @return Param|null
+     */
+    public function currentCheckParam(): ?Param
     {
-        $this->api = $api;
-        return $this;
+        return $this->param;
     }
 
-    function getErrorMsg():?string
+    /**
+     * @return ServerRequestInterface|null
+     */
+    public function getRequest(): ?ServerRequestInterface
     {
+        return $this->request;
+    }
+
+    abstract protected function validate(Param $param,ServerRequestInterface $request):bool;
+
+
+    abstract function ruleName():string;
+
+    function allCheckParams(?array $params = null):array
+    {
+        if($params === null){
+            return $this->params;
+        }
+        $this->params = $params;
+        return $this->params;
+    }
+
+    /**
+     * 规则参数请用protected
+     */
+    function getRuleArgs():array
+    {
+        if($this->args === null){
+            $list = [];
+            foreach ($this as $key => $val){
+                $list[$key] = $val;
+            }
+            unset($list['errorMsg']);
+            unset($list['params']);
+            unset($list['param']);
+            unset($list['request']);
+            unset($list['args']);
+            $this->args = $list;
+        }
+        return $this->args;
+    }
+
+    function errorMsg(?string $msg = null):?string
+    {
+        if(!empty($msg)){
+            $this->errorMsg = $msg;
+            return null;
+        }
+        if(!empty($this->errorMsg)){
+            $tpl = $this->errorMsg;
+            $tpl = str_replace('{#name}',$this->param->name,$tpl);
+            foreach ($this->getRuleArgs() as $key => $val){
+                $tpl = str_replace("{#$key}",$val,$tpl);
+
+            }
+            return $tpl;
+        }
         return $this->errorMsg;
     }
 
-    protected function isIgnoreCheck():bool
+    function isIgnoreCheck(Param $param):bool
     {
         //当配置了option选项，且传参不是null,也就是没传的时候，允许忽略检查
-        if($this->param->isOptional() && (!$this->param->isNullData()) && ($this->param->parsedValue() === null)){
+        if($param->isOptional() && (!$param->isNullData()) && ($param->parsedValue() === null)){
             return true;
         }
         return false;

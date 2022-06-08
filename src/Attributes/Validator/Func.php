@@ -2,6 +2,7 @@
 
 namespace EasySwoole\HttpAnnotation\Attributes\Validator;
 
+use EasySwoole\HttpAnnotation\Attributes\Param;
 use Psr\Http\Message\ServerRequestInterface;
 
 #[\Attribute]
@@ -12,12 +13,17 @@ class Func extends AbstractValidator
 
     function __construct(callable $func,?string $errorMsg = null)
     {
+        $this->errorMsg($errorMsg);
         $this->call = $func;
-        $this->errorMsg = $errorMsg;
     }
 
-    function validate(ServerRequestInterface $request): bool
+    protected function validate(Param $param,ServerRequestInterface $request): bool
     {
-        return call_user_func($this->call,$this->param,$request,$this->api);
+        return (bool)call_user_func($this->call,$this);
+    }
+
+    function ruleName(): string
+    {
+        return "Func";
     }
 }

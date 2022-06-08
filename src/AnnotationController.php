@@ -8,13 +8,21 @@ use EasySwoole\Http\Request;
 use EasySwoole\Http\Response;
 use EasySwoole\HttpAnnotation\Attributes\Api;
 use EasySwoole\HttpAnnotation\Attributes\Param;
+use EasySwoole\HttpAnnotation\Attributes\Validator\AbstractValidator;
+use EasySwoole\HttpAnnotation\Exception\ValidateFail;
 
 abstract class AnnotationController extends Controller
 {
-    public function __hook(?string $actionName, Request $request, Response $response)
+    public function __hook(?string $actionName, Request $request, Response $response,array $actionArg = [])
     {
-        $this->runAnnotationHook($actionName,$request);
-        return parent::__hook($actionName, $request, $response);
+        try{
+            $this->runAnnotationHook($actionName,$request);
+        }catch (\Throwable $exception){
+            $this->onException($exception);
+            return ;
+        }
+
+        parent::__hook($actionName, $request, $response);
     }
 
     private function runAnnotationHook(string $method,Request $request)
@@ -59,9 +67,31 @@ abstract class AnnotationController extends Controller
             }
         }
 
+        $finalParams = [];
         /** @var Param $param */
         foreach ($actionParams as $param){
             $param->parsedValue($request);
+            $finalParams[$param->name] = $param;
+        }
+
+        foreach ($finalParams as $param){
+            $rules = $param->validate;
+            /** @var AbstractValidator $rule */
+            foreach ($rules as $rule){
+                $rule->allCheckParams($finalParams);
+                $ret = $rule->execute($param,$request);
+                if(!$ret){
+                    $msg = $rule->errorMsg();
+                    var_dump($msg);
+                    if(!empty($msg)){
+
+                    }else{
+                        $msg = "";
+                    }
+                    $ex = new ValidateFail();
+                    die();
+                }
+            }
         }
     }
 }

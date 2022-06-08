@@ -2,6 +2,7 @@
 
 namespace EasySwoole\HttpAnnotation\Attributes\Validator;
 
+use EasySwoole\HttpAnnotation\Attributes\Param;
 use Psr\Http\Message\ServerRequestInterface;
 
 #[\Attribute]
@@ -12,20 +13,20 @@ class MaxLen extends AbstractValidator
     function __construct(callable|int $maxLen,?string $errorMsg = null)
     {
         $this->maxLen = $maxLen;
-        $this->errorMsg = $errorMsg;
+        $this->errorMsg($errorMsg);
     }
 
-    function validate(ServerRequestInterface $request): bool
+    protected function validate(Param $param,ServerRequestInterface $request): bool
     {
-        if($this->isIgnoreCheck()){
+        if($this->isIgnoreCheck($param)){
             return true;
         }
         if(is_callable($this->maxLen)){
-            $compare = call_user_func($this->maxLen);
+            $compare = call_user_func($this->maxLen,$param,$request,$this);
         }else{
             $compare = $this->maxLen;
         }
-        $data = $this->param->parsedValue();
+        $data = $param->parsedValue();
         if (is_numeric($data) || is_string($data)) {
             return strlen($data) <= $compare;
         }
@@ -33,5 +34,10 @@ class MaxLen extends AbstractValidator
             return true;
         }
         return  false;
+    }
+
+    function ruleName(): string
+    {
+        return "MaxLen";
     }
 }

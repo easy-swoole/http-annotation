@@ -2,6 +2,7 @@
 
 namespace EasySwoole\HttpAnnotation\Attributes\Validator;
 
+use EasySwoole\HttpAnnotation\Attributes\Param;
 use Psr\Http\Message\ServerRequestInterface;
 
 #[\Attribute]
@@ -9,18 +10,22 @@ class Required extends AbstractValidator
 {
     function __construct(?string $errorMsg = null)
     {
-        $this->errorMsg = $errorMsg;
+        $this->errorMsg($errorMsg);
     }
 
-    function validate(ServerRequestInterface $request): bool
+    protected function validate(Param $param,ServerRequestInterface $request): bool
     {
-        if($this->isIgnoreCheck()){
+        if($this->isIgnoreCheck($param)){
             return true;
         }
-        if((!$this->param->isNullData()) && ($this->param->parsedValue() === null)){
+        if((!$param->isNullData()) && ($param->parsedValue() === null)){
             return false;
         }
         return true;
     }
 
+    function ruleName(): string
+    {
+        return "Required";
+    }
 }
