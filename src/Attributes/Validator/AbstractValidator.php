@@ -25,6 +25,9 @@ abstract class AbstractValidator
     {
         $this->param = $param;
         $this->request = $request;
+        if($this->isIgnoreCheck($param)){
+            return true;
+        }
         return $this->validate($param,$request);
     }
 
@@ -88,6 +91,9 @@ abstract class AbstractValidator
             $tpl = $this->errorMsg;
             $tpl = str_replace('{#name}',$this->param->name,$tpl);
             foreach ($this->getRuleArgs() as $key => $val){
+                if(is_callable($val)){
+                    $val = "Func Exec Result";
+                }
                 $tpl = str_replace("{#$key}",$val,$tpl);
 
             }

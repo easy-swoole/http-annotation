@@ -18,9 +18,6 @@ class MaxLen extends AbstractValidator
 
     protected function validate(Param $param,ServerRequestInterface $request): bool
     {
-        if($this->isIgnoreCheck($param)){
-            return true;
-        }
         $compare = $this->maxLen;
         $data = $param->parsedValue();
         if (is_numeric($data) || is_string($data)) {

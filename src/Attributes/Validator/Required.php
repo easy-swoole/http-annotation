@@ -15,9 +15,6 @@ class Required extends AbstractValidator
 
     protected function validate(Param $param,ServerRequestInterface $request): bool
     {
-        if($this->isIgnoreCheck($param)){
-            return true;
-        }
         if((!$param->isNullData()) && ($param->parsedValue() === null)){
             return false;
         }
