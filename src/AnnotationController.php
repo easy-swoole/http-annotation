@@ -15,6 +15,7 @@ use EasySwoole\HttpAnnotation\Attributes\Property\Inject;
 use EasySwoole\HttpAnnotation\Attributes\Validator\AbstractValidator;
 use EasySwoole\HttpAnnotation\Exception\Annotation;
 use EasySwoole\HttpAnnotation\Exception\ParamError;
+use EasySwoole\HttpAnnotation\Exception\RequestMethodNotAllow;
 use EasySwoole\HttpAnnotation\Exception\ValidateFail;
 use EasySwoole\Component\Di as IOC;
 
@@ -61,6 +62,11 @@ abstract class AnnotationController extends Controller
                 if(!empty($actionApiTags)){
                     $apiTag = new Api(...$actionApiTags[0]->getArguments());
                     $actionParams = $apiTag->params;
+                    $allowRequestMethod = $apiTag->allowMethod;
+                    $currentRequestMethod = $request->getMethod();
+                    if(!in_array($currentRequestMethod,$allowRequestMethod)){
+                        throw new RequestMethodNotAllow("http {$currentRequestMethod} method is not allow for this request");
+                    }
                 }
             }
 
