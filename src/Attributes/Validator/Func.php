@@ -13,6 +13,9 @@ class Func extends AbstractValidator
 
     function __construct(callable $func,?string $errorMsg = null)
     {
+        if(empty($errorMsg)){
+            $errorMsg = "{#name} validate fail in custom function";
+        }
         $this->errorMsg($errorMsg);
         $this->call = $func;
     }

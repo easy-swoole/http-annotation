@@ -82,14 +82,9 @@ abstract class AnnotationController extends Controller
                 $ret = $rule->execute($param,$request);
                 if(!$ret){
                     $msg = $rule->errorMsg();
-                    var_dump($msg);
-                    if(!empty($msg)){
-
-                    }else{
-                        $msg = "";
-                    }
-                    $ex = new ValidateFail();
-                    die();
+                    $ex = new ValidateFail($msg);
+                    $ex->setFailRule($rule);
+                    throw $ex;
                 }
             }
         }

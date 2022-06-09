@@ -10,6 +10,9 @@ class Required extends AbstractValidator
 {
     function __construct(?string $errorMsg = null)
     {
+        if(empty($errorMsg)){
+            $errorMsg = "{#name} is required";
+        }
         $this->errorMsg($errorMsg);
     }
 
