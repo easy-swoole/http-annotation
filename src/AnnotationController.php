@@ -2,21 +2,29 @@
 
 namespace EasySwoole\HttpAnnotation;
 
+use EasySwoole\Component\Context\ContextManager;
 use EasySwoole\Http\AbstractInterface\Controller;
 use EasySwoole\Http\ReflectionCache;
 use EasySwoole\Http\Request;
 use EasySwoole\Http\Response;
 use EasySwoole\HttpAnnotation\Attributes\Api;
 use EasySwoole\HttpAnnotation\Attributes\Param;
+use EasySwoole\HttpAnnotation\Attributes\Property\Context;
+use EasySwoole\HttpAnnotation\Attributes\Property\Di;
+use EasySwoole\HttpAnnotation\Attributes\Property\Inject;
 use EasySwoole\HttpAnnotation\Attributes\Validator\AbstractValidator;
+use EasySwoole\HttpAnnotation\Exception\Annotation;
 use EasySwoole\HttpAnnotation\Exception\ParamError;
 use EasySwoole\HttpAnnotation\Exception\ValidateFail;
+use EasySwoole\Component\Di as IOC;
+
 
 abstract class AnnotationController extends Controller
 {
     public function __hook(?string $actionName, Request $request, Response $response,array $actionArg = [])
     {
         try{
+            $this->preAnnotationHook();
             $ret = $this->runAnnotationHook($actionName,$request);
             $ref = ReflectionCache::getInstance()->getClassReflection(static::class)->getMethod($actionName);
             foreach ($ref->getParameters() as $parameter){
@@ -99,5 +107,37 @@ abstract class AnnotationController extends Controller
             }
         }
         return $finalParams;
+    }
+
+    private function preAnnotationHook()
+    {
+        $ref = ReflectionCache::getInstance()->getClassReflection(static::class);
+        $list = $ref->getProperties(\ReflectionProperty::IS_PUBLIC|\ReflectionProperty::IS_PROTECTED|\ReflectionProperty::IS_PRIVATE);
+        foreach ($list as $item){
+            if(!$item->isStatic() && !$item->isReadOnly()){
+                $attrs = $item->getAttributes();
+                if(count($attrs) > 1){
+                    throw new Annotation("only allow one annotation attribute for property : {$item->name} in class ".static::class);
+                }
+                $name = $item->name;
+                foreach ($attrs as $attr){
+                    switch ($attr->getName()){
+                        case Inject::class:{
+                            $this->$name = $attr->getArguments()['object'];
+                            break;
+                        }
+                        case Di::class:{
+                            $this->$name = IOC::getInstance()->get($attr->getArguments()['key']);
+                            break;
+                        }
+
+                        case Context::class:{
+                            $this->$name = ContextManager::getInstance()->get($attr->getArguments()['key']);
+                            break;
+                        }
+                    }
+                }
+            }
+        }
     }
 }
