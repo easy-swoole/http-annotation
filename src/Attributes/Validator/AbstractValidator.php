@@ -92,7 +92,7 @@ abstract class AbstractValidator
             $tpl = str_replace('{#name}',$this->param->name,$tpl);
             foreach ($this->getRuleArgs() as $key => $val){
                 if(is_callable($val)){
-                    $val = "Func Exec Result";
+                    $val = "Custom Func Exec Result";
                 }
                 $tpl = str_replace("{#$key}",$val,$tpl);
 
