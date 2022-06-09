@@ -3,6 +3,7 @@
 namespace EasySwoole\HttpAnnotation;
 
 use EasySwoole\Http\ReflectionCache;
+use EasySwoole\Http\UrlParser;
 use EasySwoole\HttpAnnotation\Attributes\Api;
 use EasySwoole\Utility\File;
 use FastRoute\RouteCollector;
@@ -18,21 +19,31 @@ class Scanner
         foreach ($controllers as $controller){
             $ref = ReflectionCache::getInstance()->getClassReflection($controller);
             $trimClass = ltrim(str_replace($controllerNameSpace,"",$controller),"\\");
-
+            $controllerPrefix = str_replace("\\","/",$trimClass);
 
             $methods = ReflectionCache::getInstance()->allowMethodReflections($ref);
             /** @var \ReflectionMethod $method */
             foreach ($methods as $method){
                 if(!empty($method->getAttributes(Api::class))){
+                    $apiAttr = $method->getAttributes(Api::class)[0];
+                    $apiAttr = new Api(...$apiAttr->getArguments());
+                    $realPath = "/{$controllerPrefix}/{$method}";
+                    if(!empty($apiAttr->requestPath) && $apiAttr->requestPath != $realPath){
+                        if (!empty($apiAttr->allow)) {
+                            $allow = $apiAttr->allow;
+                        } else {
+                            $allow = ['POST', 'GET', 'PUT', 'PATCH', 'DELETE', 'HEAD', 'OPTIONS'];
+                        }
+                        $routeCollector->addRoute($allow, UrlParser::pathInfo($apiAttr->requestPath), $realPath);
+                    }
 
                 }
             }
         }
     }
 
-    private static function scanAllController(string $controllerPath,string $controllerNameSpace):array
+    private static function scanAllController(string $controllerPath):array
     {
-        $controllerNameSpace = trim($controllerNameSpace, '\\')."\\";
         $list = [];
         $files = [];
         if (is_file($controllerPath)) {
