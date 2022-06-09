@@ -33,15 +33,14 @@ class AttributeCache
         $this->classMethodMap[$key][$action] = $data;
     }
 
+    /*
+     * 注意引用克隆
+     */
     function getClassMethodMap(string $class,$action):?array
     {
         $key = md5($class);
         if(isset($this->classMethodMap[$key][$action])){
-            $list = [];
-            foreach ($this->classMethodMap[$key][$action] as $item){
-                $list[] = clone $item;
-            }
-            return $list;
+            return $this->classMethodMap[$key][$action];
         }
         return null;
     }

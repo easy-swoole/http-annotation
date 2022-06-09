@@ -28,8 +28,8 @@ class Index extends Base
         ],
         description: new Description("这是一个接口说明啊啊啊啊")
     )]
-    function index(string $token,$account){
-
+    function index(string $account){
+        $this->writeJson(200,null,"account is {$account}");
     }
 }
 

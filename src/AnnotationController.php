@@ -88,8 +88,10 @@ abstract class AnnotationController extends Controller
         $finalParams = [];
         /** @var Param $param */
         foreach ($actionParams as $param){
-            $param->parsedValue($request);
-            $finalParams[$param->name] = $param;
+            //这边需要进行克隆再进行真实值的解析
+            $temp = clone $param;
+            $temp->parsedValue($request);
+            $finalParams[$temp->name] = $temp;
         }
 
         foreach ($finalParams as $param){
