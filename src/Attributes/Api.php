@@ -9,8 +9,8 @@ class Api
     const POST = "POST";
 
     function __construct(
-        public string $requestPath,
         public string $apiName,
+        public ?string $requestPath = null,
         public ?string $apiGroup = null,
         public bool $registerRouter = false,
         public array $allow = [Api::GET,Api::POST],
