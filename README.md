@@ -8,28 +8,19 @@ composer require easyswoole/http-annotation
 
 ### Example
 ```php
-/**
- * Class ControllerA
- * @package EasySwoole\HttpAnnotation\Tests\TestController
- * @ApiGroup(groupName="A")
- * @ApiGroupDescription()
- */
-class ControllerA extends AnnotationController
-{
-    /**
-     * @Api(path="/A/test")
-     */
-    function test()
-    {
+$dispatcher = new Dispatcher();
+$dispatcher->setNamespacePrefix('EasySwoole\HttpAnnotation\Tests\ControllerExample');
+$http = new Server("127.0.0.1", 9501);
+$http->set([
+    "worker_num"=>1
+]);
 
-    }
+$http->on("request", function ($request, $response) use($dispatcher){
+    $request_psr = new Request($request);
+    $response_psr = new Response($response);
+    $dispatcher->dispatch($request_psr, $response_psr);
+    $response_psr->__response();
+});
 
-    /**
-     * @Api(path="")
-     */
-    function test2()
-    {
-        
-    }
-}
+$http->start();
 ```
