@@ -5,7 +5,6 @@ namespace EasySwoole\HttpAnnotation\Attributes\Validator;
 use EasySwoole\HttpAnnotation\Attributes\Param;
 use Psr\Http\Message\ServerRequestInterface;
 
-#[\Attribute]
 class Required extends AbstractValidator
 {
     function __construct(?string $errorMsg = null)

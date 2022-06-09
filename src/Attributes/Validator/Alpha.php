@@ -23,6 +23,6 @@ class Alpha extends AbstractValidator
 
     function ruleName(): string
     {
-        return "AllDigital";
+        return "Alpha";
     }
 }

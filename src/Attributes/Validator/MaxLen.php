@@ -5,7 +5,7 @@ namespace EasySwoole\HttpAnnotation\Attributes\Validator;
 use EasySwoole\HttpAnnotation\Attributes\Param;
 use Psr\Http\Message\ServerRequestInterface;
 
-#[\Attribute]
+
 class MaxLen extends AbstractValidator
 {
     protected int $maxLen;
