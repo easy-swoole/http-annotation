@@ -34,7 +34,12 @@ class DateAfter extends AbstractValidator
         }else{
             $afterUnixTime = strtotime($this->date);
         }
-        $unixTime = strtotime($itemData);
+        if(is_numeric($itemData) && (strlen($itemData) == 10)){
+            $unixTime = $itemData;
+        }else{
+            $unixTime = strtotime($itemData);
+        }
+
         if (is_bool($afterUnixTime)) {
             throw new Annotation("error arg:date for DateAfter validate rule");
         }
