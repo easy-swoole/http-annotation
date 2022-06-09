@@ -12,7 +12,7 @@ class Base extends AnnotationController
         if($throwable instanceof ValidateFail){
             $this->writeJson(400,null,$throwable->getMessage());
         }else{
-            $this->writeJson(500,null,$throwable->getMessage());
+            throw $throwable;
         }
     }
 }

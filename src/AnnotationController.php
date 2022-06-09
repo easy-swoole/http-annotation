@@ -26,13 +26,16 @@ abstract class AnnotationController extends Controller
         try{
             $this->preAnnotationHook();
             $ret = $this->runAnnotationHook($this->getActionName(),$this->request());
-            $ref = ReflectionCache::getInstance()->getClassReflection(static::class)->getMethod($this->getActionName());
-            foreach ($ref->getParameters() as $parameter){
-                $key = $parameter->name;
-                if(isset($ret[$key])){
-                    $actionArg[$key] = $ret[$key]->parsedValue();
-                }else{
-                    throw new ParamError("method {$this->getActionName()}() require arg: {$key} , but not define in any controller annotation");
+            $ref = ReflectionCache::getInstance()->getClassReflection(static::class);
+            if($ref->hasMethod($this->getActionName())){
+                $ref = $ref->getMethod($this->getActionName());
+                foreach ($ref->getParameters() as $parameter){
+                    $key = $parameter->name;
+                    if(isset($ret[$key])){
+                        $actionArg[$key] = $ret[$key]->parsedValue();
+                    }else{
+                        throw new ParamError("method {$this->getActionName()}() require arg: {$key} , but not define in any controller annotation");
+                    }
                 }
             }
         }catch (\Throwable $exception){
@@ -56,9 +59,8 @@ abstract class AnnotationController extends Controller
                 $actionMethod = $ref->getMethod($method);
                 $actionApiTags = $actionMethod->getAttributes(Api::class);
                 if(!empty($actionApiTags)){
-                    /** @var \ReflectionAttribute $actionApiTag */
-                    $actionApiTag = $actionApiTags[0];
-                    $actionParams = $actionApiTag->getArguments()['params'];
+                    $apiTag = new Api(...$actionApiTags[0]->getArguments());
+                    $actionParams = $apiTag->params;
                 }
             }
 
