@@ -21,18 +21,18 @@ use EasySwoole\Component\Di as IOC;
 
 abstract class AnnotationController extends Controller
 {
-    public function __hook(?string $actionName, Request $request, Response $response,array $actionArg = [])
+    public function __hook(array $actionArg = [])
     {
         try{
             $this->preAnnotationHook();
-            $ret = $this->runAnnotationHook($actionName,$request);
-            $ref = ReflectionCache::getInstance()->getClassReflection(static::class)->getMethod($actionName);
+            $ret = $this->runAnnotationHook($this->getActionName(),$this->request());
+            $ref = ReflectionCache::getInstance()->getClassReflection(static::class)->getMethod($this->getActionName());
             foreach ($ref->getParameters() as $parameter){
                 $key = $parameter->name;
                 if(isset($ret[$key])){
                     $actionArg[$key] = $ret[$key]->parsedValue();
                 }else{
-                    throw new ParamError("method {$actionName}() require arg: {$key} , but not define in any controller annotation");
+                    throw new ParamError("method {$this->getActionName()}() require arg: {$key} , but not define in any controller annotation");
                 }
             }
         }catch (\Throwable $exception){
@@ -40,7 +40,7 @@ abstract class AnnotationController extends Controller
             return ;
         }
 
-        parent::__hook($actionName, $request, $response,$actionArg);
+        parent::__hook($actionArg);
     }
 
     private function runAnnotationHook(string $method,Request $request):array
