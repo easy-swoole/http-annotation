@@ -9,6 +9,7 @@ use Psr\Http\Message\ServerRequestInterface;
 class DateAfter extends AbstractValidator
 {
     public $date;
+
     function __construct(string|callable $date,?string $errorMsg = null)
     {
         $this->date = $date;
@@ -34,11 +35,9 @@ class DateAfter extends AbstractValidator
         }else{
             $afterUnixTime = strtotime($this->date);
         }
-        if(is_numeric($itemData) && (strlen($itemData) == 10)){
-            $unixTime = $itemData;
-        }else{
-            $unixTime = strtotime($itemData);
-        }
+
+
+        $unixTime = strtotime($itemData);
 
         if (is_bool($afterUnixTime)) {
             throw new Annotation("error arg:date for DateAfter validate rule");
