@@ -21,7 +21,7 @@ class DateAfter extends AbstractValidator
 
     protected function validate(Param $param, ServerRequestInterface $request): bool
     {
-        $itemData = $this->param->parsedValue();
+        $itemData = $param->parsedValue();
         if (!is_string($itemData)) {
             return false;
         }

@@ -12,13 +12,13 @@ abstract class AbstractValidator
      */
     private ?string $errorMsg;
 
-    protected array $params = [];
+    private array $params = [];
 
-    protected ?Param $param = null;
+    private ?Param $param = null;
 
-    protected ?ServerRequestInterface $request = null;
+    private ?ServerRequestInterface $request = null;
 
-    protected $args = null;
+    private $args = null;
 
     function execute(Param $param,ServerRequestInterface $request):bool
     {

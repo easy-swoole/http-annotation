@@ -18,7 +18,7 @@ class Alpha extends AbstractValidator
 
     protected function validate(Param $param, ServerRequestInterface $request): bool
     {
-        return (bool)preg_match( '/^[a-zA-Z]+$/', (string)$this->currentCheckParam()->parsedValue());
+        return (bool)preg_match( '/^[a-zA-Z]+$/', (string)$param->parsedValue());
     }
 
     function ruleName(): string

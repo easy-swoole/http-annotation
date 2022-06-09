@@ -5,33 +5,29 @@ namespace EasySwoole\HttpAnnotation\Attributes\Validator;
 use EasySwoole\HttpAnnotation\Attributes\Param;
 use Psr\Http\Message\ServerRequestInterface;
 
-class ActiveUrl extends AbstractValidator
+class Different extends AbstractValidator
 {
-    function __construct(?string $errorMsg = null)
+    public $compare;
+    private bool $strict;
+
+    function __construct($compare,bool $strict = false,string $errorMsg = null)
     {
+        $this->compare = $compare;
+        $this->strict = $strict;
         if(empty($errorMsg)){
-            $errorMsg = "{#name} must a active url";
+            $errorMsg = "{#name} must different with  {#compare}";
         }
         $this->errorMsg($errorMsg);
     }
 
-
     protected function validate(Param $param, ServerRequestInterface $request): bool
     {
         $itemData = $param->parsedValue();
-        if (!is_string($itemData)) {
-            return false;
-        }
-
-        if (!filter_var($itemData, FILTER_VALIDATE_URL)) {
-            return false;
-        }
-
-        return checkdnsrr(parse_url($itemData, PHP_URL_HOST));
+        return !($this->strict ? $itemData === $this->compare : $itemData == $this->compare);
     }
 
     function ruleName(): string
     {
-        return "ActiveUrl";
+        return "Different";
     }
 }

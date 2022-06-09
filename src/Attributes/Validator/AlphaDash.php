@@ -18,7 +18,7 @@ class AlphaDash extends AbstractValidator
 
     protected function validate(Param $param, ServerRequestInterface $request): bool
     {
-        return (bool)preg_match( '/^[a-zA-Z0-9\-\_]+$/', (string)$this->currentCheckParam()->parsedValue());
+        return (bool)preg_match( '/^[a-zA-Z0-9\-\_]+$/', (string)$param->parsedValue());
     }
 
     function ruleName(): string

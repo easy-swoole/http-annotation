@@ -26,7 +26,7 @@ class Decimal extends AbstractValidator
 
     protected function validate(Param $param, ServerRequestInterface $request): bool
     {
-        $itemData = $this->param->parsedValue();
+        $itemData = $param->parsedValue();
         //没有传参则降级验证为浮点数即可
         if ($this->accuracy === null) {
             return filter_var($itemData, FILTER_VALIDATE_FLOAT) !== false;
