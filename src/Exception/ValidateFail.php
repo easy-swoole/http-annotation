@@ -2,10 +2,9 @@
 
 namespace EasySwoole\HttpAnnotation\Exception;
 
-use EasySwoole\Http\Exception\Exception;
 use EasySwoole\HttpAnnotation\Attributes\Validator\AbstractValidator;
 
-class ValidateFail extends Exception
+class ValidateFail extends Annotation
 {
     private ?AbstractValidator $failRule;
 

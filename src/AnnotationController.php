@@ -9,6 +9,7 @@ use EasySwoole\Http\Response;
 use EasySwoole\HttpAnnotation\Attributes\Api;
 use EasySwoole\HttpAnnotation\Attributes\Param;
 use EasySwoole\HttpAnnotation\Attributes\Validator\AbstractValidator;
+use EasySwoole\HttpAnnotation\Exception\ParamError;
 use EasySwoole\HttpAnnotation\Exception\ValidateFail;
 
 abstract class AnnotationController extends Controller
@@ -16,16 +17,25 @@ abstract class AnnotationController extends Controller
     public function __hook(?string $actionName, Request $request, Response $response,array $actionArg = [])
     {
         try{
-            $this->runAnnotationHook($actionName,$request);
+            $ret = $this->runAnnotationHook($actionName,$request);
+            $ref = ReflectionCache::getInstance()->getClassReflection(static::class)->getMethod($actionName);
+            foreach ($ref->getParameters() as $parameter){
+                $key = $parameter->name;
+                if(isset($ret[$key])){
+                    $actionArg[$key] = $ret[$key]->parsedValue();
+                }else{
+                    throw new ParamError("method {$actionName}() require arg: {$key} , but not define in any controller annotation");
+                }
+            }
         }catch (\Throwable $exception){
             $this->onException($exception);
             return ;
         }
 
-        parent::__hook($actionName, $request, $response);
+        parent::__hook($actionName, $request, $response,$actionArg);
     }
 
-    private function runAnnotationHook(string $method,Request $request)
+    private function runAnnotationHook(string $method,Request $request):array
     {
 
         $actionParams = AttributeCache::getInstance()->getClassMethodMap(static::class,$method);
@@ -88,5 +98,6 @@ abstract class AnnotationController extends Controller
                 }
             }
         }
+        return $finalParams;
     }
 }

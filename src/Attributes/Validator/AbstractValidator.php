@@ -2,7 +2,6 @@
 
 namespace EasySwoole\HttpAnnotation\Attributes\Validator;
 
-use EasySwoole\HttpAnnotation\Attributes\Api;
 use EasySwoole\HttpAnnotation\Attributes\Param;
 use Psr\Http\Message\ServerRequestInterface;
 
