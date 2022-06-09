@@ -7,6 +7,14 @@ use Psr\Http\Message\ServerRequestInterface;
 
 class ActiveUrl extends AbstractValidator
 {
+    function __construct(?string $errorMsg = null)
+    {
+        if(empty($errorMsg)){
+            $errorMsg = "{#name} must a active url";
+        }
+        $this->errorMsg($errorMsg);
+    }
+
 
     protected function validate(Param $param, ServerRequestInterface $request): bool
     {
