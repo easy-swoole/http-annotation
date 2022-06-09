@@ -32,9 +32,3 @@ class Index extends Base
         $this->writeJson(200,null,"account is {$account}");
     }
 }
-
-
-class C {
-
-}
-
