@@ -27,7 +27,7 @@ class Scanner
                 if(!empty($method->getAttributes(Api::class))){
                     $apiAttr = $method->getAttributes(Api::class)[0];
                     $apiAttr = new Api(...$apiAttr->getArguments());
-                    $realPath = "/{$controllerPrefix}/{$method}";
+                    $realPath = "/{$controllerPrefix}/{$method->name}";
                     if(!empty($apiAttr->requestPath) && $apiAttr->requestPath != $realPath){
                         if (!empty($apiAttr->allow)) {
                             $allow = $apiAttr->allow;
