@@ -15,13 +15,16 @@ class Different extends AbstractValidator
         $this->compare = $compare;
         $this->strict = $strict;
         if(empty($errorMsg)){
-            $errorMsg = "{#name} must different with  {#compare}";
+            $errorMsg = "{#name} must different with {#compare}";
         }
         $this->errorMsg($errorMsg);
     }
 
     protected function validate(Param $param, ServerRequestInterface $request): bool
     {
+        if(is_callable($this->compare)){
+            $this->compare = call_user_func($this->compare);
+        }
         $itemData = $param->parsedValue();
         return !($this->strict ? $itemData === $this->compare : $itemData == $this->compare);
     }
