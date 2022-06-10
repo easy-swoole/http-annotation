@@ -92,9 +92,18 @@ abstract class AbstractValidator
             foreach ($this->getRuleArgs() as $key => $val){
                 if(is_callable($val)){
                     $val = "Custom Func Exec Result";
+                }elseif (is_array($val)){
+                    $val = json_encode($val,JSON_UNESCAPED_SLASHES|JSON_UNESCAPED_UNICODE);
+                }elseif(is_object($val)){
+                    if(method_exists($val,"__tostring")){
+                        $val = $val->__tostring();
+                    }else{
+                        $val = (string)$val;
+                    }
+                }else{
+                    $val = (string)$val;
                 }
                 $tpl = str_replace("{#$key}",$val,$tpl);
-
             }
             return $tpl;
         }
