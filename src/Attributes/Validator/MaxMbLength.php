@@ -6,7 +6,7 @@ use EasySwoole\HttpAnnotation\Attributes\Param;
 use Psr\Http\Message\ServerRequestInterface;
 
 
-class MaxLen extends AbstractValidator
+class MaxMbLength extends AbstractValidator
 {
     protected int $maxLen;
 
@@ -14,7 +14,7 @@ class MaxLen extends AbstractValidator
     {
         $this->maxLen = $maxLen;
         if(empty($errorMsg)){
-            $errorMsg = "{#name} max length is {#maxLen}";
+            $errorMsg = "{#name} max mb Length is {#maxLen}";
         }
         $this->errorMsg($errorMsg);
     }
@@ -24,16 +24,13 @@ class MaxLen extends AbstractValidator
         $compare = $this->maxLen;
         $data = $param->parsedValue();
         if (is_numeric($data) || is_string($data)) {
-            return strlen($data) <= $compare;
-        }
-        if (is_array($data) && (count($data) <= $compare)) {
-            return true;
+            return mb_strlen($data,mb_internal_encoding()) <= $compare;
         }
         return  false;
     }
 
     function ruleName(): string
     {
-        return "MaxLen";
+        return "MaxMbLength";
     }
 }

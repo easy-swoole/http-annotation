@@ -5,7 +5,7 @@ namespace EasySwoole\HttpAnnotation\Tests\ControllerExample;
 use EasySwoole\HttpAnnotation\Attributes\Api;
 use EasySwoole\HttpAnnotation\Attributes\Description;
 use EasySwoole\HttpAnnotation\Attributes\Param;
-use EasySwoole\HttpAnnotation\Attributes\Validator\MaxLen;
+use EasySwoole\HttpAnnotation\Attributes\Validator\MaxLength;
 use EasySwoole\HttpAnnotation\Attributes\Validator\Required;
 
 class Index extends Base
@@ -16,7 +16,7 @@ class Index extends Base
         params: [
             new Param(name:"account",from: [Param::GET],validate: [
                 new Required(),
-                new MaxLen(maxLen: 15),
+                new MaxLength(maxLen: 15),
             ],description: new Description("这个参数一定要有啊"))
         ],
         exampleParams: [
