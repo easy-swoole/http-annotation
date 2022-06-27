@@ -15,7 +15,7 @@ class Scanner
         string $controllerPath,
         string $controllerNameSpace = 'App\HttpController'
     ):void{
-        $controllers = self::scanAllController($controllerPath,$controllerNameSpace);
+        $controllers = self::scanAllController($controllerPath);
         foreach ($controllers as $controller){
             $ref = ReflectionCache::getInstance()->getClassReflection($controller);
             $trimClass = ltrim(str_replace($controllerNameSpace,"",$controller),"\\");
@@ -40,6 +40,17 @@ class Scanner
                 }
             }
         }
+    }
+
+    static function scanToDoc(string $controllerPath):string{
+        $finalDoc = "";
+        $annotations = self::scanAllController($controllerPath);
+        $groupInfo = [];
+        foreach ($annotations as $annotation){
+
+        }
+
+
     }
 
     private static function scanAllController(string $controllerPath):array
