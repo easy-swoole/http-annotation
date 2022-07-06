@@ -20,7 +20,7 @@
         "php": ">=8.1",
         "ext-json": "*",
         "psr/http-message": "^1.0",
-        "easyswoole/http": "3.x-dev",
+        "easyswoole/http": "3.x",
         "ext-mbstring": "*"
     },
     "require-dev": {
