@@ -10,7 +10,6 @@ use Psr\Http\Message\ServerRequestInterface;
 class DifferentWithColumn extends AbstractValidator
 {
     public $compare;
-
     private bool $strict;
 
     function __construct(string $compare,bool $strict = false,string $errorMsg = null)

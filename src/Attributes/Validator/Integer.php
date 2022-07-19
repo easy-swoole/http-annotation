@@ -18,7 +18,11 @@ class Integer extends AbstractValidator
 
     protected function validate(Param $param, ServerRequestInterface $request): bool
     {
-        return filter_var($param->parsedValue(), FILTER_VALIDATE_INT) !== false;
+        if (is_integer($param->parsedValue())) {
+            return filter_var($param->parsedValue(), FILTER_VALIDATE_INT) !== false;
+        } else {
+            return false;
+        }
     }
 
     function ruleName(): string

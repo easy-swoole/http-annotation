@@ -29,11 +29,19 @@ class Decimal extends AbstractValidator
         $itemData = $param->parsedValue();
         //没有传参则降级验证为浮点数即可
         if ($this->accuracy === null) {
-            return filter_var($itemData, FILTER_VALIDATE_FLOAT) !== false;
+            if (is_float($itemData)) {
+                return true;
+            } else {
+                return false;
+            }
         }
         if ($this->accuracy === 0) {
-            // 容错处理 如果小数点后设置0位 则验整数
-            return filter_var($itemData, FILTER_VALIDATE_INT) !== false;
+            if (is_float($itemData)) {
+                // 容错处理 如果小数点后设置0位 则验整数
+                return filter_var($itemData, FILTER_VALIDATE_INT) !== false;
+            } else {
+                return false;
+            }
         }
         return (bool)preg_match( "/^-?(([1-9]\d*)|0)\.\d{1,$this->accuracy}$/", (string)$itemData);
     }
