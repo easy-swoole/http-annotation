@@ -17,7 +17,11 @@ class IsFloat extends AbstractValidator
 
     protected function validate(Param $param, ServerRequestInterface $request): bool
     {
-        return filter_var($param->parsedValue(), FILTER_VALIDATE_FLOAT) !== false;
+        if (is_float($param->parsedValue())) {
+            return filter_var($param->parsedValue(), FILTER_VALIDATE_FLOAT) !== false;
+        } else {
+            return false;
+        }
     }
 
     function ruleName(): string
