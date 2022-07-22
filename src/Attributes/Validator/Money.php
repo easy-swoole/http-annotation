@@ -25,10 +25,11 @@ class Money extends AbstractValidator
     {
         $itemData = $param->parsedValue();
         $precision = $this->precision;
+
+        $regex = "/^-?(([1-9]\d*)|0)\.\d{1,{$precision}}$/";
+
         if (is_null($precision) || $precision === 0) {
             $regex = "/^-?(([1-9]\d*)|0)$/";
-        } else {
-            $regex = "/^-?(([1-9]\d*)|0)\.\d{1,$precision}$/";
         }
 
         return (bool)preg_match($regex, $itemData);

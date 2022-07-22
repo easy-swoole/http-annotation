@@ -7,7 +7,7 @@ use Psr\Http\Message\ServerRequestInterface;
 
 class Min extends AbstractValidator
 {
-    protected int $min;
+    protected int|float $min;
 
     function __construct(int|float $min,?string $errorMsg = null)
     {

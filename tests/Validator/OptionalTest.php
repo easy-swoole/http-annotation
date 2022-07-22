@@ -9,7 +9,10 @@ use PHPUnit\Framework\TestCase;
 
 class OptionalTest extends TestCase
 {
-    function testNormal()
+    /*
+    * 合法
+    */
+    public function testValidCase()
     {
         $request = new Request();
         $request->withQueryParams([
@@ -34,6 +37,5 @@ class OptionalTest extends TestCase
         $rule = new Optional();
 
         $this->assertEquals(true, $rule->execute($param, $request));
-
     }
 }

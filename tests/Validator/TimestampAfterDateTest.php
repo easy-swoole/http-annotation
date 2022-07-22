@@ -9,7 +9,11 @@ use PHPUnit\Framework\TestCase;
 
 class TimestampAfterDateTest extends TestCase
 {
-    function testNormal()
+
+    /*
+    * 合法
+    */
+    public function testValidCase()
     {
         $request = new Request();
         $request->withQueryParams([
@@ -19,10 +23,10 @@ class TimestampAfterDateTest extends TestCase
         $param = new Param("date");
         $param->parsedValue($request);
 
-        $rule = new TimestampAfterDate(date('YmdHis', time() - 1));
+        $rule = new TimestampAfterDate(date: date('YmdHis', time() - 1));
         $this->assertEquals(true, $rule->execute($param, $request));
 
-
+        // func
         $request = new Request();
         $request->withQueryParams([
             "date" => time() + 1
@@ -31,10 +35,31 @@ class TimestampAfterDateTest extends TestCase
         $param = new Param("date");
         $param->parsedValue($request);
 
-        $rule = new TimestampAfterDate(date('YmdHis', time()));
+        $rule = new TimestampAfterDate(date: function () {
+            return date('YmdHis', time());
+        });
         $this->assertEquals(true, $rule->execute($param, $request));
+    }
 
+    /*
+     * 默认错误信息
+     */
+    public function testDefaultErrorMsgCase()
+    {
+        $request = new Request();
+        $request->withQueryParams([
+            "date" => time()
+        ]);
 
+        $param = new Param("date");
+        $param->parsedValue($request);
+
+        $time = date('YmdHis', time() + 1);
+        $rule = new TimestampAfterDate(date: $time);
+        $this->assertEquals(false, $rule->execute($param, $request));
+        $this->assertEquals("date must be timestamp after {$time}", $rule->errorMsg());
+
+        // func
         $request = new Request();
         $request->withQueryParams([
             "date" => "2022-09-30"
@@ -43,13 +68,31 @@ class TimestampAfterDateTest extends TestCase
         $param = new Param("date");
         $param->parsedValue($request);
 
-        $rule = new TimestampAfterDate(date: function () {
-            return date('YmdHis', time());
-        },errorMsg: '测试提示');
+        $time = date('YmdHis', time());
+        $rule = new TimestampAfterDate(date: function () use ($time) {
+            return $time;
+        });
         $this->assertEquals(false, $rule->execute($param, $request));
 
-        $rule->currentCheckParam($param);
+        $this->assertEquals("date must be timestamp after {$time}", $rule->errorMsg());
+    }
 
-        $this->assertEquals("测试提示",$rule->errorMsg());
+    /*
+     * 自定义错误信息
+     */
+    public function testCustomErrorMsgCase()
+    {
+        $request = new Request();
+        $request->withQueryParams([
+            "date" => 'bajiu'
+        ]);
+
+        $param = new Param("date");
+        $param->parsedValue($request);
+
+        $time = date('YmdHis', time() + 1);
+        $rule = new TimestampAfterDate(date: $time, errorMsg: '无效时间戳');
+        $this->assertEquals(false, $rule->execute($param, $request));
+        $this->assertEquals("无效时间戳", $rule->errorMsg());
     }
 }

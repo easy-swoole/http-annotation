@@ -10,7 +10,10 @@ use PHPUnit\Framework\TestCase;
 
 class FuncTest extends TestCase
 {
-    function testNormal()
+    /*
+    * 合法
+    */
+    public function testValidCase()
     {
         $request = new Request();
         $request->withQueryParams([
@@ -20,12 +23,18 @@ class FuncTest extends TestCase
         $param = new Param("fun");
         $param->parsedValue($request);
 
-        $rule = new Func(function (AbstractValidator $validator) {
+        $rule = new Func(func: function (AbstractValidator $validator) {
             return $validator->getRequest()->getQueryParams()['fun'] == "123456789";
         });
 
         $this->assertEquals(true, $rule->execute($param, $request));
+    }
 
+    /*
+     * 默认错误信息
+     */
+    public function testDefaultErrorMsgCase()
+    {
         $request = new Request();
         $request->withQueryParams([
             "fun" => "111",
@@ -34,13 +43,19 @@ class FuncTest extends TestCase
         $param = new Param("fun");
         $param->parsedValue($request);
 
-        $rule = new Func(function (AbstractValidator $validator) {
+        $rule = new Func(func: function (AbstractValidator $validator) {
             return $validator->getRequest()->getQueryParams()['fun'] == "222";
         });
 
         $this->assertEquals(false, $rule->execute($param, $request));
+        $this->assertEquals("fun validate fail in custom function",$rule->errorMsg());
+    }
 
-        // errorMsg
+    /*
+     * 自定义错误信息
+     */
+    public function testCustomErrorMsgCase()
+    {
         $request = new Request();
         $request->withQueryParams([
             "fun" => "111",
@@ -49,13 +64,11 @@ class FuncTest extends TestCase
         $param = new Param("fun");
         $param->parsedValue($request);
 
-        $rule = new Func(function (AbstractValidator $validator) {
+        $rule = new Func(func: function (AbstractValidator $validator) {
             return $validator->getRequest()->getQueryParams()['fun'] == "222";
         }, errorMsg: '测试提示');
 
         $this->assertEquals(false, $rule->execute($param, $request));
-        $rule->currentCheckParam($param);
-
         $this->assertEquals("测试提示",$rule->errorMsg());
     }
 }

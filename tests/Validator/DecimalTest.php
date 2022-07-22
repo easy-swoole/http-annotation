@@ -9,70 +9,80 @@ use PHPUnit\Framework\TestCase;
 
 class DecimalTest extends TestCase
 {
-    // 参数必须是十进制小数位
-    function testNormal()
+    /*
+    * 合法
+    */
+    public function testValidCase()
     {
         // null
         $request = new Request();
         $request->withQueryParams([
-            "num"=>23.0
+            "num" => 23.0
         ]);
 
         $param = new Param("num");
         $param->parsedValue($request);
 
-        $rule = new Decimal(null);
-        $this->assertEquals(true,$rule->execute($param,$request));
+        $rule = new Decimal(accuracy: null);
+        $this->assertEquals(true, $rule->execute($param, $request));
 
         // 0
         $request = new Request();
         $request->withQueryParams([
-            "num"=>50.0
+            "num" => 50.0
         ]);
 
         $param = new Param("num");
         $param->parsedValue($request);
 
-        $rule = new Decimal(0);
-        $this->assertEquals(true,$rule->execute($param,$request));
+        $rule = new Decimal(accuracy: 0);
+        $this->assertEquals(true, $rule->execute($param, $request));
 
         $request = new Request();
         $request->withQueryParams([
-            "num"=>5.56789
+            "num" => 5.56789
         ]);
 
         $param = new Param("num");
         $param->parsedValue($request);
 
-        $rule = new Decimal(5);
-        $this->assertEquals(true,$rule->execute($param,$request));
+        $rule = new Decimal(accuracy: 5);
+        $this->assertEquals(true, $rule->execute($param, $request));
+    }
 
+    /*
+     * 默认错误信息
+     */
+    public function testDefaultErrorMsgCase()
+    {
         $request = new Request();
         $request->withQueryParams([
-            "num"=>1.123456
+            "num" => 555
         ]);
 
         $param = new Param("num");
         $param->parsedValue($request);
 
-        $rule = new Decimal(5);
-        $this->assertEquals(false,$rule->execute($param,$request));
+        $rule = new Decimal(accuracy: 2);
+        $this->assertEquals(false, $rule->execute($param, $request));
+        $this->assertEquals("num must be decimal with 2 accuracy", $rule->errorMsg());
+    }
 
-        // errorMsg
+    /*
+     * 自定义错误信息
+     */
+    public function testCustomErrorMsgCase()
+    {
         $request = new Request();
         $request->withQueryParams([
-            "num"=>1.123456
+            "num" => 555
         ]);
 
         $param = new Param("num");
         $param->parsedValue($request);
 
-        $errorMsg = '测试提示';
-        $rule = new Decimal(5, $errorMsg);
-        $this->assertEquals(false,$rule->execute($param,$request));
-
-        $rule->currentCheckParam($param);
-
-        $this->assertEquals("测试提示",$rule->errorMsg());
+        $rule = new Decimal(accuracy: 2, errorMsg: 'num只能是小数');
+        $this->assertEquals(false, $rule->execute($param, $request));
+        $this->assertEquals("num只能是小数", $rule->errorMsg());
     }
 }

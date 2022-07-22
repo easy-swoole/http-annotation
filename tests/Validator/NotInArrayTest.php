@@ -9,55 +9,69 @@ use PHPUnit\Framework\TestCase;
 
 class NotInArrayTest extends TestCase
 {
-    function testNormal()
+    /*
+    * 合法
+    */
+    public function testValidCase()
+    {
+        // strict true
+        $request = new Request();
+        $request->withQueryParams([
+            "fruit" => 'Apple'
+        ]);
+
+        $param = new Param("num");
+        $param->parsedValue($request);
+
+        $rule = new NotInArray(array: ['apple', 'grape', 'orange'], strict: true);
+        $this->assertEquals(true, $rule->execute($param, $request));
+
+        // strict false
+        $request = new Request();
+        $request->withQueryParams([
+            "fruit" => 'banana'
+        ]);
+
+        $param = new Param("fruit");
+        $param->parsedValue($request);
+
+        $rule = new NotInArray(array: ['apple', 'grape', 'orange'], strict: false);
+        $this->assertEquals(true, $rule->execute($param, $request));
+    }
+
+    /*
+     * 默认错误信息
+     */
+    public function testDefaultErrorMsgCase()
     {
         $request = new Request();
         $request->withQueryParams([
-            "num" => 4
+            "fruit" => 'apple'
         ]);
 
-        $param = new Param("num");
+        $param = new Param("fruit");
         $param->parsedValue($request);
 
-        $rule = new NotInArray(array: [1, 2, 3], strict: false);
-        $this->assertEquals(true, $rule->execute($param, $request));
+        $rule = new NotInArray(array: ['apple', 'grape', 'orange'], strict: false);
+        $this->assertEquals(false, $rule->execute($param, $request));
+        $this->assertEquals('fruit must not in array of ["apple","grape","orange"]',$rule->errorMsg());
+    }
 
-
+    /*
+     * 自定义错误信息
+     */
+    public function testCustomErrorMsgCase()
+    {
         $request = new Request();
         $request->withQueryParams([
-            "str" => '2'
+            "fruit" => 'apple'
         ]);
 
-        $param = new Param("str");
+        $param = new Param("fruit");
         $param->parsedValue($request);
 
-        $rule = new NotInArray(array: [1, 2, 3], strict: true);
-        $this->assertEquals(true, $rule->execute($param, $request));
-
-        $request = new Request();
-        $request->withQueryParams([
-            "num" => "4"
-        ]);
-
-        $param = new Param("num");
-        $param->parsedValue($request);
-
-        $rule = new NotInArray(array: [1, 2, 3], strict: true);
-        $this->assertEquals(true, $rule->execute($param, $request));
-
-        $request = new Request();
-        $request->withQueryParams([
-            "str" => '测试'
-        ]);
-
-        $param = new Param("str");
-        $param->parsedValue($request);
-
-        $rule = new NotInArray(array: [1, 2, 3], strict: false, errorMsg: '测试提示');
-        $this->assertEquals(true, $rule->execute($param, $request));
-
-        $rule->currentCheckParam($param);
-
-        $this->assertEquals("测试提示",$rule->errorMsg());
+        $rule = new NotInArray(array: ['apple', 'grape', 'orange'], errorMsg: '水果不能是苹果、葡萄以及橘子');
+        $this->assertEquals(false, $rule->execute($param, $request));
+        $this->assertEquals("水果不能是苹果、葡萄以及橘子",$rule->errorMsg());
     }
 }

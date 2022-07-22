@@ -9,9 +9,12 @@ use PHPUnit\Framework\TestCase;
 
 class DifferentTest extends TestCase
 {
-    // 参数必须与***不同
-    function testNormal()
+    /*
+    * 合法
+    */
+    public function testValidCase()
     {
+        // 值不相等
         $request = new Request();
         $request->withQueryParams([
             "str" => "easyswoole",
@@ -20,30 +23,63 @@ class DifferentTest extends TestCase
         $param = new Param("str");
         $param->parsedValue($request);
 
-        $rule = new Different("easyAccount");
-
-        $rule->allCheckParams([
-            "str" => $param,
-        ]);
+        $rule = new Different(compare: "easySwoole");
 
         $this->assertEquals(true, $rule->execute($param, $request));
 
+        // 值相等,但类型不一样
         $request = new Request();
         $request->withQueryParams([
-            "str" => "20",
+            "age" => "12",
+        ]);
+
+        $param = new Param("age");
+        $param->parsedValue($request);
+
+        $rule = new Different(compare: 12,strict: true);
+
+        $this->assertEquals(true, $rule->execute($param, $request));
+    }
+
+    /*
+     * 默认错误信息
+     */
+    public function testDefaultErrorMsgCase()
+    {
+        // 值相等
+        $request = new Request();
+        $request->withQueryParams([
+            "str" => "easyswoole",
         ]);
 
         $param = new Param("str");
         $param->parsedValue($request);
 
-        $rule = new Different("20");
-
-        $rule->allCheckParams([
-            "str" => $param,
-        ]);
+        $rule = new Different(compare: "easyswoole",strict: true);
 
         $this->assertEquals(false, $rule->execute($param, $request));
+        $this->assertEquals("str must different with easyswoole",$rule->errorMsg());
 
+        // 值相等,但类型不一样
+        $request = new Request();
+        $request->withQueryParams([
+            "str" => 12,
+        ]);
+
+        $param = new Param("str");
+        $param->parsedValue($request);
+
+        $rule = new Different(compare: "12");
+
+        $this->assertEquals(false, $rule->execute($param, $request));
+        $this->assertEquals("str must different with 12",$rule->errorMsg());
+    }
+
+    /*
+     * 自定义错误信息
+     */
+    public function testCustomErrorMsgCase()
+    {
         $request = new Request();
         $request->withQueryParams([
             "str" => 0,
@@ -52,13 +88,9 @@ class DifferentTest extends TestCase
         $param = new Param("str");
         $param->parsedValue($request);
 
-        $rule = new Different("0", strict: true);
+        $rule = new Different(compare: "0",errorMsg: '参数必须不等于0');
 
-        $rule->allCheckParams([
-            "str" => $param
-        ]);
-
-        $this->assertEquals(true, $rule->execute($param, $request));
-
+        $this->assertEquals(false, $rule->execute($param, $request));
+        $this->assertEquals("参数必须不等于0",$rule->errorMsg());
     }
 }

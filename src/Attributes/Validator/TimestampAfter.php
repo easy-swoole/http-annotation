@@ -6,7 +6,7 @@ use EasySwoole\HttpAnnotation\Attributes\Param;
 use EasySwoole\HttpAnnotation\Exception\Annotation;
 use Psr\Http\Message\ServerRequestInterface;
 
-class TimestampAfterDate extends AbstractValidator
+class TimestampAfter extends AbstractValidator
 {
     public $date;
 
@@ -25,17 +25,13 @@ class TimestampAfterDate extends AbstractValidator
     protected function validate(Param $param, ServerRequestInterface $request): bool
     {
         $itemData = $param->parsedValue();
-        if (!is_numeric($itemData)) {
-            return false;
-        }
 
         if(is_callable($this->date)){
             $this->date = call_user_func($this->date);
         }
-        $time = strtotime($this->date);
 
-        if ($time !== false && $time > 0 && $time < $itemData) {
-            return true;
+        if (is_numeric($itemData) && is_numeric($this->date)) {
+            return intval($itemData) > intval($this->date);
         }
 
         return false;
@@ -43,6 +39,6 @@ class TimestampAfterDate extends AbstractValidator
 
     function ruleName(): string
     {
-        return "TimestampAfterDate";
+        return "TimestampAfter";
     }
 }

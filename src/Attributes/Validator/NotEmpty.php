@@ -17,10 +17,12 @@ class NotEmpty extends AbstractValidator
 
     protected function validate(Param $param,ServerRequestInterface $request): bool
     {
-        if((!$param->isNullData()) && ($param->parsedValue() === null)){
-            return false;
+        $itemData = $param->parsedValue();
+        if ($itemData === 0 || $itemData === '0') {
+            return true;
         }
-        return true;
+
+        return !empty($itemData);
     }
 
     function ruleName(): string

@@ -11,16 +11,7 @@ class TimestampTest extends TestCase
 {
     function testNormal()
     {
-        $request = new Request();
-        $request->withQueryParams([
-            "date" => time()
-        ]);
 
-        $param = new Param("date");
-        $param->parsedValue($request);
-
-        $rule = new Timestamp();
-        $this->assertEquals(true, $rule->execute($param, $request));
 
 
         $request = new Request();
@@ -49,5 +40,58 @@ class TimestampTest extends TestCase
         $rule->currentCheckParam($param);
 
         $this->assertEquals("测试提示",$rule->errorMsg());
+    }
+
+    /*
+    * 合法
+    */
+    public function testValidCase()
+    {
+        $request = new Request();
+        $request->withQueryParams([
+            "date" => time()
+        ]);
+
+        $param = new Param("date");
+        $param->parsedValue($request);
+
+        $rule = new Timestamp();
+        $this->assertEquals(true, $rule->execute($param, $request));
+    }
+
+    /*
+     * 默认错误信息
+     */
+    public function testDefaultErrorMsgCase()
+    {
+        $request = new Request();
+        $request->withQueryParams([
+            "date" => 'bajiu'
+        ]);
+
+        $param = new Param("date");
+        $param->parsedValue($request);
+
+        $rule = new Timestamp();
+        $this->assertEquals(false, $rule->execute($param, $request));
+        $this->assertEquals("date must be timestamp",$rule->errorMsg());
+    }
+
+    /*
+     * 自定义错误信息
+     */
+    public function testCustomErrorMsgCase()
+    {
+        $request = new Request();
+        $request->withQueryParams([
+            "date" => 'bajiu'
+        ]);
+
+        $param = new Param("date");
+        $param->parsedValue($request);
+
+        $rule = new Timestamp(errorMsg: '无效时间戳');
+        $this->assertEquals(false, $rule->execute($param, $request));
+        $this->assertEquals("无效时间戳",$rule->errorMsg());
     }
 }

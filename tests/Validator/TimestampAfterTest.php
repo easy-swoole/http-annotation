@@ -4,55 +4,40 @@ namespace EasySwoole\HttpAnnotation\Tests\Validator;
 
 use EasySwoole\Http\Request;
 use EasySwoole\HttpAnnotation\Attributes\Param;
-use EasySwoole\HttpAnnotation\Attributes\Validator\NotEmpty;
+use EasySwoole\HttpAnnotation\Attributes\Validator\TimestampAfter;
 use PHPUnit\Framework\TestCase;
 
-class NotEmptyTest extends TestCase
+class TimestampAfterTest extends TestCase
 {
     /*
     * 合法
     */
     public function testValidCase()
     {
-        // 不为空字符串
         $request = new Request();
         $request->withQueryParams([
-            "str" => "easyswoole",
+            "date" => time() + 1
         ]);
 
-        $param = new Param("str");
+        $param = new Param("date");
         $param->parsedValue($request);
 
-        $rule = new NotEmpty();
-
+        $rule = new TimestampAfter(date:time());
         $this->assertEquals(true, $rule->execute($param, $request));
 
-        // 数值0
+        // func
         $request = new Request();
         $request->withQueryParams([
-            "str" => 0,
+            "date" => time() + 1
         ]);
 
-        $param = new Param("str");
+        $param = new Param("date");
         $param->parsedValue($request);
 
-        $rule = new NotEmpty();
-
+        $rule = new TimestampAfter(date: function () {
+            return time();
+        });
         $this->assertEquals(true, $rule->execute($param, $request));
-
-        // 字符0
-        $request = new Request();
-        $request->withQueryParams([
-            "str" => "0",
-        ]);
-
-        $param = new Param("str");
-        $param->parsedValue($request);
-
-        $rule = new NotEmpty();
-
-        $this->assertEquals(true, $rule->execute($param, $request));
-
     }
 
     /*
@@ -60,33 +45,35 @@ class NotEmptyTest extends TestCase
      */
     public function testDefaultErrorMsgCase()
     {
-        // 空字符串
         $request = new Request();
         $request->withQueryParams([
-            "str" => "",
+            "date" => time()
         ]);
 
-        $param = new Param("str");
+        $param = new Param("date");
         $param->parsedValue($request);
 
-        $rule = new NotEmpty();
-
+        $time = time() + 1;
+        $rule = new TimestampAfter(date:$time);
         $this->assertEquals(false, $rule->execute($param, $request));
-        $this->assertEquals("str is notEmpty",$rule->errorMsg());
+        $this->assertEquals("date must be timestamp after {$time}", $rule->errorMsg());
 
-        // null
+        // func
         $request = new Request();
         $request->withQueryParams([
-            "str" => null,
+            "date" => "2022-09-30"
         ]);
 
-        $param = new Param("str");
+        $param = new Param("date");
         $param->parsedValue($request);
 
-        $rule = new NotEmpty();
-
+        $time = time() + 1;
+        $rule = new TimestampAfter(date: function () use ($time) {
+            return $time;
+        });
         $this->assertEquals(false, $rule->execute($param, $request));
-        $this->assertEquals("str is notEmpty",$rule->errorMsg());
+
+        $this->assertEquals("date must be timestamp after {$time}", $rule->errorMsg());
     }
 
     /*
@@ -96,15 +83,15 @@ class NotEmptyTest extends TestCase
     {
         $request = new Request();
         $request->withQueryParams([
-            "name" => "",
+            "date" => 'bajiu'
         ]);
 
-        $param = new Param("name");
+        $param = new Param("date");
         $param->parsedValue($request);
 
-        $rule = new NotEmpty(errorMsg: '名字必填');
-
+        $time = time() + 1;
+        $rule = new TimestampAfter(date: $time, errorMsg: '无效时间戳');
         $this->assertEquals(false, $rule->execute($param, $request));
-        $this->assertEquals("名字必填",$rule->errorMsg());
+        $this->assertEquals("无效时间戳", $rule->errorMsg());
     }
 }

@@ -9,7 +9,10 @@ use PHPUnit\Framework\TestCase;
 
 class RequiredTest extends TestCase
 {
-    function testNormal()
+    /*
+    * 合法
+    */
+    public function testValidCase()
     {
         $request = new Request();
         $request->withQueryParams([
@@ -22,7 +25,13 @@ class RequiredTest extends TestCase
         $rule = new Required();
 
         $this->assertEquals(true, $rule->execute($param, $request));
+    }
 
+    /*
+     * 默认错误信息
+     */
+    public function testDefaultErrorMsgCase()
+    {
         $request = new Request();
         $request->withQueryParams([
             "num" => 10,
@@ -34,24 +43,25 @@ class RequiredTest extends TestCase
         $rule = new Required();
 
         $this->assertEquals(false, $rule->execute($param, $request));
+        $this->assertEquals("str is required",$rule->errorMsg());
+    }
 
-
-        // errorMsg
+    /*
+     * 自定义错误信息
+     */
+    public function testCustomErrorMsgCase()
+    {
         $request = new Request();
         $request->withQueryParams([
             "num" => 10,
         ]);
 
-        $param = new Param("str");
+        $param = new Param("phone");
         $param->parsedValue($request);
 
-        $rule = new Required("测试提示");
+        $rule = new Required(errorMsg: '手机号码必填');
 
         $this->assertEquals(false, $rule->execute($param, $request));
-
-        $rule->currentCheckParam($param);
-
-        $this->assertEquals("测试提示",$rule->errorMsg());
-
+        $this->assertEquals("手机号码必填",$rule->errorMsg());
     }
 }

@@ -9,8 +9,10 @@ use PHPUnit\Framework\TestCase;
 
 class InArrayTest extends TestCase
 {
-    //
-    function testNormal()
+    /*
+    * 合法
+    */
+    public function testValidCase()
     {
         $request = new Request();
         $request->withQueryParams([
@@ -23,7 +25,6 @@ class InArrayTest extends TestCase
         $rule = new InArray(array: [1, 2, 3], strict: false);
         $this->assertEquals(true, $rule->execute($param, $request));
 
-
         $request = new Request();
         $request->withQueryParams([
             "str" => '2'
@@ -34,7 +35,13 @@ class InArrayTest extends TestCase
 
         $rule = new InArray(array: [1, 2, 3], strict: false);
         $this->assertEquals(true, $rule->execute($param, $request));
+    }
 
+    /*
+     * 默认错误信息
+     */
+    public function testDefaultErrorMsgCase()
+    {
         $request = new Request();
         $request->withQueryParams([
             "num" => "3"
@@ -45,7 +52,14 @@ class InArrayTest extends TestCase
 
         $rule = new InArray(array: [1, 2, 3], strict: true);
         $this->assertEquals(false, $rule->execute($param, $request));
+        $this->assertEquals("num must in array of [1,2,3]",$rule->errorMsg());
+    }
 
+    /*
+     * 自定义错误信息
+     */
+    public function testCustomErrorMsgCase()
+    {
         $request = new Request();
         $request->withQueryParams([
             "str" => '测试'
@@ -56,9 +70,6 @@ class InArrayTest extends TestCase
 
         $rule = new InArray(array: [1, 2, 3], strict: false, errorMsg: '测试提示');
         $this->assertEquals(false, $rule->execute($param, $request));
-
-        $rule->currentCheckParam($param);
-
         $this->assertEquals("测试提示",$rule->errorMsg());
     }
 }
