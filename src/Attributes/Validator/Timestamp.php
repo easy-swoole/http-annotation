@@ -3,36 +3,36 @@
 namespace EasySwoole\HttpAnnotation\Attributes\Validator;
 
 use EasySwoole\HttpAnnotation\Attributes\Param;
+use EasySwoole\HttpAnnotation\Exception\Annotation;
 use Psr\Http\Message\ServerRequestInterface;
 
-class Max extends AbstractValidator
+class Timestamp extends AbstractValidator
 {
-    protected int|float $max;
 
-    function __construct(int|float $max,?string $errorMsg = null)
+    function __construct(?string $errorMsg = null)
     {
-        $this->max = $max;
         if(empty($errorMsg)){
-            $errorMsg = "{#name} max value is {#max}";
+            $errorMsg = "{#name} must be timestamp";
         }
         $this->errorMsg($errorMsg);
     }
 
     protected function validate(Param $param, ServerRequestInterface $request): bool
     {
-        $data = $param->parsedValue();
-        if(!is_numeric($data)){
+        $itemData = $param->parsedValue();
+        if (!is_numeric($itemData)) {
             return false;
         }
-        $data = $data * 1;
-        if($data > $this->max){
-            return false;
+
+        if (strtotime(date('d-m-Y H:i:s', $itemData)) === (int)$itemData) {
+            return true;
         }
-        return true;
+
+        return false;
     }
 
     function ruleName(): string
     {
-        return "Max";
+        return "Timestamp";
     }
 }

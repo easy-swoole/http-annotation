@@ -5,34 +5,28 @@ namespace EasySwoole\HttpAnnotation\Attributes\Validator;
 use EasySwoole\HttpAnnotation\Attributes\Param;
 use Psr\Http\Message\ServerRequestInterface;
 
-class Max extends AbstractValidator
+class IsNumeric extends AbstractValidator
 {
-    protected int|float $max;
-
-    function __construct(int|float $max,?string $errorMsg = null)
+    function __construct(?string $errorMsg = null)
     {
-        $this->max = $max;
         if(empty($errorMsg)){
-            $errorMsg = "{#name} max value is {#max}";
+            $errorMsg = "{#name} must be numeric";
         }
         $this->errorMsg($errorMsg);
     }
 
+
     protected function validate(Param $param, ServerRequestInterface $request): bool
     {
-        $data = $param->parsedValue();
-        if(!is_numeric($data)){
+        if (is_numeric($param->parsedValue())) {
+            return true;
+        } else {
             return false;
         }
-        $data = $data * 1;
-        if($data > $this->max){
-            return false;
-        }
-        return true;
     }
 
     function ruleName(): string
     {
-        return "Max";
+        return "IsNumeric";
     }
 }

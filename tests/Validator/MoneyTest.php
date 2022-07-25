@@ -4,11 +4,12 @@ namespace EasySwoole\HttpAnnotation\Tests\Validator;
 
 use EasySwoole\Http\Request;
 use EasySwoole\HttpAnnotation\Attributes\Param;
-use EasySwoole\HttpAnnotation\Attributes\Validator\AllDigital;
+use EasySwoole\HttpAnnotation\Attributes\Validator\Money;
 use PHPUnit\Framework\TestCase;
 
-class AllDigitalTest extends TestCase
+class MoneyTest extends TestCase
 {
+
     /*
     * 合法
     */
@@ -16,25 +17,35 @@ class AllDigitalTest extends TestCase
     {
         $request = new Request();
         $request->withQueryParams([
-            "no" => 5001
+            "num" => 10
         ]);
 
-        $param = new Param("no");
+        $param = new Param("num");
         $param->parsedValue($request);
 
-        $rule = new AllDigital();
+        $rule = new Money();
         $this->assertEquals(true, $rule->execute($param, $request));
-
 
         $request = new Request();
         $request->withQueryParams([
-            "no" => 005001
+            "num" => 10.1
         ]);
 
-        $param = new Param("no");
+        $param = new Param("num");
         $param->parsedValue($request);
 
-        $rule = new AllDigital();
+        $rule = new Money(precision: 1);
+        $this->assertEquals(true, $rule->execute($param, $request));
+
+        $request = new Request();
+        $request->withQueryParams([
+            "num" => 10.20
+        ]);
+
+        $param = new Param("num");
+        $param->parsedValue($request);
+
+        $rule = new Money(precision: 2);
         $this->assertEquals(true, $rule->execute($param, $request));
     }
 
@@ -43,31 +54,17 @@ class AllDigitalTest extends TestCase
      */
     public function testDefaultErrorMsgCase()
     {
-        // 含有英文
         $request = new Request();
         $request->withQueryParams([
-            "no" => "0bA111"
+            "num" => 10.123
         ]);
 
-        $param = new Param("no");
+        $param = new Param("num");
         $param->parsedValue($request);
 
-        $rule = new AllDigital();
+        $rule = new Money(precision: 2);
         $this->assertEquals(false, $rule->execute($param, $request));
-        $this->assertEquals("no must be all digital", $rule->errorMsg());
-
-        // 含有小数点
-        $request = new Request();
-        $request->withQueryParams([
-            "no" => "111.11"
-        ]);
-
-        $param = new Param("no");
-        $param->parsedValue($request);
-
-        $rule = new AllDigital();
-        $this->assertEquals(false, $rule->execute($param, $request));
-        $this->assertEquals("no must be all digital", $rule->errorMsg());
+        $this->assertEquals("num must be legal amount with 2 precision",$rule->errorMsg());
     }
 
     /*
@@ -77,14 +74,14 @@ class AllDigitalTest extends TestCase
     {
         $request = new Request();
         $request->withQueryParams([
-            "no" => "111.11"
+            "num" => 10.123
         ]);
 
-        $param = new Param("no");
+        $param = new Param("num");
         $param->parsedValue($request);
 
-        $rule = new AllDigital(errorMsg: '学号只能由数字构成');
+        $rule = new Money(precision: 2,errorMsg: '金额必须两位小数');
         $this->assertEquals(false, $rule->execute($param, $request));
-        $this->assertEquals("学号只能由数字构成", $rule->errorMsg());
+        $this->assertEquals("金额必须两位小数",$rule->errorMsg());
     }
 }

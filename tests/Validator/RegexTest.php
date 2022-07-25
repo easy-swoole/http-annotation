@@ -4,27 +4,25 @@ namespace EasySwoole\HttpAnnotation\Tests\Validator;
 
 use EasySwoole\Http\Request;
 use EasySwoole\HttpAnnotation\Attributes\Param;
-use EasySwoole\HttpAnnotation\Attributes\Validator\AllDigital;
-use EasySwoole\HttpAnnotation\Attributes\Validator\Alpha;
+use EasySwoole\HttpAnnotation\Attributes\Validator\Regex;
 use PHPUnit\Framework\TestCase;
 
-class AlphaTest extends TestCase
+class RegexTest extends TestCase
 {
     /*
     * 合法
     */
     public function testValidCase()
     {
-        // 只能是字母
         $request = new Request();
         $request->withQueryParams([
-            "str" => "abcheezsss"
+            "phone" => 15880809999
         ]);
 
-        $param = new Param("str");
+        $param = new Param("phone");
         $param->parsedValue($request);
 
-        $rule = new Alpha();
+        $rule = new Regex(rule: '/^1\d{10}$/');
         $this->assertEquals(true, $rule->execute($param, $request));
     }
 
@@ -35,27 +33,15 @@ class AlphaTest extends TestCase
     {
         $request = new Request();
         $request->withQueryParams([
-            "str" => "0bA111"
+            "phone" => 158808099
         ]);
 
-        $param = new Param("str");
+        $param = new Param("phone");
         $param->parsedValue($request);
 
-        $rule = new Alpha();
+        $rule = new Regex(rule: '/^1\d{10}$/');
         $this->assertEquals(false, $rule->execute($param, $request));
-        $this->assertEquals("str must be all alpha", $rule->errorMsg());
-
-        $request = new Request();
-        $request->withQueryParams([
-            "str" => "111"
-        ]);
-
-        $param = new Param("str");
-        $param->parsedValue($request);
-
-        $rule = new Alpha();
-        $this->assertEquals(false, $rule->execute($param, $request));
-        $this->assertEquals("str must be all alpha", $rule->errorMsg());
+        $this->assertEquals("phone must meet specified rules",$rule->errorMsg());
     }
 
     /*
@@ -65,14 +51,14 @@ class AlphaTest extends TestCase
     {
         $request = new Request();
         $request->withQueryParams([
-            "str" => "0bA111"
+            "phone" => 158808099
         ]);
 
-        $param = new Param("str");
+        $param = new Param("phone");
         $param->parsedValue($request);
 
-        $rule = new Alpha(errorMsg: '您输入的参数不合法');
+        $rule = new Regex(rule: '/^1\d{10}$/',errorMsg: '手机号码格式不对');
         $this->assertEquals(false, $rule->execute($param, $request));
-        $this->assertEquals("您输入的参数不合法", $rule->errorMsg());
+        $this->assertEquals("手机号码格式不对",$rule->errorMsg());
     }
 }

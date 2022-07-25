@@ -5,15 +5,15 @@ namespace EasySwoole\HttpAnnotation\Attributes\Validator;
 use EasySwoole\HttpAnnotation\Attributes\Param;
 use Psr\Http\Message\ServerRequestInterface;
 
-class Max extends AbstractValidator
+class Min extends AbstractValidator
 {
-    protected int|float $max;
+    protected int|float $min;
 
-    function __construct(int|float $max,?string $errorMsg = null)
+    function __construct(int|float $min,?string $errorMsg = null)
     {
-        $this->max = $max;
+        $this->min = $min;
         if(empty($errorMsg)){
-            $errorMsg = "{#name} max value is {#max}";
+            $errorMsg = "{#name} min value is {#min}";
         }
         $this->errorMsg($errorMsg);
     }
@@ -25,7 +25,7 @@ class Max extends AbstractValidator
             return false;
         }
         $data = $data * 1;
-        if($data > $this->max){
+        if($data < $this->min){
             return false;
         }
         return true;
@@ -33,6 +33,6 @@ class Max extends AbstractValidator
 
     function ruleName(): string
     {
-        return "Max";
+        return "min";
     }
 }

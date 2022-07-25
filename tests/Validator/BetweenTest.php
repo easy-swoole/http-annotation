@@ -9,139 +9,135 @@ use PHPUnit\Framework\TestCase;
 
 class BetweenTest extends TestCase
 {
-    function testInt(){
+    /*
+    * 合法
+    */
+    public function testValidCase()
+    {
+        // 整数
         $request = new Request();
         $request->withQueryParams([
-            "num"=>5
+            "num" => 5
         ]);
 
         $param = new Param("num");
         $param->parsedValue($request);
 
-        $rule = new Between(min:5,max: 10);
-        $this->assertEquals(true,$rule->execute($param,$request));
+        $rule = new Between(min: 5, max: 10);
+        $this->assertEquals(true, $rule->execute($param, $request));
 
-
+        // 小数
         $request = new Request();
         $request->withQueryParams([
-            "num"=>8
+            "num" => 6.33
         ]);
 
         $param = new Param("num");
         $param->parsedValue($request);
 
-        $rule = new Between(min:5,max: 10);
-        $this->assertEquals(true,$rule->execute($param,$request));
+        $rule = new Between(min: 5, max: 10);
+        $this->assertEquals(true, $rule->execute($param, $request));
 
+        // 字符串
         $request = new Request();
         $request->withQueryParams([
-            "num"=>4
+            "num" => '6.33'
         ]);
 
         $param = new Param("num");
         $param->parsedValue($request);
 
-        $rule = new Between(min:5,max: 10);
-        $this->assertEquals(false,$rule->execute($param,$request));
+        $rule = new Between(min: 5, max: 10);
+        $this->assertEquals(true, $rule->execute($param, $request));
 
+        // 等于最小值
         $request = new Request();
         $request->withQueryParams([
-            "num"=>11
+            "num" => 5
         ]);
 
         $param = new Param("num");
         $param->parsedValue($request);
 
-        $rule = new Between(min:5,max: 10);
-        $this->assertEquals(false,$rule->execute($param,$request));
-    }
+        $rule = new Between(min: 5, max: 10);
+        $this->assertEquals(true, $rule->execute($param, $request));
 
-
-    function testFloat(){
+        // 等于最大值
         $request = new Request();
         $request->withQueryParams([
-            "num"=>5.5
+            "num" => 10
         ]);
 
         $param = new Param("num");
         $param->parsedValue($request);
 
-        $rule = new Between(min:5,max: 10);
-        $this->assertEquals(true,$rule->execute($param,$request));
+        $rule = new Between(min: 5, max: 10);
+        $this->assertEquals(true, $rule->execute($param, $request));
 
-
+        // func
         $request = new Request();
         $request->withQueryParams([
-            "num"=>8.1
+            "num" => 5.5
         ]);
 
         $param = new Param("num");
         $param->parsedValue($request);
 
-        $rule = new Between(min:5,max: 10);
-        $this->assertEquals(true,$rule->execute($param,$request));
-
-        $request = new Request();
-        $request->withQueryParams([
-            "num"=>4.9
-        ]);
-
-        $param = new Param("num");
-        $param->parsedValue($request);
-
-        $rule = new Between(min:5,max: 10);
-        $this->assertEquals(false,$rule->execute($param,$request));
-
-        $request = new Request();
-        $request->withQueryParams([
-            "num"=>11.2
-        ]);
-
-        $param = new Param("num");
-        $param->parsedValue($request);
-
-        $rule = new Between(min:5,max: 10);
-        $this->assertEquals(false,$rule->execute($param,$request));
-    }
-
-    function testFuncCall(){
-        $request = new Request();
-        $request->withQueryParams([
-            "num"=>5.5
-        ]);
-
-        $param = new Param("num");
-        $param->parsedValue($request);
-
-        $rule = new Between(min:function (){
+        $rule = new Between(min: function () {
             return 5.1;
-        },max: function (){
+        }, max: function () {
             return 8.5;
         });
-        $this->assertEquals(true,$rule->execute($param,$request));
+        $this->assertEquals(true, $rule->execute($param, $request));
+    }
 
-
-
+    /*
+     * 默认错误信息
+     */
+    public function testDefaultErrorMsgCase()
+    {
+        // 不在值之间
         $request = new Request();
         $request->withQueryParams([
-            "num"=>5
+            "num" => 110
         ]);
 
         $param = new Param("num");
         $param->parsedValue($request);
 
-        $rule = new Between(min:function (){
-            return 5.1;
-        },max: function (){
-            return 8.5;
-        });
-        $this->assertEquals(false,$rule->execute($param,$request));
+        $rule = new Between(min: 5, max: 10);
+        $this->assertEquals(false, $rule->execute($param, $request));
+        $this->assertEquals("num must between 5 to 10", $rule->errorMsg());
 
-        $rule->currentCheckParam($param);
+        // 不是合法值
+        $request = new Request();
+        $request->withQueryParams([
+            "num" => 'bajiu'
+        ]);
 
-        $this->assertEquals("num must between 5.1 to 8.5",$rule->errorMsg());
+        $param = new Param("num");
+        $param->parsedValue($request);
 
+        $rule = new Between(min: 5, max: 10);
+        $this->assertEquals(false, $rule->execute($param, $request));
+        $this->assertEquals("num must between 5 to 10", $rule->errorMsg());
+    }
 
+    /*
+     * 自定义错误信息
+     */
+    public function testCustomErrorMsgCase()
+    {
+        $request = new Request();
+        $request->withQueryParams([
+            "num" => 'bajiu'
+        ]);
 
+        $param = new Param("num");
+        $param->parsedValue($request);
+
+        $rule = new Between(min: 5, max: 10,errorMsg: '您输入的年龄不符');
+        $this->assertEquals(false, $rule->execute($param, $request));
+        $this->assertEquals("您输入的年龄不符", $rule->errorMsg());
     }
 }

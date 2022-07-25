@@ -4,27 +4,40 @@ namespace EasySwoole\HttpAnnotation\Tests\Validator;
 
 use EasySwoole\Http\Request;
 use EasySwoole\HttpAnnotation\Attributes\Param;
-use EasySwoole\HttpAnnotation\Attributes\Validator\AllDigital;
-use EasySwoole\HttpAnnotation\Attributes\Validator\Alpha;
+use EasySwoole\HttpAnnotation\Attributes\Validator\Different;
 use PHPUnit\Framework\TestCase;
 
-class AlphaTest extends TestCase
+class DifferentTest extends TestCase
 {
     /*
     * 合法
     */
     public function testValidCase()
     {
-        // 只能是字母
+        // 值不相等
         $request = new Request();
         $request->withQueryParams([
-            "str" => "abcheezsss"
+            "str" => "easyswoole",
         ]);
 
         $param = new Param("str");
         $param->parsedValue($request);
 
-        $rule = new Alpha();
+        $rule = new Different(compare: "easySwoole");
+
+        $this->assertEquals(true, $rule->execute($param, $request));
+
+        // 值相等,但类型不一样
+        $request = new Request();
+        $request->withQueryParams([
+            "age" => "12",
+        ]);
+
+        $param = new Param("age");
+        $param->parsedValue($request);
+
+        $rule = new Different(compare: 12,strict: true);
+
         $this->assertEquals(true, $rule->execute($param, $request));
     }
 
@@ -33,29 +46,33 @@ class AlphaTest extends TestCase
      */
     public function testDefaultErrorMsgCase()
     {
+        // 值相等
         $request = new Request();
         $request->withQueryParams([
-            "str" => "0bA111"
+            "str" => "easyswoole",
         ]);
 
         $param = new Param("str");
         $param->parsedValue($request);
 
-        $rule = new Alpha();
-        $this->assertEquals(false, $rule->execute($param, $request));
-        $this->assertEquals("str must be all alpha", $rule->errorMsg());
+        $rule = new Different(compare: "easyswoole",strict: true);
 
+        $this->assertEquals(false, $rule->execute($param, $request));
+        $this->assertEquals("str must different with easyswoole",$rule->errorMsg());
+
+        // 值相等,但类型不一样
         $request = new Request();
         $request->withQueryParams([
-            "str" => "111"
+            "str" => 12,
         ]);
 
         $param = new Param("str");
         $param->parsedValue($request);
 
-        $rule = new Alpha();
+        $rule = new Different(compare: "12");
+
         $this->assertEquals(false, $rule->execute($param, $request));
-        $this->assertEquals("str must be all alpha", $rule->errorMsg());
+        $this->assertEquals("str must different with 12",$rule->errorMsg());
     }
 
     /*
@@ -65,14 +82,15 @@ class AlphaTest extends TestCase
     {
         $request = new Request();
         $request->withQueryParams([
-            "str" => "0bA111"
+            "str" => 0,
         ]);
 
         $param = new Param("str");
         $param->parsedValue($request);
 
-        $rule = new Alpha(errorMsg: '您输入的参数不合法');
+        $rule = new Different(compare: "0",errorMsg: '参数必须不等于0');
+
         $this->assertEquals(false, $rule->execute($param, $request));
-        $this->assertEquals("您输入的参数不合法", $rule->errorMsg());
+        $this->assertEquals("参数必须不等于0",$rule->errorMsg());
     }
 }

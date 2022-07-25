@@ -4,10 +4,10 @@ namespace EasySwoole\HttpAnnotation\Tests\Validator;
 
 use EasySwoole\Http\Request;
 use EasySwoole\HttpAnnotation\Attributes\Param;
-use EasySwoole\HttpAnnotation\Attributes\Validator\AllDigital;
+use EasySwoole\HttpAnnotation\Attributes\Validator\TimestampBeforeDate;
 use PHPUnit\Framework\TestCase;
 
-class AllDigitalTest extends TestCase
+class TimestampBeforeDateTest extends TestCase
 {
     /*
     * 合法
@@ -16,25 +16,27 @@ class AllDigitalTest extends TestCase
     {
         $request = new Request();
         $request->withQueryParams([
-            "no" => 5001
+            "date" => time() - 1
         ]);
 
-        $param = new Param("no");
+        $param = new Param("date");
         $param->parsedValue($request);
 
-        $rule = new AllDigital();
+        $rule = new TimestampBeforeDate(date: date('YmdHis', time()));
         $this->assertEquals(true, $rule->execute($param, $request));
 
-
+        // func
         $request = new Request();
         $request->withQueryParams([
-            "no" => 005001
+            "date" => time() - 1
         ]);
 
-        $param = new Param("no");
+        $param = new Param("date");
         $param->parsedValue($request);
 
-        $rule = new AllDigital();
+        $rule = new TimestampBeforeDate(date: function () {
+            return date('YmdHis', time());
+        });
         $this->assertEquals(true, $rule->execute($param, $request));
     }
 
@@ -43,31 +45,33 @@ class AllDigitalTest extends TestCase
      */
     public function testDefaultErrorMsgCase()
     {
-        // 含有英文
         $request = new Request();
         $request->withQueryParams([
-            "no" => "0bA111"
+            "date" => time() + 1
         ]);
 
-        $param = new Param("no");
+        $param = new Param("date");
         $param->parsedValue($request);
 
-        $rule = new AllDigital();
+        $rule = new TimestampBeforeDate(date('YmdHis', time()));
         $this->assertEquals(false, $rule->execute($param, $request));
-        $this->assertEquals("no must be all digital", $rule->errorMsg());
 
-        // 含有小数点
+        // func
         $request = new Request();
         $request->withQueryParams([
-            "no" => "111.11"
+            "date" => "2022-06-30"
         ]);
 
-        $param = new Param("no");
+        $param = new Param("date");
         $param->parsedValue($request);
 
-        $rule = new AllDigital();
+        $time = date('YmdHis', time());
+        $rule = new TimestampBeforeDate(date: function () use ($time) {
+            return $time;
+        });
         $this->assertEquals(false, $rule->execute($param, $request));
-        $this->assertEquals("no must be all digital", $rule->errorMsg());
+
+        $this->assertEquals("date must be timestamp before {$time}", $rule->errorMsg());
     }
 
     /*
@@ -77,14 +81,14 @@ class AllDigitalTest extends TestCase
     {
         $request = new Request();
         $request->withQueryParams([
-            "no" => "111.11"
+            "date" => time() + 1
         ]);
 
-        $param = new Param("no");
+        $param = new Param("date");
         $param->parsedValue($request);
 
-        $rule = new AllDigital(errorMsg: '学号只能由数字构成');
+        $rule = new TimestampBeforeDate(date: date('YmdHis', time()), errorMsg: '无效时间戳');
         $this->assertEquals(false, $rule->execute($param, $request));
-        $this->assertEquals("学号只能由数字构成", $rule->errorMsg());
+        $this->assertEquals("无效时间戳", $rule->errorMsg());
     }
 }

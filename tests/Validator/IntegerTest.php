@@ -4,27 +4,38 @@ namespace EasySwoole\HttpAnnotation\Tests\Validator;
 
 use EasySwoole\Http\Request;
 use EasySwoole\HttpAnnotation\Attributes\Param;
-use EasySwoole\HttpAnnotation\Attributes\Validator\AllDigital;
-use EasySwoole\HttpAnnotation\Attributes\Validator\Alpha;
+use EasySwoole\HttpAnnotation\Attributes\Validator\Integer;
 use PHPUnit\Framework\TestCase;
 
-class AlphaTest extends TestCase
+class IntegerTest extends TestCase
 {
+
     /*
     * 合法
     */
     public function testValidCase()
     {
-        // 只能是字母
+        // 正常的int类型
         $request = new Request();
         $request->withQueryParams([
-            "str" => "abcheezsss"
+            "num" => 2
         ]);
 
-        $param = new Param("str");
+        $param = new Param("num");
         $param->parsedValue($request);
 
-        $rule = new Alpha();
+        $rule = new Integer();
+        $this->assertEquals(true, $rule->execute($param, $request));
+        // 文本型int
+        $request = new Request();
+        $request->withQueryParams([
+            "num" => '2'
+        ]);
+
+        $param = new Param("num");
+        $param->parsedValue($request);
+
+        $rule = new Integer();
         $this->assertEquals(true, $rule->execute($param, $request));
     }
 
@@ -33,29 +44,30 @@ class AlphaTest extends TestCase
      */
     public function testDefaultErrorMsgCase()
     {
+        // 不是一个数字
         $request = new Request();
         $request->withQueryParams([
-            "str" => "0bA111"
+            "num" => 'bajiu'
         ]);
 
-        $param = new Param("str");
+        $param = new Param("num");
         $param->parsedValue($request);
 
-        $rule = new Alpha();
+        $rule = new Integer();
         $this->assertEquals(false, $rule->execute($param, $request));
-        $this->assertEquals("str must be all alpha", $rule->errorMsg());
-
+        $this->assertEquals("num must be integer",$rule->errorMsg());
+        // 不是一个整数
         $request = new Request();
         $request->withQueryParams([
-            "str" => "111"
+            "num" => 0.001
         ]);
 
-        $param = new Param("str");
+        $param = new Param("num");
         $param->parsedValue($request);
 
-        $rule = new Alpha();
+        $rule = new Integer();
         $this->assertEquals(false, $rule->execute($param, $request));
-        $this->assertEquals("str must be all alpha", $rule->errorMsg());
+        $this->assertEquals("num must be integer",$rule->errorMsg());
     }
 
     /*
@@ -65,14 +77,14 @@ class AlphaTest extends TestCase
     {
         $request = new Request();
         $request->withQueryParams([
-            "str" => "0bA111"
+            "num" => 0.001
         ]);
 
-        $param = new Param("str");
+        $param = new Param("num");
         $param->parsedValue($request);
 
-        $rule = new Alpha(errorMsg: '您输入的参数不合法');
+        $rule = new Integer(errorMsg: '请输入正确的数量');
         $this->assertEquals(false, $rule->execute($param, $request));
-        $this->assertEquals("您输入的参数不合法", $rule->errorMsg());
+        $this->assertEquals("请输入正确的数量",$rule->errorMsg());
     }
 }

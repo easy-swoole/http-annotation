@@ -21,10 +21,12 @@ class MinLength extends AbstractValidator
 
     protected function validate(Param $param,ServerRequestInterface $request): bool
     {
-        $compare = $this->minLen;
-        $data = $param->parsedValue();
-        if (is_numeric($data) || is_string($data)) {
-            return strlen($data) >= $compare;
+        $itemData = $param->parsedValue();
+        if (is_numeric($itemData) || is_string($itemData)) {
+            return strlen($itemData) >= $this->minLen;
+        }
+        if (is_array($itemData) && (count($itemData) >= $this->minLen)) {
+            return true;
         }
         return  false;
     }

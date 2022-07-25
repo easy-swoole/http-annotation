@@ -4,27 +4,26 @@ namespace EasySwoole\HttpAnnotation\Tests\Validator;
 
 use EasySwoole\Http\Request;
 use EasySwoole\HttpAnnotation\Attributes\Param;
-use EasySwoole\HttpAnnotation\Attributes\Validator\AllDigital;
-use EasySwoole\HttpAnnotation\Attributes\Validator\Alpha;
+use EasySwoole\HttpAnnotation\Attributes\Validator\AlphaNum;
 use PHPUnit\Framework\TestCase;
 
-class AlphaTest extends TestCase
+class AlphaNumTest extends TestCase
 {
     /*
     * 合法
     */
     public function testValidCase()
     {
-        // 只能是字母
+        // 字段值仅允许大小写字母、数字
         $request = new Request();
         $request->withQueryParams([
-            "str" => "abcheezsss"
+            "no" => "Answer123"
         ]);
 
-        $param = new Param("str");
+        $param = new Param("no");
         $param->parsedValue($request);
 
-        $rule = new Alpha();
+        $rule = new AlphaNum();
         $this->assertEquals(true, $rule->execute($param, $request));
     }
 
@@ -35,27 +34,15 @@ class AlphaTest extends TestCase
     {
         $request = new Request();
         $request->withQueryParams([
-            "str" => "0bA111"
+            "no" => "0bA111..@"
         ]);
 
-        $param = new Param("str");
+        $param = new Param("no");
         $param->parsedValue($request);
 
-        $rule = new Alpha();
+        $rule = new AlphaNum();
         $this->assertEquals(false, $rule->execute($param, $request));
-        $this->assertEquals("str must be all alpha", $rule->errorMsg());
-
-        $request = new Request();
-        $request->withQueryParams([
-            "str" => "111"
-        ]);
-
-        $param = new Param("str");
-        $param->parsedValue($request);
-
-        $rule = new Alpha();
-        $this->assertEquals(false, $rule->execute($param, $request));
-        $this->assertEquals("str must be all alpha", $rule->errorMsg());
+        $this->assertEquals("no must be all AlphaNum", $rule->errorMsg());
     }
 
     /*
@@ -65,14 +52,14 @@ class AlphaTest extends TestCase
     {
         $request = new Request();
         $request->withQueryParams([
-            "str" => "0bA111"
+            "no" => "0bA111..@"
         ]);
 
-        $param = new Param("str");
+        $param = new Param("no");
         $param->parsedValue($request);
 
-        $rule = new Alpha(errorMsg: '您输入的参数不合法');
+        $rule = new AlphaNum(errorMsg: '只能由字母和数字构成');
         $this->assertEquals(false, $rule->execute($param, $request));
-        $this->assertEquals("您输入的参数不合法", $rule->errorMsg());
+        $this->assertEquals("只能由字母和数字构成", $rule->errorMsg());
     }
 }

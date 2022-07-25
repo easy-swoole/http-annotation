@@ -7,13 +7,14 @@ use Psr\Http\Message\ServerRequestInterface;
 
 class Length extends AbstractValidator
 {
-
-    function __construct(public int $length,?string $errorMsg = null)
+    protected int $length;
+    function __construct(int $length,?string $errorMsg = null)
     {
         if(empty($errorMsg)){
             $errorMsg = "{#name} length must be {#length}";
         }
         $this->errorMsg($errorMsg);
+        $this->length = $length;
     }
 
 
@@ -22,6 +23,9 @@ class Length extends AbstractValidator
         $itemData = $param->parsedValue();
         if (is_numeric($itemData) || is_string($itemData)) {
             return strlen($itemData) == $this->length;
+        }
+        if (is_array($itemData) && (count($itemData) == $this->length)) {
+            return true;
         }
         return false;
     }

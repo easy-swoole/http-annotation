@@ -4,37 +4,51 @@ namespace EasySwoole\HttpAnnotation\Tests\Validator;
 
 use EasySwoole\Http\Request;
 use EasySwoole\HttpAnnotation\Attributes\Param;
-use EasySwoole\HttpAnnotation\Attributes\Validator\AllDigital;
+use EasySwoole\HttpAnnotation\Attributes\Validator\IsFloat;
 use PHPUnit\Framework\TestCase;
 
-class AllDigitalTest extends TestCase
+class IsFloatTest extends TestCase
 {
+
     /*
     * 合法
     */
     public function testValidCase()
     {
+        // 小数位浮点数
         $request = new Request();
         $request->withQueryParams([
-            "no" => 5001
+            "num" => 2.0
         ]);
 
-        $param = new Param("no");
+        $param = new Param("num");
         $param->parsedValue($request);
 
-        $rule = new AllDigital();
+        $rule = new IsFloat();
         $this->assertEquals(true, $rule->execute($param, $request));
 
-
+        // 字符串表达
         $request = new Request();
         $request->withQueryParams([
-            "no" => 005001
+            "num" => '12.3'
         ]);
 
-        $param = new Param("no");
+        $param = new Param("num");
         $param->parsedValue($request);
 
-        $rule = new AllDigital();
+        $rule = new IsFloat();
+        $this->assertEquals(true, $rule->execute($param, $request));
+
+        // 整数作为浮点数
+        $request = new Request();
+        $request->withQueryParams([
+            "num" => 2
+        ]);
+
+        $param = new Param("num");
+        $param->parsedValue($request);
+
+        $rule = new IsFloat();
         $this->assertEquals(true, $rule->execute($param, $request));
     }
 
@@ -43,31 +57,18 @@ class AllDigitalTest extends TestCase
      */
     public function testDefaultErrorMsgCase()
     {
-        // 含有英文
+        // 不是合法的浮点值
         $request = new Request();
         $request->withQueryParams([
-            "no" => "0bA111"
+            "num" => 'bajiu'
         ]);
 
-        $param = new Param("no");
+        $param = new Param("num");
         $param->parsedValue($request);
 
-        $rule = new AllDigital();
+        $rule = new IsFloat();
         $this->assertEquals(false, $rule->execute($param, $request));
-        $this->assertEquals("no must be all digital", $rule->errorMsg());
-
-        // 含有小数点
-        $request = new Request();
-        $request->withQueryParams([
-            "no" => "111.11"
-        ]);
-
-        $param = new Param("no");
-        $param->parsedValue($request);
-
-        $rule = new AllDigital();
-        $this->assertEquals(false, $rule->execute($param, $request));
-        $this->assertEquals("no must be all digital", $rule->errorMsg());
+        $this->assertEquals("num must be float",$rule->errorMsg());
     }
 
     /*
@@ -77,14 +78,14 @@ class AllDigitalTest extends TestCase
     {
         $request = new Request();
         $request->withQueryParams([
-            "no" => "111.11"
+            "num" => 'bajiu'
         ]);
 
-        $param = new Param("no");
+        $param = new Param("num");
         $param->parsedValue($request);
 
-        $rule = new AllDigital(errorMsg: '学号只能由数字构成');
+        $rule = new IsFloat(errorMsg: '请输入一个浮点数');
         $this->assertEquals(false, $rule->execute($param, $request));
-        $this->assertEquals("学号只能由数字构成", $rule->errorMsg());
+        $this->assertEquals("请输入一个浮点数",$rule->errorMsg());
     }
 }

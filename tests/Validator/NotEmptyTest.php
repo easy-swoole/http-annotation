@@ -4,28 +4,55 @@ namespace EasySwoole\HttpAnnotation\Tests\Validator;
 
 use EasySwoole\Http\Request;
 use EasySwoole\HttpAnnotation\Attributes\Param;
-use EasySwoole\HttpAnnotation\Attributes\Validator\AllDigital;
-use EasySwoole\HttpAnnotation\Attributes\Validator\Alpha;
+use EasySwoole\HttpAnnotation\Attributes\Validator\NotEmpty;
 use PHPUnit\Framework\TestCase;
 
-class AlphaTest extends TestCase
+class NotEmptyTest extends TestCase
 {
     /*
     * 合法
     */
     public function testValidCase()
     {
-        // 只能是字母
+        // 不为空字符串
         $request = new Request();
         $request->withQueryParams([
-            "str" => "abcheezsss"
+            "str" => "easyswoole",
         ]);
 
         $param = new Param("str");
         $param->parsedValue($request);
 
-        $rule = new Alpha();
+        $rule = new NotEmpty();
+
         $this->assertEquals(true, $rule->execute($param, $request));
+
+        // 数值0
+        $request = new Request();
+        $request->withQueryParams([
+            "str" => 0,
+        ]);
+
+        $param = new Param("str");
+        $param->parsedValue($request);
+
+        $rule = new NotEmpty();
+
+        $this->assertEquals(true, $rule->execute($param, $request));
+
+        // 字符0
+        $request = new Request();
+        $request->withQueryParams([
+            "str" => "0",
+        ]);
+
+        $param = new Param("str");
+        $param->parsedValue($request);
+
+        $rule = new NotEmpty();
+
+        $this->assertEquals(true, $rule->execute($param, $request));
+
     }
 
     /*
@@ -33,29 +60,33 @@ class AlphaTest extends TestCase
      */
     public function testDefaultErrorMsgCase()
     {
+        // 空字符串
         $request = new Request();
         $request->withQueryParams([
-            "str" => "0bA111"
+            "str" => "",
         ]);
 
         $param = new Param("str");
         $param->parsedValue($request);
 
-        $rule = new Alpha();
-        $this->assertEquals(false, $rule->execute($param, $request));
-        $this->assertEquals("str must be all alpha", $rule->errorMsg());
+        $rule = new NotEmpty();
 
+        $this->assertEquals(false, $rule->execute($param, $request));
+        $this->assertEquals("str is notEmpty",$rule->errorMsg());
+
+        // null
         $request = new Request();
         $request->withQueryParams([
-            "str" => "111"
+            "str" => null,
         ]);
 
         $param = new Param("str");
         $param->parsedValue($request);
 
-        $rule = new Alpha();
+        $rule = new NotEmpty();
+
         $this->assertEquals(false, $rule->execute($param, $request));
-        $this->assertEquals("str must be all alpha", $rule->errorMsg());
+        $this->assertEquals("str is notEmpty",$rule->errorMsg());
     }
 
     /*
@@ -65,14 +96,15 @@ class AlphaTest extends TestCase
     {
         $request = new Request();
         $request->withQueryParams([
-            "str" => "0bA111"
+            "name" => "",
         ]);
 
-        $param = new Param("str");
+        $param = new Param("name");
         $param->parsedValue($request);
 
-        $rule = new Alpha(errorMsg: '您输入的参数不合法');
+        $rule = new NotEmpty(errorMsg: '名字必填');
+
         $this->assertEquals(false, $rule->execute($param, $request));
-        $this->assertEquals("您输入的参数不合法", $rule->errorMsg());
+        $this->assertEquals("名字必填",$rule->errorMsg());
     }
 }

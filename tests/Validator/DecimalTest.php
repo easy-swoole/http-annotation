@@ -4,37 +4,49 @@ namespace EasySwoole\HttpAnnotation\Tests\Validator;
 
 use EasySwoole\Http\Request;
 use EasySwoole\HttpAnnotation\Attributes\Param;
-use EasySwoole\HttpAnnotation\Attributes\Validator\AllDigital;
+use EasySwoole\HttpAnnotation\Attributes\Validator\Decimal;
 use PHPUnit\Framework\TestCase;
 
-class AllDigitalTest extends TestCase
+class DecimalTest extends TestCase
 {
     /*
     * 合法
     */
     public function testValidCase()
     {
+        // null
         $request = new Request();
         $request->withQueryParams([
-            "no" => 5001
+            "num" => 23.0
         ]);
 
-        $param = new Param("no");
+        $param = new Param("num");
         $param->parsedValue($request);
 
-        $rule = new AllDigital();
+        $rule = new Decimal(accuracy: null);
         $this->assertEquals(true, $rule->execute($param, $request));
 
+        // 0
+        $request = new Request();
+        $request->withQueryParams([
+            "num" => 50.0
+        ]);
+
+        $param = new Param("num");
+        $param->parsedValue($request);
+
+        $rule = new Decimal(accuracy: 0);
+        $this->assertEquals(true, $rule->execute($param, $request));
 
         $request = new Request();
         $request->withQueryParams([
-            "no" => 005001
+            "num" => 5.56789
         ]);
 
-        $param = new Param("no");
+        $param = new Param("num");
         $param->parsedValue($request);
 
-        $rule = new AllDigital();
+        $rule = new Decimal(accuracy: 5);
         $this->assertEquals(true, $rule->execute($param, $request));
     }
 
@@ -43,31 +55,17 @@ class AllDigitalTest extends TestCase
      */
     public function testDefaultErrorMsgCase()
     {
-        // 含有英文
         $request = new Request();
         $request->withQueryParams([
-            "no" => "0bA111"
+            "num" => 555
         ]);
 
-        $param = new Param("no");
+        $param = new Param("num");
         $param->parsedValue($request);
 
-        $rule = new AllDigital();
+        $rule = new Decimal(accuracy: 2);
         $this->assertEquals(false, $rule->execute($param, $request));
-        $this->assertEquals("no must be all digital", $rule->errorMsg());
-
-        // 含有小数点
-        $request = new Request();
-        $request->withQueryParams([
-            "no" => "111.11"
-        ]);
-
-        $param = new Param("no");
-        $param->parsedValue($request);
-
-        $rule = new AllDigital();
-        $this->assertEquals(false, $rule->execute($param, $request));
-        $this->assertEquals("no must be all digital", $rule->errorMsg());
+        $this->assertEquals("num must be decimal with 2 accuracy", $rule->errorMsg());
     }
 
     /*
@@ -77,14 +75,14 @@ class AllDigitalTest extends TestCase
     {
         $request = new Request();
         $request->withQueryParams([
-            "no" => "111.11"
+            "num" => 555
         ]);
 
-        $param = new Param("no");
+        $param = new Param("num");
         $param->parsedValue($request);
 
-        $rule = new AllDigital(errorMsg: '学号只能由数字构成');
+        $rule = new Decimal(accuracy: 2, errorMsg: 'num只能是小数');
         $this->assertEquals(false, $rule->execute($param, $request));
-        $this->assertEquals("学号只能由数字构成", $rule->errorMsg());
+        $this->assertEquals("num只能是小数", $rule->errorMsg());
     }
 }
