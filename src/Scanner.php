@@ -5,6 +5,7 @@ namespace EasySwoole\HttpAnnotation;
 use EasySwoole\Http\ReflectionCache;
 use EasySwoole\Http\UrlParser;
 use EasySwoole\HttpAnnotation\Attributes\Api;
+use EasySwoole\HttpAnnotation\Attributes\ApiGroup;
 use EasySwoole\Utility\File;
 use FastRoute\RouteCollector;
 
@@ -44,16 +45,26 @@ class Scanner
 
     static function scanToDoc(string $controllerPath):string{
         $finalDoc = "";
-        $annotations = self::scanAllController($controllerPath);
-        $groupInfo = [];
-        foreach ($annotations as $annotation){
+        $controllers = self::scanAllController($controllerPath);
+        $groupInfos = [];
 
+        foreach ($controllers as $controller){
+            $reflection = ReflectionCache::getInstance()->getClassReflection($controller);
+            $groupInfoRef = $reflection->getAttributes(ApiGroup::class);
+            if(!empty($groupInfoRef)){
+                /** @var \ReflectionAttribute $groupInfoRef */
+                $groupInfoRef = $groupInfoRef[0];
+                $name = $groupInfoRef->getArguments()['name'];
+                var_dump($name);
+            }
         }
+
+        return $finalDoc;
 
 
     }
 
-    private static function scanAllController(string $controllerPath):array
+    private static function scanAllController(string $controllerPath,bool $save2Cache = true):array
     {
         $list = [];
         $files = [];
@@ -81,7 +92,9 @@ class Scanner
             }
             $ref = new \ReflectionClass($class);
             if($ref->isSubclassOf(AnnotationController::class)){
-                ReflectionCache::getInstance()->addReflection($ref);
+                if($save2Cache){
+                    ReflectionCache::getInstance()->addReflection($ref);
+                }
                 $list[] = $class;
             }
         }
