@@ -73,6 +73,14 @@ class Scanner
             }
         }
 
+        //构建目录导航
+        $finalDoc .= "## Navigator \n";
+        $finalDoc = self::buildLine($finalDoc);
+        foreach ($groupDetail as $name => $des){
+            $finalDoc .= "- {$name} \n";
+        }
+        $finalDoc = self::buildLine($finalDoc);
+
         return $finalDoc;
 
 
@@ -158,5 +166,10 @@ class Scanner
 
         return $ret;
 
+    }
+
+    private static function buildLine(string $content):string
+    {
+        return $content ."\n";
     }
 }
