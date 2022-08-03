@@ -6,6 +6,7 @@ use EasySwoole\Http\ReflectionCache;
 use EasySwoole\Http\UrlParser;
 use EasySwoole\HttpAnnotation\Attributes\Api;
 use EasySwoole\HttpAnnotation\Attributes\ApiGroup;
+use EasySwoole\HttpAnnotation\Exception\Annotation;
 use EasySwoole\Utility\File;
 use FastRoute\RouteCollector;
 
@@ -46,7 +47,8 @@ class Scanner
     static function scanToDoc(string $controllerPath):string{
         $finalDoc = "";
         $controllers = self::scanAllController($controllerPath);
-        $groupInfos = [];
+        $groupDetail = [];
+        $groupControllerReflections = [];
 
         foreach ($controllers as $controller){
             $reflection = ReflectionCache::getInstance()->getClassReflection($controller);
@@ -54,8 +56,20 @@ class Scanner
             if(!empty($groupInfoRef)){
                 /** @var \ReflectionAttribute $groupInfoRef */
                 $groupInfoRef = $groupInfoRef[0];
-                $name = $groupInfoRef->getArguments()['name'];
-                var_dump($name);
+                $arg = $groupInfoRef->getArguments();
+                $name = $arg['name'];
+                $groupControllerReflections[$name][] = $reflection;
+                if(isset($arg['description'])){
+                    if(empty($groupDetail[$name])){
+                        $groupDetail[$name] = $arg['description'];
+                    }else{
+                        throw new Annotation("can not reassign group description for group ".$name);
+                    }
+                }else{
+                    if(!isset($groupDetail[$name])){
+                        $groupDetail[$name] = null;
+                    }
+                }
             }
         }
 
