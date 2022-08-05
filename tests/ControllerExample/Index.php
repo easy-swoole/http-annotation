@@ -11,7 +11,7 @@ use EasySwoole\HttpAnnotation\Attributes\Validator\Required;
 class Index extends Base
 {
     #[Api(
-        apiName: "index",
+        apiName: "home",
         requestPath: "/test/index.html",
         params: [
             new Param(name:"account",from: [Param::GET],validate: [

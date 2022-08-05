@@ -48,38 +48,79 @@ class Scanner
         $finalDoc = "";
         $controllers = self::scanAllController($controllerPath);
         $groupDetail = [];
-        $groupControllerReflections = [];
+        $groupApiMethods = [];
 
         foreach ($controllers as $controller){
             $reflection = ReflectionCache::getInstance()->getClassReflection($controller);
             $groupInfoRef = $reflection->getAttributes(ApiGroup::class);
+            $description = null;
             if(!empty($groupInfoRef)){
                 /** @var \ReflectionAttribute $groupInfoRef */
                 $groupInfoRef = $groupInfoRef[0];
                 $arg = $groupInfoRef->getArguments();
-                $name = $arg['name'];
-                $groupControllerReflections[$name][] = $reflection;
-                if(isset($arg['description'])){
-                    if(empty($groupDetail[$name])){
-                        $groupDetail[$name] = $arg['description'];
+                $groupName = $arg['groupName'];
+            }else{
+                $groupName = "Default";
+            }
+            if(!isset($groupApiMethods[$groupName])){
+                $groupApiMethods[$groupName] = [];
+            }
+
+
+            $controllerMethodRefs = ReflectionCache::getInstance()->allowMethodReflections($reflection);
+            /** @var \ReflectionMethod $controllerMethodRef */
+            foreach ($controllerMethodRefs as $controllerMethodRef){
+                $apiTag = $controllerMethodRef->getAttributes(Api::class);
+                if(!empty($apiTag)){
+                    $tag =  $apiTag[0];
+                    $tag = new Api(...$tag->getArguments());
+                    $apiName = $tag->apiName;
+                    if(!isset($groupApiMethods[$groupName][$apiName])){
+                        $groupApiMethods[$groupName][$apiName] = $tag;
                     }else{
-                        throw new Annotation("can not reassign group description for group ".$name);
-                    }
-                }else{
-                    if(!isset($groupDetail[$name])){
-                        $groupDetail[$name] = null;
+                        throw new Annotation("api name:{$apiName} is duplicate");
                     }
                 }
             }
+            if($description){
+                if(empty($groupDetail[$groupName])){
+                    $groupDetail[$groupName] = $description;
+                }else{
+                    throw new Annotation("can not reassign group description for group ".$groupName);
+                }
+            }else{
+                $groupDetail[$groupName] = null;
+            }
         }
 
-        //构建目录导航
-        $finalDoc .= "## Navigator \n";
+        //构建Group目录导航
+        $finalDoc .= "## Navigator";
         $finalDoc = self::buildLine($finalDoc);
-        foreach ($groupDetail as $name => $des){
-            $finalDoc .= "- {$name} \n";
+        $groupIndex = 1;
+        foreach ($groupDetail as $groupName => $des){
+            $finalDoc .= "{$groupIndex}. {$groupName} \n";
+            $allMethods = $groupApiMethods[$groupName];
+            $methodCount = 1;
+            /** @var Api $tag */
+            foreach ($allMethods as $tag){
+                $finalDoc .= "    {$methodCount}. {$tag->apiName} \n";
+                $methodCount ++;
+            }
+            $groupIndex ++;
         }
+        $finalDoc = self::buildLine($finalDoc,3);
+
+        //导航栏分割线
+
+        $finalDoc.= "---------- ";
         $finalDoc = self::buildLine($finalDoc);
+
+        //构建分组
+        foreach ($groupDetail as $groupName => $des){
+            $finalDoc .= "## {$groupName}";
+            $finalDoc = self::buildLine($finalDoc);
+        }
+
 
         return $finalDoc;
 
@@ -168,8 +209,8 @@ class Scanner
 
     }
 
-    private static function buildLine(string $content):string
+    private static function buildLine(string $content,int $repeat = 1):string
     {
-        return $content ."\n";
+        return $content .str_repeat("\n",$repeat);
     }
 }

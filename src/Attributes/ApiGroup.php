@@ -5,5 +5,5 @@ namespace EasySwoole\HttpAnnotation\Attributes;
 #[\Attribute()]
 class ApiGroup
 {
-    function __construct(public string $name, public ?Description $description = null){}
+    function __construct(public string $groupName, public ?Description $description = null){}
 }

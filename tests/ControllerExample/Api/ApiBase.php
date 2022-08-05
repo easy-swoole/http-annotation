@@ -7,7 +7,7 @@ use EasySwoole\HttpAnnotation\Attributes\Param;
 use EasySwoole\HttpAnnotation\Attributes\Validator\Required;
 use EasySwoole\HttpAnnotation\Tests\ControllerExample\Base;
 
-#[ApiGroup(name: "Api")]
+#[ApiGroup(groupName: "Api")]
 class ApiBase extends Base
 {
     #[Param( name: "token",validate: [
