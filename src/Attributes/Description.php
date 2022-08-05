@@ -10,7 +10,7 @@ class Description
     const XML = 3;
     const MARKDOWN = 4;
 
-    function __construct(string $desc,int $type = Description::PLAIN_TEXT)
+    function __construct(public string $desc,public int $type = Description::PLAIN_TEXT)
     {
     }
 }

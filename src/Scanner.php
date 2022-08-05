@@ -6,6 +6,7 @@ use EasySwoole\Http\ReflectionCache;
 use EasySwoole\Http\UrlParser;
 use EasySwoole\HttpAnnotation\Attributes\Api;
 use EasySwoole\HttpAnnotation\Attributes\ApiGroup;
+use EasySwoole\HttpAnnotation\Attributes\Description;
 use EasySwoole\HttpAnnotation\Exception\Annotation;
 use EasySwoole\Utility\File;
 use FastRoute\RouteCollector;
@@ -59,6 +60,9 @@ class Scanner
                 $groupInfoRef = $groupInfoRef[0];
                 $arg = $groupInfoRef->getArguments();
                 $groupName = $arg['groupName'];
+                if(isset($arg["description"])){
+                    $description = $arg['description'];
+                }
             }else{
                 $groupName = "Default";
             }
@@ -119,6 +123,12 @@ class Scanner
         foreach ($groupDetail as $groupName => $des){
             $finalDoc .= "## {$groupName}";
             $finalDoc = self::buildLine($finalDoc);
+            $des = self::parseDescription($des);
+            if(!empty($des)){
+                $finalDoc .= "{$des}";
+                $finalDoc = self::buildLine($finalDoc);
+            }
+
         }
 
 
@@ -212,5 +222,13 @@ class Scanner
     private static function buildLine(string $content,int $repeat = 1):string
     {
         return $content .str_repeat("\n",$repeat);
+    }
+
+    private static function parseDescription(?Description $description):?string
+    {
+        if($description){
+            return $description->desc;
+        }
+        return null;
     }
 }
