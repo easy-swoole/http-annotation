@@ -226,9 +226,6 @@ class Scanner
 
     private static function parseDescription(?Description $description):?string
     {
-        if($description){
-            return $description->desc;
-        }
-        return null;
+        return $description?->desc;
     }
 }
