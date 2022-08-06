@@ -7,6 +7,7 @@ use EasySwoole\Http\UrlParser;
 use EasySwoole\HttpAnnotation\Attributes\Api;
 use EasySwoole\HttpAnnotation\Attributes\ApiGroup;
 use EasySwoole\HttpAnnotation\Attributes\Description;
+use EasySwoole\HttpAnnotation\Attributes\Param;
 use EasySwoole\HttpAnnotation\Exception\Annotation;
 use EasySwoole\Utility\File;
 use FastRoute\RouteCollector;
@@ -145,13 +146,13 @@ class Scanner
                     $finalDoc .= "### {$apiTag->apiName} <sup>{$groupName}</sup>";
                     $finalDoc = self::buildLine($finalDoc);
 
-                    $finalDoc .= "Path: **{$apiTag->requestPath}**";
+                    $finalDoc .= "**Request Path:** {$apiTag->requestPath}";
                     $finalDoc = self::buildLine($finalDoc);
                     $finalDoc = self::buildLine($finalDoc);
-                    $finalDoc .= "Allow Method: **GET**";
+                    $finalDoc .= "**Allow Method:** GET";
                     $finalDoc = self::buildLine($finalDoc);
                     $finalDoc = self::buildLine($finalDoc);
-                    $finalDoc .= "Api Description: ";
+                    $finalDoc .= "**Api Description:**";
                     $finalDoc = self::buildLine($finalDoc);
                     $finalDoc = self::buildLine($finalDoc);
 
@@ -161,12 +162,36 @@ class Scanner
                         $finalDoc = self::buildLine($finalDoc);
                         $finalDoc .= "{$des}";
                         $finalDoc = self::buildLine($finalDoc);
-                        $finalDoc = self::buildLine($finalDoc);
                     }else{
                         $finalDoc .= "empty method description";
                         $finalDoc = self::buildLine($finalDoc);
                     }
-                    //参数
+                    $finalDoc = self::buildLine($finalDoc);
+
+                    $finalDoc .= "**Api Params:**";
+                    $finalDoc = self::buildLine($finalDoc);
+                    $finalDoc = self::buildLine($finalDoc);
+                    $params = $apiTag->params;
+                    if(!empty($params)){
+                        $finalDoc .= "|name|from|validate|description|default value|";
+                        $finalDoc = self::buildLine($finalDoc);
+                        $finalDoc .= "|:-----|:-----:|:-----|:-----|-----:|";
+                        $finalDoc = self::buildLine($finalDoc);
+                        /** @var Param $param */
+                        foreach ($params as $param){
+                            $finalDoc .= "| {$param->name} | GET | rule | desc | - |";
+                            $finalDoc = self::buildLine($finalDoc);
+                        }
+
+                    }else{
+                        $finalDoc .= "no any params required";
+                    }
+
+                    $finalDoc = self::buildLine($finalDoc);
+
+
+
+
                 }
             }else{
                 $finalDoc.= "empty api method for group **{$groupName}**";
