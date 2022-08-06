@@ -2,6 +2,7 @@
 
 namespace EasySwoole\HttpAnnotation\Tests\ControllerExample\Api;
 
+use EasySwoole\HttpAnnotation\Attributes\Api;
 use EasySwoole\HttpAnnotation\Attributes\ApiGroup;
 use EasySwoole\HttpAnnotation\Attributes\Description;
 
@@ -10,6 +11,11 @@ use EasySwoole\HttpAnnotation\Attributes\Description;
 )]
 class Auth extends ApiBase
 {
+    #[Api(
+        apiName: "login",
+        requestPath: "/api/auth/login",
+        description: new Description("登录接口，用于用户登录")
+    )]
     function login()
     {
 

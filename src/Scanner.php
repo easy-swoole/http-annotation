@@ -98,7 +98,7 @@ class Scanner
         }
 
         //构建Group目录导航
-        $finalDoc .= "## Navigator";
+        $finalDoc .= "# Navigator";
         $finalDoc = self::buildLine($finalDoc);
         $groupIndex = 1;
         foreach ($groupDetail as $groupName => $des){
@@ -115,20 +115,68 @@ class Scanner
         $finalDoc = self::buildLine($finalDoc,3);
 
         //导航栏分割线
-
+        $finalDoc = self::buildLine($finalDoc);
         $finalDoc.= "---------- ";
         $finalDoc = self::buildLine($finalDoc);
 
+        $finalDoc .= "# Api List";
+        $finalDoc = self::buildLine($finalDoc);
+
+
         //构建分组详情
         foreach ($groupDetail as $groupName => $des){
+            $apiMethods = $groupApiMethods[$groupName];
             $finalDoc .= "## {$groupName}";
             $finalDoc = self::buildLine($finalDoc);
+            //构建组说明
             $des = self::parseDescription($des);
             if(!empty($des)){
+                $finalDoc = self::buildLine($finalDoc);
                 $finalDoc .= "{$des}";
+                $finalDoc = self::buildLine($finalDoc);
+                $finalDoc = self::buildLine($finalDoc);
+
+            }
+
+            if(!empty($apiMethods)){
+                //文档方法表
+                /** @var Api $apiTag */
+                foreach ($apiMethods as $apiTag){
+                    $finalDoc .= "### {$apiTag->apiName} <sup>{$groupName}</sup>";
+                    $finalDoc = self::buildLine($finalDoc);
+
+                    $finalDoc .= "Path: **{$apiTag->requestPath}**";
+                    $finalDoc = self::buildLine($finalDoc);
+                    $finalDoc = self::buildLine($finalDoc);
+                    $finalDoc .= "Allow Method: **GET**";
+                    $finalDoc = self::buildLine($finalDoc);
+                    $finalDoc = self::buildLine($finalDoc);
+                    $finalDoc .= "Api Description: ";
+                    $finalDoc = self::buildLine($finalDoc);
+                    $finalDoc = self::buildLine($finalDoc);
+
+                    //说明
+                    $des = self::parseDescription($apiTag->description);
+                    if(!empty($des)){
+                        $finalDoc = self::buildLine($finalDoc);
+                        $finalDoc .= "{$des}";
+                        $finalDoc = self::buildLine($finalDoc);
+                        $finalDoc = self::buildLine($finalDoc);
+                    }else{
+                        $finalDoc .= "empty method description";
+                        $finalDoc = self::buildLine($finalDoc);
+                    }
+                    //参数
+                }
+            }else{
+                $finalDoc.= "empty api method for group **{$groupName}**";
                 $finalDoc = self::buildLine($finalDoc);
             }
 
+
+            $finalDoc = self::buildLine($finalDoc);
+            $finalDoc.= "---------- ";
+            $finalDoc = self::buildLine($finalDoc);
         }
 
 
@@ -226,6 +274,17 @@ class Scanner
 
     private static function parseDescription(?Description $description):?string
     {
+        if($description){
+            switch ($description->type){
+                case Description::MARKDOWN:{
+                    $file = $description->desc;
+                    if(!is_file($file)){
+                        throw new Annotation("markdown description file not exist :{$file}");
+                    }
+                    return file_get_contents($file);
+                }
+            }
+        }
         return $description?->desc;
     }
 }
