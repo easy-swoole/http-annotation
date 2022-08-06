@@ -102,7 +102,7 @@ class Scanner
         $finalDoc = self::buildLine($finalDoc);
         $groupIndex = 1;
         foreach ($groupDetail as $groupName => $des){
-            $finalDoc .= "{$groupIndex}. {$groupName} \n";
+            $finalDoc .= "{$groupIndex}. [{$groupName}](#{$groupName}) \n";
             $allMethods = $groupApiMethods[$groupName];
             $methodCount = 1;
             /** @var Api $tag */
@@ -119,7 +119,7 @@ class Scanner
         $finalDoc.= "---------- ";
         $finalDoc = self::buildLine($finalDoc);
 
-        //构建分组
+        //构建分组详情
         foreach ($groupDetail as $groupName => $des){
             $finalDoc .= "## {$groupName}";
             $finalDoc = self::buildLine($finalDoc);
