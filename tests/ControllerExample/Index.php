@@ -17,7 +17,7 @@ class Index extends Base
             new Param(name:"account",from: [Param::GET],validate: [
                 new Required(),
                 new MaxLength(maxLen: 15),
-            ],description: new Description("这个参数一定要有啊"))
+            ],description: new Description("用户登录的账户Id,这个参数一定要有啊"))
         ],
         exampleParams: [
             new Param(name:"test",value:3 ),

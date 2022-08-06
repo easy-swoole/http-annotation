@@ -16,6 +16,14 @@ abstract class AbstractValidator
 
     private ?Param $param = null;
 
+    /**
+     * @param Param|null $param
+     */
+    public function setParam(?Param $param): void
+    {
+        $this->param = $param;
+    }
+
     private ?ServerRequestInterface $request = null;
 
     private $args = null;

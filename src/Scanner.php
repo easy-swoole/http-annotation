@@ -8,6 +8,7 @@ use EasySwoole\HttpAnnotation\Attributes\Api;
 use EasySwoole\HttpAnnotation\Attributes\ApiGroup;
 use EasySwoole\HttpAnnotation\Attributes\Description;
 use EasySwoole\HttpAnnotation\Attributes\Param;
+use EasySwoole\HttpAnnotation\Attributes\Validator\AbstractValidator;
 use EasySwoole\HttpAnnotation\Exception\Annotation;
 use EasySwoole\Utility\File;
 use FastRoute\RouteCollector;
@@ -149,7 +150,8 @@ class Scanner
                     $finalDoc .= "**Request Path:** {$apiTag->requestPath}";
                     $finalDoc = self::buildLine($finalDoc);
                     $finalDoc = self::buildLine($finalDoc);
-                    $finalDoc .= "**Allow Method:** GET";
+                    $temp = implode(",",$apiTag->allowMethod);
+                    $finalDoc .= "**Allow Method:** $temp";
                     $finalDoc = self::buildLine($finalDoc);
                     $finalDoc = self::buildLine($finalDoc);
                     $finalDoc .= "**Api Description:**";
@@ -179,7 +181,20 @@ class Scanner
                         $finalDoc = self::buildLine($finalDoc);
                         /** @var Param $param */
                         foreach ($params as $param){
-                            $finalDoc .= "| {$param->name} | GET | rule | desc | - |";
+                            $from = implode(",",$param->from);
+                            $description = self::parseDescription($param->description);
+
+
+                            $rule = "";
+
+                            $validates = $param->validate;
+                            /** @var AbstractValidator $validate */
+                            foreach ($validates as $validate){
+                                $validate->setParam($param);
+                                $rule .= "- {$validate->errorMsg()} <br>";
+                            }
+
+                            $finalDoc .= "| {$param->name} | {$from} | <span>{$rule}</span> | {$description} | {$param->value} |";
                             $finalDoc = self::buildLine($finalDoc);
                         }
 
