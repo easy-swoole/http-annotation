@@ -21,7 +21,9 @@
         "ext-json": "*",
         "psr/http-message": "^1.0",
         "easyswoole/http": "3.x",
-        "ext-mbstring": "*"
+        "ext-mbstring": "*",
+        "ext-dom": "*",
+        "ext-simplexml": "*"
     },
     "require-dev": {
         "easyswoole/phpunit": "^1.0",

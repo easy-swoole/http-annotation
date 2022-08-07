@@ -175,33 +175,12 @@ class Scanner
                     $finalDoc = self::buildLine($finalDoc);
                     $params = $apiTag->params;
                     if(!empty($params)){
-                        $finalDoc .= "|name|from|validate|description|default value|";
-                        $finalDoc = self::buildLine($finalDoc);
-                        $finalDoc .= "|:-----|:-----:|:-----|:-----|-----:|";
-                        $finalDoc = self::buildLine($finalDoc);
-                        /** @var Param $param */
-                        foreach ($params as $param){
-                            $from = implode(",",$param->from);
-                            $description = self::parseDescription($param->description);
-
-
-                            $rule = "";
-
-                            $validates = $param->validate;
-                            /** @var AbstractValidator $validate */
-                            foreach ($validates as $validate){
-                                $validate->setParam($param);
-                                $rule .= "- {$validate->errorMsg()} <br>";
-                            }
-
-                            $finalDoc .= "| {$param->name} | {$from} | <span>{$rule}</span> | {$description} | {$param->value} |";
-                            $finalDoc = self::buildLine($finalDoc);
-                        }
-
+                        $finalDoc .= self::buildParamsTable($params);
                     }else{
                         $finalDoc .= "no any params required";
                     }
 
+                    $finalDoc = self::buildLine($finalDoc);
                     $finalDoc = self::buildLine($finalDoc);
 
 
@@ -326,5 +305,63 @@ class Scanner
             }
         }
         return $description?->desc;
+    }
+
+    private static function buildParamsTable(array $array):string
+    {
+
+        $dom = new \DOMDocument();
+        $dom->formatOutput = true;
+        $root = $dom->createElement("table");
+        //构建表头
+        $header = $dom->createElement("tr");
+        $list = ["Name","From","Validate","Description","Default"];
+        foreach ($list as $item){
+            $td = $dom->createElement("td");
+            $td->nodeValue = $item;
+            $header->appendChild($td);
+        }
+        $root->appendChild($header);
+
+        //填充值
+        /** @var Param $item */
+        foreach ($array as $item){
+            $line = $dom->createElement("tr");
+
+            $name = $dom->createElement("td");
+            $name->nodeValue = $item->name;
+            $line->appendChild($name);
+
+            $from = $dom->createElement("td");
+            $from->nodeValue = implode(",",$item->from);
+            $line->appendChild($from);
+
+            $validate = $dom->createElement("td");
+            $temp = "";
+            $temp = self::buildLine($temp);
+            $temp = self::buildLine($temp);
+            $rules = $item->validate;
+            /** @var AbstractValidator $rule */
+            foreach ($rules as $rule){
+                $rule->setParam($item);
+                $temp .= "- {$rule->errorMsg()}";
+                $temp = self::buildLine($temp);
+            }
+            $temp = self::buildLine($temp);
+            $validate->nodeValue = $temp;
+            $line->appendChild($validate);
+
+            $desc = $dom->createElement("td");
+            $desc->textContent = self::parseDescription($item->description);
+            $line->appendChild($desc);
+
+            $default = $dom->createElement("td");
+            $default->nodeValue = $item->value;
+            $line->appendChild($default);
+
+            $root->appendChild($line);
+        }
+
+        return $dom->saveHTML($root);
     }
 }
