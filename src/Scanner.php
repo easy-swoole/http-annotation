@@ -200,7 +200,7 @@ class Scanner
                         $count = 1;
                         /** @var Example $example */
                         foreach ($requestExamples as $example){
-                            $finalDoc .= "**Example Request Params{$count}:**";
+                            $finalDoc .= "**Request Example {$count}:**";
                             $finalDoc = self::buildLine($finalDoc);
                             if($example->params){
                                 $finalDoc .= self::buildParamsTable($example->params);
@@ -215,7 +215,69 @@ class Scanner
 
                         }
                     }else{
-                        $finalDoc .= "no example request params";
+                        $finalDoc .= "**Request Example:**";
+                        $finalDoc = self::buildLine($finalDoc);
+                        $finalDoc = self::buildLine($finalDoc);
+                        $finalDoc .= "no example request";
+                    }
+                    $finalDoc = self::buildLine($finalDoc);
+                    $finalDoc = self::buildLine($finalDoc);
+
+                    //成功响应示例
+                    $successExamples = $apiTag->successExample;
+                    if(!empty($successExamples)){
+                        $count = 1;
+                        /** @var Example $example */
+                        foreach ($successExamples as $example){
+                            $finalDoc .= "**Success Response Example{$count}:**";
+                            $finalDoc = self::buildLine($finalDoc);
+                            if($example->params){
+                                $finalDoc .= self::buildParamsTable($example->params);
+                                $finalDoc = self::buildLine($finalDoc);
+                                $finalDoc = self::buildLine($finalDoc);
+                            }
+                            if($example->description){
+                                $finalDoc .= self::parseDescription($example->description);
+                                $finalDoc = self::buildLine($finalDoc);
+                                $finalDoc = self::buildLine($finalDoc);
+                            }
+
+                        }
+                    }else{
+                        $finalDoc .= "**Success Response Example:**";
+                        $finalDoc = self::buildLine($finalDoc);
+                        $finalDoc = self::buildLine($finalDoc);
+                        $finalDoc .= "no success response example";
+                    }
+                    $finalDoc = self::buildLine($finalDoc);
+                    $finalDoc = self::buildLine($finalDoc);
+
+
+                    //失败响应示例
+                    $successExamples = $apiTag->successExample;
+                    if(!empty($successExamples)){
+                        $count = 1;
+                        /** @var Example $example */
+                        foreach ($successExamples as $example){
+                            $finalDoc .= "**Fail Response Example{$count}:**";
+                            $finalDoc = self::buildLine($finalDoc);
+                            if($example->params){
+                                $finalDoc .= self::buildParamsTable($example->params);
+                                $finalDoc = self::buildLine($finalDoc);
+                                $finalDoc = self::buildLine($finalDoc);
+                            }
+                            if($example->description){
+                                $finalDoc .= self::parseDescription($example->description);
+                                $finalDoc = self::buildLine($finalDoc);
+                                $finalDoc = self::buildLine($finalDoc);
+                            }
+
+                        }
+                    }else{
+                        $finalDoc .= "**Fail Response Example:**";
+                        $finalDoc = self::buildLine($finalDoc);
+                        $finalDoc = self::buildLine($finalDoc);
+                        $finalDoc .= "no fail response example";
                     }
                     $finalDoc = self::buildLine($finalDoc);
                     $finalDoc = self::buildLine($finalDoc);
