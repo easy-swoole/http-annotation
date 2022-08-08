@@ -8,6 +8,11 @@ composer require easyswoole/http-annotation
 
 ### Example
 ```php
+use EasySwoole\Http\Dispatcher;
+use EasySwoole\Http\Request;
+use EasySwoole\Http\Response;
+use Swoole\Http\Server;
+
 $dispatcher = new Dispatcher();
 $dispatcher->setNamespacePrefix('EasySwoole\HttpAnnotation\Tests\ControllerExample');
 $http = new Server("127.0.0.1", 9501);

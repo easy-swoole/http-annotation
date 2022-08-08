@@ -19,13 +19,6 @@ class Index extends Base
                 new MaxLength(maxLen: 15),
             ],description: new Description("用户登录的账户Id,这个参数一定要有啊"))
         ],
-        exampleParams: [
-            new Param(name:"test",value:3 ),
-            new Param(name:"testB",value:222)
-        ],
-        exampleSuccess: [
-
-        ],
         description: new Description("这是一个接口说明啊啊啊啊")
     )]
     function index(string $account){

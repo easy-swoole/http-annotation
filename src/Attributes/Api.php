@@ -19,9 +19,9 @@ class Api
         public bool $registerRouter = false,
         public array $allowMethod = [Api::GET,Api::POST],
         public array $params = [],
-        public array $exampleParams = [],
-        public array $exampleSuccess = [],
-        public array $exampleFail = [],
+        public array $requestExample = [],
+        public array $successExample = [],
+        public array $failExapmple = [],
         public ?Description $description = null
     ){}
 }

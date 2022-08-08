@@ -26,13 +26,18 @@ class Scanner
             $trimClass = ltrim(str_replace($controllerNameSpace,"",$controller),"\\");
             $controllerPrefix = str_replace("\\","/",$trimClass);
 
-            $methods = ReflectionCache::getInstance()->allowMethodReflections($ref);
-            /** @var \ReflectionMethod $method */
-            foreach ($methods as $method){
-                if(!empty($method->getAttributes(Api::class))){
-                    $apiAttr = $method->getAttributes(Api::class)[0];
-                    $apiAttr = new Api(...$apiAttr->getArguments());
-                    $realPath = "/{$controllerPrefix}/{$method->name}";
+            $methodRefs = ReflectionCache::getInstance()->allowMethodReflections($ref);
+            /** @var \ReflectionMethod $methodRef */
+            foreach ($methodRefs as $methodRef){
+                if(!empty($methodRef->getAttributes(Api::class))){
+                    $apiAttr = $methodRef->getAttributes(Api::class)[0];
+                    try{
+                        $apiAttr = new Api(...$apiAttr->getArguments());
+                    }catch (\Throwable $exception){
+                        $msg = "{$exception->getMessage()} in controller: {$controller} methodRef: {$methodRef->name}";
+                        throw new Annotation($msg);
+                    }
+                    $realPath = "/{$controllerPrefix}/{$methodRef->name}";
                     if(!empty($apiAttr->requestPath) && $apiAttr->requestPath != $realPath){
                         if (!empty($apiAttr->allow)) {
                             $allow = $apiAttr->allow;
@@ -79,7 +84,13 @@ class Scanner
                 $apiTag = $controllerMethodRef->getAttributes(Api::class);
                 if(!empty($apiTag)){
                     $tag =  $apiTag[0];
-                    $tag = new Api(...$tag->getArguments());
+                    try{
+                        $tag = new Api(...$tag->getArguments());
+                    }catch (\Throwable $exception){
+                        $msg = "{$exception->getMessage()} in controller: {$controller} method: {$controllerMethodRef->name}";
+                        throw new Annotation($msg);
+                    }
+
                     $apiName = $tag->apiName;
                     if(!isset($groupApiMethods[$groupName][$apiName])){
                         $groupApiMethods[$groupName][$apiName] = $tag;
