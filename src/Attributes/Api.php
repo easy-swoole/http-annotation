@@ -21,7 +21,7 @@ class Api
         public array $params = [],
         public array $requestExample = [],
         public array $successExample = [],
-        public array $failExapmple = [],
+        public array $failExample = [],
         public ?Description $description = null
     ){}
 }
