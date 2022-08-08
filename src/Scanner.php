@@ -7,6 +7,7 @@ use EasySwoole\Http\UrlParser;
 use EasySwoole\HttpAnnotation\Attributes\Api;
 use EasySwoole\HttpAnnotation\Attributes\ApiGroup;
 use EasySwoole\HttpAnnotation\Attributes\Description;
+use EasySwoole\HttpAnnotation\Attributes\Example;
 use EasySwoole\HttpAnnotation\Attributes\Param;
 use EasySwoole\HttpAnnotation\Attributes\Validator\AbstractValidator;
 use EasySwoole\HttpAnnotation\Exception\Annotation;
@@ -194,11 +195,25 @@ class Scanner
                     $finalDoc = self::buildLine($finalDoc);
 
                     //请求参数示例
-
-                    $finalDoc .= "**Example Request Params:**";
                     $requestExamples = $apiTag->requestExample;
                     if(!empty($requestExamples)){
+                        $count = 1;
+                        /** @var Example $example */
+                        foreach ($requestExamples as $example){
+                            $finalDoc .= "**Example Request Params{$count}:**";
+                            $finalDoc = self::buildLine($finalDoc);
+                            if($example->params){
+                                $finalDoc .= self::buildParamsTable($example->params);
+                                $finalDoc = self::buildLine($finalDoc);
+                                $finalDoc = self::buildLine($finalDoc);
+                            }
+                            if($example->description){
+                                $finalDoc .= self::parseDescription($example->description);
+                                $finalDoc = self::buildLine($finalDoc);
+                                $finalDoc = self::buildLine($finalDoc);
+                            }
 
+                        }
                     }else{
                         $finalDoc .= "no example request params";
                     }
@@ -377,7 +392,7 @@ class Scanner
             $line->appendChild($validate);
 
             $desc = $dom->createElement("td");
-            $desc->textContent = self::parseDescription($item->description);
+            $desc->nodeValue = self::parseDescription($item->description);
             $line->appendChild($desc);
 
             $default = $dom->createElement("td");
