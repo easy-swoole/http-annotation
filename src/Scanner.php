@@ -180,7 +180,7 @@ class Scanner
                         $finalDoc = self::buildLine($finalDoc);
                     }
                     $finalDoc = self::buildLine($finalDoc);
-
+                    //请求参数
                     $finalDoc .= "**Api Params:**";
                     $finalDoc = self::buildLine($finalDoc);
                     $finalDoc = self::buildLine($finalDoc);
@@ -190,9 +190,23 @@ class Scanner
                     }else{
                         $finalDoc .= "no any params required";
                     }
+                    $finalDoc = self::buildLine($finalDoc);
+                    $finalDoc = self::buildLine($finalDoc);
 
+                    //请求参数示例
+
+                    $finalDoc .= "**Example Request Params:**";
+                    $requestExamples = $apiTag->requestExample;
+                    if(!empty($requestExamples)){
+
+                    }else{
+                        $finalDoc .= "no example request params";
+                    }
                     $finalDoc = self::buildLine($finalDoc);
                     $finalDoc = self::buildLine($finalDoc);
+
+
+
 
 
 
