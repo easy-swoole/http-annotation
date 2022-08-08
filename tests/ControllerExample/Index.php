@@ -4,6 +4,7 @@ namespace EasySwoole\HttpAnnotation\Tests\ControllerExample;
 
 use EasySwoole\HttpAnnotation\Attributes\Api;
 use EasySwoole\HttpAnnotation\Attributes\Description;
+use EasySwoole\HttpAnnotation\Attributes\Example;
 use EasySwoole\HttpAnnotation\Attributes\Param;
 use EasySwoole\HttpAnnotation\Attributes\Validator\MaxLength;
 use EasySwoole\HttpAnnotation\Attributes\Validator\Required;
@@ -18,6 +19,18 @@ class Index extends Base
                 new Required(),
                 new MaxLength(maxLen: 15),
             ],description: new Description("用户登录的账户Id,这个参数一定要有啊"))
+        ],
+        requestExample: [
+            new Example(
+                params: [
+                    new Param(name:"account",value: "kiss291323003")
+                ]
+            ),
+            new Example(
+                params: [
+                    new Param(name: "account",value: "291323003")
+                ],description: new Description("测试账户参数的说明")
+            )
         ],
         description: new Description("这是一个接口说明啊啊啊啊")
     )]
