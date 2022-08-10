@@ -121,7 +121,7 @@ class Scanner
             $methodCount = 1;
             /** @var Api $tag */
             foreach ($allMethods as $tag){
-                $finalDoc .= "    {$methodCount}. {$tag->apiName} \n";
+                $finalDoc .= "    - [{$tag->apiName}](#{$groupName}-{$tag->apiName}) \n";
                 $methodCount ++;
             }
             $groupIndex ++;
@@ -140,7 +140,7 @@ class Scanner
         //构建分组详情
         foreach ($groupDetail as $groupName => $des){
             $apiMethods = $groupApiMethods[$groupName];
-            $finalDoc .= "## {$groupName}";
+            $finalDoc .= "<h2 id=\"{$groupName}\">{$groupName}</h2>";
             $finalDoc = self::buildLine($finalDoc);
             //构建组说明
             $des = self::parseDescription($des);
@@ -156,9 +156,9 @@ class Scanner
                 //文档方法表
                 /** @var Api $apiTag */
                 foreach ($apiMethods as $apiTag){
-                    $finalDoc .= "### {$apiTag->apiName} <sup>{$groupName}</sup>";
+                    $finalDoc .= "<h3 id=\"{$groupName}-{$apiTag->apiName}\">{$apiTag->apiName} <sup>{$groupName}</sup></h3>";
                     $finalDoc = self::buildLine($finalDoc);
-
+                    $finalDoc = self::buildLine($finalDoc);
                     $finalDoc .= "**Request Path:** {$apiTag->requestPath}";
                     $finalDoc = self::buildLine($finalDoc);
                     $finalDoc = self::buildLine($finalDoc);
