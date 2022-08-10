@@ -112,7 +112,8 @@ class Scanner
         }
 
         //构建Group目录导航
-        $finalDoc .= "# Navigator";
+        $finalDoc .= "<h1 id='Navigator'>Navigator</h1>";
+        $finalDoc = self::buildLine($finalDoc);
         $finalDoc = self::buildLine($finalDoc);
         $groupIndex = 1;
         foreach ($groupDetail as $groupName => $des){
@@ -330,8 +331,9 @@ class Scanner
                     }
                     $finalDoc = self::buildLine($finalDoc);
                     $finalDoc = self::buildLine($finalDoc);
-
-
+                    $finalDoc .= "<p align=\"right\"><a href='#Navigator'>Back To Navigator</a></p>";
+                    $finalDoc = self::buildLine($finalDoc);
+                    $finalDoc = self::buildLine($finalDoc);
 
 
 
