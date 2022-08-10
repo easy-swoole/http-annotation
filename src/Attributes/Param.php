@@ -3,6 +3,7 @@
 namespace EasySwoole\HttpAnnotation\Attributes;
 
 use EasySwoole\HttpAnnotation\Attributes\Validator\Optional;
+use EasySwoole\HttpAnnotation\Exception\Annotation;
 use Psr\Http\Message\ServerRequestInterface;
 
 #[\Attribute(\Attribute::TARGET_ALL|\Attribute::IS_REPEATABLE)]
@@ -28,7 +29,13 @@ class Param
         public ?array $validate = [],
         public ?Description $description = null,
         public $value = null
-    ){}
+    ){
+        if($this->description){
+            if($this->description->type != Description::PLAIN_TEXT){
+                throw new Annotation("description only allow PLAIN_TEXT type in Param attribute");
+            }
+        }
+    }
 
     public function parsedValue(?ServerRequestInterface $request = null)
     {
