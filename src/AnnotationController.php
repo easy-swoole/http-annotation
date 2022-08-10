@@ -79,7 +79,13 @@ abstract class AnnotationController extends Controller
 
             foreach ($onRequestParams as $onRequestParam){
                 $args = $onRequestParam->getArguments();
-                $onRequestParam = new Param(...$args);
+                try{
+                    $onRequestParam = new Param(...$args);
+                }catch (\Throwable $exception){
+                    $controller = static::class;
+                    $msg = "{$exception->getMessage()} in controller: {$controller} onRequest Method";
+                    throw new Annotation($msg);
+                }
 
                 $hit = false;
                 foreach ($actionParams as $actionParam){

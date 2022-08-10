@@ -23,6 +23,9 @@ class Param
     private bool|null $isOptional = null;
     private bool $isNullData = false;
 
+    /**
+     * @throws Annotation
+     */
     public function __construct(
         public string $name,
         public array $from = ["GET","POST"],

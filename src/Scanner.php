@@ -58,7 +58,6 @@ class Scanner
         $controllers = self::scanAllController($controllerPath);
         $groupDetail = [];
         $groupApiMethods = [];
-
         foreach ($controllers as $controller){
             $reflection = ReflectionCache::getInstance()->getClassReflection($controller);
             $groupInfoRef = $reflection->getAttributes(ApiGroup::class);
@@ -80,6 +79,21 @@ class Scanner
 
 
             $controllerMethodRefs = ReflectionCache::getInstance()->allowMethodReflections($reflection);
+            $onRequestParams = $reflection->getMethod("onRequest")->getAttributes(Param::class);
+            $temp = [];
+            foreach ($onRequestParams as $onRequestParam){
+                $args = $onRequestParam->getArguments();
+                try{
+                    $onRequestParam = new Param(...$args);
+                }catch (\Throwable $exception){
+                    $controller = static::class;
+                    $msg = "{$exception->getMessage()} in controller: {$controller} onRequest Method";
+                    throw new Annotation($msg);
+                }
+                $temp[$onRequestParam->name] = $onRequestParam;
+            }
+            $onRequestParams = $temp;
+
             /** @var \ReflectionMethod $controllerMethodRef */
             foreach ($controllerMethodRefs as $controllerMethodRef){
                 $apiTag = $controllerMethodRef->getAttributes(Api::class);
@@ -87,6 +101,22 @@ class Scanner
                     $tag =  $apiTag[0];
                     try{
                         $tag = new Api(...$tag->getArguments());
+                        $tempArr = $tag->params;
+                        $tempOnRequestParams = $onRequestParams;
+                        /**
+                         * @var  $index
+                         * @var Param $item
+                         */
+                        foreach ($tempArr as $index =>$item){
+                            //参数覆盖检查
+                            if(isset($tempOnRequestParams[$item->name])){
+                                unset($tempOnRequestParams[$item->name]);
+                            }
+                        }
+                        foreach ($tempOnRequestParams as $item){
+                            $tempArr[] = $item;
+                        }
+                        $tag->params = $tempArr;
                     }catch (\Throwable $exception){
                         $msg = "{$exception->getMessage()} in controller: {$controller} method: {$controllerMethodRef->name}";
                         throw new Annotation($msg);
@@ -96,7 +126,7 @@ class Scanner
                     if(!isset($groupApiMethods[$groupName][$apiName])){
                         $groupApiMethods[$groupName][$apiName] = $tag;
                     }else{
-                        throw new Annotation("api name:{$apiName} is duplicate");
+                        throw new Annotation("api name:{$apiName} is duplicate in api group:{$groupName}");
                     }
                 }
             }
