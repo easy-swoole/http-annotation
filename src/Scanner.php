@@ -200,7 +200,7 @@ class Scanner
                         $count = 1;
                         /** @var Example $example */
                         foreach ($requestExamples as $example){
-                            $finalDoc .= "**Request Example {$count}:**";
+                            $finalDoc .= "**Request Example{$count}:**";
                             $finalDoc = self::buildLine($finalDoc);
                             if($example->params){
                                 $finalDoc .= self::buildExampleParamsTable($example->params);
@@ -210,15 +210,15 @@ class Scanner
                             if($example->description){
                                 switch ($example->description->type){
                                     case Description::JSON:{
-                                        $finalDoc .= "**Request Example {$count} JSON:**";
+                                        $finalDoc .= "**Request Example{$count} JSON:**";
                                         break;
                                     }
                                     case Description::XML:{
-                                        $finalDoc .= "**Request Example {$count} XML:**";
+                                        $finalDoc .= "**Request Example{$count} XML:**";
                                         break;
                                     }
                                     default:{
-                                        $finalDoc .= "**Request Example {$count} Description:**";
+                                        $finalDoc .= "**Request Example{$count} Description:**";
                                     }
                                 }
                                 $finalDoc = self::buildLine($finalDoc);
@@ -252,6 +252,22 @@ class Scanner
                                 $finalDoc = self::buildLine($finalDoc);
                             }
                             if($example->description){
+                                switch ($example->description->type){
+                                    case Description::JSON:{
+                                        $finalDoc .= "**Success Response Example{$count} JSON:**";
+                                        break;
+                                    }
+                                    case Description::XML:{
+                                        $finalDoc .= "**Success Response Example{$count} XML:**";
+                                        break;
+                                    }
+                                    default:{
+                                        $finalDoc .= "**Success Response Example{$count} Description:**";
+                                    }
+                                }
+                                $finalDoc = self::buildLine($finalDoc);
+                                $finalDoc = self::buildLine($finalDoc);
+
                                 $finalDoc .= self::parseDescription($example->description);
                                 $finalDoc = self::buildLine($finalDoc);
                                 $finalDoc = self::buildLine($finalDoc);
@@ -282,6 +298,23 @@ class Scanner
                                 $finalDoc = self::buildLine($finalDoc);
                             }
                             if($example->description){
+
+                                switch ($example->description->type){
+                                    case Description::JSON:{
+                                        $finalDoc .= "**Fail Response Example{$count} JSON:**";
+                                        break;
+                                    }
+                                    case Description::XML:{
+                                        $finalDoc .= "**Fail Response Example{$count} XML:**";
+                                        break;
+                                    }
+                                    default:{
+                                        $finalDoc .= "**Fail Response Example{$count} Description:**";
+                                    }
+                                }
+                                $finalDoc = self::buildLine($finalDoc);
+                                $finalDoc = self::buildLine($finalDoc);
+
                                 $finalDoc .= self::parseDescription($example->description);
                                 $finalDoc = self::buildLine($finalDoc);
                                 $finalDoc = self::buildLine($finalDoc);
@@ -432,6 +465,19 @@ class Scanner
                     }
                     $temp = json_encode($temp, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT);
                     return "```json\n$temp\n```";
+                }
+                case Description::XML:{
+                    $file = $description->desc;
+                    if(!is_file($file)){
+                        throw new Annotation("xml file not exist :{$file}");
+                    }
+                    $temp =  file_get_contents($file);
+                    $xml = simplexml_load_string($temp, 'SimpleXMLElement', LIBXML_NOERROR | LIBXML_NOCDATA);
+                    if ($xml) {
+                        $content = $xml->saveXML();
+                        return "```xml\n$content\n```";
+                    }
+                    throw new Annotation("xml file :{$file} not a valid format");
                 }
             }
         }

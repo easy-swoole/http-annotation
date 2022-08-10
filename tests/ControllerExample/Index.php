@@ -28,6 +28,11 @@ class Index extends Base
             ),
             new Example(
                 params: [
+                    new Param(name:"account",value: "xmlxmlxmlxml")
+                ],description: new Description("tests/res/xml.xml",Description::XML)
+            ),
+            new Example(
+                params: [
                     new Param(name: "account",value: "291323003")
                 ],description: new Description(
                     desc: "tests/res/description.md",

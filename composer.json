@@ -22,7 +22,9 @@
         "psr/http-message": "^1.0",
         "easyswoole/http": "3.x",
         "ext-mbstring": "*",
-        "ext-dom": "*"
+        "ext-dom": "*",
+        "ext-simplexml": "*",
+        "ext-libxml": "*"
     },
     "require-dev": {
         "easyswoole/phpunit": "^1.0",
