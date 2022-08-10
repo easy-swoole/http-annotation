@@ -331,7 +331,7 @@ class Scanner
                     }
                     $finalDoc = self::buildLine($finalDoc);
                     $finalDoc = self::buildLine($finalDoc);
-                    $finalDoc .= "<p align=\"right\"><a href='#Navigator'>Back To Navigator</a></p>";
+                    $finalDoc .= "<p align=\"right\">Back To <a href='#Navigator'>Navigator</a>|<a href='#{$groupName}-{$apiTag->apiName}'>{$apiTag->apiName}<sup>{$groupName}</sup></a></p>";
                     $finalDoc = self::buildLine($finalDoc);
                     $finalDoc = self::buildLine($finalDoc);
 
