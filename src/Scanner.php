@@ -365,6 +365,8 @@ class Scanner
                     $finalDoc = self::buildLine($finalDoc);
                     $finalDoc = self::buildLine($finalDoc);
 
+                    $finalDoc.= "---------- ";
+                    $finalDoc = self::buildLine($finalDoc);
 
 
 

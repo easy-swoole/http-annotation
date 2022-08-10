@@ -23,4 +23,13 @@ class Message extends Base
     function list(){
 
     }
+
+    #[Api(
+        apiName: "unRead",
+        requestPath: "api/common/message/unRead",
+        params: []
+    )]
+    function unRead(){
+
+    }
 }
