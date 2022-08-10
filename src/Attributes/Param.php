@@ -31,7 +31,9 @@ class Param
         public array $from = ["GET","POST"],
         public ?array $validate = [],
         public ?Description $description = null,
-        public $value = null
+        public $value = null,
+        public bool $deprecated = false,
+        public bool $unset = false
     ){
         if($this->description){
             if($this->description->type != Description::PLAIN_TEXT){

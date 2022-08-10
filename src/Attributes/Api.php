@@ -22,6 +22,7 @@ class Api
         public array $requestExample = [],
         public array $successExample = [],
         public array $failExample = [],
-        public ?Description $description = null
+        public ?Description $description = null,
+        public bool $deprecated = false,
     ){}
 }
