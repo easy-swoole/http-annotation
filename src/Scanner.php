@@ -203,7 +203,7 @@ class Scanner
                             $finalDoc .= "**Request Example {$count}:**";
                             $finalDoc = self::buildLine($finalDoc);
                             if($example->params){
-                                $finalDoc .= self::buildParamsTable($example->params);
+                                $finalDoc .= self::buildExampleParamsTable($example->params);
                                 $finalDoc = self::buildLine($finalDoc);
                                 $finalDoc = self::buildLine($finalDoc);
                             }
@@ -212,7 +212,7 @@ class Scanner
                                 $finalDoc = self::buildLine($finalDoc);
                                 $finalDoc = self::buildLine($finalDoc);
                             }
-
+                            $count++;
                         }
                     }else{
                         $finalDoc .= "**Request Example:**";
@@ -232,7 +232,7 @@ class Scanner
                             $finalDoc .= "**Success Response Example{$count}:**";
                             $finalDoc = self::buildLine($finalDoc);
                             if($example->params){
-                                $finalDoc .= self::buildParamsTable($example->params);
+                                $finalDoc .= self::buildExampleParamsTable($example->params);
                                 $finalDoc = self::buildLine($finalDoc);
                                 $finalDoc = self::buildLine($finalDoc);
                             }
@@ -241,7 +241,7 @@ class Scanner
                                 $finalDoc = self::buildLine($finalDoc);
                                 $finalDoc = self::buildLine($finalDoc);
                             }
-
+                            $count++;
                         }
                     }else{
                         $finalDoc .= "**Success Response Example:**";
@@ -262,7 +262,7 @@ class Scanner
                             $finalDoc .= "**Fail Response Example{$count}:**";
                             $finalDoc = self::buildLine($finalDoc);
                             if($example->params){
-                                $finalDoc .= self::buildParamsTable($example->params);
+                                $finalDoc .= self::buildExampleParamsTable($example->params);
                                 $finalDoc = self::buildLine($finalDoc);
                                 $finalDoc = self::buildLine($finalDoc);
                             }
@@ -271,8 +271,9 @@ class Scanner
                                 $finalDoc = self::buildLine($finalDoc);
                                 $finalDoc = self::buildLine($finalDoc);
                             }
-
+                            $count++;
                         }
+
                     }else{
                         $finalDoc .= "**Fail Response Example:**";
                         $finalDoc = self::buildLine($finalDoc);
@@ -452,6 +453,46 @@ class Scanner
             $temp = self::buildLine($temp);
             $validate->nodeValue = $temp;
             $line->appendChild($validate);
+
+            $desc = $dom->createElement("td");
+            $desc->nodeValue = self::parseDescription($item->description);
+            $line->appendChild($desc);
+
+            $default = $dom->createElement("td");
+            $default->nodeValue = $item->value;
+            $line->appendChild($default);
+
+            $root->appendChild($line);
+        }
+
+        return $dom->saveHTML($root);
+    }
+
+
+    private static function buildExampleParamsTable(array $array):string
+    {
+
+        $dom = new \DOMDocument();
+        $dom->formatOutput = true;
+        $root = $dom->createElement("table");
+        //构建表头
+        $header = $dom->createElement("tr");
+        $list = ["Name","Description","Value"];
+        foreach ($list as $item){
+            $td = $dom->createElement("td");
+            $td->nodeValue = $item;
+            $header->appendChild($td);
+        }
+        $root->appendChild($header);
+
+        //填充值
+        /** @var Param $item */
+        foreach ($array as $item){
+            $line = $dom->createElement("tr");
+
+            $name = $dom->createElement("td");
+            $name->nodeValue = $item->name;
+            $line->appendChild($name);
 
             $desc = $dom->createElement("td");
             $desc->nodeValue = self::parseDescription($item->description);
