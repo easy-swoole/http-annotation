@@ -24,12 +24,15 @@ class Index extends Base
             new Example(
                 params: [
                     new Param(name:"account",value: "kiss291323003")
-                ]
+                ],description: new Description("tests/res/json.json",Description::JSON)
             ),
             new Example(
                 params: [
                     new Param(name: "account",value: "291323003")
-                ],description: new Description("测试账户参数的说明")
+                ],description: new Description(
+                    desc: "tests/res/description.md",
+                    type: Description::MARKDOWN
+                )
             )
         ],
         description: new Description("这是一个接口说明啊啊啊啊")

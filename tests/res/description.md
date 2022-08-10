@@ -4,3 +4,14 @@ EasySwoole是一款常驻内存型的分布式swoole框架，专为API而生，�
 ```php
 php easyswoole server satrt 
 ```
+
+附带json示例：
+```json
+{
+  "port": 10808,
+  "protocol": "socks",
+  "auth": "noauth",
+  "udp": true,
+  "userLevel": 8
+}
+```

@@ -208,6 +208,21 @@ class Scanner
                                 $finalDoc = self::buildLine($finalDoc);
                             }
                             if($example->description){
+                                switch ($example->description->type){
+                                    case Description::JSON:{
+                                        $finalDoc .= "**Request Example {$count} JSON:**";
+                                        break;
+                                    }
+                                    case Description::XML:{
+                                        $finalDoc .= "**Request Example {$count} XML:**";
+                                        break;
+                                    }
+                                    default:{
+                                        $finalDoc .= "**Request Example {$count} Description:**";
+                                    }
+                                }
+                                $finalDoc = self::buildLine($finalDoc);
+                                $finalDoc = self::buildLine($finalDoc);
                                 $finalDoc .= self::parseDescription($example->description);
                                 $finalDoc = self::buildLine($finalDoc);
                                 $finalDoc = self::buildLine($finalDoc);
@@ -404,6 +419,19 @@ class Scanner
                         throw new Annotation("markdown description file not exist :{$file}");
                     }
                     return file_get_contents($file);
+                }
+                case Description::JSON:{
+                    $file = $description->desc;
+                    if(!is_file($file)){
+                        throw new Annotation("json file not exist :{$file}");
+                    }
+                    $temp =  file_get_contents($file);
+                    $temp = json_decode($temp);
+                    if(!is_array($temp) && !is_object($temp)){
+                        throw new Annotation("json file :{$file} not a valid format");
+                    }
+                    $temp = json_encode($temp, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT);
+                    return "```json\n$temp\n```";
                 }
             }
         }
