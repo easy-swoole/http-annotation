@@ -316,7 +316,7 @@ class Scanner
 
 
                     //失败响应示例
-                    $successExamples = $apiTag->successExample;
+                    $successExamples = $apiTag->failExample;
                     if(!empty($successExamples)){
                         $count = 1;
                         /** @var Example $example */
@@ -607,12 +607,30 @@ class Scanner
             $line->appendChild($desc);
 
             $default = $dom->createElement("td");
-            $default->nodeValue = $item->value;
+            $default->nodeValue = self::valueHandler($item);
             $line->appendChild($default);
 
             $root->appendChild($line);
         }
 
         return $dom->saveHTML($root);
+    }
+
+    public static function valueHandler(Param $param):?string
+    {
+        switch ($param->type){
+            case Param::TYPE_LIST:{
+                if($param->value === null){
+                    return "[]";
+                }
+                return json_encode($param->value,JSON_UNESCAPED_UNICODE|JSON_UNESCAPED_SLASHES);
+            }
+            default:{
+                if($param->value === null){
+                    return null;
+                }
+                return (string)$param->value;
+            }
+        }
     }
 }

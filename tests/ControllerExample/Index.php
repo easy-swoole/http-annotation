@@ -22,19 +22,16 @@ class Index extends Base
         ],
         requestExample: [
             new Example(
-                params: [
-                    new Param(name:"account",value: "kiss291323003")
-                ],description: new Description("tests/res/json.json",Description::JSON)
+                new Param(name:"account",value: "kiss291323003"),
+                new Description("tests/res/json.json",Description::JSON)
             ),
             new Example(
-                params: [
-                    new Param(name:"account",value: "xmlxmlxmlxml")
-                ],description: new Description("tests/res/xml.xml",Description::XML)
+                new Param(name:"account",value: "xmlxmlxmlxml"),
+                new Description("tests/res/xml.xml",Description::XML)
             ),
             new Example(
-                params: [
-                    new Param(name: "account",value: "291323003")
-                ],description: new Description(
+                new Param(name: "account",value: "291323003"),
+                new Description(
                     desc: "tests/res/description.md",
                     type: Description::MARKDOWN
                 )

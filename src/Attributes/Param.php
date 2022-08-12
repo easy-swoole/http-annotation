@@ -9,6 +9,16 @@ use Psr\Http\Message\ServerRequestInterface;
 #[\Attribute(\Attribute::TARGET_ALL|\Attribute::IS_REPEATABLE)]
 class Param
 {
+    const TYPE_STRING = "TYPE_STRING";
+    const TYPE_INT = "TYPE_STRING";
+    const TYPE_DOUBLE = "TYPE_STRING";
+    const TYPE_REAL = "TYPE_STRING";
+    const TYPE_FLOAT = "TYPE_STRING";
+    const TYPE_BOOL = "TYPE_STRING";
+
+    const TYPE_LIST = "TYPE_STRING";
+    const TYPE_OBJECT = "TYPE_STRING";
+
     const GET = "GET";
     const POST = "POST";
     const COOKIE = "COOKIE";
@@ -30,10 +40,11 @@ class Param
         public string $name,
         public array $from = ["GET","POST"],
         public ?array $validate = [],
-        public ?Description $description = null,
         public $value = null,
         public bool $deprecated = false,
-        public bool $unset = false
+        public bool $unset = false,
+        public ?Description $description = null,
+        public ?string $type = null
     ){
         if($this->description){
             if($this->description->type != Description::PLAIN_TEXT){
