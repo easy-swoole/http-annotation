@@ -9,11 +9,7 @@ class Example
 {
     function __construct(
         public ?array $params = [],
-        public ?Description $description = null,
-        public ?string $plainText = null
+        public ?Description $description = null
     ){
-        if(!empty($this->params) && $this->plainText != null){
-            throw new Annotation("can not set params and plainText value at the same time");
-        }
     }
 }

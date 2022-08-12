@@ -543,7 +543,7 @@ class Scanner
             $line = $dom->createElement("tr");
 
             $name = $dom->createElement("td");
-            $name->nodeValue = str_repeat("-",$subCount).$item->name;
+            $name->nodeValue = str_repeat("&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;",$subCount).$item->name;
             $line->appendChild($name);
 
             $from = $dom->createElement("td");
@@ -570,20 +570,16 @@ class Scanner
             $line->appendChild($desc);
 
             $default = $dom->createElement("td");
-            $default->nodeValue = $item->value;
+            $default->nodeValue = self::valueHandler($item);
             $line->appendChild($default);
 
             $root->appendChild($line);
 
             //检查是否有下级
             if($item->type == Param::TYPE_OBJECT){
-                if(is_array($item->value)){
-                    $subCount++;
-                    foreach ($item->value as $sub){
-                        $builder($sub,$subCount);
-                    }
-                }else{
-                    throw new Annotation("Param {$item->name} value not correct Object format");
+                $subCount++;
+                foreach ($item->subObject as $sub){
+                    $builder($sub,$subCount);
                 }
             }
         };
@@ -657,14 +653,12 @@ class Scanner
     public static function valueHandler(Param $param):?string
     {
         switch ($param->type){
+            case Param::TYPE_OBJECT:
             case Param::TYPE_LIST:{
                 if($param->value === null){
-                    return "[]";
+                    return null;
                 }
                 return json_encode($param->value,JSON_UNESCAPED_UNICODE|JSON_UNESCAPED_SLASHES);
-            }
-            case Param::TYPE_OBJECT:{
-                return "Object";
             }
             default:{
                 if($param->value === null){

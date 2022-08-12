@@ -37,16 +37,20 @@ class Param
      * @throws Annotation
      */
     public function __construct(
-        public string $name,
-        public array $from = ["GET","POST"],
-        public ?array $validate = [],
-        public $value = null,
-        public bool $deprecated = false,
-        public bool $unset = false,
-        public ?Description $description = null,
-        public ?string $type = null
+        public string                   $name,
+        public array                    $from = ["GET","POST"],
+        public ?array                   $validate = [],
+        public                          $value = null,
+        public bool                     $deprecated = false,
+        public bool                     $unset = false,
+        public Description|string|null $description = null,
+        public ?string                  $type = null,
+        public array                    $subObject = []
     ){
         if($this->description){
+            if(!$this->description instanceof Description){
+                $this->description = new Description(desc:$this->description);
+            }
             if($this->description->type != Description::PLAIN_TEXT){
                 throw new Annotation("description only allow PLAIN_TEXT type in Param attribute");
             }

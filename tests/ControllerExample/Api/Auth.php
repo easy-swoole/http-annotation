@@ -6,6 +6,7 @@ use EasySwoole\HttpAnnotation\Attributes\Api;
 use EasySwoole\HttpAnnotation\Attributes\ApiGroup;
 use EasySwoole\HttpAnnotation\Attributes\Description;
 use EasySwoole\HttpAnnotation\Attributes\Param;
+use EasySwoole\HttpAnnotation\Attributes\RequestParam;
 use EasySwoole\HttpAnnotation\Attributes\Validator\MaxLength;
 use EasySwoole\HttpAnnotation\Attributes\Validator\Required;
 
@@ -14,7 +15,31 @@ use EasySwoole\HttpAnnotation\Attributes\Validator\Required;
 )]
 class Auth extends ApiBase
 {
-
+    #[Api(
+        apiName: "login",
+        allowMethod:Api::POST,
+        requestPath: "/auth/login.html",
+        requestParam: new RequestParam(
+            params: [
+                new Param(name:"account",from: [Param::JSON],validate: [
+                    new Required(),
+                    new MaxLength(maxLen: 15),
+                ],description: new Description("用户登录的账户Id")),
+                new Param(name:"password",from: [Param::JSON],validate: [
+                    new Required(),
+                    new MaxLength(maxLen: 15),
+                ],description: new Description("密码")),
+                new Param(name: "verify", from: [Param::JSON],
+                    description: new Description("验证码"),
+                    type: Param::TYPE_OBJECT,
+                    subObject: [
+                        new Param(name: "code",description: "防伪编号"),
+                        new Param(name: "phone",description: "手机号")
+                    ])
+            ]
+        ),
+        description: new Description("这是一个接口说明啊啊啊啊")
+    )]
     function login()
     {
 
