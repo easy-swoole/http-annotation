@@ -15,13 +15,12 @@ class Api
 
     function __construct(
         public string $apiName,
+        public string $allowMethod,
         public ?string $requestPath = null,
         public bool $registerRouter = false,
-        public array $allowMethod = [Api::GET,Api::POST],
-        public array $params = [],
+        public ?ApiRequest $request = null,
         public array $requestExample = [],
-        public array $successExample = [],
-        public array $failExample = [],
+        public array $responseExample = [],
         public ?Description $description = null,
         public bool $deprecated = false,
     ){}
