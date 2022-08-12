@@ -31,17 +31,55 @@ class Message extends Base
         params: [],
         successExample: [
             new Example(
-                new Param(name: "status"),
-                new Param(
-                    name: "result",
-                    value: [154,155,156],
-                    type: Param::TYPE_LIST
-                ),
-                new Param("message")
+                params: [
+                    new Param(name: "status"),
+                    new Param(
+                        name: "result",
+                        value: [154,155,156],
+                        type: Param::TYPE_LIST
+                    ),
+                    new Param("message")
+                ]
             )
         ]
     )]
     function unRead(){
+
+    }
+
+    #[Api(
+        apiName: "detail",
+        requestPath: "api/common/message/detail",
+        params: [
+
+        ],
+        successExample: [
+            new Example(
+                params: [
+                    new Param(name: "status"),
+                    new Param(
+                        name: "result",
+                        value: [
+                            new Param(name: "fromId"),
+                            new Param(name: "content"),
+                            new Param(name: "time"),
+                            new Param(
+                                name: "author",
+                                value: [
+                                    new Param(name: "name"),
+                                    new Param(name: "email")
+                                ],
+                                type: Param::TYPE_OBJECT
+                            )
+                        ],
+                        type: Param::TYPE_OBJECT
+                    ),
+                    new Param("message")
+                ]
+            )
+        ]
+    )]
+    function detail(){
 
     }
 }

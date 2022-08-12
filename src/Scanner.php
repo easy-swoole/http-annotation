@@ -534,13 +534,11 @@ class Scanner
         }
         $root->appendChild($header);
 
-        //填充值
-        /** @var Param $item */
-        foreach ($array as $item){
+        $builder = function (Param $item,$subCount = 0)use($dom,$root,&$builder){
             $line = $dom->createElement("tr");
 
             $name = $dom->createElement("td");
-            $name->nodeValue = $item->name;
+            $name->nodeValue = str_repeat("-",$subCount).$item->name;
             $line->appendChild($name);
 
             $from = $dom->createElement("td");
@@ -571,6 +569,24 @@ class Scanner
             $line->appendChild($default);
 
             $root->appendChild($line);
+
+            //检查是否有下级
+            if($item->type == Param::TYPE_OBJECT){
+                if(is_array($item->value)){
+                    $subCount++;
+                    foreach ($item->value as $sub){
+                        $builder($sub,$subCount);
+                    }
+                }else{
+                    throw new Annotation("Param {$item->name} value not correct Object format");
+                }
+            }
+        };
+
+        //填充值
+        /** @var Param $item */
+        foreach ($array as $item){
+            $builder($item);
         }
 
         return $dom->saveHTML($root);
@@ -593,13 +609,13 @@ class Scanner
         }
         $root->appendChild($header);
 
-        //填充值
-        /** @var Param $item */
-        foreach ($array as $item){
+
+        $builder = function (Param $item,$subCount = 0)use($dom,$root,&$builder){
             $line = $dom->createElement("tr");
 
             $name = $dom->createElement("td");
-            $name->nodeValue = $item->name;
+
+            $name->nodeValue = str_repeat("&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;",$subCount).$item->name;
             $line->appendChild($name);
 
             $desc = $dom->createElement("td");
@@ -611,6 +627,23 @@ class Scanner
             $line->appendChild($default);
 
             $root->appendChild($line);
+
+            if($item->type == Param::TYPE_OBJECT){
+                if(is_array($item->value)){
+                    $subCount++;
+                    foreach ($item->value as $sub){
+                        $builder($sub,$subCount);
+                    }
+                }else{
+                    throw new Annotation("Param {$item->name} value not correct Object format");
+                }
+            }
+        };
+
+        //填充值
+        /** @var Param $item */
+        foreach ($array as $item){
+            $builder($item);
         }
 
         return $dom->saveHTML($root);
@@ -624,6 +657,9 @@ class Scanner
                     return "[]";
                 }
                 return json_encode($param->value,JSON_UNESCAPED_UNICODE|JSON_UNESCAPED_SLASHES);
+            }
+            case Param::TYPE_OBJECT:{
+                return "Object";
             }
             default:{
                 if($param->value === null){

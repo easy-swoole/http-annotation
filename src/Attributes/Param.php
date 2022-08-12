@@ -10,14 +10,14 @@ use Psr\Http\Message\ServerRequestInterface;
 class Param
 {
     const TYPE_STRING = "TYPE_STRING";
-    const TYPE_INT = "TYPE_STRING";
-    const TYPE_DOUBLE = "TYPE_STRING";
-    const TYPE_REAL = "TYPE_STRING";
-    const TYPE_FLOAT = "TYPE_STRING";
-    const TYPE_BOOL = "TYPE_STRING";
+    const TYPE_INT = "TYPE_INT";
+    const TYPE_DOUBLE = "TYPE_DOUBLE";
+    const TYPE_REAL = "TYPE_REAL";
+    const TYPE_FLOAT = "TYPE_FLOAT";
+    const TYPE_BOOL = "TYPE_BOOL";
 
-    const TYPE_LIST = "TYPE_STRING";
-    const TYPE_OBJECT = "TYPE_STRING";
+    const TYPE_LIST = "TYPE_LIST";
+    const TYPE_OBJECT = "TYPE_OBJECT";
 
     const GET = "GET";
     const POST = "POST";
