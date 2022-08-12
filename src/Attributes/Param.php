@@ -38,7 +38,7 @@ class Param
      */
     public function __construct(
         public string                   $name,
-        public array                    $from = ["GET","POST"],
+        public string                   $from,
         public ?array                   $validate = [],
         public                          $value = null,
         public bool                     $deprecated = false,

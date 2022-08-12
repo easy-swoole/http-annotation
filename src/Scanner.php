@@ -223,7 +223,7 @@ class Scanner
                     $finalDoc = self::buildLine($finalDoc);
                     $params = $apiTag->requestParam->params;
                     if(!empty($params)){
-                        $finalDoc .= self::buildParamsTable($params);
+                        $finalDoc .= self::buildRequestParamsTable($params);
                     }else{
                         $finalDoc .= "no any params required";
                     }
@@ -523,7 +523,7 @@ class Scanner
         return $description?->desc;
     }
 
-    private static function buildParamsTable(array $array):string
+    private static function buildRequestParamsTable(array $array):string
     {
 
         $dom = new \DOMDocument();
@@ -539,7 +539,10 @@ class Scanner
         }
         $root->appendChild($header);
 
-        $builder = function (Param $item,$subCount = 0)use($dom,$root,&$builder){
+        $builder = function (Param $item,$subCount = 0,string $from = null)use($dom,$root,&$builder){
+            if($from && ($from != $item->from)){
+                throw new Annotation("{$item->name} param 'from' is different with parent 'from': {$from}");
+            }
             $line = $dom->createElement("tr");
 
             $name = $dom->createElement("td");
@@ -579,7 +582,7 @@ class Scanner
             if($item->type == Param::TYPE_OBJECT){
                 $subCount++;
                 foreach ($item->subObject as $sub){
-                    $builder($sub,$subCount);
+                    $builder($sub,$subCount,$item->from);
                 }
             }
         };
