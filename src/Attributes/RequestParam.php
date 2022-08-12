@@ -2,7 +2,7 @@
 
 namespace EasySwoole\HttpAnnotation\Attributes;
 
-class ApiRequest extends Example
+class RequestParam extends Example
 {
 
 }

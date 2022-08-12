@@ -9,6 +9,7 @@ use EasySwoole\HttpAnnotation\Attributes\ApiGroup;
 use EasySwoole\HttpAnnotation\Attributes\Description;
 use EasySwoole\HttpAnnotation\Attributes\Example;
 use EasySwoole\HttpAnnotation\Attributes\Param;
+use EasySwoole\HttpAnnotation\Attributes\RequestParam;
 use EasySwoole\HttpAnnotation\Attributes\Validator\AbstractValidator;
 use EasySwoole\HttpAnnotation\Exception\Annotation;
 use EasySwoole\Utility\File;
@@ -101,7 +102,11 @@ class Scanner
                     $tag =  $apiTag[0];
                     try{
                         $tag = new Api(...$tag->getArguments());
-                        $tempArr = $tag->params;
+                        if(!$tag->requestParam){
+                            $tag->requestParam = new RequestParam();
+                        }
+                        $tempArr = $tag->requestParam->params;
+
                         $tempOnRequestParams = $onRequestParams;
                         /**
                          * @var  $index
@@ -116,7 +121,7 @@ class Scanner
                         foreach ($tempOnRequestParams as $item){
                             $tempArr[] = $item;
                         }
-                        $tag->params = $tempArr;
+                        $tag->requestParam->params = $tempArr;
                     }catch (\Throwable $exception){
                         $msg = "{$exception->getMessage()} in controller: {$controller} method: {$controllerMethodRef->name}";
                         throw new Annotation($msg);
@@ -140,6 +145,7 @@ class Scanner
                 $groupDetail[$groupName] = null;
             }
         }
+
 
         //构建Group目录导航
         $finalDoc .= "<h1 id='Navigator'>Navigator</h1>";
@@ -215,7 +221,7 @@ class Scanner
                     $finalDoc .= "**Api Params:**";
                     $finalDoc = self::buildLine($finalDoc);
                     $finalDoc = self::buildLine($finalDoc);
-                    $params = $apiTag->params;
+                    $params = $apiTag->requestParam->params;
                     if(!empty($params)){
                         $finalDoc .= self::buildParamsTable($params);
                     }else{
@@ -268,104 +274,104 @@ class Scanner
                     $finalDoc = self::buildLine($finalDoc);
                     $finalDoc = self::buildLine($finalDoc);
 
-                    //成功响应示例
-                    $successExamples = $apiTag->successExample;
-                    if(!empty($successExamples)){
-                        $count = 1;
-                        /** @var Example $example */
-                        foreach ($successExamples as $example){
-                            $finalDoc .= "**Success Response Example{$count}:**";
-                            $finalDoc = self::buildLine($finalDoc);
-                            if($example->params){
-                                $finalDoc .= self::buildExampleParamsTable($example->params);
-                                $finalDoc = self::buildLine($finalDoc);
-                                $finalDoc = self::buildLine($finalDoc);
-                            }
-                            if($example->description){
-                                switch ($example->description->type){
-                                    case Description::JSON:{
-                                        $finalDoc .= "**Success Response Example{$count} JSON:**";
-                                        break;
-                                    }
-                                    case Description::XML:{
-                                        $finalDoc .= "**Success Response Example{$count} XML:**";
-                                        break;
-                                    }
-                                    default:{
-                                        $finalDoc .= "**Success Response Example{$count} Description:**";
-                                    }
-                                }
-                                $finalDoc = self::buildLine($finalDoc);
-                                $finalDoc = self::buildLine($finalDoc);
+//                    //成功响应示例
+//                    $successExamples = $apiTag->successExample;
+//                    if(!empty($successExamples)){
+//                        $count = 1;
+//                        /** @var Example $example */
+//                        foreach ($successExamples as $example){
+//                            $finalDoc .= "**Success Response Example{$count}:**";
+//                            $finalDoc = self::buildLine($finalDoc);
+//                            if($example->params){
+//                                $finalDoc .= self::buildExampleParamsTable($example->params);
+//                                $finalDoc = self::buildLine($finalDoc);
+//                                $finalDoc = self::buildLine($finalDoc);
+//                            }
+//                            if($example->description){
+//                                switch ($example->description->type){
+//                                    case Description::JSON:{
+//                                        $finalDoc .= "**Success Response Example{$count} JSON:**";
+//                                        break;
+//                                    }
+//                                    case Description::XML:{
+//                                        $finalDoc .= "**Success Response Example{$count} XML:**";
+//                                        break;
+//                                    }
+//                                    default:{
+//                                        $finalDoc .= "**Success Response Example{$count} Description:**";
+//                                    }
+//                                }
+//                                $finalDoc = self::buildLine($finalDoc);
+//                                $finalDoc = self::buildLine($finalDoc);
+//
+//                                $finalDoc .= self::parseDescription($example->description);
+//                                $finalDoc = self::buildLine($finalDoc);
+//                                $finalDoc = self::buildLine($finalDoc);
+//                            }
+//                            $count++;
+//                        }
+//                    }else{
+//                        $finalDoc .= "**Success Response Example:**";
+//                        $finalDoc = self::buildLine($finalDoc);
+//                        $finalDoc = self::buildLine($finalDoc);
+//                        $finalDoc .= "no success response example";
+//                    }
+//                    $finalDoc = self::buildLine($finalDoc);
+//                    $finalDoc = self::buildLine($finalDoc);
 
-                                $finalDoc .= self::parseDescription($example->description);
-                                $finalDoc = self::buildLine($finalDoc);
-                                $finalDoc = self::buildLine($finalDoc);
-                            }
-                            $count++;
-                        }
-                    }else{
-                        $finalDoc .= "**Success Response Example:**";
-                        $finalDoc = self::buildLine($finalDoc);
-                        $finalDoc = self::buildLine($finalDoc);
-                        $finalDoc .= "no success response example";
-                    }
-                    $finalDoc = self::buildLine($finalDoc);
-                    $finalDoc = self::buildLine($finalDoc);
 
-
-                    //失败响应示例
-                    $successExamples = $apiTag->failExample;
-                    if(!empty($successExamples)){
-                        $count = 1;
-                        /** @var Example $example */
-                        foreach ($successExamples as $example){
-                            $finalDoc .= "**Fail Response Example{$count}:**";
-                            $finalDoc = self::buildLine($finalDoc);
-                            if($example->params){
-                                $finalDoc .= self::buildExampleParamsTable($example->params);
-                                $finalDoc = self::buildLine($finalDoc);
-                                $finalDoc = self::buildLine($finalDoc);
-                            }
-                            if($example->description){
-
-                                switch ($example->description->type){
-                                    case Description::JSON:{
-                                        $finalDoc .= "**Fail Response Example{$count} JSON:**";
-                                        break;
-                                    }
-                                    case Description::XML:{
-                                        $finalDoc .= "**Fail Response Example{$count} XML:**";
-                                        break;
-                                    }
-                                    default:{
-                                        $finalDoc .= "**Fail Response Example{$count} Description:**";
-                                    }
-                                }
-                                $finalDoc = self::buildLine($finalDoc);
-                                $finalDoc = self::buildLine($finalDoc);
-
-                                $finalDoc .= self::parseDescription($example->description);
-                                $finalDoc = self::buildLine($finalDoc);
-                                $finalDoc = self::buildLine($finalDoc);
-                            }
-                            $count++;
-                        }
-
-                    }else{
-                        $finalDoc .= "**Fail Response Example:**";
-                        $finalDoc = self::buildLine($finalDoc);
-                        $finalDoc = self::buildLine($finalDoc);
-                        $finalDoc .= "no fail response example";
-                    }
-                    $finalDoc = self::buildLine($finalDoc);
-                    $finalDoc = self::buildLine($finalDoc);
-                    $finalDoc .= "<p align=\"right\">Back To <a href='#Navigator'>Navigator</a>|<a href='#{$groupName}-{$apiTag->apiName}'>{$apiTag->apiName}<sup>{$groupName}</sup></a></p>";
-                    $finalDoc = self::buildLine($finalDoc);
-                    $finalDoc = self::buildLine($finalDoc);
-
-                    $finalDoc.= "---------- ";
-                    $finalDoc = self::buildLine($finalDoc);
+//                    //失败响应示例
+//                    $successExamples = $apiTag->failExample;
+//                    if(!empty($successExamples)){
+//                        $count = 1;
+//                        /** @var Example $example */
+//                        foreach ($successExamples as $example){
+//                            $finalDoc .= "**Fail Response Example{$count}:**";
+//                            $finalDoc = self::buildLine($finalDoc);
+//                            if($example->params){
+//                                $finalDoc .= self::buildExampleParamsTable($example->params);
+//                                $finalDoc = self::buildLine($finalDoc);
+//                                $finalDoc = self::buildLine($finalDoc);
+//                            }
+//                            if($example->description){
+//
+//                                switch ($example->description->type){
+//                                    case Description::JSON:{
+//                                        $finalDoc .= "**Fail Response Example{$count} JSON:**";
+//                                        break;
+//                                    }
+//                                    case Description::XML:{
+//                                        $finalDoc .= "**Fail Response Example{$count} XML:**";
+//                                        break;
+//                                    }
+//                                    default:{
+//                                        $finalDoc .= "**Fail Response Example{$count} Description:**";
+//                                    }
+//                                }
+//                                $finalDoc = self::buildLine($finalDoc);
+//                                $finalDoc = self::buildLine($finalDoc);
+//
+//                                $finalDoc .= self::parseDescription($example->description);
+//                                $finalDoc = self::buildLine($finalDoc);
+//                                $finalDoc = self::buildLine($finalDoc);
+//                            }
+//                            $count++;
+//                        }
+//
+//                    }else{
+//                        $finalDoc .= "**Fail Response Example:**";
+//                        $finalDoc = self::buildLine($finalDoc);
+//                        $finalDoc = self::buildLine($finalDoc);
+//                        $finalDoc .= "no fail response example";
+//                    }
+//                    $finalDoc = self::buildLine($finalDoc);
+//                    $finalDoc = self::buildLine($finalDoc);
+//                    $finalDoc .= "<p align=\"right\">Back To <a href='#Navigator'>Navigator</a>|<a href='#{$groupName}-{$apiTag->apiName}'>{$apiTag->apiName}<sup>{$groupName}</sup></a></p>";
+//                    $finalDoc = self::buildLine($finalDoc);
+//                    $finalDoc = self::buildLine($finalDoc);
+//
+//                    $finalDoc.= "---------- ";
+//                    $finalDoc = self::buildLine($finalDoc);
 
 
 

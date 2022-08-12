@@ -14,14 +14,14 @@ class Api
     const OPTIONS = "OPTIONS";
 
     function __construct(
-        public string $apiName,
-        public string $allowMethod,
-        public ?string $requestPath = null,
-        public bool $registerRouter = false,
-        public ?ApiRequest $requestParams = null,
-        public array $requestExample = [],
-        public array $responseExample = [],
-        public ?Description $description = null,
-        public bool $deprecated = false,
+        public string        $apiName,
+        public string        $allowMethod,
+        public ?string       $requestPath = null,
+        public bool          $registerRouter = false,
+        public ?RequestParam $requestParam = null,
+        public array         $requestExample = [],
+        public array         $responseExample = [],
+        public ?Description  $description = null,
+        public bool          $deprecated = false,
     ){}
 }

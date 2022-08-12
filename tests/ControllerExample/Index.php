@@ -3,7 +3,7 @@
 namespace EasySwoole\HttpAnnotation\Tests\ControllerExample;
 
 use EasySwoole\HttpAnnotation\Attributes\Api;
-use EasySwoole\HttpAnnotation\Attributes\ApiRequest;
+use EasySwoole\HttpAnnotation\Attributes\RequestParam;
 use EasySwoole\HttpAnnotation\Attributes\Description;
 use EasySwoole\HttpAnnotation\Attributes\Example;
 use EasySwoole\HttpAnnotation\Attributes\Param;
@@ -16,7 +16,7 @@ class Index extends Base
         apiName: "home",
         allowMethod:Api::GET,
         requestPath: "/test/index.html",
-        requestParams: new ApiRequest(
+        requestParam: new RequestParam(
             params: [
                 new Param(name:"account",from: [Param::GET],validate: [
                     new Required(),
