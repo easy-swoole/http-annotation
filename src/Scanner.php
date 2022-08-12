@@ -193,8 +193,7 @@ class Scanner
                     $finalDoc .= "**Request Path:** {$apiTag->requestPath}";
                     $finalDoc = self::buildLine($finalDoc);
                     $finalDoc = self::buildLine($finalDoc);
-                    $temp = implode(",",$apiTag->allowMethod);
-                    $finalDoc .= "**Allow Method:** $temp";
+                    $finalDoc .= "**Allow Method:** {$apiTag->allowMethod}";
                     $finalDoc = self::buildLine($finalDoc);
                     $finalDoc = self::buildLine($finalDoc);
                     $finalDoc .= "**Api Description:**";

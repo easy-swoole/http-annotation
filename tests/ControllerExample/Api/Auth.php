@@ -14,22 +14,7 @@ use EasySwoole\HttpAnnotation\Attributes\Validator\Required;
 )]
 class Auth extends ApiBase
 {
-    #[Api(
-        apiName: "login",
-        requestPath: "/api/auth/login",
-        params: [
-            new Param(
-                name:"account",
-                from: [Param::GET],
-                validate: [
-                    new Required(),
-                    new MaxLength(maxLen: 15),
-                ],
-                description: new Description("用户登录的账户Id,这个参数一定要有啊")
-            )
-        ],
-        description: new Description("登录接口，用于用户登录")
-    )]
+
     function login()
     {
 

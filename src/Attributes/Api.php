@@ -18,7 +18,7 @@ class Api
         public string $allowMethod,
         public ?string $requestPath = null,
         public bool $registerRouter = false,
-        public ?ApiRequest $request = null,
+        public ?ApiRequest $requestParams = null,
         public array $requestExample = [],
         public array $responseExample = [],
         public ?Description $description = null,
