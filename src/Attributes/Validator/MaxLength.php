@@ -12,19 +12,21 @@ class MaxLength extends AbstractValidator
 
     function __construct(int $maxLen,?string $errorMsg = null)
     {
-        $this->maxLen = $maxLen;
         if(empty($errorMsg)){
             $errorMsg = "{#name} max length is {#maxLen}";
         }
         $this->errorMsg($errorMsg);
+        $this->maxLen = $maxLen;
     }
 
     protected function validate(Param $param,ServerRequestInterface $request): bool
     {
-        $compare = $this->maxLen;
-        $data = $param->parsedValue();
-        if (is_numeric($data) || is_string($data)) {
-            return strlen($data) <= $compare;
+        $itemData = $param->parsedValue();
+        if (is_numeric($itemData) || is_string($itemData)) {
+            return strlen($itemData) <= $this->maxLen;
+        }
+        if (is_array($itemData) && (count($itemData) <= $this->maxLen)) {
+            return true;
         }
         return  false;
     }

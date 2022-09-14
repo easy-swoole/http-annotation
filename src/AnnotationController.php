@@ -57,10 +57,17 @@ abstract class AnnotationController extends Controller
             $onRequestParams = $ref->getMethod("onRequest")->getAttributes(Param::class);
 
             if($ref->hasMethod($method)){
-                $actionMethod = $ref->getMethod($method);
-                $actionApiTags = $actionMethod->getAttributes(Api::class);
+                $actionMethodRef = $ref->getMethod($method);
+                $actionApiTags = $actionMethodRef->getAttributes(Api::class);
                 if(!empty($actionApiTags)){
-                    $apiTag = new Api(...$actionApiTags[0]->getArguments());
+                    try{
+                        $apiTag = new Api(...$actionApiTags[0]->getArguments());
+                    }catch (\Throwable $exception){
+                        $class = static::class;
+                        $msg = "{$exception->getMessage()} in controller: {$class} method: {$method}";
+                        throw new Annotation($msg);
+                    }
+
                     $actionParams = $apiTag->params;
                     $allowRequestMethod = $apiTag->allowMethod;
                     $currentRequestMethod = $request->getMethod();
@@ -72,7 +79,13 @@ abstract class AnnotationController extends Controller
 
             foreach ($onRequestParams as $onRequestParam){
                 $args = $onRequestParam->getArguments();
-                $onRequestParam = new Param(...$args);
+                try{
+                    $onRequestParam = new Param(...$args);
+                }catch (\Throwable $exception){
+                    $controller = static::class;
+                    $msg = "{$exception->getMessage()} in controller: {$controller} onRequest Method";
+                    throw new Annotation($msg);
+                }
 
                 $hit = false;
                 foreach ($actionParams as $actionParam){

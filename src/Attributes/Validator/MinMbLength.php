@@ -21,10 +21,12 @@ class MinMbLength extends AbstractValidator
 
     protected function validate(Param $param,ServerRequestInterface $request): bool
     {
-        $compare = $this->minLen;
-        $data = $param->parsedValue();
-        if (is_numeric($data) || is_string($data)) {
-            return mb_strlen($data,mb_internal_encoding()) >= $compare;
+        $itemData = $param->parsedValue();
+        if (is_numeric($itemData) || is_string($itemData)) {
+            return mb_strlen($itemData,mb_internal_encoding()) >= $this->minLen;
+        }
+        if (is_array($itemData) && (count($itemData) >= $this->minLen)) {
+            return true;
         }
         return  false;
     }

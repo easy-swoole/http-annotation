@@ -9,7 +9,7 @@ class Equal extends AbstractValidator
 {
 
     private bool $strict;
-    private $compare;
+    public $compare;
 
     function __construct($compare,bool $strict = false,string $errorMsg = null)
     {

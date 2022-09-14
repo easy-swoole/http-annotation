@@ -3,11 +3,22 @@
 namespace EasySwoole\HttpAnnotation\Attributes;
 
 use EasySwoole\HttpAnnotation\Attributes\Validator\Optional;
+use EasySwoole\HttpAnnotation\Exception\Annotation;
 use Psr\Http\Message\ServerRequestInterface;
 
 #[\Attribute(\Attribute::TARGET_ALL|\Attribute::IS_REPEATABLE)]
 class Param
 {
+    const TYPE_STRING = "TYPE_STRING";
+    const TYPE_INT = "TYPE_INT";
+    const TYPE_DOUBLE = "TYPE_DOUBLE";
+    const TYPE_REAL = "TYPE_REAL";
+    const TYPE_FLOAT = "TYPE_FLOAT";
+    const TYPE_BOOL = "TYPE_BOOL";
+
+    const TYPE_LIST = "TYPE_LIST";
+    const TYPE_OBJECT = "TYPE_OBJECT";
+
     const GET = "GET";
     const POST = "POST";
     const COOKIE = "COOKIE";
@@ -22,13 +33,29 @@ class Param
     private bool|null $isOptional = null;
     private bool $isNullData = false;
 
+    /**
+     * @throws Annotation
+     */
     public function __construct(
-        public string $name,
-        public array $from = ["GET","POST"],
-        public ?array $validate = [],
-        public ?Description $description = null,
-        public $value = null
-    ){}
+        public string                   $name,
+        public string                   $from,
+        public ?array                   $validate = [],
+        public                          $value = null,
+        public bool                     $deprecated = false,
+        public bool                     $unset = false,
+        public Description|string|null $description = null,
+        public ?string                  $type = null,
+        public array                    $subObject = []
+    ){
+        if($this->description){
+            if(!$this->description instanceof Description){
+                $this->description = new Description(desc:$this->description);
+            }
+            if($this->description->type != Description::PLAIN_TEXT){
+                throw new Annotation("description only allow PLAIN_TEXT type in Param attribute");
+            }
+        }
+    }
 
     public function parsedValue(?ServerRequestInterface $request = null)
     {

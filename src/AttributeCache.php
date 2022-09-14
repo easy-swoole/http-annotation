@@ -14,10 +14,10 @@ class AttributeCache
 
     function addApiGroup(ApiGroup $apiGroup):bool
     {
-        if(isset($this->apiGroup[$apiGroup->name])){
+        if(isset($this->apiGroup[$apiGroup->groupName])){
             return false;
         }else{
-            $this->apiGroup[$apiGroup->name] = $apiGroup;
+            $this->apiGroup[$apiGroup->groupName] = $apiGroup;
             return true;
         }
     }

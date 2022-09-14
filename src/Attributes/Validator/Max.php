@@ -7,7 +7,7 @@ use Psr\Http\Message\ServerRequestInterface;
 
 class Max extends AbstractValidator
 {
-    protected int $max;
+    protected int|float $max;
 
     function __construct(int|float $max,?string $errorMsg = null)
     {
