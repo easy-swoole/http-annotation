@@ -11,6 +11,7 @@ use EasySwoole\HttpAnnotation\Attributes\Example;
 use EasySwoole\HttpAnnotation\Attributes\Param;
 use EasySwoole\HttpAnnotation\Attributes\RequestParam;
 use EasySwoole\HttpAnnotation\Attributes\Validator\AbstractValidator;
+use EasySwoole\HttpAnnotation\Enum\HttpMethod;
 use EasySwoole\HttpAnnotation\Enum\ParamType;
 use EasySwoole\HttpAnnotation\Enum\ParamFrom;
 use EasySwoole\HttpAnnotation\Exception\Annotation;
@@ -126,7 +127,7 @@ class Scanner
                         $tag->requestParam->params = $tempArr;
                     }catch (\Throwable $exception){
                         $msg = "{$exception->getMessage()} in controller: {$controller} method: {$controllerMethodRef->name}";
-                        throw new Annotation($msg);
+                        throw $exception;
                     }
 
                     $apiName = $tag->apiName;
@@ -201,7 +202,15 @@ class Scanner
                     $finalDoc .= "**Request Path:** {$apiTag->requestPath}";
                     $finalDoc = self::buildLine($finalDoc);
                     $finalDoc = self::buildLine($finalDoc);
-                    $finalDoc .= "**Allow Method:** {$apiTag->allowMethod}";
+                    $allMethodStr = "";
+                    if($apiTag->allowMethod instanceof HttpMethod){
+                        $allMethodStr = $apiTag->allowMethod->toString();
+                    }else{
+                        foreach ($apiTag->allowMethod as $allowMethodItem) {
+                            $allMethodStr .= "{$allowMethodItem->toString()},";
+                        }
+                    }
+                    $finalDoc .= "**Allow Method:** {$allMethodStr}";
                     $finalDoc = self::buildLine($finalDoc);
                     $finalDoc = self::buildLine($finalDoc);
                     $finalDoc .= "**Api Description:**";
@@ -552,7 +561,17 @@ class Scanner
             $line->appendChild($name);
 
             $from = $dom->createElement("td");
-            $from->nodeValue = implode(",",$item->from);
+
+            $fromStr = "";
+            if($item->from instanceof ParamFrom){
+                $fromStr = $item->from->toString();
+            }else{
+                foreach ($item->from as $fromItem) {
+                    $fromStr .= "{$fromItem->toString()},";
+                }
+            }
+
+            $from->nodeValue = $fromStr;
             $line->appendChild($from);
 
             $validate = $dom->createElement("td");

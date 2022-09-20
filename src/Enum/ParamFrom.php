@@ -15,4 +15,9 @@ enum ParamFrom
     case COOKIE;
     case HEADER;
     case ROUTER_PARAMS;
+
+    public function toString():string
+    {
+        return $this->name;
+    }
 }
