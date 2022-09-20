@@ -5,6 +5,7 @@ namespace EasySwoole\HttpAnnotation\Tests\Validator;
 use EasySwoole\Http\Request;
 use EasySwoole\HttpAnnotation\Attributes\Param;
 use EasySwoole\HttpAnnotation\Attributes\Validator\Required;
+use EasySwoole\HttpAnnotation\Enum\ValueFrom;
 use PHPUnit\Framework\TestCase;
 
 class RequiredTest extends TestCase
@@ -19,7 +20,7 @@ class RequiredTest extends TestCase
             "str" => "easyswoole",
         ]);
 
-        $param = new Param("str");
+        $param = new Param("str", [ValueFrom::GET]);
         $param->parsedValue($request);
 
         $rule = new Required();
@@ -34,10 +35,10 @@ class RequiredTest extends TestCase
     {
         $request = new Request();
         $request->withQueryParams([
-            "num" => 10,
+            "str" => null,
         ]);
 
-        $param = new Param("str");
+        $param = new Param("str", [ValueFrom::GET]);
         $param->parsedValue($request);
 
         $rule = new Required();
@@ -56,7 +57,7 @@ class RequiredTest extends TestCase
             "num" => 10,
         ]);
 
-        $param = new Param("phone");
+        $param = new Param("phone", [ValueFrom::GET]);
         $param->parsedValue($request);
 
         $rule = new Required(errorMsg: '手机号码必填');

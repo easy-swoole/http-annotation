@@ -5,6 +5,7 @@ namespace EasySwoole\HttpAnnotation\Tests\Validator;
 use EasySwoole\Http\Request;
 use EasySwoole\HttpAnnotation\Attributes\Param;
 use EasySwoole\HttpAnnotation\Attributes\Validator\DifferentWithColumn;
+use EasySwoole\HttpAnnotation\Enum\ValueFrom;
 use PHPUnit\Framework\TestCase;
 
 class DifferentWithColumnTest extends TestCase
@@ -21,10 +22,10 @@ class DifferentWithColumnTest extends TestCase
             'account' => "easyAccount"
         ]);
 
-        $param = new Param("str");
+        $param = new Param("str", [ValueFrom::GET]);
         $param->parsedValue($request);
 
-        $account = new Param("account");
+        $account = new Param("account", [ValueFrom::GET]);
         $account->parsedValue($request);
 
         $rule = new DifferentWithColumn(compare: "account");
@@ -44,10 +45,10 @@ class DifferentWithColumnTest extends TestCase
             'account' => 12
         ]);
 
-        $param = new Param("str");
+        $param = new Param("str", [ValueFrom::GET]);
         $param->parsedValue($request);
 
-        $account = new Param("account");
+        $account = new Param("account", [ValueFrom::GET]);
         $account->parsedValue($request);
 
         $rule = new DifferentWithColumn(compare: "account",strict: true);
@@ -72,10 +73,10 @@ class DifferentWithColumnTest extends TestCase
             'account' => "bajiu"
         ]);
 
-        $param = new Param("str");
+        $param = new Param("str", [ValueFrom::GET]);
         $param->parsedValue($request);
 
-        $account = new Param("account");
+        $account = new Param("account", [ValueFrom::GET]);
         $account->parsedValue($request);
 
         $rule = new DifferentWithColumn(compare: "account",strict: true);
@@ -94,10 +95,10 @@ class DifferentWithColumnTest extends TestCase
             'account' => 89
         ]);
 
-        $param = new Param("str");
+        $param = new Param("str", [ValueFrom::GET]);
         $param->parsedValue($request);
 
-        $account = new Param("account");
+        $account = new Param("account", [ValueFrom::GET]);
         $account->parsedValue($request);
 
         $rule = new DifferentWithColumn(compare: "account");
@@ -117,10 +118,10 @@ class DifferentWithColumnTest extends TestCase
             'account' => 89
         ]);
 
-        $param = new Param("str");
+        $param = new Param("str", [ValueFrom::GET]);
         $param->parsedValue($request);
 
-        $account = new Param("account");
+        $account = new Param("account", [ValueFrom::GET]);
         $account->parsedValue($request);
 
         $rule = new DifferentWithColumn(compare: "account");
@@ -145,10 +146,10 @@ class DifferentWithColumnTest extends TestCase
             'account' => "bajiu"
         ]);
 
-        $param = new Param("str");
+        $param = new Param("str", [ValueFrom::GET]);
         $param->parsedValue($request);
 
-        $account = new Param("account");
+        $account = new Param("account", [ValueFrom::GET]);
         $account->parsedValue($request);
 
         $rule = new DifferentWithColumn(compare: "account",strict: true,errorMsg: '两个参数不能一样');

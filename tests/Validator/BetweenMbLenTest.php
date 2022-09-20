@@ -5,6 +5,7 @@ namespace EasySwoole\HttpAnnotation\Tests\Validator;
 use EasySwoole\Http\Request;
 use EasySwoole\HttpAnnotation\Attributes\Param;
 use EasySwoole\HttpAnnotation\Attributes\Validator\BetweenMbLen;
+use EasySwoole\HttpAnnotation\Enum\ValueFrom;
 use PHPUnit\Framework\TestCase;
 
 class BetweenMbLenTest extends TestCase
@@ -21,7 +22,7 @@ class BetweenMbLenTest extends TestCase
             "name" => '城南花已开'
         ]);
 
-        $param = new Param("name");
+        $param = new Param("name", [ValueFrom::GET]);
         $param->parsedValue($request);
 
         $rule = new BetweenMbLen(minLen: 5, maxLen: 10);
@@ -33,7 +34,7 @@ class BetweenMbLenTest extends TestCase
             "name" => 'bajiu'
         ]);
 
-        $param = new Param("name");
+        $param = new Param("name", [ValueFrom::GET]);
         $param->parsedValue($request);
 
         $rule = new BetweenMbLen(minLen: 5, maxLen: 10);
@@ -45,7 +46,7 @@ class BetweenMbLenTest extends TestCase
             "num" => 5.56
         ]);
 
-        $param = new Param("num");
+        $param = new Param("num", [ValueFrom::GET]);
         $param->parsedValue($request);
 
         $rule = new BetweenMbLen(minLen: function () {
@@ -66,7 +67,7 @@ class BetweenMbLenTest extends TestCase
             "name" => '城南花已开'
         ]);
 
-        $param = new Param("name");
+        $param = new Param("name", [ValueFrom::GET]);
         $param->parsedValue($request);
 
         $rule = new BetweenMbLen(minLen: 2, maxLen: 4);
@@ -84,7 +85,7 @@ class BetweenMbLenTest extends TestCase
             "name" => '八九'
         ]);
 
-        $param = new Param("name");
+        $param = new Param("name", [ValueFrom::GET]);
         $param->parsedValue($request);
 
         $rule = new BetweenMbLen(minLen: function () {

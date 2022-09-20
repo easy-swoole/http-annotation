@@ -5,6 +5,7 @@ namespace EasySwoole\HttpAnnotation\Tests\Validator;
 use EasySwoole\Http\Request;
 use EasySwoole\HttpAnnotation\Attributes\Param;
 use EasySwoole\HttpAnnotation\Attributes\Validator\MinLength;
+use EasySwoole\HttpAnnotation\Enum\ValueFrom;
 use PHPUnit\Framework\TestCase;
 
 class MinLengthTest extends TestCase
@@ -20,7 +21,7 @@ class MinLengthTest extends TestCase
             "str" => 12345
         ]);
 
-        $param = new Param("str");
+        $param = new Param("str", [ValueFrom::GET]);
         $param->parsedValue($request);
 
         $rule = new MinLength(minLen: 5);
@@ -32,7 +33,7 @@ class MinLengthTest extends TestCase
             "str" => '12345'
         ]);
 
-        $param = new Param("str");
+        $param = new Param("str", [ValueFrom::GET]);
         $param->parsedValue($request);
 
         $rule = new MinLength(minLen: 5);
@@ -44,7 +45,7 @@ class MinLengthTest extends TestCase
             "str" => ['apple', 'grape', 'orange']
         ]);
 
-        $param = new Param("str");
+        $param = new Param("str", [ValueFrom::GET]);
         $param->parsedValue($request);
 
         $rule = new MinLength(minLen: 3);
@@ -62,7 +63,7 @@ class MinLengthTest extends TestCase
             "str" => 1234
         ]);
 
-        $param = new Param("str");
+        $param = new Param("str", [ValueFrom::GET]);
         $param->parsedValue($request);
 
         $rule = new MinLength(minLen: 5);
@@ -75,7 +76,7 @@ class MinLengthTest extends TestCase
             "str" => '1234'
         ]);
 
-        $param = new Param("str");
+        $param = new Param("str", [ValueFrom::GET]);
         $param->parsedValue($request);
 
         $rule = new MinLength(minLen: 5);
@@ -87,7 +88,7 @@ class MinLengthTest extends TestCase
             "str" => ['apple', 'grape', 'orange']
         ]);
 
-        $param = new Param("str");
+        $param = new Param("str", [ValueFrom::GET]);
         $param->parsedValue($request);
 
         $rule = new MinLength(minLen: 4);
@@ -100,7 +101,7 @@ class MinLengthTest extends TestCase
             "str" => (object)['apple', 'grape', 'orange', 'orange', 'orange']
         ]);
 
-        $param = new Param("str");
+        $param = new Param("str", [ValueFrom::GET]);
         $param->parsedValue($request);
 
         $rule = new MinLength(minLen: 5);
@@ -118,7 +119,7 @@ class MinLengthTest extends TestCase
             "name" => 'bajiu'
         ]);
 
-        $param = new Param("name");
+        $param = new Param("name", [ValueFrom::GET]);
         $param->parsedValue($request);
 
         $rule = new MinLength(minLen: 6,errorMsg: '名字长度最少6位');

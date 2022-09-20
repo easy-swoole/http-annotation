@@ -5,6 +5,7 @@ namespace EasySwoole\HttpAnnotation\Tests\Validator;
 use EasySwoole\Http\Request;
 use EasySwoole\HttpAnnotation\Attributes\Param;
 use EasySwoole\HttpAnnotation\Attributes\Validator\TimestampBeforeDate;
+use EasySwoole\HttpAnnotation\Enum\ValueFrom;
 use PHPUnit\Framework\TestCase;
 
 class TimestampBeforeDateTest extends TestCase
@@ -19,7 +20,7 @@ class TimestampBeforeDateTest extends TestCase
             "date" => time() - 1
         ]);
 
-        $param = new Param("date");
+        $param = new Param("date", [ValueFrom::GET]);
         $param->parsedValue($request);
 
         $rule = new TimestampBeforeDate(date: date('YmdHis', time()));
@@ -31,7 +32,7 @@ class TimestampBeforeDateTest extends TestCase
             "date" => time() - 1
         ]);
 
-        $param = new Param("date");
+        $param = new Param("date", [ValueFrom::GET]);
         $param->parsedValue($request);
 
         $rule = new TimestampBeforeDate(date: function () {
@@ -50,7 +51,7 @@ class TimestampBeforeDateTest extends TestCase
             "date" => time() + 1
         ]);
 
-        $param = new Param("date");
+        $param = new Param("date", [ValueFrom::GET]);
         $param->parsedValue($request);
 
         $rule = new TimestampBeforeDate(date('YmdHis', time()));
@@ -62,7 +63,7 @@ class TimestampBeforeDateTest extends TestCase
             "date" => "2022-06-30"
         ]);
 
-        $param = new Param("date");
+        $param = new Param("date", [ValueFrom::GET]);
         $param->parsedValue($request);
 
         $time = date('YmdHis', time());
@@ -84,7 +85,7 @@ class TimestampBeforeDateTest extends TestCase
             "date" => time() + 1
         ]);
 
-        $param = new Param("date");
+        $param = new Param("date", [ValueFrom::GET]);
         $param->parsedValue($request);
 
         $rule = new TimestampBeforeDate(date: date('YmdHis', time()), errorMsg: '无效时间戳');

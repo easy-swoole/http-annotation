@@ -5,6 +5,7 @@ namespace EasySwoole\HttpAnnotation\Tests\Validator;
 use EasySwoole\Http\Request;
 use EasySwoole\HttpAnnotation\Attributes\Param;
 use EasySwoole\HttpAnnotation\Attributes\Validator\TimestampAfterDate;
+use EasySwoole\HttpAnnotation\Enum\ValueFrom;
 use PHPUnit\Framework\TestCase;
 
 class TimestampAfterDateTest extends TestCase
@@ -20,7 +21,7 @@ class TimestampAfterDateTest extends TestCase
             "date" => time()
         ]);
 
-        $param = new Param("date");
+        $param = new Param("date", [ValueFrom::GET]);
         $param->parsedValue($request);
 
         $rule = new TimestampAfterDate(date: date('YmdHis', time() - 1));
@@ -32,7 +33,7 @@ class TimestampAfterDateTest extends TestCase
             "date" => time() + 1
         ]);
 
-        $param = new Param("date");
+        $param = new Param("date", [ValueFrom::GET]);
         $param->parsedValue($request);
 
         $rule = new TimestampAfterDate(date: function () {
@@ -51,7 +52,7 @@ class TimestampAfterDateTest extends TestCase
             "date" => time()
         ]);
 
-        $param = new Param("date");
+        $param = new Param("date", [ValueFrom::GET]);
         $param->parsedValue($request);
 
         $time = date('YmdHis', time() + 1);
@@ -65,7 +66,7 @@ class TimestampAfterDateTest extends TestCase
             "date" => "2022-09-30"
         ]);
 
-        $param = new Param("date");
+        $param = new Param("date", [ValueFrom::GET]);
         $param->parsedValue($request);
 
         $time = date('YmdHis', time());
@@ -87,7 +88,7 @@ class TimestampAfterDateTest extends TestCase
             "date" => 'bajiu'
         ]);
 
-        $param = new Param("date");
+        $param = new Param("date", [ValueFrom::GET]);
         $param->parsedValue($request);
 
         $time = date('YmdHis', time() + 1);

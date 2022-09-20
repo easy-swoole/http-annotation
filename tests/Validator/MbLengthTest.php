@@ -5,6 +5,7 @@ namespace EasySwoole\HttpAnnotation\Tests\Validator;
 use EasySwoole\Http\Request;
 use EasySwoole\HttpAnnotation\Attributes\Param;
 use EasySwoole\HttpAnnotation\Attributes\Validator\MbLength;
+use EasySwoole\HttpAnnotation\Enum\ValueFrom;
 use PHPUnit\Framework\TestCase;
 
 class MbLengthTest extends TestCase
@@ -20,7 +21,7 @@ class MbLengthTest extends TestCase
             "str" => '八九'
         ]);
 
-        $param = new Param("str");
+        $param = new Param("str", [ValueFrom::GET]);
         $param->parsedValue($request);
 
         $rule = new MbLength(length: 2);
@@ -32,7 +33,7 @@ class MbLengthTest extends TestCase
             "str" => '89'
         ]);
 
-        $param = new Param("str");
+        $param = new Param("str", [ValueFrom::GET]);
         $param->parsedValue($request);
 
         $rule = new MbLength(length: 2);
@@ -44,7 +45,7 @@ class MbLengthTest extends TestCase
             "str" => ['apple', 'grape', 'orange']
         ]);
 
-        $param = new Param("str");
+        $param = new Param("str", [ValueFrom::GET]);
         $param->parsedValue($request);
 
         $rule = new MbLength(length: 3);
@@ -62,7 +63,7 @@ class MbLengthTest extends TestCase
             "str" => '八九'
         ]);
 
-        $param = new Param("str");
+        $param = new Param("str", [ValueFrom::GET]);
         $param->parsedValue($request);
 
         $rule = new MbLength(length: 5);
@@ -75,7 +76,7 @@ class MbLengthTest extends TestCase
             "str" => '89'
         ]);
 
-        $param = new Param("str");
+        $param = new Param("str", [ValueFrom::GET]);
         $param->parsedValue($request);
 
         $rule = new MbLength(length: 5);
@@ -87,7 +88,7 @@ class MbLengthTest extends TestCase
             "str" => ['apple', 'grape', 'orange']
         ]);
 
-        $param = new Param("str");
+        $param = new Param("str", [ValueFrom::GET]);
         $param->parsedValue($request);
 
         $rule = new MbLength(length: 5);
@@ -100,7 +101,7 @@ class MbLengthTest extends TestCase
             "str" => (object)['apple', 'grape', 'orange', 'orange', 'orange']
         ]);
 
-        $param = new Param("str");
+        $param = new Param("str", [ValueFrom::GET]);
         $param->parsedValue($request);
 
         $rule = new MbLength(length: 5);
@@ -118,7 +119,7 @@ class MbLengthTest extends TestCase
             "name" => '城南花已开'
         ]);
 
-        $param = new Param("name");
+        $param = new Param("name", [ValueFrom::GET]);
         $param->parsedValue($request);
 
         $rule = new MbLength(length: 6,errorMsg: '名字长度必须是6位');

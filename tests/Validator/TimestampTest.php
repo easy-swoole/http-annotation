@@ -5,6 +5,7 @@ namespace EasySwoole\HttpAnnotation\Tests\Validator;
 use EasySwoole\Http\Request;
 use EasySwoole\HttpAnnotation\Attributes\Param;
 use EasySwoole\HttpAnnotation\Attributes\Validator\Timestamp;
+use EasySwoole\HttpAnnotation\Enum\ValueFrom;
 use PHPUnit\Framework\TestCase;
 
 class TimestampTest extends TestCase
@@ -19,7 +20,7 @@ class TimestampTest extends TestCase
             "date" => '123456789123456'
         ]);
 
-        $param = new Param("date");
+        $param = new Param("date", [ValueFrom::GET]);
         $param->parsedValue($request);
 
         $rule = new Timestamp();
@@ -31,7 +32,7 @@ class TimestampTest extends TestCase
             "date" => "2022-06-30"
         ]);
 
-        $param = new Param("date");
+        $param = new Param("date", [ValueFrom::GET]);
         $param->parsedValue($request);
 
         $rule = new Timestamp(errorMsg: '测试提示');
@@ -52,7 +53,7 @@ class TimestampTest extends TestCase
             "date" => time()
         ]);
 
-        $param = new Param("date");
+        $param = new Param("date", [ValueFrom::GET]);
         $param->parsedValue($request);
 
         $rule = new Timestamp();
@@ -69,7 +70,7 @@ class TimestampTest extends TestCase
             "date" => 'bajiu'
         ]);
 
-        $param = new Param("date");
+        $param = new Param("date", [ValueFrom::GET]);
         $param->parsedValue($request);
 
         $rule = new Timestamp();
@@ -87,7 +88,7 @@ class TimestampTest extends TestCase
             "date" => 'bajiu'
         ]);
 
-        $param = new Param("date");
+        $param = new Param("date", [ValueFrom::GET]);
         $param->parsedValue($request);
 
         $rule = new Timestamp(errorMsg: '无效时间戳');

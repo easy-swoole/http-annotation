@@ -5,6 +5,7 @@ namespace EasySwoole\HttpAnnotation\Tests\Validator;
 use EasySwoole\Http\Request;
 use EasySwoole\HttpAnnotation\Attributes\Param;
 use EasySwoole\HttpAnnotation\Attributes\Validator\BetweenLen;
+use EasySwoole\HttpAnnotation\Enum\ValueFrom;
 use EasySwoole\Validate\tests\UploadFile;
 use PHPUnit\Framework\TestCase;
 
@@ -21,7 +22,7 @@ class BetweenLenTest extends TestCase
             "name" => 5.56789
         ]);
 
-        $param = new Param("name");
+        $param = new Param("name", [ValueFrom::GET]);
         $param->parsedValue($request);
 
         $rule = new BetweenLen(minLen: 5, maxLen: 10);
@@ -33,7 +34,7 @@ class BetweenLenTest extends TestCase
             "str" => 'asc-~+...9'
         ]);
 
-        $param = new Param("str");
+        $param = new Param("str", [ValueFrom::GET]);
         $param->parsedValue($request);
 
         $rule = new BetweenLen(minLen: 5, maxLen: 10);
@@ -51,7 +52,7 @@ class BetweenLenTest extends TestCase
             "name" => 4.9876
         ]);
 
-        $param = new Param("name");
+        $param = new Param("name", [ValueFrom::GET]);
         $param->parsedValue($request);
 
         $rule = new BetweenLen(minLen: 2, maxLen: 5);
@@ -64,7 +65,7 @@ class BetweenLenTest extends TestCase
             "str" => '测试测试'
         ]);
 
-        $param = new Param("str");
+        $param = new Param("str", [ValueFrom::GET]);
         $param->parsedValue($request);
 
         $rule = new BetweenLen(minLen: 5, maxLen: 10);
@@ -77,7 +78,7 @@ class BetweenLenTest extends TestCase
             "name" => 5.56
         ]);
 
-        $param = new Param("name");
+        $param = new Param("name", [ValueFrom::GET]);
         $param->parsedValue($request);
 
         $rule = new BetweenLen(minLen: function () {
@@ -99,7 +100,7 @@ class BetweenLenTest extends TestCase
             "str" => '测试' // 6
         ]);
 
-        $param = new Param("str");
+        $param = new Param("str", [ValueFrom::GET]);
         $param->parsedValue($request);
 
         $rule = new BetweenLen(minLen: function () {

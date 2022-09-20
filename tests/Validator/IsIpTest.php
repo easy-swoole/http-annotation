@@ -5,6 +5,7 @@ namespace EasySwoole\HttpAnnotation\Tests\Validator;
 use EasySwoole\Http\Request;
 use EasySwoole\HttpAnnotation\Attributes\Param;
 use EasySwoole\HttpAnnotation\Attributes\Validator\IsIp;
+use EasySwoole\HttpAnnotation\Enum\ValueFrom;
 use PHPUnit\Framework\TestCase;
 
 class IsIpTest extends TestCase
@@ -20,7 +21,7 @@ class IsIpTest extends TestCase
             "ip" => '192.0.0.1'
         ]);
 
-        $param = new Param("ip");
+        $param = new Param("ip", [ValueFrom::GET]);
         $param->parsedValue($request);
 
         $rule = new IsIp();
@@ -32,7 +33,7 @@ class IsIpTest extends TestCase
             "ip" => '2001:0db8:85a3:08d3:1319:8a2e:0370:7334'
         ]);
 
-        $param = new Param("ip");
+        $param = new Param("ip", [ValueFrom::GET]);
         $param->parsedValue($request);
 
         $rule = new IsIp();
@@ -50,7 +51,7 @@ class IsIpTest extends TestCase
             "ip" => 'https://wwww.easyswoole.com'
         ]);
 
-        $param = new Param("ip");
+        $param = new Param("ip", [ValueFrom::GET]);
         $param->parsedValue($request);
 
         $rule = new IsIp();
@@ -63,7 +64,7 @@ class IsIpTest extends TestCase
             "ip" => '256.256.256.256'
         ]);
 
-        $param = new Param("ip");
+        $param = new Param("ip", [ValueFrom::GET]);
         $param->parsedValue($request);
 
         $rule = new IsIp();
@@ -81,7 +82,7 @@ class IsIpTest extends TestCase
             "ip" => 'this is str'
         ]);
 
-        $param = new Param("ip");
+        $param = new Param("ip", [ValueFrom::GET]);
         $param->parsedValue($request);
 
         $rule = new IsIp(errorMsg: '请输入合法的IP地址');
