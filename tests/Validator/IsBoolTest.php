@@ -5,7 +5,7 @@ namespace EasySwoole\HttpAnnotation\Tests\Validator;
 use EasySwoole\Http\Request;
 use EasySwoole\HttpAnnotation\Attributes\Param;
 use EasySwoole\HttpAnnotation\Attributes\Validator\IsBool;
-use EasySwoole\HttpAnnotation\Enum\ValueFrom;
+use EasySwoole\HttpAnnotation\Enum\ParamFrom;
 use PHPUnit\Framework\TestCase;
 
 class IsBoolTest extends TestCase
@@ -22,7 +22,7 @@ class IsBoolTest extends TestCase
             "bool" => true
         ]);
 
-        $param = new Param("bool", [ValueFrom::GET]);
+        $param = new Param("bool", [ParamFrom::GET]);
         $param->parsedValue($request);
 
         $rule = new IsBool();
@@ -34,7 +34,7 @@ class IsBoolTest extends TestCase
             "bool" => 1
         ]);
 
-        $param = new Param("bool", [ValueFrom::GET]);
+        $param = new Param("bool", [ParamFrom::GET]);
         $param->parsedValue($request);
 
         $rule = new IsBool();
@@ -46,7 +46,7 @@ class IsBoolTest extends TestCase
             "bool" => "1"
         ]);
 
-        $param = new Param("bool", [ValueFrom::GET]);
+        $param = new Param("bool", [ParamFrom::GET]);
         $param->parsedValue($request);
 
         $rule = new IsBool();
@@ -58,7 +58,7 @@ class IsBoolTest extends TestCase
             "bool" => false
         ]);
 
-        $param = new Param("bool", [ValueFrom::GET]);
+        $param = new Param("bool", [ParamFrom::GET]);
         $param->parsedValue($request);
 
         $rule = new IsBool();
@@ -70,7 +70,7 @@ class IsBoolTest extends TestCase
             "bool" => 0
         ]);
 
-        $param = new Param("bool", [ValueFrom::GET]);
+        $param = new Param("bool", [ParamFrom::GET]);
         $param->parsedValue($request);
 
         $rule = new IsBool();
@@ -88,7 +88,7 @@ class IsBoolTest extends TestCase
             "bool" => 'true'
         ]);
 
-        $param = new Param("bool", [ValueFrom::GET]);
+        $param = new Param("bool", [ParamFrom::GET]);
         $param->parsedValue($request);
 
         $rule = new IsBool();
@@ -106,7 +106,7 @@ class IsBoolTest extends TestCase
             "bool" => null
         ]);
 
-        $param = new Param("bool", [ValueFrom::GET]);
+        $param = new Param("bool", [ParamFrom::GET]);
         $param->parsedValue($request);
 
         $rule = new IsBool('状态只能是开启或关闭');

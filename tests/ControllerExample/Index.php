@@ -11,7 +11,7 @@ use EasySwoole\HttpAnnotation\Attributes\Validator\MaxLength;
 use EasySwoole\HttpAnnotation\Attributes\Validator\Optional;
 use EasySwoole\HttpAnnotation\Attributes\Validator\Required;
 use EasySwoole\HttpAnnotation\Enum\HttpMethod;
-use EasySwoole\HttpAnnotation\Enum\ValueFrom;
+use EasySwoole\HttpAnnotation\Enum\ParamFrom;
 
 class Index extends Base
 {
@@ -23,7 +23,7 @@ class Index extends Base
             params: [
                 new Param(
                     name: "page",
-                    from: [ValueFrom::GET],
+                    from: [ParamFrom::GET],
                     validate: [
                         new Optional()
                     ],
@@ -32,7 +32,7 @@ class Index extends Base
                 ),
                 new Param(
                     name: "account",
-                    from: [ValueFrom::GET],
+                    from: [ParamFrom::GET],
                     validate: [
                         new Optional()
                     ],
@@ -49,11 +49,11 @@ class Index extends Base
 
     #[Api(
         apiName: "hello",
-        allowMethod:HttpMethod::POST,
+        allowMethod:[HttpMethod::POST,HttpMethod::GET],
         requestPath: "/test/hello.html",
         requestParam: new RequestParam(
             params: [
-                new Param(name:"account",from: [Param::GET],validate: [
+                new Param(name:"account",from:ParamFrom::GET,validate: [
                     new Required(),
                     new MaxLength(maxLen: 15),
                 ],description: new Description("用户登录的账户Id,这个参数一定要有啊"))

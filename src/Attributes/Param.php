@@ -6,7 +6,9 @@ use EasySwoole\Component\Context\ContextManager;
 use EasySwoole\Component\Di as IOC;
 use EasySwoole\Http\AbstractInterface\AbstractRouter;
 use EasySwoole\HttpAnnotation\Attributes\Validator\Optional;
-use EasySwoole\HttpAnnotation\Enum\ValueFrom;
+use EasySwoole\HttpAnnotation\Enum\HttpMethod;
+use EasySwoole\HttpAnnotation\Enum\ParamType;
+use EasySwoole\HttpAnnotation\Enum\ParamFrom;
 use EasySwoole\HttpAnnotation\Exception\Annotation;
 use Psr\Http\Message\ServerRequestInterface;
 
@@ -21,15 +23,15 @@ class Param
      * @throws Annotation
      */
     public function __construct(
-        public string                   $name,
-        public string|array             $from,
-        public ?array                   $validate = [],
-        public                          $value = null,
-        public bool                     $deprecated = false,
-        public bool                     $unset = false,
+        public string                  $name,
+        public ParamFrom|array         $from,
+        public ?array                  $validate = [],
+        public                         $value = null,
+        public bool                    $deprecated = false,
+        public bool                    $unset = false,
         public Description|string|null $description = null,
-        public ?string                  $type = null,
-        public array                    $subObject = []
+        public ?ParamType              $type = null,
+        public array                   $subObject = []
     ){
         if($this->description){
             if(!$this->description instanceof Description){
@@ -48,7 +50,7 @@ class Param
         }
         if($request){
             $hit = false;
-            if(is_string($this->from)){
+            if($this->from instanceof HttpMethod){
                 $fromList = [$this->from];
             }else{
                 $fromList = $this->from;
@@ -56,7 +58,7 @@ class Param
             foreach ($fromList as $from){
                 if(!$hit){
                     switch ($from){
-                        case ValueFrom::GET:{
+                        case ParamFrom::GET:{
                             $data = $request->getQueryParams();
                             if(isset($data[$this->name])){
                                 $hit = true;
@@ -64,7 +66,7 @@ class Param
                                 break;
                             }
                         }
-                        case ValueFrom::FORM_POST:{
+                        case ParamFrom::FORM_POST:{
                             $data = $request->getParsedBody();
                             if(isset($data[$this->name])){
                                 $hit = true;
@@ -72,7 +74,7 @@ class Param
                                 break;
                             }
                         }
-                        case ValueFrom::JSON:{
+                        case ParamFrom::JSON:{
                             $data = json_decode($request->getBody()->__toString(),true);
                             if(!is_array($data)){
                                 $data = [];
@@ -83,13 +85,13 @@ class Param
                                 break;
                             }
                         }
-                        case ValueFrom::XML:
-                        case ValueFrom::RAW_POST:{
+                        case ParamFrom::XML:
+                        case ParamFrom::RAW_POST:{
                             $hit = true;
                             $this->value = $request->getBody()->__toString();
                             break;
                         }
-                        case ValueFrom::FILE:{
+                        case ParamFrom::FILE:{
                             $data = $request->getUploadedFile($this->name);
                             if(!empty($data)){
                                 $hit = true;
@@ -97,7 +99,7 @@ class Param
                                 break;
                             }
                         }
-                        case ValueFrom::DI:{
+                        case ParamFrom::DI:{
                             $data = IOC::getInstance()->get($this->name);
                             if(!empty($data)){
                                 $hit = true;
@@ -105,7 +107,7 @@ class Param
                                 break;
                             }
                         }
-                        case ValueFrom::CONTEXT:{
+                        case ParamFrom::CONTEXT:{
                             $data = ContextManager::getInstance()->get($this->name);
                             if(!empty($data)){
                                 $hit = true;
@@ -113,7 +115,7 @@ class Param
                                 break;
                             }
                         }
-                        case ValueFrom::COOKIE:{
+                        case ParamFrom::COOKIE:{
                             $data = $request->getCookieParams($this->name);
                             if(!empty($data)){
                                 $hit = true;
@@ -121,7 +123,7 @@ class Param
                                 break;
                             }
                         }
-                        case ValueFrom::HEADER:{
+                        case ParamFrom::HEADER:{
                             $data = $request->getHeader($this->name);
                             $hit = true;
                             if(!empty($data)){
@@ -131,7 +133,7 @@ class Param
                             }
                             break;
                         }
-                        case ValueFrom::ROUTER_PARAMS:{
+                        case ParamFrom::ROUTER_PARAMS:{
                             $data = ContextManager::getInstance()->get(AbstractRouter::PARSE_PARAMS_CONTEXT_KEY);
                             if(isset($data[$this->name])){
                                 $hit = true;

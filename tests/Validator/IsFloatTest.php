@@ -5,7 +5,7 @@ namespace EasySwoole\HttpAnnotation\Tests\Validator;
 use EasySwoole\Http\Request;
 use EasySwoole\HttpAnnotation\Attributes\Param;
 use EasySwoole\HttpAnnotation\Attributes\Validator\IsFloat;
-use EasySwoole\HttpAnnotation\Enum\ValueFrom;
+use EasySwoole\HttpAnnotation\Enum\ParamFrom;
 use PHPUnit\Framework\TestCase;
 
 class IsFloatTest extends TestCase
@@ -22,7 +22,7 @@ class IsFloatTest extends TestCase
             "num" => 2.0
         ]);
 
-        $param = new Param("num", [ValueFrom::GET]);
+        $param = new Param("num", [ParamFrom::GET]);
         $param->parsedValue($request);
 
         $rule = new IsFloat();
@@ -34,7 +34,7 @@ class IsFloatTest extends TestCase
             "num" => '12.3'
         ]);
 
-        $param = new Param("num", [ValueFrom::GET]);
+        $param = new Param("num", [ParamFrom::GET]);
         $param->parsedValue($request);
 
         $rule = new IsFloat();
@@ -46,7 +46,7 @@ class IsFloatTest extends TestCase
             "num" => 2
         ]);
 
-        $param = new Param("num", [ValueFrom::GET]);
+        $param = new Param("num", [ParamFrom::GET]);
         $param->parsedValue($request);
 
         $rule = new IsFloat();
@@ -64,7 +64,7 @@ class IsFloatTest extends TestCase
             "num" => 'bajiu'
         ]);
 
-        $param = new Param("num", [ValueFrom::GET]);
+        $param = new Param("num", [ParamFrom::GET]);
         $param->parsedValue($request);
 
         $rule = new IsFloat();
@@ -82,7 +82,7 @@ class IsFloatTest extends TestCase
             "num" => 'bajiu'
         ]);
 
-        $param = new Param("num", [ValueFrom::GET]);
+        $param = new Param("num", [ParamFrom::GET]);
         $param->parsedValue($request);
 
         $rule = new IsFloat(errorMsg: '请输入一个浮点数');

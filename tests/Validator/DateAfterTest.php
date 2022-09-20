@@ -5,7 +5,7 @@ namespace EasySwoole\HttpAnnotation\Tests\Validator;
 use EasySwoole\Http\Request;
 use EasySwoole\HttpAnnotation\Attributes\Param;
 use EasySwoole\HttpAnnotation\Attributes\Validator\DateAfter;
-use EasySwoole\HttpAnnotation\Enum\ValueFrom;
+use EasySwoole\HttpAnnotation\Enum\ParamFrom;
 use PHPUnit\Framework\TestCase;
 
 class DateAfterTest extends TestCase
@@ -21,7 +21,7 @@ class DateAfterTest extends TestCase
             "date" => "20220501"
         ]);
 
-        $param = new Param("date", [ValueFrom::GET]);
+        $param = new Param("date", [ParamFrom::GET]);
         $param->parsedValue($request);
 
         $rule = new DateAfter(date: "20220430");
@@ -32,7 +32,7 @@ class DateAfterTest extends TestCase
             "date" => "2022-05-06"
         ]);
 
-        $param = new Param("date", [ValueFrom::GET]);
+        $param = new Param("date", [ParamFrom::GET]);
         $param->parsedValue($request);
 
         $rule = new DateAfter(date: "20220430");
@@ -43,7 +43,7 @@ class DateAfterTest extends TestCase
             "date" => "2022-05-06 00:00:00"
         ]);
 
-        $param = new Param("date", [ValueFrom::GET]);
+        $param = new Param("date", [ParamFrom::GET]);
         $param->parsedValue($request);
 
         $rule = new DateAfter(date: "20200630");
@@ -55,7 +55,7 @@ class DateAfterTest extends TestCase
             "date" => "20220630"
         ]);
 
-        $param = new Param("date", [ValueFrom::GET]);
+        $param = new Param("date", [ParamFrom::GET]);
         $param->parsedValue($request);
 
         $rule = new DateAfter(date: function () {
@@ -75,7 +75,7 @@ class DateAfterTest extends TestCase
             "date" => "2022-05-08"
         ]);
 
-        $param = new Param("date", [ValueFrom::GET]);
+        $param = new Param("date", [ParamFrom::GET]);
         $param->parsedValue($request);
 
         $rule = new DateAfter(date: "20220530");
@@ -88,7 +88,7 @@ class DateAfterTest extends TestCase
             "date" => "bajiu"
         ]);
 
-        $param = new Param("date", [ValueFrom::GET]);
+        $param = new Param("date", [ParamFrom::GET]);
         $param->parsedValue($request);
 
         $rule = new DateAfter(date: "20220530");
@@ -101,7 +101,7 @@ class DateAfterTest extends TestCase
             "date" => "1654765394"
         ]);
 
-        $param = new Param("date", [ValueFrom::GET]);
+        $param = new Param("date", [ParamFrom::GET]);
         $param->parsedValue($request);
 
         $rule = new DateAfter(date: "20220530");
@@ -119,7 +119,7 @@ class DateAfterTest extends TestCase
             "date" => "bajiu"
         ]);
 
-        $param = new Param("date", [ValueFrom::GET]);
+        $param = new Param("date", [ParamFrom::GET]);
         $param->parsedValue($request);
 
         $rule = new DateAfter(date: "20220530", errorMsg: '日期不合法');

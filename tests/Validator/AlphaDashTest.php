@@ -5,7 +5,7 @@ namespace EasySwoole\HttpAnnotation\Tests\Validator;
 use EasySwoole\Http\Request;
 use EasySwoole\HttpAnnotation\Attributes\Param;
 use EasySwoole\HttpAnnotation\Attributes\Validator\AlphaDash;
-use EasySwoole\HttpAnnotation\Enum\ValueFrom;
+use EasySwoole\HttpAnnotation\Enum\ParamFrom;
 use PHPUnit\Framework\TestCase;
 
 class AlphaDashTest extends TestCase
@@ -21,7 +21,7 @@ class AlphaDashTest extends TestCase
             "str" => "qweqwe-123_"
         ]);
 
-        $param = new Param("str", [ValueFrom::GET]);
+        $param = new Param("str", [ParamFrom::GET]);
         $param->parsedValue($request);
 
         $rule = new AlphaDash();
@@ -38,7 +38,7 @@ class AlphaDashTest extends TestCase
             "str" => "0bA1-11_..@"
         ]);
 
-        $param = new Param("str", [ValueFrom::GET]);
+        $param = new Param("str", [ParamFrom::GET]);
         $param->parsedValue($request);
 
         $rule = new AlphaDash();
@@ -56,7 +56,7 @@ class AlphaDashTest extends TestCase
             "str" => "0bA1-11_..@"
         ]);
 
-        $param = new Param("str", [ValueFrom::GET]);
+        $param = new Param("str", [ParamFrom::GET]);
         $param->parsedValue($request);
 
         $rule = new AlphaDash(errorMsg: '只能由字母数字下划线和破折号构成');

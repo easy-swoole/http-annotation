@@ -5,7 +5,7 @@ namespace EasySwoole\HttpAnnotation\Tests\Validator;
 use EasySwoole\Http\Request;
 use EasySwoole\HttpAnnotation\Attributes\Param;
 use EasySwoole\HttpAnnotation\Attributes\Validator\InArray;
-use EasySwoole\HttpAnnotation\Enum\ValueFrom;
+use EasySwoole\HttpAnnotation\Enum\ParamFrom;
 use PHPUnit\Framework\TestCase;
 
 class InArrayTest extends TestCase
@@ -20,7 +20,7 @@ class InArrayTest extends TestCase
             "num" => 2
         ]);
 
-        $param = new Param("num", [ValueFrom::GET]);
+        $param = new Param("num", [ParamFrom::GET]);
         $param->parsedValue($request);
 
         $rule = new InArray(array: [1, 2, 3], strict: false);
@@ -31,7 +31,7 @@ class InArrayTest extends TestCase
             "str" => '2'
         ]);
 
-        $param = new Param("str", [ValueFrom::GET]);
+        $param = new Param("str", [ParamFrom::GET]);
         $param->parsedValue($request);
 
         $rule = new InArray(array: [1, 2, 3], strict: false);
@@ -48,7 +48,7 @@ class InArrayTest extends TestCase
             "num" => "3"
         ]);
 
-        $param = new Param("num", [ValueFrom::GET]);
+        $param = new Param("num", [ParamFrom::GET]);
         $param->parsedValue($request);
 
         $rule = new InArray(array: [1, 2, 3], strict: true);
@@ -66,7 +66,7 @@ class InArrayTest extends TestCase
             "str" => '测试'
         ]);
 
-        $param = new Param("str", [ValueFrom::GET]);
+        $param = new Param("str", [ParamFrom::GET]);
         $param->parsedValue($request);
 
         $rule = new InArray(array: [1, 2, 3], strict: false, errorMsg: '测试提示');

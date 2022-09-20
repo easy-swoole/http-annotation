@@ -5,7 +5,7 @@ namespace EasySwoole\HttpAnnotation\Tests\Validator;
 use EasySwoole\Http\Request;
 use EasySwoole\HttpAnnotation\Attributes\Param;
 use EasySwoole\HttpAnnotation\Attributes\Validator\Regex;
-use EasySwoole\HttpAnnotation\Enum\ValueFrom;
+use EasySwoole\HttpAnnotation\Enum\ParamFrom;
 use PHPUnit\Framework\TestCase;
 
 class RegexTest extends TestCase
@@ -20,7 +20,7 @@ class RegexTest extends TestCase
             "phone" => 15880809999
         ]);
 
-        $param = new Param("phone", [ValueFrom::GET]);
+        $param = new Param("phone", [ParamFrom::GET]);
         $param->parsedValue($request);
 
         $rule = new Regex(rule: '/^1\d{10}$/');
@@ -37,7 +37,7 @@ class RegexTest extends TestCase
             "phone" => 158808099
         ]);
 
-        $param = new Param("phone", [ValueFrom::GET]);
+        $param = new Param("phone", [ParamFrom::GET]);
         $param->parsedValue($request);
 
         $rule = new Regex(rule: '/^1\d{10}$/');
@@ -55,7 +55,7 @@ class RegexTest extends TestCase
             "phone" => 158808099
         ]);
 
-        $param = new Param("phone", [ValueFrom::GET]);
+        $param = new Param("phone", [ParamFrom::GET]);
         $param->parsedValue($request);
 
         $rule = new Regex(rule: '/^1\d{10}$/',errorMsg: '手机号码格式不对');

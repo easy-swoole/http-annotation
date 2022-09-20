@@ -5,7 +5,7 @@ namespace EasySwoole\HttpAnnotation\Tests\Validator;
 use EasySwoole\Http\Request;
 use EasySwoole\HttpAnnotation\Attributes\Param;
 use EasySwoole\HttpAnnotation\Attributes\Validator\Optional;
-use EasySwoole\HttpAnnotation\Enum\ValueFrom;
+use EasySwoole\HttpAnnotation\Enum\ParamFrom;
 use PHPUnit\Framework\TestCase;
 
 class OptionalTest extends TestCase
@@ -20,7 +20,7 @@ class OptionalTest extends TestCase
             "str" => "easyswoole",
         ]);
 
-        $param = new Param("str", [ValueFrom::GET]);
+        $param = new Param("str", [ParamFrom::GET]);
         $param->parsedValue($request);
 
         $rule = new Optional();
@@ -32,7 +32,7 @@ class OptionalTest extends TestCase
             "num" => 10,
         ]);
 
-        $param = new Param("str", [ValueFrom::GET]);
+        $param = new Param("str", [ParamFrom::GET]);
         $param->parsedValue($request);
 
         $rule = new Optional();

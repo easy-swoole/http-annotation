@@ -2,7 +2,7 @@
 
 namespace EasySwoole\HttpAnnotation\Enum;
 
-enum ValueFrom
+enum ParamFrom
 {
     case GET;
     case FORM_POST;

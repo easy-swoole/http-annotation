@@ -6,7 +6,7 @@ use EasySwoole\Http\Request;
 use EasySwoole\HttpAnnotation\Attributes\Param;
 use EasySwoole\HttpAnnotation\Attributes\Validator\AbstractValidator;
 use EasySwoole\HttpAnnotation\Attributes\Validator\Func;
-use EasySwoole\HttpAnnotation\Enum\ValueFrom;
+use EasySwoole\HttpAnnotation\Enum\ParamFrom;
 use PHPUnit\Framework\TestCase;
 
 class FuncTest extends TestCase
@@ -21,7 +21,7 @@ class FuncTest extends TestCase
             "fun" => "123456789",
         ]);
 
-        $param = new Param("fun", [ValueFrom::GET]);
+        $param = new Param("fun", [ParamFrom::GET]);
         $param->parsedValue($request);
 
         $rule = new Func(func: function (AbstractValidator $validator) {
@@ -41,7 +41,7 @@ class FuncTest extends TestCase
             "fun" => "111",
         ]);
 
-        $param = new Param("fun", [ValueFrom::GET]);
+        $param = new Param("fun", [ParamFrom::GET]);
         $param->parsedValue($request);
 
         $rule = new Func(func: function (AbstractValidator $validator) {
@@ -62,7 +62,7 @@ class FuncTest extends TestCase
             "fun" => "111",
         ]);
 
-        $param = new Param("fun", [ValueFrom::GET]);
+        $param = new Param("fun", [ParamFrom::GET]);
         $param->parsedValue($request);
 
         $rule = new Func(func: function (AbstractValidator $validator) {

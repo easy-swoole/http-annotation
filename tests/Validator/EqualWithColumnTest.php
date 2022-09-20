@@ -5,7 +5,7 @@ namespace EasySwoole\HttpAnnotation\Tests\Validator;
 use EasySwoole\Http\Request;
 use EasySwoole\HttpAnnotation\Attributes\Param;
 use EasySwoole\HttpAnnotation\Attributes\Validator\EqualWithColumn;
-use EasySwoole\HttpAnnotation\Enum\ValueFrom;
+use EasySwoole\HttpAnnotation\Enum\ParamFrom;
 use PHPUnit\Framework\TestCase;
 
 class EqualWithColumnTest extends TestCase
@@ -19,10 +19,10 @@ class EqualWithColumnTest extends TestCase
             'account' => "easyAccount"
         ]);
 
-        $param = new Param("str", [ValueFrom::GET]);
+        $param = new Param("str", [ParamFrom::GET]);
         $param->parsedValue($request);
 
-        $account = new Param("account", [ValueFrom::GET]);
+        $account = new Param("account", [ParamFrom::GET]);
         $account->parsedValue($request);
 
         $rule = new EqualWithColumn(compare: "account");
@@ -41,10 +41,10 @@ class EqualWithColumnTest extends TestCase
             'account' => 0
         ]);
 
-        $param = new Param("str", [ValueFrom::GET]);
+        $param = new Param("str", [ParamFrom::GET]);
         $param->parsedValue($request);
 
-        $account = new Param("account", [ValueFrom::GET]);
+        $account = new Param("account", [ParamFrom::GET]);
         $account->parsedValue($request);
 
         $rule = new EqualWithColumn(compare: "account");
@@ -62,10 +62,10 @@ class EqualWithColumnTest extends TestCase
             'account' => 0
         ]);
 
-        $param = new Param("str", [ValueFrom::GET]);
+        $param = new Param("str", [ParamFrom::GET]);
         $param->parsedValue($request);
 
-        $account = new Param("account", [ValueFrom::GET]);
+        $account = new Param("account", [ParamFrom::GET]);
         $account->parsedValue($request);
         // 严格模式 "0" != 0
         $rule = new EqualWithColumn(compare: "account", strict: true);
@@ -85,10 +85,10 @@ class EqualWithColumnTest extends TestCase
             'account' => 0
         ]);
 
-        $param = new Param("str", [ValueFrom::GET]);
+        $param = new Param("str", [ParamFrom::GET]);
         $param->parsedValue($request);
 
-        $account = new Param("account", [ValueFrom::GET]);
+        $account = new Param("account", [ParamFrom::GET]);
         $account->parsedValue($request);
 
         $rule = new EqualWithColumn(compare: "account", strict: true, errorMsg: '测试提示');
@@ -116,10 +116,10 @@ class EqualWithColumnTest extends TestCase
             'account' => "easySwoole"
         ]);
 
-        $param = new Param("str", [ValueFrom::GET]);
+        $param = new Param("str", [ParamFrom::GET]);
         $param->parsedValue($request);
 
-        $account = new Param("account", [ValueFrom::GET]);
+        $account = new Param("account", [ParamFrom::GET]);
         $account->parsedValue($request);
 
         $rule = new EqualWithColumn(compare: "account");
@@ -138,10 +138,10 @@ class EqualWithColumnTest extends TestCase
             'account' => 89
         ]);
 
-        $param = new Param("str", [ValueFrom::GET]);
+        $param = new Param("str", [ParamFrom::GET]);
         $param->parsedValue($request);
 
-        $account = new Param("account", [ValueFrom::GET]);
+        $account = new Param("account", [ParamFrom::GET]);
         $account->parsedValue($request);
 
         $rule = new EqualWithColumn(compare: "account");
@@ -168,10 +168,10 @@ class EqualWithColumnTest extends TestCase
             'account' => 89
         ]);
 
-        $param = new Param("str", [ValueFrom::GET]);
+        $param = new Param("str", [ParamFrom::GET]);
         $param->parsedValue($request);
 
-        $account = new Param("account", [ValueFrom::GET]);
+        $account = new Param("account", [ParamFrom::GET]);
         $account->parsedValue($request);
 
         $rule = new EqualWithColumn(compare: "account",strict: true);
@@ -191,10 +191,10 @@ class EqualWithColumnTest extends TestCase
             'account' => 98
         ]);
 
-        $param = new Param("str", [ValueFrom::GET]);
+        $param = new Param("str", [ParamFrom::GET]);
         $param->parsedValue($request);
 
-        $account = new Param("account", [ValueFrom::GET]);
+        $account = new Param("account", [ParamFrom::GET]);
         $account->parsedValue($request);
 
         $rule = new EqualWithColumn(compare: "account");
@@ -213,10 +213,10 @@ class EqualWithColumnTest extends TestCase
             'account' => 98
         ]);
 
-        $param = new Param("str", [ValueFrom::GET]);
+        $param = new Param("str", [ParamFrom::GET]);
         $param->parsedValue($request);
 
-        $account = new Param("account", [ValueFrom::GET]);
+        $account = new Param("account", [ParamFrom::GET]);
         $account->parsedValue($request);
 
         $rule = new EqualWithColumn(compare: "account");
@@ -241,10 +241,10 @@ class EqualWithColumnTest extends TestCase
             'account' => 98
         ]);
 
-        $param = new Param("str", [ValueFrom::GET]);
+        $param = new Param("str", [ParamFrom::GET]);
         $param->parsedValue($request);
 
-        $account = new Param("account", [ValueFrom::GET]);
+        $account = new Param("account", [ParamFrom::GET]);
         $account->parsedValue($request);
 
         $rule = new EqualWithColumn(compare: "account",errorMsg: '两个参数必须一样');

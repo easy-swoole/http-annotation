@@ -5,7 +5,7 @@ namespace EasySwoole\HttpAnnotation\Tests\Validator;
 use EasySwoole\Http\Request;
 use EasySwoole\HttpAnnotation\Attributes\Param;
 use EasySwoole\HttpAnnotation\Attributes\Validator\NotInArray;
-use EasySwoole\HttpAnnotation\Enum\ValueFrom;
+use EasySwoole\HttpAnnotation\Enum\ParamFrom;
 use PHPUnit\Framework\TestCase;
 
 class NotInArrayTest extends TestCase
@@ -21,7 +21,7 @@ class NotInArrayTest extends TestCase
             "fruit" => 'Apple'
         ]);
 
-        $param = new Param("num", [ValueFrom::GET]);
+        $param = new Param("num", [ParamFrom::GET]);
         $param->parsedValue($request);
 
         $rule = new NotInArray(array: ['apple', 'grape', 'orange'], strict: true);
@@ -33,7 +33,7 @@ class NotInArrayTest extends TestCase
             "fruit" => 'banana'
         ]);
 
-        $param = new Param("fruit", [ValueFrom::GET]);
+        $param = new Param("fruit", [ParamFrom::GET]);
         $param->parsedValue($request);
 
         $rule = new NotInArray(array: ['apple', 'grape', 'orange'], strict: false);
@@ -50,7 +50,7 @@ class NotInArrayTest extends TestCase
             "fruit" => 'apple'
         ]);
 
-        $param = new Param("fruit", [ValueFrom::GET]);
+        $param = new Param("fruit", [ParamFrom::GET]);
         $param->parsedValue($request);
 
         $rule = new NotInArray(array: ['apple', 'grape', 'orange'], strict: false);
@@ -68,7 +68,7 @@ class NotInArrayTest extends TestCase
             "fruit" => 'apple'
         ]);
 
-        $param = new Param("fruit", [ValueFrom::GET]);
+        $param = new Param("fruit", [ParamFrom::GET]);
         $param->parsedValue($request);
 
         $rule = new NotInArray(array: ['apple', 'grape', 'orange'], errorMsg: '水果不能是苹果、葡萄以及橘子');
