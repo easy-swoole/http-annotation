@@ -22,25 +22,23 @@ class Auth extends ApiBase
         apiName: "login",
         allowMethod:HttpMethod::POST,
         requestPath: "/auth/login.html",
-        requestParam: new RequestParam(
-            params: [
-                new Param(name:"account",from: ParamFrom::JSON,validate: [
-                    new Required(),
-                    new MaxLength(maxLen: 15),
-                ],description: new Description("用户登录的账户Id")),
-                new Param(name:"password",from: ParamFrom::JSON,validate: [
-                    new Required(),
-                    new MaxLength(maxLen: 15),
-                ],description: new Description("密码")),
-                new Param(name: "verify", from: ParamFrom::JSON,
-                    description: new Description("验证码"),
-                    type: ParamType::OBJECT,
-                    subObject: [
-                        new Param(name: "code", from: ParamFrom::JSON, description: "防伪编号"),
-                        new Param(name: "phone", from: ParamFrom::JSON, description: "手机号")
-                    ])
-            ]
-        ),
+        requestParam:[
+            new Param(name:"account",from: ParamFrom::JSON,validate: [
+                new Required(),
+                new MaxLength(maxLen: 15),
+            ],description: new Description("用户登录的账户Id")),
+            new Param(name:"password",from: ParamFrom::JSON,validate: [
+                new Required(),
+                new MaxLength(maxLen: 15),
+            ],description: new Description("密码")),
+            new Param(name: "verify", from: ParamFrom::JSON,
+                description: new Description("验证码"),
+                type: ParamType::OBJECT,
+                subObject: [
+                    new Param(name: "code", from: ParamFrom::JSON, description: "防伪编号"),
+                    new Param(name: "phone", from: ParamFrom::JSON, description: "手机号")
+                ])
+        ],
         description: new Description("这是一个接口说明啊啊啊啊")
     )]
     function login()

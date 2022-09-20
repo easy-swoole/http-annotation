@@ -105,10 +105,8 @@ class Scanner
                     $tag =  $apiTag[0];
                     try{
                         $tag = new Api(...$tag->getArguments());
-                        if(!$tag->requestParam){
-                            $tag->requestParam = new RequestParam();
-                        }
-                        $tempArr = $tag->requestParam->params;
+
+                        $tempArr = $tag->requestParam;
 
                         $tempOnRequestParams = $onRequestParams;
                         /**
@@ -124,7 +122,7 @@ class Scanner
                         foreach ($tempOnRequestParams as $item){
                             $tempArr[] = $item;
                         }
-                        $tag->requestParam->params = $tempArr;
+                        $tag->requestParam = $tempArr;
                     }catch (\Throwable $exception){
                         $msg = "{$exception->getMessage()} in controller: {$controller} method: {$controllerMethodRef->name}";
                         throw $exception;
@@ -232,7 +230,7 @@ class Scanner
                     $finalDoc .= "**Api Params:**";
                     $finalDoc = self::buildLine($finalDoc);
                     $finalDoc = self::buildLine($finalDoc);
-                    $params = $apiTag->requestParam->params;
+                    $params = $apiTag->requestParam;
                     if(!empty($params)){
                         $finalDoc .= self::buildRequestParamsTable($params);
                     }else{

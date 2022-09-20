@@ -19,28 +19,26 @@ class Index extends Base
         apiName: "home",
         allowMethod:HttpMethod::GET,
         requestPath: "/test/index.html",
-        requestParam: new RequestParam(
-            params: [
-                new Param(
-                    name: "page",
-                    from: ParamFrom::GET,
-                    validate: [
-                        new Optional()
-                    ],
-                    value: 1,
-                    description: new Description("翻页参数")
-                ),
-                new Param(
-                    name: "account",
-                    from: ParamFrom::GET,
-                    validate: [
-                        new Optional()
-                    ],
-                    value: 1,
-                    description: new Description("翻页参数")
-                )
-            ]
-        ),
+        requestParam: [
+            new Param(
+                name: "page",
+                from: ParamFrom::GET,
+                validate: [
+                    new Optional()
+                ],
+                value: 1,
+                description: new Description("翻页参数")
+            ),
+            new Param(
+                name: "account",
+                from: ParamFrom::GET,
+                validate: [
+                    new Optional()
+                ],
+                value: 1,
+                description: new Description("翻页参数")
+            )
+        ],
         description: new Description("这是一个接口说明啊啊啊啊")
     )]
     function index(string $account){
@@ -51,14 +49,12 @@ class Index extends Base
         apiName: "hello",
         allowMethod:[HttpMethod::POST,HttpMethod::GET],
         requestPath: "/test/hello.html",
-        requestParam: new RequestParam(
-            params: [
-                new Param(name:"account",from:ParamFrom::GET,validate: [
-                    new Required(),
-                    new MaxLength(maxLen: 15),
-                ],description: new Description("用户登录的账户Id,这个参数一定要有啊"))
-            ]
-        ),
+        requestParam: [
+            new Param(name:"account",from:ParamFrom::GET,validate: [
+                new Required(),
+                new MaxLength(maxLen: 15),
+            ],description: new Description("用户登录的账户Id,这个参数一定要有啊"))
+        ],
         description: new Description("这是一个接口说明啊啊啊啊")
     )]
     function hello(string $account){

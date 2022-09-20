@@ -12,7 +12,7 @@ class Api
         public HttpMethod|array        $allowMethod,
         public ?string       $requestPath = null,
         public bool          $registerRouter = false,
-        public ?RequestParam $requestParam = null,
+        public array $requestParam = [],
         public array         $requestExample = [],
         public array         $responseExample = [],
         public ?Description  $description = null,

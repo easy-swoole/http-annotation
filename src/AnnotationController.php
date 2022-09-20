@@ -69,7 +69,7 @@ abstract class AnnotationController extends Controller
                         throw new Annotation($msg);
                     }
 
-                    $actionParams = $apiTag->requestParam->params;
+                    $actionParams = $apiTag->requestParam;
                     if($apiTag->allowMethod instanceof HttpMethod){
                         $allowRequestMethod = [$apiTag->allowMethod->toString()];
                     }else{
