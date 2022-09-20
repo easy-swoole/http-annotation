@@ -11,6 +11,8 @@ use EasySwoole\HttpAnnotation\Attributes\Example;
 use EasySwoole\HttpAnnotation\Attributes\Param;
 use EasySwoole\HttpAnnotation\Attributes\RequestParam;
 use EasySwoole\HttpAnnotation\Attributes\Validator\AbstractValidator;
+use EasySwoole\HttpAnnotation\Enum\ParamType;
+use EasySwoole\HttpAnnotation\Enum\ValueFrom;
 use EasySwoole\HttpAnnotation\Exception\Annotation;
 use EasySwoole\Utility\File;
 use FastRoute\RouteCollector;
@@ -579,7 +581,7 @@ class Scanner
             $root->appendChild($line);
 
             //检查是否有下级
-            if($item->type == Param::TYPE_OBJECT){
+            if($item->type == ParamType::OBJECT){
                 $subCount++;
                 foreach ($item->subObject as $sub){
                     $builder($sub,$subCount,$item->from);
@@ -632,7 +634,7 @@ class Scanner
 
             $root->appendChild($line);
 
-            if($item->type == Param::TYPE_OBJECT){
+            if($item->type == ParamType::OBJECT){
                 if(is_array($item->value)){
                     $subCount++;
                     foreach ($item->value as $sub){
@@ -656,8 +658,8 @@ class Scanner
     public static function valueHandler(Param $param):?string
     {
         switch ($param->type){
-            case Param::TYPE_OBJECT:
-            case Param::TYPE_LIST:{
+            case ParamType::OBJECT:
+            case ParamType::LIST:{
                 if($param->value === null){
                     return null;
                 }
