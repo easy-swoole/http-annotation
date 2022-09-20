@@ -11,4 +11,10 @@ enum HttpMethod
     case HEAD;
     case PATCH;
     case OPTIONS;
+
+    function toString():string
+    {
+        return $this->name;
+    }
+
 }

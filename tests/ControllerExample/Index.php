@@ -10,13 +10,14 @@ use EasySwoole\HttpAnnotation\Attributes\Param;
 use EasySwoole\HttpAnnotation\Attributes\Validator\MaxLength;
 use EasySwoole\HttpAnnotation\Attributes\Validator\Optional;
 use EasySwoole\HttpAnnotation\Attributes\Validator\Required;
+use EasySwoole\HttpAnnotation\Enum\HttpMethod;
 use EasySwoole\HttpAnnotation\Enum\ValueFrom;
 
 class Index extends Base
 {
     #[Api(
         apiName: "home",
-        allowMethod:Api::GET,
+        allowMethod:HttpMethod::GET,
         requestPath: "/test/index.html",
         requestParam: new RequestParam(
             params: [
@@ -48,7 +49,7 @@ class Index extends Base
 
     #[Api(
         apiName: "hello",
-        allowMethod:Api::POST,
+        allowMethod:HttpMethod::POST,
         requestPath: "/test/hello.html",
         requestParam: new RequestParam(
             params: [

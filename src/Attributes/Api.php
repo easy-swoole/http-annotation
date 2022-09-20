@@ -2,20 +2,14 @@
 
 namespace EasySwoole\HttpAnnotation\Attributes;
 
+use EasySwoole\HttpAnnotation\Enum\HttpMethod;
+
 #[\Attribute]
 class Api
 {
-    const GET = "GET";
-    const POST = "POST";
-    const PUT = 'PUT';
-    const PATCH = "PATCH";
-    const DELETE = "DELETE";
-    const HEAD = "HEAD";
-    const OPTIONS = "OPTIONS";
-
     function __construct(
         public string        $apiName,
-        public string|array        $allowMethod,
+        public HttpMethod|array        $allowMethod,
         public ?string       $requestPath = null,
         public bool          $registerRouter = false,
         public ?RequestParam $requestParam = null,

@@ -13,6 +13,7 @@ use EasySwoole\HttpAnnotation\Attributes\Property\Context;
 use EasySwoole\HttpAnnotation\Attributes\Property\Di;
 use EasySwoole\HttpAnnotation\Attributes\Property\Inject;
 use EasySwoole\HttpAnnotation\Attributes\Validator\AbstractValidator;
+use EasySwoole\HttpAnnotation\Enum\HttpMethod;
 use EasySwoole\HttpAnnotation\Exception\Annotation;
 use EasySwoole\HttpAnnotation\Exception\ParamError;
 use EasySwoole\HttpAnnotation\Exception\RequestMethodNotAllow;
@@ -69,8 +70,8 @@ abstract class AnnotationController extends Controller
                     }
 
                     $actionParams = $apiTag->requestParam->params;
-                    if(is_string($apiTag->allowMethod)){
-                        $allowRequestMethod = [$apiTag->allowMethod];
+                    if($apiTag->allowMethod instanceof HttpMethod){
+                        $allowRequestMethod = [$apiTag->allowMethod->toString()];
                     }else{
                         $allowRequestMethod = $apiTag->allowMethod;
                     }
