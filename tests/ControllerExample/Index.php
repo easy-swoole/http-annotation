@@ -21,15 +21,6 @@ class Index extends Base
         requestPath: "/test/index.html",
         requestParam: [
             new Param(
-                name: "page",
-                from: ParamFrom::GET,
-                validate: [
-                    new Optional()
-                ],
-                value: 1,
-                description: new Description("翻页参数")
-            ),
-            new Param(
                 name: "account",
                 from: ParamFrom::GET,
                 validate: [

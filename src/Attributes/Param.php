@@ -56,16 +56,16 @@ class Param
                     if(isset($data[$this->name])){
                         $hit = true;
                         $this->value = $data[$this->name];
-                        break;
                     }
+                    break;
                 }
                 case ParamFrom::FORM_POST:{
                     $data = $request->getParsedBody();
                     if(isset($data[$this->name])){
                         $hit = true;
                         $this->value = $data[$this->name];
-                        break;
                     }
+                    break;
                 }
                 case ParamFrom::JSON:{
                     $data = json_decode($request->getBody()->__toString(),true);
@@ -75,8 +75,8 @@ class Param
                     if(isset($data[$this->name])){
                         $hit = true;
                         $this->value = $data[$this->name];
-                        break;
                     }
+                    break;
                 }
                 case ParamFrom::XML:
                 case ParamFrom::RAW_POST:{
@@ -89,32 +89,32 @@ class Param
                     if(!empty($data)){
                         $hit = true;
                         $this->value = $data;
-                        break;
                     }
+                    break;
                 }
                 case ParamFrom::DI:{
                     $data = IOC::getInstance()->get($this->name);
                     if(!empty($data)){
                         $hit = true;
                         $this->value = $data;
-                        break;
                     }
+                    break;
                 }
                 case ParamFrom::CONTEXT:{
                     $data = ContextManager::getInstance()->get($this->name);
                     if(!empty($data)){
                         $hit = true;
                         $this->value = $data;
-                        break;
                     }
+                    break;
                 }
                 case ParamFrom::COOKIE:{
                     $data = $request->getCookieParams($this->name);
                     if(!empty($data)){
                         $hit = true;
                         $this->value = $data;
-                        break;
                     }
+                    break;
                 }
                 case ParamFrom::HEADER:{
                     $data = $request->getHeader($this->name);
@@ -131,10 +131,11 @@ class Param
                     if(isset($data[$this->name])){
                         $hit = true;
                         $this->value = $data;
-                        break;
                     }
+                    break;
                 }
             }
+
             $this->isParsed = true;
             if($hit && ($this->value === null)){
                 $this->isNullData = true;
