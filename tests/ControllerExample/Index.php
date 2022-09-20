@@ -27,6 +27,15 @@ class Index extends Base
                     ],
                     value: 1,
                     description: new Description("翻页参数")
+                ),
+                new Param(
+                    name: "account",
+                    from: [Param::GET],
+                    validate: [
+                        new Optional()
+                    ],
+                    value: 1,
+                    description: new Description("翻页参数")
                 )
             ]
         ),

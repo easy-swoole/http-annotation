@@ -38,7 +38,7 @@ class Param
      */
     public function __construct(
         public string                   $name,
-        public string                   $from,
+        public string|array                   $from,
         public ?array                   $validate = [],
         public                          $value = null,
         public bool                     $deprecated = false,
@@ -64,7 +64,12 @@ class Param
         }
         if($request){
             $hit = false;
-            foreach ($this->from as $from){
+            if(is_string($this->from)){
+                $fromList = [$this->from];
+            }else{
+                $fromList = $this->from;
+            }
+            foreach ($fromList as $from){
                 if(!$hit){
                     switch ($from){
                         case Param::GET:{

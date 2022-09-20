@@ -68,8 +68,12 @@ abstract class AnnotationController extends Controller
                         throw new Annotation($msg);
                     }
 
-                    $actionParams = $apiTag->params;
-                    $allowRequestMethod = $apiTag->allowMethod;
+                    $actionParams = $apiTag->requestParam->params;
+                    if(is_string($apiTag->allowMethod)){
+                        $allowRequestMethod = [$apiTag->allowMethod];
+                    }else{
+                        $allowRequestMethod = $apiTag->allowMethod;
+                    }
                     $currentRequestMethod = $request->getMethod();
                     if(!in_array($currentRequestMethod,$allowRequestMethod)){
                         throw new RequestMethodNotAllow("http {$currentRequestMethod} method is not allow for this request");
