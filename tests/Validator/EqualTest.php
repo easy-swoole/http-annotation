@@ -5,6 +5,7 @@ namespace EasySwoole\HttpAnnotation\Tests\Validator;
 use EasySwoole\Http\Request;
 use EasySwoole\HttpAnnotation\Attributes\Param;
 use EasySwoole\HttpAnnotation\Attributes\Validator\Equal;
+use EasySwoole\HttpAnnotation\Enum\ValueFrom;
 use PHPUnit\Framework\TestCase;
 
 class EqualTest extends TestCase
@@ -20,7 +21,7 @@ class EqualTest extends TestCase
             "str" => "easyswoole",
         ]);
 
-        $param = new Param("str");
+        $param = new Param("str", [ValueFrom::GET]);
         $param->parsedValue($request);
 
         $rule = new Equal(compare: "easyswoole");
@@ -32,7 +33,7 @@ class EqualTest extends TestCase
             "str" => "89",
         ]);
 
-        $param = new Param("str");
+        $param = new Param("str", [ValueFrom::GET]);
         $param->parsedValue($request);
 
         $rule = new Equal(compare: 89);
@@ -52,7 +53,7 @@ class EqualTest extends TestCase
             "str" => "easyswoole",
         ]);
 
-        $param = new Param("str");
+        $param = new Param("str", [ValueFrom::GET]);
         $param->parsedValue($request);
 
         $rule = new Equal(compare: "easySwoole");
@@ -66,7 +67,7 @@ class EqualTest extends TestCase
             "str" => "89",
         ]);
 
-        $param = new Param("str");
+        $param = new Param("str", [ValueFrom::GET]);
         $param->parsedValue($request);
 
         $rule = new Equal(compare: 89,strict: true);
@@ -85,7 +86,7 @@ class EqualTest extends TestCase
             "str" => "easyswoole",
         ]);
 
-        $param = new Param("str");
+        $param = new Param("str", [ValueFrom::GET]);
         $param->parsedValue($request);
 
         $rule = new Equal(compare: "easySwoole",errorMsg: '参数必须为easyswoole');

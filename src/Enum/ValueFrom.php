@@ -12,4 +12,7 @@ enum ValueFrom
     case FILE;
     case DI;
     case CONTEXT;
+    case COOKIE;
+    case HEADER;
+    case ROUTER_PARAMS;
 }

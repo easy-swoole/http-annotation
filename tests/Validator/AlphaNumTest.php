@@ -5,6 +5,7 @@ namespace EasySwoole\HttpAnnotation\Tests\Validator;
 use EasySwoole\Http\Request;
 use EasySwoole\HttpAnnotation\Attributes\Param;
 use EasySwoole\HttpAnnotation\Attributes\Validator\AlphaNum;
+use EasySwoole\HttpAnnotation\Enum\ValueFrom;
 use PHPUnit\Framework\TestCase;
 
 class AlphaNumTest extends TestCase
@@ -20,7 +21,7 @@ class AlphaNumTest extends TestCase
             "no" => "Answer123"
         ]);
 
-        $param = new Param("no");
+        $param = new Param("no", [ValueFrom::GET]);
         $param->parsedValue($request);
 
         $rule = new AlphaNum();
@@ -37,7 +38,7 @@ class AlphaNumTest extends TestCase
             "no" => "0bA111..@"
         ]);
 
-        $param = new Param("no");
+        $param = new Param("no", [ValueFrom::GET]);
         $param->parsedValue($request);
 
         $rule = new AlphaNum();
@@ -55,7 +56,7 @@ class AlphaNumTest extends TestCase
             "no" => "0bA111..@"
         ]);
 
-        $param = new Param("no");
+        $param = new Param("no", [ValueFrom::GET]);
         $param->parsedValue($request);
 
         $rule = new AlphaNum(errorMsg: '只能由字母和数字构成');

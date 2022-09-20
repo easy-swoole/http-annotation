@@ -5,6 +5,7 @@ namespace EasySwoole\HttpAnnotation\Tests\Validator;
 use EasySwoole\Http\Request;
 use EasySwoole\HttpAnnotation\Attributes\Param;
 use EasySwoole\HttpAnnotation\Attributes\Validator\Money;
+use EasySwoole\HttpAnnotation\Enum\ValueFrom;
 use PHPUnit\Framework\TestCase;
 
 class MoneyTest extends TestCase
@@ -20,7 +21,7 @@ class MoneyTest extends TestCase
             "num" => 10
         ]);
 
-        $param = new Param("num");
+        $param = new Param("num", [ValueFrom::GET]);
         $param->parsedValue($request);
 
         $rule = new Money();
@@ -31,7 +32,7 @@ class MoneyTest extends TestCase
             "num" => 10.1
         ]);
 
-        $param = new Param("num");
+        $param = new Param("num", [ValueFrom::GET]);
         $param->parsedValue($request);
 
         $rule = new Money(precision: 1);
@@ -42,7 +43,7 @@ class MoneyTest extends TestCase
             "num" => 10.20
         ]);
 
-        $param = new Param("num");
+        $param = new Param("num", [ValueFrom::GET]);
         $param->parsedValue($request);
 
         $rule = new Money(precision: 2);
@@ -59,7 +60,7 @@ class MoneyTest extends TestCase
             "num" => 10.123
         ]);
 
-        $param = new Param("num");
+        $param = new Param("num", [ValueFrom::GET]);
         $param->parsedValue($request);
 
         $rule = new Money(precision: 2);
@@ -77,7 +78,7 @@ class MoneyTest extends TestCase
             "num" => 10.123
         ]);
 
-        $param = new Param("num");
+        $param = new Param("num", [ValueFrom::GET]);
         $param->parsedValue($request);
 
         $rule = new Money(precision: 2,errorMsg: '金额必须两位小数');

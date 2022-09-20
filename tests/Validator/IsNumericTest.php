@@ -5,6 +5,7 @@ namespace EasySwoole\HttpAnnotation\Tests\Validator;
 use EasySwoole\Http\Request;
 use EasySwoole\HttpAnnotation\Attributes\Param;
 use EasySwoole\HttpAnnotation\Attributes\Validator\IsNumeric;
+use EasySwoole\HttpAnnotation\Enum\ValueFrom;
 use PHPUnit\Framework\TestCase;
 
 class IsNumericTest extends TestCase
@@ -20,7 +21,7 @@ class IsNumericTest extends TestCase
             "age" => 18
         ]);
 
-        $param = new Param("age");
+        $param = new Param("age", [ValueFrom::GET]);
         $param->parsedValue($request);
 
         $rule = new IsNumeric();
@@ -31,7 +32,7 @@ class IsNumericTest extends TestCase
             "price" => 18.1
         ]);
 
-        $param = new Param("price");
+        $param = new Param("price", [ValueFrom::GET]);
         $param->parsedValue($request);
 
         $rule = new IsNumeric();
@@ -42,7 +43,7 @@ class IsNumericTest extends TestCase
             "age" => '18'
         ]);
 
-        $param = new Param("age");
+        $param = new Param("age", [ValueFrom::GET]);
         $param->parsedValue($request);
 
         $rule = new IsNumeric();
@@ -53,7 +54,7 @@ class IsNumericTest extends TestCase
             "price" => '18.1'
         ]);
 
-        $param = new Param("price");
+        $param = new Param("price", [ValueFrom::GET]);
         $param->parsedValue($request);
 
         $rule = new IsNumeric();
@@ -71,7 +72,7 @@ class IsNumericTest extends TestCase
             "price" => 'bajiu'
         ]);
 
-        $param = new Param("price");
+        $param = new Param("price", [ValueFrom::GET]);
         $param->parsedValue($request);
 
         $rule = new IsNumeric();
@@ -89,7 +90,7 @@ class IsNumericTest extends TestCase
             "price" => 'bajiu'
         ]);
 
-        $param = new Param("price");
+        $param = new Param("price", [ValueFrom::GET]);
         $param->parsedValue($request);
 
         $rule = new IsNumeric(errorMsg: '价格必须是数字');

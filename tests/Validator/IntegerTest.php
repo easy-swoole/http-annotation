@@ -5,6 +5,7 @@ namespace EasySwoole\HttpAnnotation\Tests\Validator;
 use EasySwoole\Http\Request;
 use EasySwoole\HttpAnnotation\Attributes\Param;
 use EasySwoole\HttpAnnotation\Attributes\Validator\Integer;
+use EasySwoole\HttpAnnotation\Enum\ValueFrom;
 use PHPUnit\Framework\TestCase;
 
 class IntegerTest extends TestCase
@@ -21,7 +22,7 @@ class IntegerTest extends TestCase
             "num" => 2
         ]);
 
-        $param = new Param("num");
+        $param = new Param("num", [ValueFrom::GET]);
         $param->parsedValue($request);
 
         $rule = new Integer();
@@ -29,10 +30,10 @@ class IntegerTest extends TestCase
         // 文本型int
         $request = new Request();
         $request->withQueryParams([
-            "num" => '2'
+            "num" => "2"
         ]);
 
-        $param = new Param("num");
+        $param = new Param("num", [ValueFrom::GET]);
         $param->parsedValue($request);
 
         $rule = new Integer();
@@ -50,7 +51,7 @@ class IntegerTest extends TestCase
             "num" => 'bajiu'
         ]);
 
-        $param = new Param("num");
+        $param = new Param("num", [ValueFrom::GET]);
         $param->parsedValue($request);
 
         $rule = new Integer();
@@ -62,7 +63,7 @@ class IntegerTest extends TestCase
             "num" => 0.001
         ]);
 
-        $param = new Param("num");
+        $param = new Param("num", [ValueFrom::GET]);
         $param->parsedValue($request);
 
         $rule = new Integer();
@@ -80,7 +81,7 @@ class IntegerTest extends TestCase
             "num" => 0.001
         ]);
 
-        $param = new Param("num");
+        $param = new Param("num", [ValueFrom::GET]);
         $param->parsedValue($request);
 
         $rule = new Integer(errorMsg: '请输入正确的数量');

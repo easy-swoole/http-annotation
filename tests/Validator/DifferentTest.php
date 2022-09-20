@@ -5,6 +5,7 @@ namespace EasySwoole\HttpAnnotation\Tests\Validator;
 use EasySwoole\Http\Request;
 use EasySwoole\HttpAnnotation\Attributes\Param;
 use EasySwoole\HttpAnnotation\Attributes\Validator\Different;
+use EasySwoole\HttpAnnotation\Enum\ValueFrom;
 use PHPUnit\Framework\TestCase;
 
 class DifferentTest extends TestCase
@@ -20,7 +21,7 @@ class DifferentTest extends TestCase
             "str" => "easyswoole",
         ]);
 
-        $param = new Param("str");
+        $param = new Param("str", [ValueFrom::GET]);
         $param->parsedValue($request);
 
         $rule = new Different(compare: "easySwoole");
@@ -33,7 +34,7 @@ class DifferentTest extends TestCase
             "age" => "12",
         ]);
 
-        $param = new Param("age");
+        $param = new Param("age", [ValueFrom::GET]);
         $param->parsedValue($request);
 
         $rule = new Different(compare: 12,strict: true);
@@ -52,7 +53,7 @@ class DifferentTest extends TestCase
             "str" => "easyswoole",
         ]);
 
-        $param = new Param("str");
+        $param = new Param("str", [ValueFrom::GET]);
         $param->parsedValue($request);
 
         $rule = new Different(compare: "easyswoole",strict: true);
@@ -66,7 +67,7 @@ class DifferentTest extends TestCase
             "str" => 12,
         ]);
 
-        $param = new Param("str");
+        $param = new Param("str", [ValueFrom::GET]);
         $param->parsedValue($request);
 
         $rule = new Different(compare: "12");
@@ -85,7 +86,7 @@ class DifferentTest extends TestCase
             "str" => 0,
         ]);
 
-        $param = new Param("str");
+        $param = new Param("str", [ValueFrom::GET]);
         $param->parsedValue($request);
 
         $rule = new Different(compare: "0",errorMsg: '参数必须不等于0');

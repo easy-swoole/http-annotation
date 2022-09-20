@@ -2,13 +2,26 @@
 
 namespace EasySwoole\HttpAnnotation\Tests\Validator;
 
+use EasySwoole\Component\Context\ContextManager;
+use EasySwoole\Component\Di;
+use EasySwoole\Http\AbstractInterface\AbstractRouter;
+use EasySwoole\Http\Dispatcher;
 use EasySwoole\Http\Request;
 use EasySwoole\HttpAnnotation\Attributes\Param;
 use EasySwoole\HttpAnnotation\Attributes\Validator\ActiveUrl;
+use EasySwoole\HttpAnnotation\Enum\ValueFrom;
+use http\Encoding\Stream;
 use PHPUnit\Framework\TestCase;
+use Psr\Http\Message\StreamInterface;
 
 class ActiveUrlTest extends TestCase
 {
+    protected function setUp(): void
+    {
+        parent::setUp();
+        ContextManager::getInstance()->set('url', 'https://www.baidu.com');
+        Di::getInstance()->set('url', 'https://www.baidu.com');
+    }
     /*
      * 合法
      */
@@ -20,7 +33,7 @@ class ActiveUrlTest extends TestCase
             "url" => "https://www.baidu.com"
         ]);
 
-        $param = new Param("url");
+        $param = new Param("url", [ValueFrom::GET]);
         $param->parsedValue($request);
 
         $rule = new ActiveUrl();
@@ -38,7 +51,7 @@ class ActiveUrlTest extends TestCase
             "url" => "this is a str"
         ]);
 
-        $param = new Param("url");
+        $param = new Param("url", [ValueFrom::GET]);
         $param->parsedValue($request);
 
         $rule = new ActiveUrl();
@@ -51,7 +64,7 @@ class ActiveUrlTest extends TestCase
             "url" => "https://www.noneDnsAnswerDomain.com"
         ]);
 
-        $param = new Param("url");
+        $param = new Param("url", [ValueFrom::GET]);
         $param->parsedValue($request);
 
         $rule = new ActiveUrl();
@@ -70,7 +83,7 @@ class ActiveUrlTest extends TestCase
             "url" => "https://www.noneDnsAnswerDomain.com"
         ]);
 
-        $param = new Param("url");
+        $param = new Param("url", [ValueFrom::GET]);
         $param->parsedValue($request);
 
         $rule = new ActiveUrl(errorMsg: '您输入的网址无效');

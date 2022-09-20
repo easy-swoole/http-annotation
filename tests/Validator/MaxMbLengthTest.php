@@ -5,6 +5,7 @@ namespace EasySwoole\HttpAnnotation\Tests\Validator;
 use EasySwoole\Http\Request;
 use EasySwoole\HttpAnnotation\Attributes\Param;
 use EasySwoole\HttpAnnotation\Attributes\Validator\MaxMbLength;
+use EasySwoole\HttpAnnotation\Enum\ValueFrom;
 use PHPUnit\Framework\TestCase;
 
 class MaxMbLengthTest extends TestCase
@@ -20,7 +21,7 @@ class MaxMbLengthTest extends TestCase
             "str" => 12345
         ]);
 
-        $param = new Param("str");
+        $param = new Param("str", [ValueFrom::GET]);
         $param->parsedValue($request);
 
         $rule = new MaxMbLength(maxLen: 5);
@@ -32,7 +33,7 @@ class MaxMbLengthTest extends TestCase
             "str" => '城南花已开'
         ]);
 
-        $param = new Param("str");
+        $param = new Param("str", [ValueFrom::GET]);
         $param->parsedValue($request);
 
         $rule = new MaxMbLength(maxLen: 5);
@@ -44,7 +45,7 @@ class MaxMbLengthTest extends TestCase
             "str" => ['apple', 'grape', 'orange']
         ]);
 
-        $param = new Param("str");
+        $param = new Param("str", [ValueFrom::GET]);
         $param->parsedValue($request);
 
         $rule = new MaxMbLength(maxLen: 3);
@@ -62,7 +63,7 @@ class MaxMbLengthTest extends TestCase
             "str" => 123456
         ]);
 
-        $param = new Param("str");
+        $param = new Param("str", [ValueFrom::GET]);
         $param->parsedValue($request);
 
         $rule = new MaxMbLength(maxLen: 5);
@@ -75,7 +76,7 @@ class MaxMbLengthTest extends TestCase
             "str" => '城南花已开'
         ]);
 
-        $param = new Param("str");
+        $param = new Param("str", [ValueFrom::GET]);
         $param->parsedValue($request);
 
         $rule = new MaxMbLength(maxLen: 4);
@@ -87,7 +88,7 @@ class MaxMbLengthTest extends TestCase
             "str" => ['apple', 'grape', 'orange']
         ]);
 
-        $param = new Param("str");
+        $param = new Param("str", [ValueFrom::GET]);
         $param->parsedValue($request);
 
         $rule = new MaxMbLength(maxLen: 2);
@@ -100,7 +101,7 @@ class MaxMbLengthTest extends TestCase
             "str" => (object)['apple', 'grape', 'orange', 'orange', 'orange']
         ]);
 
-        $param = new Param("str");
+        $param = new Param("str", [ValueFrom::GET]);
         $param->parsedValue($request);
 
         $rule = new MaxMbLength(maxLen: 5);
@@ -118,7 +119,7 @@ class MaxMbLengthTest extends TestCase
             "name" => '城南花已开'
         ]);
 
-        $param = new Param("name");
+        $param = new Param("name", [ValueFrom::GET]);
         $param->parsedValue($request);
 
         $rule = new MaxMbLength(maxLen: 4,errorMsg: '名字长度最多4位');

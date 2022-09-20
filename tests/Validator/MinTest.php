@@ -5,6 +5,7 @@ namespace EasySwoole\HttpAnnotation\Tests\Validator;
 use EasySwoole\Http\Request;
 use EasySwoole\HttpAnnotation\Attributes\Param;
 use EasySwoole\HttpAnnotation\Attributes\Validator\Min;
+use EasySwoole\HttpAnnotation\Enum\ValueFrom;
 use PHPUnit\Framework\TestCase;
 
 class MinTest extends TestCase
@@ -20,7 +21,7 @@ class MinTest extends TestCase
             "num" => 101
         ]);
 
-        $param = new Param("num");
+        $param = new Param("num", [ValueFrom::GET]);
         $param->parsedValue($request);
 
         $rule = new Min(min: 100);
@@ -31,7 +32,7 @@ class MinTest extends TestCase
             "num" => 100
         ]);
 
-        $param = new Param("num");
+        $param = new Param("num", [ValueFrom::GET]);
         $param->parsedValue($request);
 
         $rule = new Min(min: 100);
@@ -42,7 +43,7 @@ class MinTest extends TestCase
             "num" => 100.1
         ]);
 
-        $param = new Param("num");
+        $param = new Param("num", [ValueFrom::GET]);
         $param->parsedValue($request);
 
         $rule = new Min(min: 100);
@@ -53,7 +54,7 @@ class MinTest extends TestCase
             "num" => 100.1
         ]);
 
-        $param = new Param("num");
+        $param = new Param("num", [ValueFrom::GET]);
         $param->parsedValue($request);
 
         $rule = new Min(min: 100.1);
@@ -64,7 +65,7 @@ class MinTest extends TestCase
             "num" => '101'
         ]);
 
-        $param = new Param("num");
+        $param = new Param("num", [ValueFrom::GET]);
         $param->parsedValue($request);
 
         $rule = new Min(min: 100);
@@ -75,7 +76,7 @@ class MinTest extends TestCase
             "num" => '100'
         ]);
 
-        $param = new Param("num");
+        $param = new Param("num", [ValueFrom::GET]);
         $param->parsedValue($request);
 
         $rule = new Min(min: 100);
@@ -86,7 +87,7 @@ class MinTest extends TestCase
             "num" => '100.1'
         ]);
 
-        $param = new Param("num");
+        $param = new Param("num", [ValueFrom::GET]);
         $param->parsedValue($request);
 
         $rule = new Min(min: 100);
@@ -97,7 +98,7 @@ class MinTest extends TestCase
             "num" => '100.0'
         ]);
 
-        $param = new Param("num");
+        $param = new Param("num", [ValueFrom::GET]);
         $param->parsedValue($request);
 
         $rule = new Min(min: 100);
@@ -115,7 +116,7 @@ class MinTest extends TestCase
             "num" => 99
         ]);
 
-        $param = new Param("num");
+        $param = new Param("num", [ValueFrom::GET]);
         $param->parsedValue($request);
 
         $rule = new Min(min: 100);
@@ -127,7 +128,7 @@ class MinTest extends TestCase
             "num" => 99.9
         ]);
 
-        $param = new Param("num");
+        $param = new Param("num", [ValueFrom::GET]);
         $param->parsedValue($request);
 
         $rule = new Min(min: 100);
@@ -139,7 +140,7 @@ class MinTest extends TestCase
             "num" => '99'
         ]);
 
-        $param = new Param("num");
+        $param = new Param("num", [ValueFrom::GET]);
         $param->parsedValue($request);
 
         $rule = new Min(min: 100);
@@ -151,7 +152,7 @@ class MinTest extends TestCase
             "num" => '99.9'
         ]);
 
-        $param = new Param("num");
+        $param = new Param("num", [ValueFrom::GET]);
         $param->parsedValue($request);
 
         $rule = new Min(min: 100);
@@ -163,7 +164,7 @@ class MinTest extends TestCase
             "num" => '99.0.1'
         ]);
 
-        $param = new Param("num");
+        $param = new Param("num", [ValueFrom::GET]);
         $param->parsedValue($request);
 
         $rule = new Min(min: 100);
@@ -181,7 +182,7 @@ class MinTest extends TestCase
             "price" => 99
         ]);
 
-        $param = new Param("price");
+        $param = new Param("price", [ValueFrom::GET]);
         $param->parsedValue($request);
 
         $rule = new Min(min: 100,errorMsg: '价钱最低100');

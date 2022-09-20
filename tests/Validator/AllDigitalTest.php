@@ -5,6 +5,7 @@ namespace EasySwoole\HttpAnnotation\Tests\Validator;
 use EasySwoole\Http\Request;
 use EasySwoole\HttpAnnotation\Attributes\Param;
 use EasySwoole\HttpAnnotation\Attributes\Validator\AllDigital;
+use EasySwoole\HttpAnnotation\Enum\ValueFrom;
 use PHPUnit\Framework\TestCase;
 
 class AllDigitalTest extends TestCase
@@ -19,7 +20,7 @@ class AllDigitalTest extends TestCase
             "no" => 5001
         ]);
 
-        $param = new Param("no");
+        $param = new Param("no", [ValueFrom::GET]);
         $param->parsedValue($request);
 
         $rule = new AllDigital();
@@ -31,7 +32,7 @@ class AllDigitalTest extends TestCase
             "no" => 005001
         ]);
 
-        $param = new Param("no");
+        $param = new Param("no", [ValueFrom::GET]);
         $param->parsedValue($request);
 
         $rule = new AllDigital();
@@ -49,7 +50,7 @@ class AllDigitalTest extends TestCase
             "no" => "0bA111"
         ]);
 
-        $param = new Param("no");
+        $param = new Param("no", [ValueFrom::GET]);
         $param->parsedValue($request);
 
         $rule = new AllDigital();
@@ -62,7 +63,7 @@ class AllDigitalTest extends TestCase
             "no" => "111.11"
         ]);
 
-        $param = new Param("no");
+        $param = new Param("no", [ValueFrom::GET]);
         $param->parsedValue($request);
 
         $rule = new AllDigital();
@@ -80,7 +81,7 @@ class AllDigitalTest extends TestCase
             "no" => "111.11"
         ]);
 
-        $param = new Param("no");
+        $param = new Param("no", [ValueFrom::GET]);
         $param->parsedValue($request);
 
         $rule = new AllDigital(errorMsg: '学号只能由数字构成');
