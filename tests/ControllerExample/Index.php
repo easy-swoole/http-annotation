@@ -10,6 +10,7 @@ use EasySwoole\HttpAnnotation\Attributes\Param;
 use EasySwoole\HttpAnnotation\Attributes\Validator\MaxLength;
 use EasySwoole\HttpAnnotation\Attributes\Validator\Optional;
 use EasySwoole\HttpAnnotation\Attributes\Validator\Required;
+use EasySwoole\HttpAnnotation\Enum\ValueFrom;
 
 class Index extends Base
 {
@@ -21,7 +22,7 @@ class Index extends Base
             params: [
                 new Param(
                     name: "page",
-                    from: [Param::GET],
+                    from: [ValueFrom::GET],
                     validate: [
                         new Optional()
                     ],
@@ -30,7 +31,7 @@ class Index extends Base
                 ),
                 new Param(
                     name: "account",
-                    from: [Param::GET],
+                    from: [ValueFrom::GET],
                     validate: [
                         new Optional()
                     ],

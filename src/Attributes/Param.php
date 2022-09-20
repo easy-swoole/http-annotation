@@ -3,32 +3,13 @@
 namespace EasySwoole\HttpAnnotation\Attributes;
 
 use EasySwoole\HttpAnnotation\Attributes\Validator\Optional;
+use EasySwoole\HttpAnnotation\Enum\ValueFrom;
 use EasySwoole\HttpAnnotation\Exception\Annotation;
 use Psr\Http\Message\ServerRequestInterface;
 
 #[\Attribute(\Attribute::TARGET_ALL|\Attribute::IS_REPEATABLE)]
 class Param
 {
-    const TYPE_STRING = "TYPE_STRING";
-    const TYPE_INT = "TYPE_INT";
-    const TYPE_DOUBLE = "TYPE_DOUBLE";
-    const TYPE_REAL = "TYPE_REAL";
-    const TYPE_FLOAT = "TYPE_FLOAT";
-    const TYPE_BOOL = "TYPE_BOOL";
-
-    const TYPE_LIST = "TYPE_LIST";
-    const TYPE_OBJECT = "TYPE_OBJECT";
-
-    const GET = "GET";
-    const POST = "POST";
-    const COOKIE = "COOKIE";
-    const HEADER = "HEADER";
-    const FILE = "FILE";
-    const RAW = "RAW";
-    const JSON = "JSON";
-    const CONTEXT = "CONTEXT";
-    const DI = "DI";
-
     private bool $isParsed = false;
     private bool|null $isOptional = null;
     private bool $isNullData = false;
@@ -72,7 +53,7 @@ class Param
             foreach ($fromList as $from){
                 if(!$hit){
                     switch ($from){
-                        case Param::GET:{
+                        case ValueFrom::GET:{
                             $data = $request->getQueryParams();
                             if(isset($data[$this->name])){
                                 $hit = true;
@@ -80,7 +61,7 @@ class Param
                                 break;
                             }
                         }
-                        case Param::POST:{
+                        case ValueFrom::FORM_POST:{
                             $data = $request->getParsedBody();
                             if(isset($data[$this->name])){
                                 $hit = true;
