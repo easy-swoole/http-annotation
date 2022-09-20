@@ -23,7 +23,7 @@ class Index extends Base
             params: [
                 new Param(
                     name: "page",
-                    from: [ParamFrom::GET],
+                    from: ParamFrom::GET,
                     validate: [
                         new Optional()
                     ],
@@ -32,7 +32,7 @@ class Index extends Base
                 ),
                 new Param(
                     name: "account",
-                    from: [ParamFrom::GET],
+                    from: ParamFrom::GET,
                     validate: [
                         new Optional()
                     ],

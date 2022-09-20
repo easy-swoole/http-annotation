@@ -8,9 +8,6 @@ use EasySwoole\HttpAnnotation\Tests\ControllerExample\Api\ApiBase;
 
 class Base extends ApiBase
 {
-    #[Param( name: "token",validate: [
-        new Required()
-    ])]
     function onRequest(?string $action): ?bool
     {
         return parent::onRequest($action);

@@ -24,7 +24,7 @@ class Param
      */
     public function __construct(
         public string                  $name,
-        public ParamFrom|array         $from,
+        public ParamFrom               $from = ParamFrom::GET,
         public ?array                  $validate = [],
         public                         $value = null,
         public bool                    $deprecated = false,
@@ -50,100 +50,89 @@ class Param
         }
         if($request){
             $hit = false;
-            if($this->from instanceof HttpMethod){
-                $fromList = [$this->from];
-            }else{
-                $fromList = $this->from;
-            }
-            foreach ($fromList as $from){
-                if(!$hit){
-                    switch ($from){
-                        case ParamFrom::GET:{
-                            $data = $request->getQueryParams();
-                            if(isset($data[$this->name])){
-                                $hit = true;
-                                $this->value = $data[$this->name];
-                                break;
-                            }
-                        }
-                        case ParamFrom::FORM_POST:{
-                            $data = $request->getParsedBody();
-                            if(isset($data[$this->name])){
-                                $hit = true;
-                                $this->value = $data[$this->name];
-                                break;
-                            }
-                        }
-                        case ParamFrom::JSON:{
-                            $data = json_decode($request->getBody()->__toString(),true);
-                            if(!is_array($data)){
-                                $data = [];
-                            }
-                            if(isset($data[$this->name])){
-                                $hit = true;
-                                $this->value = $data[$this->name];
-                                break;
-                            }
-                        }
-                        case ParamFrom::XML:
-                        case ParamFrom::RAW_POST:{
-                            $hit = true;
-                            $this->value = $request->getBody()->__toString();
-                            break;
-                        }
-                        case ParamFrom::FILE:{
-                            $data = $request->getUploadedFile($this->name);
-                            if(!empty($data)){
-                                $hit = true;
-                                $this->value = $data;
-                                break;
-                            }
-                        }
-                        case ParamFrom::DI:{
-                            $data = IOC::getInstance()->get($this->name);
-                            if(!empty($data)){
-                                $hit = true;
-                                $this->value = $data;
-                                break;
-                            }
-                        }
-                        case ParamFrom::CONTEXT:{
-                            $data = ContextManager::getInstance()->get($this->name);
-                            if(!empty($data)){
-                                $hit = true;
-                                $this->value = $data;
-                                break;
-                            }
-                        }
-                        case ParamFrom::COOKIE:{
-                            $data = $request->getCookieParams($this->name);
-                            if(!empty($data)){
-                                $hit = true;
-                                $this->value = $data;
-                                break;
-                            }
-                        }
-                        case ParamFrom::HEADER:{
-                            $data = $request->getHeader($this->name);
-                            $hit = true;
-                            if(!empty($data)){
-                                $this->value = $data[0];
-                            }else{
-                                $this->value = null;
-                            }
-                            break;
-                        }
-                        case ParamFrom::ROUTER_PARAMS:{
-                            $data = ContextManager::getInstance()->get(AbstractRouter::PARSE_PARAMS_CONTEXT_KEY);
-                            if(isset($data[$this->name])){
-                                $hit = true;
-                                $this->value = $data;
-                                break;
-                            }
-                        }
+            switch ($this->from){
+                case ParamFrom::GET:{
+                    $data = $request->getQueryParams();
+                    if(isset($data[$this->name])){
+                        $hit = true;
+                        $this->value = $data[$this->name];
+                        break;
                     }
-                }else{
+                }
+                case ParamFrom::FORM_POST:{
+                    $data = $request->getParsedBody();
+                    if(isset($data[$this->name])){
+                        $hit = true;
+                        $this->value = $data[$this->name];
+                        break;
+                    }
+                }
+                case ParamFrom::JSON:{
+                    $data = json_decode($request->getBody()->__toString(),true);
+                    if(!is_array($data)){
+                        $data = [];
+                    }
+                    if(isset($data[$this->name])){
+                        $hit = true;
+                        $this->value = $data[$this->name];
+                        break;
+                    }
+                }
+                case ParamFrom::XML:
+                case ParamFrom::RAW_POST:{
+                    $hit = true;
+                    $this->value = $request->getBody()->__toString();
                     break;
+                }
+                case ParamFrom::FILE:{
+                    $data = $request->getUploadedFile($this->name);
+                    if(!empty($data)){
+                        $hit = true;
+                        $this->value = $data;
+                        break;
+                    }
+                }
+                case ParamFrom::DI:{
+                    $data = IOC::getInstance()->get($this->name);
+                    if(!empty($data)){
+                        $hit = true;
+                        $this->value = $data;
+                        break;
+                    }
+                }
+                case ParamFrom::CONTEXT:{
+                    $data = ContextManager::getInstance()->get($this->name);
+                    if(!empty($data)){
+                        $hit = true;
+                        $this->value = $data;
+                        break;
+                    }
+                }
+                case ParamFrom::COOKIE:{
+                    $data = $request->getCookieParams($this->name);
+                    if(!empty($data)){
+                        $hit = true;
+                        $this->value = $data;
+                        break;
+                    }
+                }
+                case ParamFrom::HEADER:{
+                    $data = $request->getHeader($this->name);
+                    $hit = true;
+                    if(!empty($data)){
+                        $this->value = $data[0];
+                    }else{
+                        $this->value = null;
+                    }
+                    break;
+                }
+                case ParamFrom::ROUTER_PARAMS:{
+                    $data = ContextManager::getInstance()->get(AbstractRouter::PARSE_PARAMS_CONTEXT_KEY);
+                    if(isset($data[$this->name])){
+                        $hit = true;
+                        $this->value = $data;
+                        break;
+                    }
                 }
             }
             $this->isParsed = true;

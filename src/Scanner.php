@@ -550,9 +550,9 @@ class Scanner
         }
         $root->appendChild($header);
 
-        $builder = function (Param $item,$subCount = 0,string $from = null)use($dom,$root,&$builder){
-            if($from && ($from != $item->from)){
-                throw new Annotation("{$item->name} param 'from' is different with parent 'from': {$from}");
+        $builder = function (Param $item, $subCount = 0,ParamFrom $parentFrom = null)use($dom,$root,&$builder){
+            if($parentFrom && ($parentFrom != $item->from)){
+                throw new Annotation("param name: {$item->name} 'from' attribute is different with parent 'from' attribute : {$parentFrom->toString()}");
             }
             $line = $dom->createElement("tr");
 
@@ -560,7 +560,7 @@ class Scanner
             $name->nodeValue = str_repeat("&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;",$subCount).$item->name;
             $line->appendChild($name);
 
-            $from = $dom->createElement("td");
+            $fromNode = $dom->createElement("td");
 
             $fromStr = "";
             if($item->from instanceof ParamFrom){
@@ -571,8 +571,8 @@ class Scanner
                 }
             }
 
-            $from->nodeValue = $fromStr;
-            $line->appendChild($from);
+            $fromNode->nodeValue = $fromStr;
+            $line->appendChild($fromNode);
 
             $validate = $dom->createElement("td");
             $temp = "";
