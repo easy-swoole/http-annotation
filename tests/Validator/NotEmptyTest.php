@@ -21,7 +21,7 @@ class NotEmptyTest extends TestCase
             "str" => "easyswoole",
         ]);
 
-        $param = new Param("str", [ParamFrom::GET]);
+        $param = new Param(name:"str");
         $param->parsedValue($request);
 
         $rule = new NotEmpty();
@@ -34,7 +34,7 @@ class NotEmptyTest extends TestCase
             "str" => 0,
         ]);
 
-        $param = new Param("str", [ParamFrom::GET]);
+        $param = new Param(name:"str");
         $param->parsedValue($request);
 
         $rule = new NotEmpty();
@@ -47,7 +47,7 @@ class NotEmptyTest extends TestCase
             "str" => "0",
         ]);
 
-        $param = new Param("str", [ParamFrom::GET]);
+        $param = new Param(name:"str");
         $param->parsedValue($request);
 
         $rule = new NotEmpty();
@@ -67,7 +67,7 @@ class NotEmptyTest extends TestCase
             "str" => "",
         ]);
 
-        $param = new Param("str", [ParamFrom::GET]);
+        $param = new Param(name:"str");
         $param->parsedValue($request);
 
         $rule = new NotEmpty();
@@ -81,7 +81,7 @@ class NotEmptyTest extends TestCase
             "str" => null,
         ]);
 
-        $param = new Param("str", [ParamFrom::GET]);
+        $param = new Param(name:"str");
         $param->parsedValue($request);
 
         $rule = new NotEmpty();
@@ -100,7 +100,7 @@ class NotEmptyTest extends TestCase
             "name" => "",
         ]);
 
-        $param = new Param("name", [ParamFrom::GET]);
+        $param = new Param(name:"name");
         $param->parsedValue($request);
 
         $rule = new NotEmpty(errorMsg: '名字必填');

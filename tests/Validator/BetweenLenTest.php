@@ -22,7 +22,7 @@ class BetweenLenTest extends TestCase
             "name" => 5.56789
         ]);
 
-        $param = new Param("name", [ParamFrom::GET]);
+        $param = new Param(name:"name");
         $param->parsedValue($request);
 
         $rule = new BetweenLen(minLen: 5, maxLen: 10);
@@ -34,7 +34,7 @@ class BetweenLenTest extends TestCase
             "str" => 'asc-~+...9'
         ]);
 
-        $param = new Param("str", [ParamFrom::GET]);
+        $param = new Param(name:"str");
         $param->parsedValue($request);
 
         $rule = new BetweenLen(minLen: 5, maxLen: 10);
@@ -52,7 +52,7 @@ class BetweenLenTest extends TestCase
             "name" => 4.9876
         ]);
 
-        $param = new Param("name", [ParamFrom::GET]);
+        $param = new Param(name:"name");
         $param->parsedValue($request);
 
         $rule = new BetweenLen(minLen: 2, maxLen: 5);
@@ -65,7 +65,7 @@ class BetweenLenTest extends TestCase
             "str" => '测试测试'
         ]);
 
-        $param = new Param("str", [ParamFrom::GET]);
+        $param = new Param(name:"str");
         $param->parsedValue($request);
 
         $rule = new BetweenLen(minLen: 5, maxLen: 10);
@@ -78,7 +78,7 @@ class BetweenLenTest extends TestCase
             "name" => 5.56
         ]);
 
-        $param = new Param("name", [ParamFrom::GET]);
+        $param = new Param(name:"name");
         $param->parsedValue($request);
 
         $rule = new BetweenLen(minLen: function () {
@@ -100,7 +100,7 @@ class BetweenLenTest extends TestCase
             "str" => '测试' // 6
         ]);
 
-        $param = new Param("str", [ParamFrom::GET]);
+        $param = new Param(name:"str");
         $param->parsedValue($request);
 
         $rule = new BetweenLen(minLen: function () {

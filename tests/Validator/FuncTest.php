@@ -21,7 +21,7 @@ class FuncTest extends TestCase
             "fun" => "123456789",
         ]);
 
-        $param = new Param("fun", [ParamFrom::GET]);
+        $param = new Param(name:"fun");
         $param->parsedValue($request);
 
         $rule = new Func(func: function (AbstractValidator $validator) {
@@ -41,7 +41,7 @@ class FuncTest extends TestCase
             "fun" => "111",
         ]);
 
-        $param = new Param("fun", [ParamFrom::GET]);
+        $param = new Param(name:"fun");
         $param->parsedValue($request);
 
         $rule = new Func(func: function (AbstractValidator $validator) {
@@ -62,7 +62,7 @@ class FuncTest extends TestCase
             "fun" => "111",
         ]);
 
-        $param = new Param("fun", [ParamFrom::GET]);
+        $param = new Param(name:"fun");
         $param->parsedValue($request);
 
         $rule = new Func(func: function (AbstractValidator $validator) {

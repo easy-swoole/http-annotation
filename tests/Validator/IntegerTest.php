@@ -22,7 +22,7 @@ class IntegerTest extends TestCase
             "num" => 2
         ]);
 
-        $param = new Param("num", [ParamFrom::GET]);
+        $param = new Param(name:"num");
         $param->parsedValue($request);
 
         $rule = new Integer();
@@ -33,7 +33,7 @@ class IntegerTest extends TestCase
             "num" => "2"
         ]);
 
-        $param = new Param("num", [ParamFrom::GET]);
+        $param = new Param(name:"num");
         $param->parsedValue($request);
 
         $rule = new Integer();
@@ -51,7 +51,7 @@ class IntegerTest extends TestCase
             "num" => 'bajiu'
         ]);
 
-        $param = new Param("num", [ParamFrom::GET]);
+        $param = new Param(name:"num");
         $param->parsedValue($request);
 
         $rule = new Integer();
@@ -63,7 +63,7 @@ class IntegerTest extends TestCase
             "num" => 0.001
         ]);
 
-        $param = new Param("num", [ParamFrom::GET]);
+        $param = new Param(name:"num");
         $param->parsedValue($request);
 
         $rule = new Integer();
@@ -81,7 +81,7 @@ class IntegerTest extends TestCase
             "num" => 0.001
         ]);
 
-        $param = new Param("num", [ParamFrom::GET]);
+        $param = new Param(name:"num");
         $param->parsedValue($request);
 
         $rule = new Integer(errorMsg: '请输入正确的数量');

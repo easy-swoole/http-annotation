@@ -21,7 +21,7 @@ class MinTest extends TestCase
             "num" => 101
         ]);
 
-        $param = new Param("num", [ParamFrom::GET]);
+        $param = new Param(name:"num");
         $param->parsedValue($request);
 
         $rule = new Min(min: 100);
@@ -32,7 +32,7 @@ class MinTest extends TestCase
             "num" => 100
         ]);
 
-        $param = new Param("num", [ParamFrom::GET]);
+        $param = new Param(name:"num");
         $param->parsedValue($request);
 
         $rule = new Min(min: 100);
@@ -43,7 +43,7 @@ class MinTest extends TestCase
             "num" => 100.1
         ]);
 
-        $param = new Param("num", [ParamFrom::GET]);
+        $param = new Param(name:"num");
         $param->parsedValue($request);
 
         $rule = new Min(min: 100);
@@ -54,7 +54,7 @@ class MinTest extends TestCase
             "num" => 100.1
         ]);
 
-        $param = new Param("num", [ParamFrom::GET]);
+        $param = new Param(name:"num");
         $param->parsedValue($request);
 
         $rule = new Min(min: 100.1);
@@ -65,7 +65,7 @@ class MinTest extends TestCase
             "num" => '101'
         ]);
 
-        $param = new Param("num", [ParamFrom::GET]);
+        $param = new Param(name:"num");
         $param->parsedValue($request);
 
         $rule = new Min(min: 100);
@@ -76,7 +76,7 @@ class MinTest extends TestCase
             "num" => '100'
         ]);
 
-        $param = new Param("num", [ParamFrom::GET]);
+        $param = new Param(name:"num");
         $param->parsedValue($request);
 
         $rule = new Min(min: 100);
@@ -87,7 +87,7 @@ class MinTest extends TestCase
             "num" => '100.1'
         ]);
 
-        $param = new Param("num", [ParamFrom::GET]);
+        $param = new Param(name:"num");
         $param->parsedValue($request);
 
         $rule = new Min(min: 100);
@@ -98,7 +98,7 @@ class MinTest extends TestCase
             "num" => '100.0'
         ]);
 
-        $param = new Param("num", [ParamFrom::GET]);
+        $param = new Param(name:"num");
         $param->parsedValue($request);
 
         $rule = new Min(min: 100);
@@ -116,7 +116,7 @@ class MinTest extends TestCase
             "num" => 99
         ]);
 
-        $param = new Param("num", [ParamFrom::GET]);
+        $param = new Param(name:"num");
         $param->parsedValue($request);
 
         $rule = new Min(min: 100);
@@ -128,7 +128,7 @@ class MinTest extends TestCase
             "num" => 99.9
         ]);
 
-        $param = new Param("num", [ParamFrom::GET]);
+        $param = new Param(name:"num");
         $param->parsedValue($request);
 
         $rule = new Min(min: 100);
@@ -140,7 +140,7 @@ class MinTest extends TestCase
             "num" => '99'
         ]);
 
-        $param = new Param("num", [ParamFrom::GET]);
+        $param = new Param(name:"num");
         $param->parsedValue($request);
 
         $rule = new Min(min: 100);
@@ -152,7 +152,7 @@ class MinTest extends TestCase
             "num" => '99.9'
         ]);
 
-        $param = new Param("num", [ParamFrom::GET]);
+        $param = new Param(name:"num");
         $param->parsedValue($request);
 
         $rule = new Min(min: 100);
@@ -164,7 +164,7 @@ class MinTest extends TestCase
             "num" => '99.0.1'
         ]);
 
-        $param = new Param("num", [ParamFrom::GET]);
+        $param = new Param(name:"num");
         $param->parsedValue($request);
 
         $rule = new Min(min: 100);
@@ -182,7 +182,7 @@ class MinTest extends TestCase
             "price" => 99
         ]);
 
-        $param = new Param("price", [ParamFrom::GET]);
+        $param = new Param(name:"price");
         $param->parsedValue($request);
 
         $rule = new Min(min: 100,errorMsg: '价钱最低100');
