@@ -17,6 +17,10 @@ class NotEmpty extends AbstractValidator
 
     protected function validate(Param $param,ServerRequestInterface $request): bool
     {
+        if($param->isOptional() && !$param->hasSet()){
+            return true;
+        }
+
         $itemData = $param->parsedValue();
         if ($itemData === 0 || $itemData === '0') {
             return true;

@@ -24,6 +24,10 @@ class NotInArray extends AbstractValidator
 
     protected function validate(Param $param, ServerRequestInterface $request): bool
     {
+        if($param->isOptional() && !$param->hasSet()){
+            return true;
+        }
+        
         return !in_array($param->parsedValue(), $this->array, $this->strict);
     }
 

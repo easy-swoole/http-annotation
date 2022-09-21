@@ -24,6 +24,10 @@ class TimestampAfterDate extends AbstractValidator
 
     protected function validate(Param $param, ServerRequestInterface $request): bool
     {
+        if($param->isOptional() && !$param->hasSet()){
+            return true;
+        }
+        
         $itemData = $param->parsedValue();
         if (!is_numeric($itemData)) {
             return false;
