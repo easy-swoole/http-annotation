@@ -17,7 +17,7 @@ class Param
 {
     private bool $isParsed = false;
     private bool|null $isOptional = null;
-    private bool $isNullData = false;
+    private bool $hasSet = false;
 
     /**
      * @throws Annotation
@@ -49,12 +49,11 @@ class Param
             return $this->value;
         }
         if($request){
-            $hit = false;
             switch ($this->from){
                 case ParamFrom::GET:{
                     $data = $request->getQueryParams();
                     if(isset($data[$this->name])){
-                        $hit = true;
+                        $this->hasSet = true;
                         $this->value = $data[$this->name];
                     }
                     break;
@@ -62,7 +61,7 @@ class Param
                 case ParamFrom::FORM_POST:{
                     $data = $request->getParsedBody();
                     if(isset($data[$this->name])){
-                        $hit = true;
+                        $this->hasSet = true;
                         $this->value = $data[$this->name];
                     }
                     break;
@@ -73,21 +72,21 @@ class Param
                         $data = [];
                     }
                     if(isset($data[$this->name])){
-                        $hit = true;
+                        $this->hasSet = true;
                         $this->value = $data[$this->name];
                     }
                     break;
                 }
                 case ParamFrom::XML:
                 case ParamFrom::RAW_POST:{
-                    $hit = true;
+                    $this->hasSet = true;
                     $this->value = $request->getBody()->__toString();
                     break;
                 }
                 case ParamFrom::FILE:{
                     $data = $request->getUploadedFile($this->name);
                     if(!empty($data)){
-                        $hit = true;
+                        $this->hasSet = true;
                         $this->value = $data;
                     }
                     break;
@@ -95,7 +94,7 @@ class Param
                 case ParamFrom::DI:{
                     $data = IOC::getInstance()->get($this->name);
                     if(!empty($data)){
-                        $hit = true;
+                        $this->hasSet = true;
                         $this->value = $data;
                     }
                     break;
@@ -103,7 +102,7 @@ class Param
                 case ParamFrom::CONTEXT:{
                     $data = ContextManager::getInstance()->get($this->name);
                     if(!empty($data)){
-                        $hit = true;
+                        $this->hasSet = true;
                         $this->value = $data;
                     }
                     break;
@@ -111,14 +110,14 @@ class Param
                 case ParamFrom::COOKIE:{
                     $data = $request->getCookieParams($this->name);
                     if(!empty($data)){
-                        $hit = true;
+                        $this->hasSet = true;
                         $this->value = $data;
                     }
                     break;
                 }
                 case ParamFrom::HEADER:{
                     $data = $request->getHeader($this->name);
-                    $hit = true;
+                    $this->hasSet = true;
                     if(!empty($data)){
                         $this->value = $data[0];
                     }else{
@@ -129,7 +128,7 @@ class Param
                 case ParamFrom::ROUTER_PARAMS:{
                     $data = ContextManager::getInstance()->get(AbstractRouter::PARSE_PARAMS_CONTEXT_KEY);
                     if(isset($data[$this->name])){
-                        $hit = true;
+                        $this->hasSet = true;
                         $this->value = $data;
                     }
                     break;
@@ -137,9 +136,6 @@ class Param
             }
 
             $this->isParsed = true;
-            if($hit && ($this->value === null)){
-                $this->isNullData = true;
-            }
         }
         return $this->value;
     }
@@ -158,8 +154,8 @@ class Param
         return $this->isOptional;
     }
 
-    public function isNullData(): bool
-    {
-        return $this->isNullData;
-    }
+   public function hasSet():bool
+   {
+       return $this->hasSet;
+   }
 }
