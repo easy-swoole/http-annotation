@@ -222,19 +222,33 @@ class Scanner
                         $finalDoc .= "{$des}";
                         $finalDoc = self::buildLine($finalDoc);
                     }else{
-                        $finalDoc .= "empty method description";
+                        $finalDoc .= "Empty Method Description";
                         $finalDoc = self::buildLine($finalDoc);
                     }
                     $finalDoc = self::buildLine($finalDoc);
                     //请求参数
-                    $finalDoc .= "**Api Params:**";
+                    $finalDoc .= "**Request Params:**";
                     $finalDoc = self::buildLine($finalDoc);
                     $finalDoc = self::buildLine($finalDoc);
                     $params = $apiTag->requestParam;
                     if(!empty($params)){
                         $finalDoc .= self::buildRequestParamsTable($params);
                     }else{
-                        $finalDoc .= "no any params required";
+                        $finalDoc .= "No Any Request Params Defined";
+                    }
+                    $finalDoc = self::buildLine($finalDoc);
+                    $finalDoc = self::buildLine($finalDoc);
+
+
+                    //响应
+                    $finalDoc .= "**Response Params:**";
+                    $finalDoc = self::buildLine($finalDoc);
+                    $finalDoc = self::buildLine($finalDoc);
+                    $params = $apiTag->responseParam;
+                    if(!empty($params)){
+                        $finalDoc .= self::buildExampleParamsTable($params);
+                    }else{
+                        $finalDoc .= "No Any Response Params Defined";
                     }
                     $finalDoc = self::buildLine($finalDoc);
                     $finalDoc = self::buildLine($finalDoc);
@@ -278,116 +292,58 @@ class Scanner
                         $finalDoc .= "**Request Example:**";
                         $finalDoc = self::buildLine($finalDoc);
                         $finalDoc = self::buildLine($finalDoc);
-                        $finalDoc .= "no example request";
+                        $finalDoc .= "No Example Request";
                     }
                     $finalDoc = self::buildLine($finalDoc);
                     $finalDoc = self::buildLine($finalDoc);
 
-//                    //成功响应示例
-//                    $successExamples = $apiTag->successExample;
-//                    if(!empty($successExamples)){
-//                        $count = 1;
-//                        /** @var Example $example */
-//                        foreach ($successExamples as $example){
-//                            $finalDoc .= "**Success Response Example{$count}:**";
-//                            $finalDoc = self::buildLine($finalDoc);
-//                            if($example->params){
-//                                $finalDoc .= self::buildExampleParamsTable($example->params);
-//                                $finalDoc = self::buildLine($finalDoc);
-//                                $finalDoc = self::buildLine($finalDoc);
-//                            }
-//                            if($example->description){
-//                                switch ($example->description->type){
-//                                    case Description::JSON:{
-//                                        $finalDoc .= "**Success Response Example{$count} JSON:**";
-//                                        break;
-//                                    }
-//                                    case Description::XML:{
-//                                        $finalDoc .= "**Success Response Example{$count} XML:**";
-//                                        break;
-//                                    }
-//                                    default:{
-//                                        $finalDoc .= "**Success Response Example{$count} Description:**";
-//                                    }
-//                                }
-//                                $finalDoc = self::buildLine($finalDoc);
-//                                $finalDoc = self::buildLine($finalDoc);
-//
-//                                $finalDoc .= self::parseDescription($example->description);
-//                                $finalDoc = self::buildLine($finalDoc);
-//                                $finalDoc = self::buildLine($finalDoc);
-//                            }
-//                            $count++;
-//                        }
-//                    }else{
-//                        $finalDoc .= "**Success Response Example:**";
-//                        $finalDoc = self::buildLine($finalDoc);
-//                        $finalDoc = self::buildLine($finalDoc);
-//                        $finalDoc .= "no success response example";
-//                    }
-//                    $finalDoc = self::buildLine($finalDoc);
-//                    $finalDoc = self::buildLine($finalDoc);
+                    //响应示例
+                    $responseParams = $apiTag->responseExample;
+                    if(!empty($responseParams)){
+                        $count = 1;
+                        /** @var Example $example */
+                        foreach ($responseParams as $example){
+                            $finalDoc .= "**Response Example{$count}:**";
+                            $finalDoc = self::buildLine($finalDoc);
+                            if($example->params){
+                                $finalDoc .= self::buildExampleParamsTable($example->params);
+                                $finalDoc = self::buildLine($finalDoc);
+                                $finalDoc = self::buildLine($finalDoc);
+                            }
+                            if($example->description){
+                                switch ($example->description->type){
+                                    case Description::JSON:{
+                                        $finalDoc .= "**Response Example{$count} JSON:**";
+                                        break;
+                                    }
+                                    case Description::XML:{
+                                        $finalDoc .= "**Response Example{$count} XML:**";
+                                        break;
+                                    }
+                                    default:{
+                                        $finalDoc .= "**Response Example{$count} Description:**";
+                                    }
+                                }
+                                $finalDoc = self::buildLine($finalDoc);
+                                $finalDoc = self::buildLine($finalDoc);
 
-
-//                    //失败响应示例
-//                    $successExamples = $apiTag->failExample;
-//                    if(!empty($successExamples)){
-//                        $count = 1;
-//                        /** @var Example $example */
-//                        foreach ($successExamples as $example){
-//                            $finalDoc .= "**Fail Response Example{$count}:**";
-//                            $finalDoc = self::buildLine($finalDoc);
-//                            if($example->params){
-//                                $finalDoc .= self::buildExampleParamsTable($example->params);
-//                                $finalDoc = self::buildLine($finalDoc);
-//                                $finalDoc = self::buildLine($finalDoc);
-//                            }
-//                            if($example->description){
-//
-//                                switch ($example->description->type){
-//                                    case Description::JSON:{
-//                                        $finalDoc .= "**Fail Response Example{$count} JSON:**";
-//                                        break;
-//                                    }
-//                                    case Description::XML:{
-//                                        $finalDoc .= "**Fail Response Example{$count} XML:**";
-//                                        break;
-//                                    }
-//                                    default:{
-//                                        $finalDoc .= "**Fail Response Example{$count} Description:**";
-//                                    }
-//                                }
-//                                $finalDoc = self::buildLine($finalDoc);
-//                                $finalDoc = self::buildLine($finalDoc);
-//
-//                                $finalDoc .= self::parseDescription($example->description);
-//                                $finalDoc = self::buildLine($finalDoc);
-//                                $finalDoc = self::buildLine($finalDoc);
-//                            }
-//                            $count++;
-//                        }
-//
-//                    }else{
-//                        $finalDoc .= "**Fail Response Example:**";
-//                        $finalDoc = self::buildLine($finalDoc);
-//                        $finalDoc = self::buildLine($finalDoc);
-//                        $finalDoc .= "no fail response example";
-//                    }
-//                    $finalDoc = self::buildLine($finalDoc);
-//                    $finalDoc = self::buildLine($finalDoc);
-//                    $finalDoc .= "<p align=\"right\">Back To <a href='#Navigator'>Navigator</a>|<a href='#{$groupName}-{$apiTag->apiName}'>{$apiTag->apiName}<sup>{$groupName}</sup></a></p>";
-//                    $finalDoc = self::buildLine($finalDoc);
-//                    $finalDoc = self::buildLine($finalDoc);
-//
-//                    $finalDoc.= "---------- ";
-//                    $finalDoc = self::buildLine($finalDoc);
-
-
-
-
+                                $finalDoc .= self::parseDescription($example->description);
+                                $finalDoc = self::buildLine($finalDoc);
+                                $finalDoc = self::buildLine($finalDoc);
+                            }
+                            $count++;
+                        }
+                    }else{
+                        $finalDoc .= "**Response Example:**";
+                        $finalDoc = self::buildLine($finalDoc);
+                        $finalDoc = self::buildLine($finalDoc);
+                        $finalDoc .= "No Response Example";
+                    }
+                    $finalDoc = self::buildLine($finalDoc);
+                    $finalDoc = self::buildLine($finalDoc);
                 }
             }else{
-                $finalDoc.= "empty api method for group **{$groupName}**";
+                $finalDoc.= "Empty Api Method For Group **{$groupName}**";
                 $finalDoc = self::buildLine($finalDoc);
             }
 
@@ -532,6 +488,57 @@ class Scanner
         return $description?->desc;
     }
 
+    private static function buildExampleParamsTable(array $array):string
+    {
+
+        $dom = new \DOMDocument();
+        $dom->formatOutput = true;
+        $root = $dom->createElement("table");
+        //构建表头
+        $header = $dom->createElement("tr");
+        $list = ["Name","Description","Default"];
+        foreach ($list as $item){
+            $td = $dom->createElement("td");
+            $td->nodeValue = $item;
+            $header->appendChild($td);
+        }
+        $root->appendChild($header);
+
+        $builder = function (Param $item, $subCount = 0,ParamFrom $parentFrom = null)use($dom,$root,&$builder){
+            if($parentFrom && ($parentFrom != $item->from)){
+                throw new Annotation("param name: {$item->name} 'from' attribute is different with parent 'from' attribute : {$parentFrom->toString()}");
+            }
+            $line = $dom->createElement("tr");
+
+            $name = $dom->createElement("td");
+            $name->nodeValue = str_repeat("&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;",$subCount).$item->name;
+            $line->appendChild($name);
+
+
+
+            $default = $dom->createElement("td");
+            $default->nodeValue = self::valueHandler($item);
+            $line->appendChild($default);
+
+            $root->appendChild($line);
+
+            //检查是否有下级
+
+            $subCount++;
+            foreach ($item->subObject as $sub){
+                $builder($sub,$subCount,$item->from);
+            }
+        };
+
+        //填充值
+        /** @var Param $item */
+        foreach ($array as $item){
+            $builder($item);
+        }
+
+        return $dom->saveHTML($root);
+    }
+
     private static function buildRequestParamsTable(array $array):string
     {
 
@@ -598,11 +605,10 @@ class Scanner
             $root->appendChild($line);
 
             //检查是否有下级
-            if($item->type == ParamType::OBJECT){
-                $subCount++;
-                foreach ($item->subObject as $sub){
-                    $builder($sub,$subCount,$item->from);
-                }
+
+            $subCount++;
+            foreach ($item->subObject as $sub){
+                $builder($sub,$subCount,$item->from);
             }
         };
 
@@ -615,62 +621,6 @@ class Scanner
         return $dom->saveHTML($root);
     }
 
-
-    private static function buildExampleParamsTable(array $array):string
-    {
-
-        $dom = new \DOMDocument();
-        $dom->formatOutput = true;
-        $root = $dom->createElement("table");
-        //构建表头
-        $header = $dom->createElement("tr");
-        $list = ["Name","Description","Value"];
-        foreach ($list as $item){
-            $td = $dom->createElement("td");
-            $td->nodeValue = $item;
-            $header->appendChild($td);
-        }
-        $root->appendChild($header);
-
-
-        $builder = function (Param $item,$subCount = 0)use($dom,$root,&$builder){
-            $line = $dom->createElement("tr");
-
-            $name = $dom->createElement("td");
-
-            $name->nodeValue = str_repeat("&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;",$subCount).$item->name;
-            $line->appendChild($name);
-
-            $desc = $dom->createElement("td");
-            $desc->nodeValue = self::parseDescription($item->description);
-            $line->appendChild($desc);
-
-            $default = $dom->createElement("td");
-            $default->nodeValue = self::valueHandler($item);
-            $line->appendChild($default);
-
-            $root->appendChild($line);
-
-            if($item->type == ParamType::OBJECT){
-                if(is_array($item->value)){
-                    $subCount++;
-                    foreach ($item->value as $sub){
-                        $builder($sub,$subCount);
-                    }
-                }else{
-                    throw new Annotation("Param {$item->name} value not correct Object format");
-                }
-            }
-        };
-
-        //填充值
-        /** @var Param $item */
-        foreach ($array as $item){
-            $builder($item);
-        }
-
-        return $dom->saveHTML($root);
-    }
 
     public static function valueHandler(Param $param):?string
     {

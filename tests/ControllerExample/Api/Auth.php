@@ -39,6 +39,17 @@ class Auth extends ApiBase
                     new Param(name: "phone", from: ParamFrom::JSON, description: "手机号")
                 ])
         ],
+        responseParam:[
+            new Param("code"),
+            new Param(
+                name: "Result",
+                subObject: [
+                    new Param("token"),
+                    new Param("expire")
+                ]
+            ),
+            new Param("msg")
+        ],
         description: new Description("这是一个接口说明啊啊啊啊")
     )]
     function login()
