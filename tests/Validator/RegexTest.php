@@ -20,7 +20,7 @@ class RegexTest extends TestCase
             "phone" => 15880809999
         ]);
 
-        $param = new Param("phone", [ParamFrom::GET]);
+        $param = new Param(name:"phone");
         $param->parsedValue($request);
 
         $rule = new Regex(rule: '/^1\d{10}$/');
@@ -37,7 +37,7 @@ class RegexTest extends TestCase
             "phone" => 158808099
         ]);
 
-        $param = new Param("phone", [ParamFrom::GET]);
+        $param = new Param(name:"phone");
         $param->parsedValue($request);
 
         $rule = new Regex(rule: '/^1\d{10}$/');
@@ -55,7 +55,7 @@ class RegexTest extends TestCase
             "phone" => 158808099
         ]);
 
-        $param = new Param("phone", [ParamFrom::GET]);
+        $param = new Param(name:"phone");
         $param->parsedValue($request);
 
         $rule = new Regex(rule: '/^1\d{10}$/',errorMsg: '手机号码格式不对');

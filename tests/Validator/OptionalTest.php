@@ -20,7 +20,7 @@ class OptionalTest extends TestCase
             "str" => "easyswoole",
         ]);
 
-        $param = new Param("str", [ParamFrom::GET]);
+        $param = new Param(name:"str");
         $param->parsedValue($request);
 
         $rule = new Optional();
@@ -32,7 +32,7 @@ class OptionalTest extends TestCase
             "num" => 10,
         ]);
 
-        $param = new Param("str", [ParamFrom::GET]);
+        $param = new Param(name:"str");
         $param->parsedValue($request);
 
         $rule = new Optional();

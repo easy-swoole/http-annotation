@@ -33,7 +33,7 @@ class ActiveUrlTest extends TestCase
             "url" => "https://www.baidu.com"
         ]);
 
-        $param = new Param("url", [ParamFrom::GET]);
+        $param = new Param(name:"url");
         $param->parsedValue($request);
 
         $rule = new ActiveUrl();
@@ -51,7 +51,7 @@ class ActiveUrlTest extends TestCase
             "url" => "this is a str"
         ]);
 
-        $param = new Param("url", [ParamFrom::GET]);
+        $param = new Param(name:"url");
         $param->parsedValue($request);
 
         $rule = new ActiveUrl();
@@ -64,7 +64,7 @@ class ActiveUrlTest extends TestCase
             "url" => "https://www.noneDnsAnswerDomain.com"
         ]);
 
-        $param = new Param("url", [ParamFrom::GET]);
+        $param = new Param(name:"url");
         $param->parsedValue($request);
 
         $rule = new ActiveUrl();
@@ -83,7 +83,7 @@ class ActiveUrlTest extends TestCase
             "url" => "https://www.noneDnsAnswerDomain.com"
         ]);
 
-        $param = new Param("url", [ParamFrom::GET]);
+        $param = new Param(name:"url");
         $param->parsedValue($request);
 
         $rule = new ActiveUrl(errorMsg: '您输入的网址无效');

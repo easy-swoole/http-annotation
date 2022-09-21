@@ -21,7 +21,7 @@ class EqualTest extends TestCase
             "str" => "easyswoole",
         ]);
 
-        $param = new Param("str", [ParamFrom::GET]);
+        $param = new Param(name:"str");
         $param->parsedValue($request);
 
         $rule = new Equal(compare: "easyswoole");
@@ -33,7 +33,7 @@ class EqualTest extends TestCase
             "str" => "89",
         ]);
 
-        $param = new Param("str", [ParamFrom::GET]);
+        $param = new Param(name:"str");
         $param->parsedValue($request);
 
         $rule = new Equal(compare: 89);
@@ -53,7 +53,7 @@ class EqualTest extends TestCase
             "str" => "easyswoole",
         ]);
 
-        $param = new Param("str", [ParamFrom::GET]);
+        $param = new Param(name:"str");
         $param->parsedValue($request);
 
         $rule = new Equal(compare: "easySwoole");
@@ -67,7 +67,7 @@ class EqualTest extends TestCase
             "str" => "89",
         ]);
 
-        $param = new Param("str", [ParamFrom::GET]);
+        $param = new Param(name:"str");
         $param->parsedValue($request);
 
         $rule = new Equal(compare: 89,strict: true);
@@ -86,7 +86,7 @@ class EqualTest extends TestCase
             "str" => "easyswoole",
         ]);
 
-        $param = new Param("str", [ParamFrom::GET]);
+        $param = new Param(name:"str");
         $param->parsedValue($request);
 
         $rule = new Equal(compare: "easySwoole",errorMsg: '参数必须为easyswoole');

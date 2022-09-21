@@ -20,7 +20,7 @@ class TimestampBeforeTest extends TestCase
             "date" => time() - 1
         ]);
 
-        $param = new Param("date", [ParamFrom::GET]);
+        $param = new Param(name:"date");
         $param->parsedValue($request);
 
         $rule = new TimestampBefore(date: time());
@@ -32,7 +32,7 @@ class TimestampBeforeTest extends TestCase
             "date" => time() - 1
         ]);
 
-        $param = new Param("date", [ParamFrom::GET]);
+        $param = new Param(name:"date");
         $param->parsedValue($request);
 
         $rule = new TimestampBefore(date: function () {
@@ -51,7 +51,7 @@ class TimestampBeforeTest extends TestCase
             "date" => time() + 1
         ]);
 
-        $param = new Param("date", [ParamFrom::GET]);
+        $param = new Param(name:"date");
         $param->parsedValue($request);
 
         $rule = new TimestampBefore(time());
@@ -63,7 +63,7 @@ class TimestampBeforeTest extends TestCase
             "date" => "2022-06-30"
         ]);
 
-        $param = new Param("date", [ParamFrom::GET]);
+        $param = new Param(name:"date");
         $param->parsedValue($request);
 
         $time = time();
@@ -85,7 +85,7 @@ class TimestampBeforeTest extends TestCase
             "date" => time() + 1
         ]);
 
-        $param = new Param("date", [ParamFrom::GET]);
+        $param = new Param(name:"date");
         $param->parsedValue($request);
 
         $rule = new TimestampBefore(date: time(), errorMsg: '无效时间戳');

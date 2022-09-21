@@ -20,7 +20,7 @@ class RequiredTest extends TestCase
             "str" => "easyswoole",
         ]);
 
-        $param = new Param("str", [ParamFrom::GET]);
+        $param = new Param(name:"str");
         $param->parsedValue($request);
 
         $rule = new Required();
@@ -38,7 +38,7 @@ class RequiredTest extends TestCase
             "str" => null,
         ]);
 
-        $param = new Param("str", [ParamFrom::GET]);
+        $param = new Param(name:"str");
         $param->parsedValue($request);
 
         $rule = new Required();
@@ -57,7 +57,7 @@ class RequiredTest extends TestCase
             "num" => 10,
         ]);
 
-        $param = new Param("phone", [ParamFrom::GET]);
+        $param = new Param(name:"phone");
         $param->parsedValue($request);
 
         $rule = new Required(errorMsg: '手机号码必填');

@@ -21,7 +21,7 @@ class MinMbLengthTest extends TestCase
             "str" => 12345
         ]);
 
-        $param = new Param("str", [ParamFrom::GET]);
+        $param = new Param(name:"str");
         $param->parsedValue($request);
 
         $rule = new MinMbLength(minLen: 5);
@@ -33,7 +33,7 @@ class MinMbLengthTest extends TestCase
             "str" => '城南花已开'
         ]);
 
-        $param = new Param("str", [ParamFrom::GET]);
+        $param = new Param(name:"str");
         $param->parsedValue($request);
 
         $rule = new MinMbLength(minLen: 5);
@@ -45,7 +45,7 @@ class MinMbLengthTest extends TestCase
             "str" => ['apple', 'grape', 'orange']
         ]);
 
-        $param = new Param("str", [ParamFrom::GET]);
+        $param = new Param(name:"str");
         $param->parsedValue($request);
 
         $rule = new MinMbLength(minLen: 3);
@@ -63,7 +63,7 @@ class MinMbLengthTest extends TestCase
             "str" => 1234
         ]);
 
-        $param = new Param("str", [ParamFrom::GET]);
+        $param = new Param(name:"str");
         $param->parsedValue($request);
 
         $rule = new MinMbLength(minLen: 5);
@@ -76,7 +76,7 @@ class MinMbLengthTest extends TestCase
             "str" => '城南花已开'
         ]);
 
-        $param = new Param("str", [ParamFrom::GET]);
+        $param = new Param(name:"str");
         $param->parsedValue($request);
 
         $rule = new MinMbLength(minLen: 6);
@@ -88,7 +88,7 @@ class MinMbLengthTest extends TestCase
             "str" => ['apple', 'grape', 'orange']
         ]);
 
-        $param = new Param("str", [ParamFrom::GET]);
+        $param = new Param(name:"str");
         $param->parsedValue($request);
 
         $rule = new MinMbLength(minLen: 4);
@@ -101,7 +101,7 @@ class MinMbLengthTest extends TestCase
             "str" => (object)['apple', 'grape', 'orange', 'orange', 'orange']
         ]);
 
-        $param = new Param("str", [ParamFrom::GET]);
+        $param = new Param(name:"str");
         $param->parsedValue($request);
 
         $rule = new MinMbLength(minLen: 5);
@@ -119,7 +119,7 @@ class MinMbLengthTest extends TestCase
             "name" => '城南花已开'
         ]);
 
-        $param = new Param("name", [ParamFrom::GET]);
+        $param = new Param(name:"name");
         $param->parsedValue($request);
 
         $rule = new MinMbLength(minLen: 6,errorMsg: '名字长度最少6位');

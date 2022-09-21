@@ -21,7 +21,7 @@ class DecimalTest extends TestCase
             "num" => 23.0
         ]);
 
-        $param = new Param("num", [ParamFrom::GET]);
+        $param = new Param(name:"num");
         $param->parsedValue($request);
 
         $rule = new Decimal(accuracy: null);
@@ -33,7 +33,7 @@ class DecimalTest extends TestCase
             "num" => 50.0
         ]);
 
-        $param = new Param("num", [ParamFrom::GET]);
+        $param = new Param(name:"num");
         $param->parsedValue($request);
 
         $rule = new Decimal(accuracy: 0);
@@ -44,7 +44,7 @@ class DecimalTest extends TestCase
             "num" => 5.56789
         ]);
 
-        $param = new Param("num", [ParamFrom::GET]);
+        $param = new Param(name:"num");
         $param->parsedValue($request);
 
         $rule = new Decimal(accuracy: 5);
@@ -61,7 +61,7 @@ class DecimalTest extends TestCase
             "num" => 555
         ]);
 
-        $param = new Param("num", [ParamFrom::GET]);
+        $param = new Param(name:"num");
         $param->parsedValue($request);
 
         $rule = new Decimal(accuracy: 2);
@@ -79,7 +79,7 @@ class DecimalTest extends TestCase
             "num" => 555
         ]);
 
-        $param = new Param("num", [ParamFrom::GET]);
+        $param = new Param(name:"num");
         $param->parsedValue($request);
 
         $rule = new Decimal(accuracy: 2, errorMsg: 'num只能是小数');

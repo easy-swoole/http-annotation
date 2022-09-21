@@ -21,7 +21,7 @@ class AlphaNumTest extends TestCase
             "no" => "Answer123"
         ]);
 
-        $param = new Param("no", [ParamFrom::GET]);
+        $param = new Param(name:"no");
         $param->parsedValue($request);
 
         $rule = new AlphaNum();
@@ -38,7 +38,7 @@ class AlphaNumTest extends TestCase
             "no" => "0bA111..@"
         ]);
 
-        $param = new Param("no", [ParamFrom::GET]);
+        $param = new Param(name:"no");
         $param->parsedValue($request);
 
         $rule = new AlphaNum();
@@ -56,7 +56,7 @@ class AlphaNumTest extends TestCase
             "no" => "0bA111..@"
         ]);
 
-        $param = new Param("no", [ParamFrom::GET]);
+        $param = new Param(name:"no");
         $param->parsedValue($request);
 
         $rule = new AlphaNum(errorMsg: '只能由字母和数字构成');

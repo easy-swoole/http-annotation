@@ -21,7 +21,7 @@ class NotInArrayTest extends TestCase
             "fruit" => 'Apple'
         ]);
 
-        $param = new Param("num", [ParamFrom::GET]);
+        $param = new Param(name:"num");
         $param->parsedValue($request);
 
         $rule = new NotInArray(array: ['apple', 'grape', 'orange'], strict: true);
@@ -33,7 +33,7 @@ class NotInArrayTest extends TestCase
             "fruit" => 'banana'
         ]);
 
-        $param = new Param("fruit", [ParamFrom::GET]);
+        $param = new Param(name:"fruit");
         $param->parsedValue($request);
 
         $rule = new NotInArray(array: ['apple', 'grape', 'orange'], strict: false);
@@ -50,7 +50,7 @@ class NotInArrayTest extends TestCase
             "fruit" => 'apple'
         ]);
 
-        $param = new Param("fruit", [ParamFrom::GET]);
+        $param = new Param(name:"fruit");
         $param->parsedValue($request);
 
         $rule = new NotInArray(array: ['apple', 'grape', 'orange'], strict: false);
@@ -68,7 +68,7 @@ class NotInArrayTest extends TestCase
             "fruit" => 'apple'
         ]);
 
-        $param = new Param("fruit", [ParamFrom::GET]);
+        $param = new Param(name:"fruit");
         $param->parsedValue($request);
 
         $rule = new NotInArray(array: ['apple', 'grape', 'orange'], errorMsg: '水果不能是苹果、葡萄以及橘子');

@@ -21,7 +21,7 @@ class TimestampAfterDateTest extends TestCase
             "date" => time()
         ]);
 
-        $param = new Param("date", [ParamFrom::GET]);
+        $param = new Param(name:"date");
         $param->parsedValue($request);
 
         $rule = new TimestampAfterDate(date: date('YmdHis', time() - 1));
@@ -33,7 +33,7 @@ class TimestampAfterDateTest extends TestCase
             "date" => time() + 1
         ]);
 
-        $param = new Param("date", [ParamFrom::GET]);
+        $param = new Param(name:"date");
         $param->parsedValue($request);
 
         $rule = new TimestampAfterDate(date: function () {
@@ -52,7 +52,7 @@ class TimestampAfterDateTest extends TestCase
             "date" => time()
         ]);
 
-        $param = new Param("date", [ParamFrom::GET]);
+        $param = new Param(name:"date");
         $param->parsedValue($request);
 
         $time = date('YmdHis', time() + 1);
@@ -66,7 +66,7 @@ class TimestampAfterDateTest extends TestCase
             "date" => "2022-09-30"
         ]);
 
-        $param = new Param("date", [ParamFrom::GET]);
+        $param = new Param(name:"date");
         $param->parsedValue($request);
 
         $time = date('YmdHis', time());
@@ -88,7 +88,7 @@ class TimestampAfterDateTest extends TestCase
             "date" => 'bajiu'
         ]);
 
-        $param = new Param("date", [ParamFrom::GET]);
+        $param = new Param(name:"date");
         $param->parsedValue($request);
 
         $time = date('YmdHis', time() + 1);

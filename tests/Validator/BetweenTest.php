@@ -21,7 +21,7 @@ class BetweenTest extends TestCase
             "num" => 5
         ]);
 
-        $param = new Param("num", [ParamFrom::GET]);
+        $param = new Param(name:"num");
         $param->parsedValue($request);
 
         $rule = new Between(min: 5, max: 10);
@@ -33,7 +33,7 @@ class BetweenTest extends TestCase
             "num" => 6.33
         ]);
 
-        $param = new Param("num", [ParamFrom::GET]);
+        $param = new Param(name:"num");
         $param->parsedValue($request);
 
         $rule = new Between(min: 5, max: 10);
@@ -45,7 +45,7 @@ class BetweenTest extends TestCase
             "num" => '6.33'
         ]);
 
-        $param = new Param("num", [ParamFrom::GET]);
+        $param = new Param(name:"num");
         $param->parsedValue($request);
 
         $rule = new Between(min: 5, max: 10);
@@ -57,7 +57,7 @@ class BetweenTest extends TestCase
             "num" => 5
         ]);
 
-        $param = new Param("num", [ParamFrom::GET]);
+        $param = new Param(name:"num");
         $param->parsedValue($request);
 
         $rule = new Between(min: 5, max: 10);
@@ -69,7 +69,7 @@ class BetweenTest extends TestCase
             "num" => 10
         ]);
 
-        $param = new Param("num", [ParamFrom::GET]);
+        $param = new Param(name:"num");
         $param->parsedValue($request);
 
         $rule = new Between(min: 5, max: 10);
@@ -81,7 +81,7 @@ class BetweenTest extends TestCase
             "num" => 5.5
         ]);
 
-        $param = new Param("num", [ParamFrom::GET]);
+        $param = new Param(name:"num");
         $param->parsedValue($request);
 
         $rule = new Between(min: function () {
@@ -103,7 +103,7 @@ class BetweenTest extends TestCase
             "num" => 110
         ]);
 
-        $param = new Param("num", [ParamFrom::GET]);
+        $param = new Param(name:"num");
         $param->parsedValue($request);
 
         $rule = new Between(min: 5, max: 10);
@@ -116,7 +116,7 @@ class BetweenTest extends TestCase
             "num" => 'bajiu'
         ]);
 
-        $param = new Param("num", [ParamFrom::GET]);
+        $param = new Param(name:"num");
         $param->parsedValue($request);
 
         $rule = new Between(min: 5, max: 10);
@@ -134,7 +134,7 @@ class BetweenTest extends TestCase
             "num" => 'bajiu'
         ]);
 
-        $param = new Param("num", [ParamFrom::GET]);
+        $param = new Param(name:"num");
         $param->parsedValue($request);
 
         $rule = new Between(min: 5, max: 10,errorMsg: '您输入的年龄不符');
