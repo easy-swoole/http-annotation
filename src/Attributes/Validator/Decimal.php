@@ -26,6 +26,10 @@ class Decimal extends AbstractValidator
 
     protected function validate(Param $param, ServerRequestInterface $request): bool
     {
+        if($param->isOptional() && !$param->hasSet()){
+            return true;
+        }
+        
         $itemData = $param->parsedValue();
         //没有传参则降级验证为浮点数即可
         if ($this->accuracy === null) {

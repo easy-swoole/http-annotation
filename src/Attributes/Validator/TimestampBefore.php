@@ -24,6 +24,10 @@ class TimestampBefore extends AbstractValidator
 
     protected function validate(Param $param, ServerRequestInterface $request): bool
     {
+        if($param->isOptional() && !$param->hasSet()){
+            return true;
+        }
+        
         $itemData = $param->parsedValue();
 
         if(is_callable($this->date)){

@@ -18,6 +18,10 @@ class IsNumeric extends AbstractValidator
 
     protected function validate(Param $param, ServerRequestInterface $request): bool
     {
+        if($param->isOptional() && !$param->hasSet()){
+            return true;
+        }
+        
         if (is_numeric($param->parsedValue())) {
             return true;
         } else {

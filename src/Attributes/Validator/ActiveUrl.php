@@ -21,6 +21,7 @@ class ActiveUrl extends AbstractValidator
         if($param->isOptional() && !$param->hasSet()){
             return true;
         }
+
         $itemData = $param->parsedValue();
         if (!is_string($itemData)) {
             return false;

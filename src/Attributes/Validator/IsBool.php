@@ -17,6 +17,10 @@ class IsBool extends AbstractValidator
 
     protected function validate(Param $param, ServerRequestInterface $request): bool
     {
+        if($param->isOptional() && !$param->hasSet()){
+            return true;
+        }
+        
         return in_array($param->parsedValue(),["1",1,"0",0,true,false],true);
     }
 
