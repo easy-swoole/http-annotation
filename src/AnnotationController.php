@@ -28,16 +28,32 @@ abstract class AnnotationController extends Controller
         try{
             $this->preHandleProperty();
             $actionParams = $this->runParamsValidate($this->getActionName(),$this->request());
+            $handler = function (Param $param)use(&$handler){
+                if(!empty($param->subObject)){
+                    $temp = [];
+                    /** @var Param $item */
+                    foreach ($param->subObject as $item){
+                        $temp[$item->name] = $handler($item);
+                    }
+                    return $temp;
+                }else{
+                    return $param->parsedValue();
+                }
+            };
+            /** @var Param $actionParam */
+            foreach ($actionParams as $actionParam){
+                $actionParams[$actionParam->name] = $handler($actionParam);
+            }
             $ref = ReflectionCache::getInstance()->getClassReflection(static::class);
             if($ref->hasMethod($this->getActionName())){
                 $ref = $ref->getMethod($this->getActionName());
                 foreach ($ref->getParameters() as $parameter){
                     $key = $parameter->name;
-                    if(isset($actionParams[$key])){
-                        $actionArg[$key] = $actionParams[$key]->parsedValue();
-                    }else{
-                        throw new ParamError("method {$this->getActionName()}() require arg: {$key} , but not define in any controller annotation");
-                    }
+//                    if(isset($actionParams[$key])){
+//                        $actionArg[$key] = $actionParams[$key]->parsedValue();
+//                    }else{
+//                        throw new ParamError("method {$this->getActionName()}() require arg: {$key} , but not define in any controller annotation");
+//                    }
                 }
             }
         }catch (\Throwable $exception){
