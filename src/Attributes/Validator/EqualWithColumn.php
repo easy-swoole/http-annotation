@@ -25,10 +25,6 @@ class EqualWithColumn extends AbstractValidator
 
     protected function validate(Param $param, ServerRequestInterface $request): bool
     {
-        if($param->isOptional() && !$param->hasSet()){
-            return true;
-        }
-        
         $itemData = $param->parsedValue();
         $list = $this->allCheckParams();
         if(!isset($list[$this->compare])){

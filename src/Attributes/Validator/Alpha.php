@@ -18,10 +18,6 @@ class Alpha extends AbstractValidator
 
     protected function validate(Param $param, ServerRequestInterface $request): bool
     {
-        if($param->isOptional() && !$param->hasSet()){
-            return true;
-        }
-        
         return (bool)preg_match( '/^[a-zA-Z]+$/', (string)$param->parsedValue());
     }
 

@@ -17,10 +17,6 @@ class IsFloat extends AbstractValidator
 
     protected function validate(Param $param, ServerRequestInterface $request): bool
     {
-        if($param->isOptional() && !$param->hasSet()){
-            return true;
-        }
-        
         return filter_var($param->parsedValue(), FILTER_VALIDATE_FLOAT) !== false;
     }
 

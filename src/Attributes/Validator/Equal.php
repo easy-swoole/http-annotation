@@ -24,10 +24,6 @@ class Equal extends AbstractValidator
 
     protected function validate(Param $param, ServerRequestInterface $request): bool
     {
-        if($param->isOptional() && !$param->hasSet()){
-            return true;
-        }
-        
         if(is_callable($this->compare)){
             $this->compare = call_user_func($this->compare);
         }

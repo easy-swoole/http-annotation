@@ -20,10 +20,6 @@ class Max extends AbstractValidator
 
     protected function validate(Param $param, ServerRequestInterface $request): bool
     {
-        if($param->isOptional() && !$param->hasSet()){
-            return true;
-        }
-        
         $data = $param->parsedValue();
         if(!is_numeric($data)){
             return false;

@@ -21,10 +21,6 @@ class MaxMbLength extends AbstractValidator
 
     protected function validate(Param $param,ServerRequestInterface $request): bool
     {
-        if($param->isOptional() && !$param->hasSet()){
-            return true;
-        }
-
         $itemData = $param->parsedValue();
         if (is_numeric($itemData) || is_string($itemData)) {
             return mb_strlen($itemData,mb_internal_encoding()) <= $this->maxLen;
