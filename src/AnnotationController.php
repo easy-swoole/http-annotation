@@ -111,28 +111,48 @@ abstract class AnnotationController extends Controller
             }
         }
 
+        $preHandler = function (Param $param)use(&$preHandler,$request){
+            //这边需要进行克隆再进行真实值的解析
+            $temp = clone $param;
+            $subItems = [];
+            foreach ($temp->subObject as $item){
+                $subItems[] = $preHandler($item);
+            }
+            $temp->subObject = $subItems;
+            return $temp;
+        };
+
         $finalParams = [];
         /** @var Param $param */
         foreach ($actionParams as $param){
-            //这边需要进行克隆再进行真实值的解析
-            $temp = clone $param;
-            $temp->parsedValue($request);
-            $finalParams[$temp->name] = $temp;
+            $finalParams[$param->name] = $preHandler($param);
         }
 
-        foreach ($finalParams as $param){
-            $rules = $param->validate;
-            /** @var AbstractValidator $rule */
-            foreach ($rules as $rule){
-                $rule->allCheckParams($finalParams);
-                $ret = $rule->execute($param,$request);
-                if(!$ret){
-                    $msg = $rule->errorMsg();
-                    $ex = new ValidateFail($msg);
-                    $ex->setFailRule($rule);
-                    throw $ex;
+        $validateFunc = function (Param $param)use($request,$finalParams,&$validateFunc){
+            //当有下级的时候，当级校验没有意义
+            if(!empty($param->subObject)){
+                foreach ($param->subObject as $sub){
+                    $validateFunc($sub);
+                }
+            }else{
+                $param->parsedValue($request);
+                $rules = $param->validate;
+                /** @var AbstractValidator $rule */
+                foreach ($rules as $rule){
+                    $rule->allCheckParams($finalParams);
+                    $ret = $rule->execute($param,$request);
+                    if(!$ret){
+                        $msg = $rule->errorMsg();
+                        $ex = new ValidateFail($msg);
+                        $ex->setFailRule($rule);
+                        throw $ex;
+                    }
                 }
             }
+        };
+
+        foreach ($finalParams as $param){
+            $validateFunc($param);
         }
         return $finalParams;
     }

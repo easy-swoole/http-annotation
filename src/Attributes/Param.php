@@ -10,6 +10,7 @@ use EasySwoole\HttpAnnotation\Enum\HttpMethod;
 use EasySwoole\HttpAnnotation\Enum\ParamType;
 use EasySwoole\HttpAnnotation\Enum\ParamFrom;
 use EasySwoole\HttpAnnotation\Exception\Annotation;
+use EasySwoole\Spl\SplArray;
 use Psr\Http\Message\ServerRequestInterface;
 
 #[\Attribute(\Attribute::TARGET_ALL|\Attribute::IS_REPEATABLE)]
@@ -18,6 +19,7 @@ class Param
     private bool $isParsed = false;
     private bool|null $isOptional = null;
     private bool $hasSet = false;
+    private array $parentStack = [];
 
     /**
      * @throws Annotation
@@ -41,6 +43,22 @@ class Param
                 throw new Annotation("description only allow PLAIN_TEXT type in Param attribute");
             }
         }
+        if(!empty($this->subObject)){
+            /** @var Param $item */
+            $temp = $this->parentStack;
+            $temp[] = $this->name;
+            foreach ($this->subObject as $item){
+                $item->parentStack($temp);
+            }
+        }
+    }
+
+    function parentStack(?array $stack = null):array
+    {
+        if($stack !== null){
+            $this->parentStack = $stack;
+        }
+        return $this->parentStack;
     }
 
     public function parsedValue(?ServerRequestInterface $request = null)
@@ -71,10 +89,23 @@ class Param
                     if(!is_array($data)){
                         $data = [];
                     }
-                    if(isset($data[$this->name])){
-                        $this->hasSet = true;
-                        $this->value = $data[$this->name];
+                    if(empty($this->parentStack)){
+                        if(isset($data[$this->name])){
+                            $this->hasSet = true;
+                            $this->value = $data[$this->name];
+                        }
+                    }else{
+                        foreach ($this->parentStack as $stack){
+                            if(isset($data[$stack])){
+                                $data = $data[$stack];
+                            }
+                        }
+                        if(is_array($data) && isset($data[$this->name])){
+                            $this->hasSet = true;
+                            $this->value = $data[$this->name];
+                        }
                     }
+
                     break;
                 }
                 case ParamFrom::XML:

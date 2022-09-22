@@ -20,14 +20,14 @@ class Auth extends ApiBase
 {
     #[Api(
         apiName: "login",
-        allowMethod: HttpMethod::POST,
+        allowMethod: HttpMethod::GET,
         requestPath: "/auth/login.html",
         requestParam: [
-            new Param(name: "account", from: ParamFrom::JSON, validate: [
+            new Param(name: "account", from: ParamFrom::GET, validate: [
                 new Required(),
                 new MaxLength(maxLen: 15),
             ], description: new Description("用户登录的账户Id")),
-            new Param(name: "password", from: ParamFrom::JSON, validate: [
+            new Param(name: "password", from: ParamFrom::GET, validate: [
                 new Required(),
                 new MaxLength(maxLen: 15),
             ], description: new Description("密码")),
@@ -35,7 +35,10 @@ class Auth extends ApiBase
                 description: new Description("验证码"),
                 type: ParamType::OBJECT,
                 subObject: [
-                    new Param(name: "code", from: ParamFrom::JSON, description: "防伪编号"),
+                    new Param(name: "code", from: ParamFrom::JSON, validate:[
+                        new Required(),
+                        new MaxLength(maxLen: 15),
+                    ],description: "防伪编号"),
                     new Param(name: "phone", from: ParamFrom::JSON, description: "手机号")
                 ])
         ],
