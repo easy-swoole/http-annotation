@@ -514,7 +514,9 @@ class Scanner
             $name->nodeValue = str_repeat("&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;",$subCount).$item->name;
             $line->appendChild($name);
 
-
+            $desc = $dom->createElement("td");
+            $desc->nodeValue = self::parseDescription($item->description);
+            $line->appendChild($desc);
 
             $default = $dom->createElement("td");
             $default->nodeValue = self::valueHandler($item);
