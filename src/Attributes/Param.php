@@ -108,7 +108,32 @@ class Param
 
                     break;
                 }
-                case ParamFrom::XML:
+                case ParamFrom::XML:{
+                    $xml = $request->getBody()->__toString();
+                    // xml 转数组
+                    $data = json_decode(json_encode(simplexml_load_string($xml)), true);
+                    if(!is_array($data)){
+                        $data = [];
+                    }
+                    if(empty($this->parentStack)){
+                        if(isset($data[$this->name])){
+                            $this->hasSet = true;
+                            $this->value = $data[$this->name];
+                        }
+                    }else{
+                        foreach ($this->parentStack as $stack){
+                            if(isset($data[$stack])){
+                                $data = $data[$stack];
+                            }
+                        }
+                        if(is_array($data) && isset($data[$this->name])){
+                            $this->hasSet = true;
+                            $this->value = $data[$this->name];
+                        }
+                    }
+
+                    break;
+                }
                 case ParamFrom::RAW_POST:{
                     $this->hasSet = true;
                     $this->value = $request->getBody()->__toString();
