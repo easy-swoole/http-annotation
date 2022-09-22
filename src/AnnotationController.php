@@ -49,11 +49,11 @@ abstract class AnnotationController extends Controller
                 $ref = $ref->getMethod($this->getActionName());
                 foreach ($ref->getParameters() as $parameter){
                     $key = $parameter->name;
-//                    if(isset($actionParams[$key])){
-//                        $actionArg[$key] = $actionParams[$key]->parsedValue();
-//                    }else{
-//                        throw new ParamError("method {$this->getActionName()}() require arg: {$key} , but not define in any controller annotation");
-//                    }
+                    if(isset($actionParams[$key])){
+                        $actionArg[$key] = $actionParams[$key];
+                    }else{
+                        throw new ParamError("method {$this->getActionName()}() require arg: {$key} , but not define in any controller annotation");
+                    }
                 }
             }
         }catch (\Throwable $exception){
