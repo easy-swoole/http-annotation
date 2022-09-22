@@ -3,9 +3,7 @@
 namespace EasySwoole\HttpAnnotation\Tests\ControllerExample;
 
 use EasySwoole\HttpAnnotation\Attributes\Api;
-use EasySwoole\HttpAnnotation\Attributes\RequestParam;
 use EasySwoole\HttpAnnotation\Attributes\Description;
-use EasySwoole\HttpAnnotation\Attributes\Example;
 use EasySwoole\HttpAnnotation\Attributes\Param;
 use EasySwoole\HttpAnnotation\Attributes\Validator\MaxLength;
 use EasySwoole\HttpAnnotation\Attributes\Validator\Optional;
