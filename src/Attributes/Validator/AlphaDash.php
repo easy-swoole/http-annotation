@@ -18,10 +18,6 @@ class AlphaDash extends AbstractValidator
 
     protected function validate(Param $param, ServerRequestInterface $request): bool
     {
-        if($param->isOptional() && !$param->hasSet()){
-            return true;
-        }
-        
         return (bool)preg_match( '/^[a-zA-Z0-9\-\_]+$/', (string)$param->parsedValue());
     }
 

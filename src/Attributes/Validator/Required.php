@@ -17,9 +17,6 @@ class Required extends AbstractValidator
 
     protected function validate(Param $param,ServerRequestInterface $request): bool
     {
-        if($param->isOptional() && !$param->hasSet()){
-            return true;
-        }
         if(!$param->hasSet()){
             return false;
         }

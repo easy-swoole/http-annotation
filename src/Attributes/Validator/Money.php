@@ -23,10 +23,6 @@ class Money extends AbstractValidator
 
     protected function validate(Param $param, ServerRequestInterface $request): bool
     {
-        if($param->isOptional() && !$param->hasSet()){
-            return true;
-        }
-        
         $itemData = $param->parsedValue();
         $precision = $this->precision;
 
