@@ -26,15 +26,15 @@ abstract class AnnotationController extends Controller
     public function __hook(array $actionArg = [])
     {
         try{
-            $this->preAnnotationHook();
-            $ret = $this->runAnnotationHook($this->getActionName(),$this->request());
+            $this->preHandleProperty();
+            $actionParams = $this->runParamsValidate($this->getActionName(),$this->request());
             $ref = ReflectionCache::getInstance()->getClassReflection(static::class);
             if($ref->hasMethod($this->getActionName())){
                 $ref = $ref->getMethod($this->getActionName());
                 foreach ($ref->getParameters() as $parameter){
                     $key = $parameter->name;
-                    if(isset($ret[$key])){
-                        $actionArg[$key] = $ret[$key]->parsedValue();
+                    if(isset($actionParams[$key])){
+                        $actionArg[$key] = $actionParams[$key]->parsedValue();
                     }else{
                         throw new ParamError("method {$this->getActionName()}() require arg: {$key} , but not define in any controller annotation");
                     }
@@ -48,7 +48,7 @@ abstract class AnnotationController extends Controller
         parent::__hook($actionArg);
     }
 
-    private function runAnnotationHook(string $method,Request $request):array
+    private function runParamsValidate(string $method, Request $request):array
     {
 
         $actionParams = AttributeCache::getInstance()->getClassMethodMap(static::class,$method);
@@ -157,7 +157,7 @@ abstract class AnnotationController extends Controller
         return $finalParams;
     }
 
-    private function preAnnotationHook()
+    private function preHandleProperty()
     {
         $ref = ReflectionCache::getInstance()->getClassReflection(static::class);
         $list = $ref->getProperties(\ReflectionProperty::IS_PUBLIC|\ReflectionProperty::IS_PROTECTED|\ReflectionProperty::IS_PRIVATE);
