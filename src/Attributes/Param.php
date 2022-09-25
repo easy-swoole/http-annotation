@@ -191,6 +191,12 @@ class Param
                 }
             }
 
+            if($this->type != null){
+                switch ($this->type){
+
+                }
+            }
+
             $this->isParsed = true;
         }
         return $this->value;
