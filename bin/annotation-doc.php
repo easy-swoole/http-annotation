@@ -29,7 +29,7 @@ class DocCommand implements CommandInterface{
     {
         $dir = CommandManager::getInstance()->getOpt("dir");
         if(empty($dir)){
-            return "php annotation-doc.php --dir=DIR  --format=html|markdown";
+            return "php annotation-doc.php --dir=DIR  --format=html|markdown --project=PROJECT_NAME";
         }
         $format = CommandManager::getInstance()->getOpt("format","html");
         $fix = "doc_".date("Ymd");
@@ -48,13 +48,15 @@ class DocCommand implements CommandInterface{
             }
             closedir($dh);
         }
-        $data = Scanner::scanToDoc($dir);
+
         $finalFile = getcwd();
         if($format == "html"){
-            $html = ParserDown::instance()->parse($data);
+            $project = CommandManager::getInstance()->getOpt("project","Project");
+            $temp = Scanner::scanToHtml($dir,$project);
             $finalFile = $finalFile."/{$fix}_{$maxCount}.html";
-            file_put_contents($finalFile,$html);
+            file_put_contents($finalFile,$temp);
         }else{
+            $data = Scanner::scanToMarkdown($dir);
             $finalFile = $finalFile."/{$fix}_{$maxCount}.md";
             file_put_contents($finalFile,$data);
         }
