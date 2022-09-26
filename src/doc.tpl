@@ -234,7 +234,6 @@
         .content-right {
             max-width: 700px;
             margin-left: 290px;
-            padding-left: 70px;
             flex-grow: 1;
         }
         .content-right h1:target {

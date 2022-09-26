@@ -595,10 +595,13 @@ class Scanner
             $temp = self::buildLine($temp);
             $rules = $item->validate;
             /** @var AbstractValidator $rule */
+            $count = 1;
             foreach ($rules as $rule){
                 $rule->setParam($item);
-                $temp .= "- {$rule->errorMsg()}";
+                $temp .= "{$count}. {$rule->errorMsg()}";
                 $temp = self::buildLine($temp);
+                $temp = self::buildLine($temp);
+                $count++;
             }
             $temp = self::buildLine($temp);
             $validate->nodeValue = $temp;
