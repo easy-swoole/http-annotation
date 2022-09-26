@@ -4,6 +4,8 @@ use EasySwoole\Command\AbstractInterface\CommandHelpInterface;
 use EasySwoole\Command\AbstractInterface\CommandInterface;
 use EasySwoole\Command\Caller;
 use EasySwoole\Command\CommandManager;
+use EasySwoole\HttpAnnotation\Scanner;
+use EasySwoole\ParserDown\ParserDown;
 
 $file = null;
 foreach ([ __DIR__ . '/../../../autoload.php', __DIR__ . '/../vendor/autoload.php' ] as $file) {
@@ -26,14 +28,43 @@ class DocCommand implements CommandInterface{
     public function exec(): ?string
     {
         $dir = CommandManager::getInstance()->getOpt("dir");
+        if(empty($dir)){
+            return "php annotation-doc.php --dir=DIR  --format=html|markdown";
+        }
         $format = CommandManager::getInstance()->getOpt("format","html");
-        return "";
+        $fix = "doc_".date("Ymd");
+        $maxCount = 1;
+        if ($dh = opendir(getcwd())) {
+            while (($file = readdir($dh)) !== false) {
+                if(is_file($file)){
+                    if(str_starts_with($file, $fix)){
+                        $name = explode(".",$file)[0];
+                        $count = (int)substr($name,strlen($fix)+1);
+                        if($count >= $maxCount){
+                            $maxCount = $count + 1;
+                        }
+                    }
+                }
+            }
+            closedir($dh);
+        }
+        $data = Scanner::scanToDoc($dir);
+        $finalFile = getcwd();
+        if($format == "html"){
+            $html = ParserDown::instance()->parse($data);
+            $finalFile = $finalFile."/{$fix}_{$maxCount}.html";
+            file_put_contents($finalFile,$html);
+        }else{
+            $finalFile = $finalFile."/{$fix}_{$maxCount}.md";
+            file_put_contents($finalFile,$data);
+        }
+        return "create doc file :{$finalFile}";
     }
 
     public function help(CommandHelpInterface $commandHelp): CommandHelpInterface
     {
         $commandHelp->addActionOpt('--dir', 'scanned directory or file');
-        $commandHelp->addActionOpt('--format', 'import ext MD file');
+        $commandHelp->addActionOpt('--format', 'format as markdown or html');
         return $commandHelp;
     }
 
