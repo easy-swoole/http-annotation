@@ -193,7 +193,24 @@ class Param
 
             if($this->type != null){
                 switch ($this->type){
-
+                    case ParamType::STRING:{
+                        $this->value = (string)$this->value;
+                        break;
+                    }
+                    case ParamType::INT:{
+                        $this->value = (int)$this->value;
+                        break;
+                    }
+                    case ParamType::FLOAT:
+                    case ParamType::REAL:
+                    case ParamType::DOUBLE:{
+                        $this->value = (float)$this->value;
+                        break;
+                    }
+                    case ParamType::BOOLEAN:{
+                        $this->value = (bool)$this->value;
+                        break;
+                    }
                 }
             }
 
