@@ -233,7 +233,6 @@
         }
         .content-right {
             max-width: 700px;
-            margin-left: 290px;
             flex-grow: 1;
         }
         .content-right h1:target {
@@ -266,6 +265,7 @@
             margin-top: 56px;
             padding-top: 24px;
             display: flex;
+            justify-content: center;
         }
         .curproject-name {
             font-size: 42px;
