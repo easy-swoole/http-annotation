@@ -56,10 +56,14 @@ class Scanner
         }
     }
 
-    static function scanToHtml(string $controllerPath,string $projectName):string
+    static function scanToHtml(string $controllerPath,string $projectName,?string $tplAddress = null):string
     {
         $str = self::scanToMarkdown($controllerPath);
-        $temp = file_get_contents(__DIR__.'/doc.tpl');
+        if ($tplAddress) {
+            $temp = file_get_contents($tplAddress);
+        } else {
+            $temp = file_get_contents(__DIR__.'/doc.tpl');
+        }
         $html = ParserDown::instance()->parse($str);
         $temp = str_replace('{{$apiDoc}}',$html,$temp);
         return str_replace('{{$projectName}}',$projectName,$temp);
