@@ -30,6 +30,15 @@ class Scanner
             $ref = ReflectionCache::getInstance()->getClassReflection($controller);
             $trimClass = ltrim(str_replace($controllerNameSpace,"",$controller),"\\");
             $controllerRequestPrefix = str_replace("\\","/",$trimClass);
+            //替换首字母为小写。
+            $arr = explode("/",$controllerRequestPrefix);
+            $controllerRequestPrefix = "";
+            while ($a = array_shift($arr)){
+                $controllerRequestPrefix .= lcfirst($a);
+                if(!empty($arr)){
+                    $controllerRequestPrefix .= "/";
+                }
+            }
 
             $methodRefs = ReflectionCache::getInstance()->allowMethodReflections($ref);
             /** @var \ReflectionMethod $methodRef */
