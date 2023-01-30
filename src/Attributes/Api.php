@@ -16,7 +16,7 @@ class Api
         public array         $responseParam = [],
         public array         $requestExample = [],
         public array         $responseExample = [],
-        public ?Description  $description = null,
+        public Description|string|null $description = null,
         public bool          $deprecated = false,
     ){}
 }

@@ -187,15 +187,17 @@ class Scanner
         $finalDoc = self::buildLine($finalDoc);
         $groupIndex = 1;
         foreach ($groupDetail as $groupName => $des){
-            $finalDoc .= "{$groupIndex}. [{$groupName}](#{$groupName}) \n";
+            $finalDoc .= "### [{$groupName}](#{$groupName}) ";
+            $finalDoc = self::buildLine($finalDoc,2);
             $allMethods = $groupApiMethods[$groupName];
             $methodCount = 1;
             /** @var Api $tag */
             foreach ($allMethods as $tag){
-                $finalDoc .= "    - [{$tag->apiName}](#{$groupName}-{$tag->apiName}) \n";
+                $finalDoc .= "{$methodCount}. [{$tag->apiName}](#{$groupName}-{$tag->apiName}) \n";
                 $methodCount ++;
             }
             $groupIndex ++;
+            $finalDoc = self::buildLine($finalDoc,2);
         }
         $finalDoc = self::buildLine($finalDoc,3);
 
@@ -479,9 +481,11 @@ class Scanner
         return $content .str_repeat("\n",$repeat);
     }
 
-    private static function parseDescription(?Description $description):?string
+    private static function parseDescription(Description|string|null $description = null):?string
     {
-        if($description){
+        if(is_string($description)){
+            return  $description;
+        }else if($description instanceof Description){
             switch ($description->type){
                 case Description::MARKDOWN:{
                     $file = $description->desc;
