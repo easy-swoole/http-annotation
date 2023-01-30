@@ -583,31 +583,15 @@ class Scanner
 
     private static function buildRequestParamsTable(array $array):string
     {
+        //用模板构建是因为可能存在一些html 实体，不希望被转化
 
-        $dom = new \DOMDocument();
-        $dom->formatOutput = true;
-        $root = $dom->createElement("table");
-        //构建表头
-        $header = $dom->createElement("tr");
-        $list = ["Name","From","Validate","Description","Default"];
-        foreach ($list as $item){
-            $td = $dom->createElement("td");
-            $td->nodeValue = $item;
-            $header->appendChild($td);
-        }
-        $root->appendChild($header);
-
-        $builder = function (Param $item, $subCount = 0,ParamFrom $parentFrom = null)use($dom,$root,&$builder){
+        $builder = function (Param $item, $subCount = 0,ParamFrom $parentFrom = null)use(&$builder){
             if($parentFrom && ($parentFrom != $item->from)){
                 throw new Annotation("param name: {$item->name} 'from' attribute is different with parent 'from' attribute : {$parentFrom->toString()}");
             }
-            $line = $dom->createElement("tr");
 
-            $name = $dom->createElement("td");
-            $name->nodeValue = str_repeat("&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;",$subCount).$item->name;
-            $line->appendChild($name);
+            $name = str_repeat("&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;",$subCount).$item->name;
 
-            $fromNode = $dom->createElement("td");
 
             $fromStr = "";
             if($item->from instanceof ParamFrom){
@@ -618,10 +602,7 @@ class Scanner
                 }
             }
 
-            $fromNode->nodeValue = $fromStr;
-            $line->appendChild($fromNode);
 
-            $validate = $dom->createElement("td");
             $temp = "";
             $temp = self::buildLine($temp);
             $temp = self::buildLine($temp);
@@ -630,40 +611,59 @@ class Scanner
             $count = 1;
             foreach ($rules as $rule){
                 $rule->setCurrentParam($item);
-                $temp .= "{$count}. {$rule->errorMsg()}";
+                $temp .= "{$count}. {$rule->errorMsg()} <br>";
                 $temp = self::buildLine($temp);
                 $temp = self::buildLine($temp);
                 $count++;
             }
-            $temp = self::buildLine($temp);
-            $validate->nodeValue = $temp;
-            $line->appendChild($validate);
+            $validate = $temp;
 
-            $desc = $dom->createElement("td");
-            $desc->nodeValue = self::parseDescription($item->description);
-            $line->appendChild($desc);
 
-            $default = $dom->createElement("td");
-            $default->nodeValue = self::valueHandler($item);
-            $line->appendChild($default);
+            $desc = self::parseDescription($item->description);
 
-            $root->appendChild($line);
+            $default = self::valueHandler($item);
 
             //检查是否有下级
-
+            $next = "";
             $subCount++;
             foreach ($item->subObject as $sub){
-                $builder($sub,$subCount,$item->from);
+                $next .= $builder($sub,$subCount,$item->from);
             }
+
+            return "
+<tr>
+            <td>{$name}</td>
+            <td>{$fromStr}</td>
+            <td>{$validate}</td>
+            <td>{$desc}</td>
+            <td>{$default}</td>
+		</tr>
+		{$next}
+		";
         };
 
+
+
         //填充值
+
+        $final = "";
+
         /** @var Param $item */
         foreach ($array as $item){
-            $builder($item);
+            $final .= $builder($item);
         }
 
-        return $dom->saveHTML($root);
+        return "
+<table>
+    <tr>
+		<td>Name</td>
+		<td>From</td>
+		<td>Validate</td>
+		<td>Description</td>
+		<td>Default</td>
+	</tr>
+	{$final}
+</table>";
     }
 
 
