@@ -5,7 +5,7 @@ namespace EasySwoole\HttpAnnotation\Enum;
 enum ParamFrom
 {
     case GET;
-    case FORM_POST;
+    case POST;
     case XML;
     case JSON;
     case RAW_POST;

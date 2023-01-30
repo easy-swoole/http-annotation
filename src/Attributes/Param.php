@@ -76,7 +76,7 @@ class Param
                     }
                     break;
                 }
-                case ParamFrom::FORM_POST:{
+                case ParamFrom::POST:{
                     $data = $request->getParsedBody();
                     if(isset($data[$this->name])){
                         $this->hasSet = true;
