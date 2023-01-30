@@ -29,7 +29,7 @@ class Scanner
         foreach ($controllers as $controller){
             $ref = ReflectionCache::getInstance()->getClassReflection($controller);
             $trimClass = ltrim(str_replace($controllerNameSpace,"",$controller),"\\");
-            $controllerPrefix = str_replace("\\","/",$trimClass);
+            $controllerRequestPrefix = str_replace("\\","/",$trimClass);
 
             $methodRefs = ReflectionCache::getInstance()->allowMethodReflections($ref);
             /** @var \ReflectionMethod $methodRef */
@@ -42,7 +42,7 @@ class Scanner
                         $msg = "{$exception->getMessage()} in controller: {$controller} methodRef: {$methodRef->name}";
                         throw new Annotation($msg);
                     }
-                    $realPath = "/{$controllerPrefix}/{$methodRef->name}";
+                    $realPath = "/{$controllerRequestPrefix}/{$methodRef->name}";
                     if(!empty($apiAttr->requestPath) && $apiAttr->requestPath != $realPath){
                         if (!empty($apiAttr->allow)) {
                             $allow = $apiAttr->allow;
@@ -56,16 +56,16 @@ class Scanner
         }
     }
 
-    static function scanToHtml(string $controllerPath,string $projectName):string
+    static function scanToHtml(string $controllerPath,string $projectName, string $controllerNameSpace = 'App\HttpController'):string
     {
-        $str = self::scanToMarkdown($controllerPath);
+        $str = self::scanToMarkdown($controllerPath,$controllerNameSpace);
         $temp = file_get_contents(__DIR__.'/doc.tpl');
         $html = ParserDown::instance()->parse($str);
         $temp = str_replace('{{$apiDoc}}',$html,$temp);
         return str_replace('{{$projectName}}',$projectName,$temp);
     }
 
-    static function scanToMarkdown(string $controllerPath):string{
+    static function scanToMarkdown(string $controllerPath, string $controllerNameSpace = 'App\HttpController'):string{
         $finalDoc = "";
         $controllers = self::scanAllController($controllerPath);
         $groupDetail = [];
@@ -106,6 +106,9 @@ class Scanner
             }
             $onRequestParams = $temp;
 
+            $trimClass = ltrim(str_replace($controllerNameSpace,"",$controller),"\\");
+            $controllerRequestPrefix = str_replace("\\","/",$trimClass);
+
             /** @var \ReflectionMethod $controllerMethodRef */
             foreach ($controllerMethodRefs as $controllerMethodRef){
                 $apiTag = $controllerMethodRef->getAttributes(Api::class);
@@ -113,6 +116,10 @@ class Scanner
                     $tag =  $apiTag[0];
                     try{
                         $tag = new Api(...$tag->getArguments());
+
+                        if(empty($tag->requestPath)){
+                            $tag->requestPath = "/{$controllerRequestPrefix}/{$controllerMethodRef->name}";
+                        }
 
                         $tempArr = $tag->requestParam;
 
