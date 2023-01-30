@@ -158,7 +158,7 @@ class Scanner
                         $tag->requestParam = $tempArr;
                     }catch (\Throwable $exception){
                         $msg = "{$exception->getMessage()} in controller: {$controller} method: {$controllerMethodRef->name}";
-                        throw $exception;
+                        throw new Annotation($msg);
                     }
 
                     $apiName = $tag->apiName;
