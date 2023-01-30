@@ -158,7 +158,7 @@ class Scanner
                         $tag->requestParam = $tempArr;
                     }catch (\Throwable $exception){
                         $msg = "{$exception->getMessage()} in controller: {$controller} method: {$controllerMethodRef->name}";
-                        throw new Annotation($msg);
+                        throw $exception;
                     }
 
                     $apiName = $tag->apiName;
@@ -180,13 +180,17 @@ class Scanner
             }
         }
 
-
         //构建Group目录导航
         $finalDoc .= "<h1 id='Navigator'>Navigator</h1>";
         $finalDoc = self::buildLine($finalDoc);
         $finalDoc = self::buildLine($finalDoc);
-        $groupIndex = 1;
         foreach ($groupDetail as $groupName => $des){
+            //删除无实际方法分组
+            if(empty($groupApiMethods[$groupName])){
+                unset($groupDetail[$groupName]);
+                continue;
+            }
+
             $finalDoc .= "### [{$groupName}](#{$groupName}) ";
             $finalDoc = self::buildLine($finalDoc,2);
             $allMethods = $groupApiMethods[$groupName];
@@ -196,7 +200,6 @@ class Scanner
                 $finalDoc .= "{$methodCount}. [{$tag->apiName}](#{$groupName}-{$tag->apiName}) \n";
                 $methodCount ++;
             }
-            $groupIndex ++;
             $finalDoc = self::buildLine($finalDoc,2);
         }
         $finalDoc = self::buildLine($finalDoc,3);
