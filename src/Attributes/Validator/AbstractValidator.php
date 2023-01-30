@@ -80,7 +80,7 @@ abstract class AbstractValidator
             }
             unset($list['errorMsg']);
             unset($list['params']);
-            unset($list['param']);
+            unset($list['currentParam']);
             unset($list['request']);
             unset($list['args']);
             $this->args = $list;
@@ -104,7 +104,7 @@ abstract class AbstractValidator
                     $val = json_encode($val,JSON_UNESCAPED_SLASHES|JSON_UNESCAPED_UNICODE);
                 }elseif(is_object($val)){
                     if(method_exists($val,"__toString")){
-                        $val = $val->__tostring();
+                        $val = $val->__toString();
                     }else{
                         $val = (string)$val;
                     }
