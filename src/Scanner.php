@@ -108,6 +108,15 @@ class Scanner
 
             $trimClass = ltrim(str_replace($controllerNameSpace,"",$controller),"\\");
             $controllerRequestPrefix = str_replace("\\","/",$trimClass);
+            //替换首字母为小写。
+            $arr = explode("/",$controllerRequestPrefix);
+            $controllerRequestPrefix = "";
+            while ($a = array_shift($arr)){
+                $controllerRequestPrefix .= lcfirst($a);
+                if(!empty($arr)){
+                    $controllerRequestPrefix .= "/";
+                }
+            }
 
             /** @var \ReflectionMethod $controllerMethodRef */
             foreach ($controllerMethodRefs as $controllerMethodRef){
