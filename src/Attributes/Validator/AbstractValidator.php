@@ -14,14 +14,14 @@ abstract class AbstractValidator
 
     private array $params = [];
 
-    private ?Param $param = null;
+    private ?Param $currentParam = null;
 
     /**
-     * @param Param|null $param
+     * @param Param|null $currentParam
      */
-    public function setParam(?Param $param): void
+    public function setCurrentParam(?Param $currentParam): void
     {
-        $this->param = $param;
+        $this->currentParam = $currentParam;
     }
 
     private ?ServerRequestInterface $request = null;
@@ -30,7 +30,7 @@ abstract class AbstractValidator
 
     function execute(Param $param,ServerRequestInterface $request):bool
     {
-        $this->param = $param;
+        $this->currentParam = $param;
         $this->request = $request;
         if($this->isIgnoreCheck($param)){
             return true;
@@ -43,7 +43,7 @@ abstract class AbstractValidator
      */
     public function currentCheckParam(): ?Param
     {
-        return $this->param;
+        return $this->currentParam;
     }
 
     /**
@@ -96,14 +96,14 @@ abstract class AbstractValidator
         }
         if(!empty($this->errorMsg)){
             $tpl = $this->errorMsg;
-            $tpl = str_replace('{#name}',$this->param->name,$tpl);
+            $tpl = str_replace('{#name}',$this->currentParam->name,$tpl);
             foreach ($this->getRuleArgs() as $key => $val){
                 if(is_callable($val)){
                     $val = "Custom Func Exec Result";
                 }elseif (is_array($val)){
                     $val = json_encode($val,JSON_UNESCAPED_SLASHES|JSON_UNESCAPED_UNICODE);
                 }elseif(is_object($val)){
-                    if(method_exists($val,"__tostring")){
+                    if(method_exists($val,"__toString")){
                         $val = $val->__tostring();
                     }else{
                         $val = (string)$val;

@@ -629,7 +629,7 @@ class Scanner
             /** @var AbstractValidator $rule */
             $count = 1;
             foreach ($rules as $rule){
-                $rule->setParam($item);
+                $rule->setCurrentParam($item);
                 $temp .= "{$count}. {$rule->errorMsg()}";
                 $temp = self::buildLine($temp);
                 $temp = self::buildLine($temp);
