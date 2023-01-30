@@ -14,6 +14,7 @@ use EasySwoole\HttpAnnotation\Enum\HttpMethod;
 use EasySwoole\HttpAnnotation\Enum\ParamType;
 use EasySwoole\HttpAnnotation\Enum\ParamFrom;
 use EasySwoole\HttpAnnotation\Exception\Annotation;
+use EasySwoole\ParserDown\ParserDown;
 use EasySwoole\Utility\File;
 use FastRoute\RouteCollector;
 
@@ -55,7 +56,16 @@ class Scanner
         }
     }
 
-    static function scanToDoc(string $controllerPath):string{
+    static function scanToHtml(string $controllerPath,string $projectName):string
+    {
+        $str = self::scanToMarkdown($controllerPath);
+        $temp = file_get_contents(__DIR__.'/doc.tpl');
+        $html = ParserDown::instance()->parse($str);
+        $temp = str_replace('{{$apiDoc}}',$html,$temp);
+        return str_replace('{{$projectName}}',$projectName,$temp);
+    }
+
+    static function scanToMarkdown(string $controllerPath):string{
         $finalDoc = "";
         $controllers = self::scanAllController($controllerPath);
         $groupDetail = [];
@@ -585,10 +595,13 @@ class Scanner
             $temp = self::buildLine($temp);
             $rules = $item->validate;
             /** @var AbstractValidator $rule */
+            $count = 1;
             foreach ($rules as $rule){
                 $rule->setParam($item);
-                $temp .= "- {$rule->errorMsg()}";
+                $temp .= "{$count}. {$rule->errorMsg()}";
                 $temp = self::buildLine($temp);
+                $temp = self::buildLine($temp);
+                $count++;
             }
             $temp = self::buildLine($temp);
             $validate->nodeValue = $temp;
