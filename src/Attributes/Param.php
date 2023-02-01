@@ -26,7 +26,7 @@ class Param
      */
     public function __construct(
         public string                  $name,
-        public ParamFrom               $from = ParamFrom::GET,
+        public ParamFrom|array         $from = [ParamFrom::GET,ParamFrom::POST],
         public ?array                  $validate = [],
         public                         $value = null,
         public bool                    $deprecated = false,
@@ -67,129 +67,140 @@ class Param
             return $this->value;
         }
         if($request){
-            switch ($this->from){
-                case ParamFrom::GET:{
-                    $data = $request->getQueryParams();
-                    if(isset($data[$this->name])){
-                        $this->hasSet = true;
-                        $this->value = $data[$this->name];
-                    }
-                    break;
-                }
-                case ParamFrom::POST:{
-                    $data = $request->getParsedBody();
-                    if(isset($data[$this->name])){
-                        $this->hasSet = true;
-                        $this->value = $data[$this->name];
-                    }
-                    break;
-                }
-                case ParamFrom::JSON:{
-                    $data = json_decode($request->getBody()->__toString(),true);
-                    if(!is_array($data)){
-                        $data = [];
-                    }
-                    if(empty($this->parentStack)){
+            if(is_array($this->from)){
+                $fromList = $this->from;
+            }else{
+                $fromList = [$this->from];
+            }
+            foreach ($fromList as $from){
+                switch ($from){
+                    case ParamFrom::GET:{
+                        $data = $request->getQueryParams();
                         if(isset($data[$this->name])){
                             $this->hasSet = true;
                             $this->value = $data[$this->name];
                         }
-                    }else{
-                        foreach ($this->parentStack as $stack){
-                            if(isset($data[$stack])){
-                                $data = $data[$stack];
-                            }
-                        }
-                        if(is_array($data) && isset($data[$this->name])){
-                            $this->hasSet = true;
-                            $this->value = $data[$this->name];
-                        }
+                        break;
                     }
-
-                    break;
-                }
-                case ParamFrom::XML:{
-                    $xml = $request->getBody()->__toString();
-                    // xml 转数组
-                    $data = json_decode(json_encode(simplexml_load_string($xml)), true);
-                    if(!is_array($data)){
-                        $data = [];
-                    }
-                    if(empty($this->parentStack)){
+                    case ParamFrom::POST:{
+                        $data = $request->getParsedBody();
                         if(isset($data[$this->name])){
                             $this->hasSet = true;
                             $this->value = $data[$this->name];
                         }
-                    }else{
-                        foreach ($this->parentStack as $stack){
-                            if(isset($data[$stack])){
-                                $data = $data[$stack];
+                        break;
+                    }
+                    case ParamFrom::JSON:{
+                        $data = json_decode($request->getBody()->__toString(),true);
+                        if(!is_array($data)){
+                            $data = [];
+                        }
+                        if(empty($this->parentStack)){
+                            if(isset($data[$this->name])){
+                                $this->hasSet = true;
+                                $this->value = $data[$this->name];
+                            }
+                        }else{
+                            foreach ($this->parentStack as $stack){
+                                if(isset($data[$stack])){
+                                    $data = $data[$stack];
+                                }
+                            }
+                            if(is_array($data) && isset($data[$this->name])){
+                                $this->hasSet = true;
+                                $this->value = $data[$this->name];
                             }
                         }
-                        if(is_array($data) && isset($data[$this->name])){
-                            $this->hasSet = true;
-                            $this->value = $data[$this->name];
-                        }
-                    }
 
-                    break;
-                }
-                case ParamFrom::RAW_POST:{
-                    $this->hasSet = true;
-                    $this->value = $request->getBody()->__toString();
-                    break;
-                }
-                case ParamFrom::FILE:{
-                    $data = $request->getUploadedFile($this->name);
-                    if(!empty($data)){
+                        break;
+                    }
+                    case ParamFrom::XML:{
+                        $xml = $request->getBody()->__toString();
+                        // xml 转数组
+                        $data = json_decode(json_encode(simplexml_load_string($xml)), true);
+                        if(!is_array($data)){
+                            $data = [];
+                        }
+                        if(empty($this->parentStack)){
+                            if(isset($data[$this->name])){
+                                $this->hasSet = true;
+                                $this->value = $data[$this->name];
+                            }
+                        }else{
+                            foreach ($this->parentStack as $stack){
+                                if(isset($data[$stack])){
+                                    $data = $data[$stack];
+                                }
+                            }
+                            if(is_array($data) && isset($data[$this->name])){
+                                $this->hasSet = true;
+                                $this->value = $data[$this->name];
+                            }
+                        }
+
+                        break;
+                    }
+                    case ParamFrom::RAW_POST:{
                         $this->hasSet = true;
-                        $this->value = $data;
+                        $this->value = $request->getBody()->__toString();
+                        break;
                     }
-                    break;
-                }
-                case ParamFrom::DI:{
-                    $data = IOC::getInstance()->get($this->name);
-                    if(!empty($data)){
+                    case ParamFrom::FILE:{
+                        $data = $request->getUploadedFile($this->name);
+                        if(!empty($data)){
+                            $this->hasSet = true;
+                            $this->value = $data;
+                        }
+                        break;
+                    }
+                    case ParamFrom::DI:{
+                        $data = IOC::getInstance()->get($this->name);
+                        if(!empty($data)){
+                            $this->hasSet = true;
+                            $this->value = $data;
+                        }
+                        break;
+                    }
+                    case ParamFrom::CONTEXT:{
+                        $data = ContextManager::getInstance()->get($this->name);
+                        if(!empty($data)){
+                            $this->hasSet = true;
+                            $this->value = $data;
+                        }
+                        break;
+                    }
+                    case ParamFrom::COOKIE:{
+                        $data = $request->getCookieParams($this->name);
+                        if(!empty($data)){
+                            $this->hasSet = true;
+                            $this->value = $data;
+                        }
+                        break;
+                    }
+                    case ParamFrom::HEADER:{
+                        $data = $request->getHeader($this->name);
                         $this->hasSet = true;
-                        $this->value = $data;
+                        if(!empty($data)){
+                            $this->value = $data[0];
+                        }else{
+                            $this->value = null;
+                        }
+                        break;
                     }
-                    break;
+                    case ParamFrom::ROUTER_PARAMS:{
+                        $data = ContextManager::getInstance()->get(AbstractRouter::PARSE_PARAMS_CONTEXT_KEY);
+                        if(isset($data[$this->name])){
+                            $this->hasSet = true;
+                            $this->value = $data;
+                        }
+                        break;
+                    }
                 }
-                case ParamFrom::CONTEXT:{
-                    $data = ContextManager::getInstance()->get($this->name);
-                    if(!empty($data)){
-                        $this->hasSet = true;
-                        $this->value = $data;
-                    }
-                    break;
-                }
-                case ParamFrom::COOKIE:{
-                    $data = $request->getCookieParams($this->name);
-                    if(!empty($data)){
-                        $this->hasSet = true;
-                        $this->value = $data;
-                    }
-                    break;
-                }
-                case ParamFrom::HEADER:{
-                    $data = $request->getHeader($this->name);
-                    $this->hasSet = true;
-                    if(!empty($data)){
-                        $this->value = $data[0];
-                    }else{
-                        $this->value = null;
-                    }
-                    break;
-                }
-                case ParamFrom::ROUTER_PARAMS:{
-                    $data = ContextManager::getInstance()->get(AbstractRouter::PARSE_PARAMS_CONTEXT_KEY);
-                    if(isset($data[$this->name])){
-                        $this->hasSet = true;
-                        $this->value = $data;
-                    }
+                if($this->hasSet){
                     break;
                 }
             }
+
 
             if($this->type != null){
                 switch ($this->type){
