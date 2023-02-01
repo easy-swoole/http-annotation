@@ -47,12 +47,19 @@ abstract class AnnotationController extends Controller
             $ref = ReflectionCache::getInstance()->getClassReflection(static::class);
             if($ref->hasMethod($this->getActionName())){
                 $ref = $ref->getMethod($this->getActionName());
-                foreach ($ref->getParameters() as $parameter){
-                    $key = $parameter->name;
-                    if(isset($actionParams[$key])){
-                        $actionArg[$key] = $actionParams[$key];
-                    }else{
-                        throw new ParamError("method {$this->getActionName()}() require arg: {$key} , but not define in any controller annotation");
+                $parameters = $ref->getParameters();
+                //如果用数组来接收全部参数
+                if(count($parameters) == 1 && $parameters[0]->getType()->getName() == "array"){
+                    $key = $parameters[0]->name;
+                    $actionArg[$key] = $actionParams;
+                }else{
+                    foreach ($parameters as $parameter){
+                        $key = $parameter->name;
+                        if(isset($actionParams[$key])){
+                            $actionArg[$key] = $actionParams[$key];
+                        }else{
+                            throw new ParamError("method {$this->getActionName()}() require arg: {$key} , but not define in any controller annotation");
+                        }
                     }
                 }
             }
