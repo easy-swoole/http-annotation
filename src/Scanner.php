@@ -245,6 +245,7 @@ class Scanner
                         foreach ($apiTag->allowMethod as $allowMethodItem) {
                             $allMethodStr .= "{$allowMethodItem->toString()},";
                         }
+                        $allMethodStr = rtrim($allMethodStr,',');
                     }
                     $finalDoc .= "**Allow Method:** {$allMethodStr}";
                     $finalDoc = self::buildLine($finalDoc);
@@ -404,11 +405,9 @@ class Scanner
         if (is_file($controllerPath)) {
             $files[] = $controllerPath;
         } else {
-            $files = File::scanDirectory($controllerPath);
-            if(isset($files['files'])){
-                $files = $files['files'];
-            }else{
-                return $list;
+            $temp = File::scanDirectory($controllerPath);
+            if(isset($temp['files'])){
+                $files = $temp['files'];
             }
         }
 
@@ -600,6 +599,7 @@ class Scanner
                 foreach ($item->from as $fromItem) {
                     $fromStr .= "{$fromItem->toString()},";
                 }
+                $fromStr = rtrim($fromStr,',');
             }
 
 
