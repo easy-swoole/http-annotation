@@ -544,7 +544,7 @@ class Scanner
         }
         $root->appendChild($header);
 
-        $builder = function (Param $item, $subCount = 0,ParamFrom $parentFrom = null)use($dom,$root,&$builder){
+        $builder = function (Param $item, $subCount = 0,ParamFrom|array $parentFrom = null)use($dom,$root,&$builder){
             if($parentFrom && ($parentFrom != $item->from)){
                 throw new Annotation("param name: {$item->name} 'from' attribute is different with parent 'from' attribute : {$parentFrom->toString()}");
             }
@@ -585,7 +585,7 @@ class Scanner
     {
         //用模板构建是因为可能存在一些html 实体，不希望被转化
 
-        $builder = function (Param $item, $subCount = 0,ParamFrom $parentFrom = null)use(&$builder){
+        $builder = function (Param $item, $subCount = 0,ParamFrom|array $parentFrom = null)use(&$builder){
             if($parentFrom && ($parentFrom != $item->from)){
                 throw new Annotation("param name: {$item->name} 'from' attribute is different with parent 'from' attribute : {$parentFrom->toString()}");
             }
