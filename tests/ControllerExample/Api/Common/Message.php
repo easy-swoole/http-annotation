@@ -10,10 +10,16 @@ use EasySwoole\HttpAnnotation\Attributes\Validator\Optional;
 class Message extends Base
 {
 
+    #[Api(
+        apiName: "list"
+    )]
     function list(){
 
     }
 
+    #[Api(
+        apiName: "unRead"
+    )]
     function unRead(){
 
     }

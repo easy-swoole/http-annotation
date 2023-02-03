@@ -153,7 +153,9 @@ class Scanner
                             }
                         }
                         foreach ($tempOnRequestParams as $item){
-                            $tempArr[] = $item;
+                            if(!in_array($controllerMethodRef->name,$item->ignoreAction)){
+                                $tempArr[] = $item;
+                            }
                         }
                         $tag->requestParam = $tempArr;
                     }catch (\Throwable $exception){

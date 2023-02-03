@@ -8,6 +8,12 @@ use EasySwoole\HttpAnnotation\Tests\ControllerExample\Api\ApiBase;
 
 class Base extends ApiBase
 {
+    #[Param(
+        name: "token",
+        ignoreAction: [
+            "list"
+        ]
+    )]
     function onRequest(?string $action): ?bool
     {
         return parent::onRequest($action);

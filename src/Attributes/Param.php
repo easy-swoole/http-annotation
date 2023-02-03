@@ -33,7 +33,8 @@ class Param
         public bool                    $unset = false,
         public Description|string|null $description = null,
         public ?ParamType              $type = null,
-        public array                   $subObject = []
+        public array                   $subObject = [],
+        public array                   $ignoreAction = []
     ){
         if($this->description){
             if(!$this->description instanceof Description){
