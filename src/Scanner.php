@@ -129,6 +129,7 @@ class Scanner
             }
             $onRequestParams = $temp;
 
+            //全局定义的重复参数名，优先度低于onRequest声明的
             foreach ($controllerGlobalParams as $param){
                 if(!isset($onRequestParams[$param->name])){
                     $onRequestParams[$param->name] = $param;
@@ -161,13 +162,13 @@ class Scanner
 
                         $tempArr = $tag->requestParam;
 
+                        //全局和onRequest处定义的，优先度低于action定义
                         $tempOnRequestParams = $onRequestParams;
                         /**
                          * @var  $index
                          * @var Param $item
                          */
                         foreach ($tempArr as $index =>$item){
-                            //参数覆盖检查
                             if(isset($tempOnRequestParams[$item->name])){
                                 unset($tempOnRequestParams[$item->name]);
                             }
