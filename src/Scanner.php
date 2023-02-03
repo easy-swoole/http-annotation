@@ -100,6 +100,9 @@ class Scanner
 
 
             $controllerMethodRefs = ReflectionCache::getInstance()->allowMethodReflections($reflection);
+
+            $controllerGlobalParams = $reflection->getAttributes(Param::class);
+
             $onRequestParams = $reflection->getMethod("onRequest")->getAttributes(Param::class);
             $temp = [];
             foreach ($onRequestParams as $onRequestParam){
@@ -160,7 +163,7 @@ class Scanner
                         $tag->requestParam = $tempArr;
                     }catch (\Throwable $exception){
                         $msg = "{$exception->getMessage()} in controller: {$controller} method: {$controllerMethodRef->name}";
-                        throw $exception;
+                        throw new Annotation($msg);
                     }
 
                     $apiName = $tag->apiName;
