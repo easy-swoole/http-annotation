@@ -101,7 +101,18 @@ class Scanner
 
             $controllerMethodRefs = ReflectionCache::getInstance()->allowMethodReflections($reflection);
 
-            $controllerGlobalParams = $reflection->getAttributes(Param::class);
+            $controllerGlobalParams = [];
+            $gTemp = $reflection->getAttributes(Param::class);
+            foreach ($gTemp as $g){
+                $args = $g->getArguments();
+                try{
+                    $controllerGlobalParams[] = new Param(...$args);
+                }catch (\Throwable $exception){
+                    $controller = static::class;
+                    $msg = "{$exception->getMessage()} in controller: {$controller} global param";
+                    throw new Annotation($msg);
+                }
+            }
 
             $onRequestParams = $reflection->getMethod("onRequest")->getAttributes(Param::class);
             $temp = [];
@@ -117,6 +128,12 @@ class Scanner
                 $temp[$onRequestParam->name] = $onRequestParam;
             }
             $onRequestParams = $temp;
+
+            foreach ($controllerGlobalParams as $param){
+                if(!isset($onRequestParams[$param->name])){
+                    $onRequestParams[$param->name] = $param;
+                }
+            }
 
             $trimClass = ltrim(str_replace($controllerNameSpace,"",$controller),"\\");
             $controllerRequestPrefix = str_replace("\\","/",$trimClass);

@@ -17,4 +17,12 @@ class Profile extends Base
     {
 
     }
+
+    #[Api(
+        apiName: "update"
+    )]
+    function update()
+    {
+
+    }
 }
