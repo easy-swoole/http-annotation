@@ -10,6 +10,7 @@ use EasySwoole\HttpAnnotation\Attributes\Validator\Optional;
 use EasySwoole\HttpAnnotation\Attributes\Validator\Required;
 use EasySwoole\HttpAnnotation\Enum\HttpMethod;
 use EasySwoole\HttpAnnotation\Enum\ParamFrom;
+use EasySwoole\HttpAnnotation\Scanner;
 
 class Index extends Base
 {
@@ -48,5 +49,12 @@ class Index extends Base
     )]
     function hello(string $account){
         $this->writeJson(200,null,"account is {$account}");
+    }
+
+    function doc()
+    {
+        $path = __DIR__;
+        $doc = Scanner::scanToHtml($path,"auth");
+        $this->response()->write($doc);
     }
 }
