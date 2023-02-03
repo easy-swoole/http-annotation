@@ -79,6 +79,19 @@ abstract class AnnotationController extends Controller
             $actionParams = [];
             $ref = ReflectionCache::getInstance()->getClassReflection(static::class);
             $onRequestParams = $ref->getMethod("onRequest")->getAttributes(Param::class);
+            $controllerGlobalParams = [];
+            $gTemp = $ref->getAttributes(Param::class);
+            foreach ($gTemp as $g){
+                $args = $g->getArguments();
+                try{
+                    $controllerGlobalParams[] = new Param(...$args);
+                }catch (\Throwable $exception){
+                    $controller = static::class;
+                    $msg = "{$exception->getMessage()} in controller: {$controller} global param";
+                    throw new Annotation($msg);
+                }
+            }
+
 
             if($ref->hasMethod($method)){
                 $actionMethodRef = $ref->getMethod($method);
