@@ -10,7 +10,9 @@ class Base extends ApiBase
 {
     #[Param(
         name: "token",
-        ignoreAction: [
+        validate: [
+            new Required()
+        ], ignoreAction: [
             "list"
         ]
     )]

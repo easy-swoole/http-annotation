@@ -2,6 +2,7 @@
 
 namespace EasySwoole\HttpAnnotation\Tests\ControllerExample\Api\Common;
 
+use EasySwoole\Http\Message\Status;
 use EasySwoole\HttpAnnotation\Attributes\Api;
 use EasySwoole\HttpAnnotation\Attributes\Example;
 use EasySwoole\HttpAnnotation\Attributes\Param;
@@ -14,7 +15,7 @@ class Message extends Base
         apiName: "list"
     )]
     function list(){
-
+        $this->writeJson(Status::CODE_OK,[1,2,3]);
     }
 
     #[Api(
