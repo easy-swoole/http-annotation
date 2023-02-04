@@ -23,7 +23,7 @@ use EasySwoole\Component\Di as IOC;
 
 abstract class AnnotationController extends Controller
 {
-    public function __hook(array $actionArg = [])
+    public function __hook(?array $actionArg = [],?array $onRequestArg = null)
     {
         try{
             $this->preHandleProperty();
@@ -71,8 +71,9 @@ abstract class AnnotationController extends Controller
             $this->onException($exception);
             return ;
         }
+        $onRequestArg = $actionParams;
 
-        parent::__hook($actionArg);
+        parent::__hook($actionArg,$onRequestArg);
     }
 
     private function runParamsValidate(string $method, Request $request):array
