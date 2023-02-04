@@ -2,6 +2,7 @@
 
 namespace EasySwoole\HttpAnnotation\Tests\ControllerExample\Api\Common;
 
+use EasySwoole\Http\Message\Status;
 use EasySwoole\HttpAnnotation\Attributes\Api;
 use EasySwoole\HttpAnnotation\Attributes\Param;
 use EasySwoole\HttpAnnotation\Attributes\Validator\Required;
@@ -22,7 +23,7 @@ class Profile extends Base
     )]
     function info()
     {
-
+        $this->writeJson(Status::CODE_OK,null,"info");
     }
 
     #[Api(
@@ -30,6 +31,6 @@ class Profile extends Base
     )]
     function update()
     {
-
+        $this->writeJson(Status::CODE_OK,null,"update");
     }
 }

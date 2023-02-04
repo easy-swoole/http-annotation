@@ -84,7 +84,8 @@ abstract class AnnotationController extends Controller
             foreach ($gTemp as $g){
                 $args = $g->getArguments();
                 try{
-                    $controllerGlobalParams[] = new Param(...$args);
+                    $test = new Param(...$args);
+                    $controllerGlobalParams[$test->name] = $test;
                 }catch (\Throwable $exception){
                     $controller = static::class;
                     $msg = "{$exception->getMessage()} in controller: {$controller} global param";
@@ -139,6 +140,16 @@ abstract class AnnotationController extends Controller
                 if(!$hit){
                     $actionParams[] = $onRequestParam;
                 }
+            }
+
+            //全局定义的重复参数名，优先度低于method声明的
+            foreach ($actionParams as $param){
+                if(isset($controllerGlobalParams[$param->name])){
+                    unset($controllerGlobalParams[$param->name]);
+                }
+            }
+            foreach ($controllerGlobalParams as $param){
+                $actionParams[] = $param;
             }
 
             $allowMethod = ReflectionCache::getInstance()->allowMethodReflections($ref);
