@@ -49,13 +49,17 @@ abstract class AnnotationController extends Controller
                 $ref = $ref->getMethod($this->getActionName());
                 $parameters = $ref->getParameters();
                 //如果用数组来接收全部参数
-                if(count($parameters) == 1 && $parameters[0]->getType()->getName() == "array"){
+                $type = $parameters[0]->getType();
+                if($type){
+                    $type = $type->getName();
+                }
+                if(count($parameters) == 1 && $type == "array"){
                     $key = $parameters[0]->name;
                     $actionArg[$key] = $actionParams;
                 }else{
                     foreach ($parameters as $parameter){
                         $key = $parameter->name;
-                        if(isset($actionParams[$key])){
+                        if(key_exists($key,$actionParams)){
                             $actionArg[$key] = $actionParams[$key];
                         }else{
                             throw new ParamError("method {$this->getActionName()}() require arg: {$key} , but not define in any controller annotation");
