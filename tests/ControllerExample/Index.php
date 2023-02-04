@@ -54,7 +54,8 @@ class Index extends Base
     function doc()
     {
         $path = __DIR__;
-        $doc = Scanner::scanToHtml($path,"auth");
+        $namespace = 'EasySwoole\HttpAnnotation\Tests\ControllerExample';
+        $doc = Scanner::scanToHtml($path,"auth",$namespace);
         $this->response()->write($doc);
     }
 }
