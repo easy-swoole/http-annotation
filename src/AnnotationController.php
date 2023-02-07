@@ -66,7 +66,7 @@ abstract class AnnotationController extends Controller
                     $temps = AttributeCache::getInstance()
                         ->getClassMethodParams(static::class,$this->getActionName());
                     foreach ($temps as $keyKey => $temp){
-                        $temps[$keyKey] = $actionParams[$keyKey] ?: null;
+                        $temps[$keyKey] = $actionParams[$keyKey] !== null ? $actionParams[$keyKey] : null;
                     }
                     $actionArg[$key] = $temps;
                 }else{
