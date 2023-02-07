@@ -25,6 +25,9 @@ abstract class AnnotationController extends Controller
 {
     public function __hook(?array $actionArg = [],?array $onRequestArg = null)
     {
+        if($onRequestArg == null){
+            $onRequestArg = [];
+        }
         try{
             $this->preHandleProperty();
             $actionParams = $this->runParamsValidate($this->getActionName(),$this->request());
@@ -43,6 +46,7 @@ abstract class AnnotationController extends Controller
             /** @var Param $actionParam */
             foreach ($actionParams as $actionParam){
                 $actionParams[$actionParam->name] = $handler($actionParam);
+                $onRequestArg[$actionParam->name] = $actionParams[$actionParam->name];
             }
             $ref = ReflectionCache::getInstance()->getClassReflection(static::class);
             if($ref->hasMethod($this->getActionName())){
@@ -58,7 +62,13 @@ abstract class AnnotationController extends Controller
                 }
                 if(count($parameters) == 1 && $type == "array"){
                     $key = $parameters[0]->name;
-                    $actionArg[$key] = $actionParams;
+                    //传递全部参数的时候，去除onRequest定义的参数。
+                    $temps = AttributeCache::getInstance()
+                        ->getClassMethodParams(static::class,$this->getActionName());
+                    foreach ($temps as $keyKey => $temp){
+                        $temps[$keyKey] = $actionParams[$keyKey] ?: null;
+                    }
+                    $actionArg[$key] = $temps;
                 }else{
                     foreach ($parameters as $parameter){
                         $key = $parameter->name;
@@ -74,9 +84,10 @@ abstract class AnnotationController extends Controller
             $this->onException($exception);
             return ;
         }
-        if($onRequestArg == null){
-            $onRequestArg = $actionParams;
-        }
+        /*
+         * $onRequestArg 是全部定义的参数，而$actionArg 是方法定义与控制器全局定义的参数合集
+         */
+
         parent::__hook($actionArg,$onRequestArg);
     }
 
@@ -152,8 +163,8 @@ abstract class AnnotationController extends Controller
                     throw new Annotation($msg);
                 }
 
-                if(!isset($actionParam[$onRequestParam->name])){
-                    $actionParam[$onRequestParam->name] = $onRequestParam;
+                if(!isset($actionParams[$onRequestParam->name])){
+                    $actionParams[$onRequestParam->name] = $onRequestParam;
                 }
             }
 
