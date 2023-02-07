@@ -3,6 +3,7 @@
 namespace EasySwoole\HttpAnnotation;
 
 use EasySwoole\HttpAnnotation\Attributes\Api;
+use EasySwoole\HttpAnnotation\Attributes\ExtendParam;
 use EasySwoole\HttpAnnotation\Attributes\Param;
 use EasySwoole\HttpAnnotation\Exception\Annotation;
 use FastRoute\RouteCollector;
@@ -44,6 +45,13 @@ class Utility
                     throw new Annotation($msg);
                 }
             }
+        }
+
+        //检查是否继承父类
+        $extendParents = [];
+        $extendParent = $actionMethodRef->getAttributes(ExtendParam::class);
+        if(!empty($extendParent)){
+            $extendParent = new ExtendParam(...$extendParent[0]->getArguments());
         }
 
         return $finalParams;
