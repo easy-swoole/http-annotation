@@ -9,38 +9,40 @@ class AttributeCache
 {
     use Singleton;
 
-    protected array $apiGroup = [];
-    protected array $classMethodMap = [];
+    protected array $classMethodFullParams = [];
 
-    function addApiGroup(ApiGroup $apiGroup):bool
-    {
-        if(isset($this->apiGroup[$apiGroup->groupName])){
-            return false;
-        }else{
-            $this->apiGroup[$apiGroup->groupName] = $apiGroup;
-            return true;
-        }
-    }
+    protected array $classMethodParams = [];
 
-    function apiGroups():array
-    {
-        return $this->apiGroup;
-    }
-
-    function setClassMethodMap(string $class,$action,array $data):void
+    function setClassMethodFullParams(string $class, $action, array $data):void
     {
         $key = md5($class);
-        $this->classMethodMap[$key][$action] = $data;
+        $this->classMethodFullParams[$key][$action] = $data;
     }
+
 
     /*
      * 注意引用克隆
      */
-    function getClassMethodMap(string $class,$action):?array
+    function getClassMethodFullParams(string $class,string $action):?array
     {
         $key = md5($class);
-        if(isset($this->classMethodMap[$key][$action])){
-            return $this->classMethodMap[$key][$action];
+        if(isset($this->classMethodFullParams[$key][$action])){
+            return $this->classMethodFullParams[$key][$action];
+        }
+        return null;
+    }
+
+    function setClassMethodParams(string $class,string $action, array $data):void
+    {
+        $key = md5($class);
+        $this->classMethodParams[$key][$action] = $data;
+    }
+
+    function getClassMethodParams(string $class,string $action)
+    {
+        $key = md5($class);
+        if(isset($this->classMethodParams[$key][$action])){
+            return $this->classMethodParams[$key][$action];
         }
         return null;
     }

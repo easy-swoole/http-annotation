@@ -83,7 +83,7 @@ abstract class AnnotationController extends Controller
     private function runParamsValidate(string $method, Request $request):array
     {
 
-        $actionParams = AttributeCache::getInstance()->getClassMethodMap(static::class,$method);
+        $actionParams = AttributeCache::getInstance()->getClassMethodFullParams(static::class,$method);
         if($actionParams === null){
             $actionParams = [];
             $ref = ReflectionCache::getInstance()->getClassReflection(static::class);
@@ -164,7 +164,7 @@ abstract class AnnotationController extends Controller
             $allowMethod = ReflectionCache::getInstance()->allowMethodReflections($ref);
             //如果是存在于用户定义的方法，才允许缓存起来。
             if(isset($allowMethod[$method])){
-                AttributeCache::getInstance()->setClassMethodMap(static::class,$method,$actionParams);
+                AttributeCache::getInstance()->setClassMethodFullParams(static::class,$method,$actionParams);
             }
         }
 
