@@ -83,10 +83,17 @@ abstract class AnnotationController extends Controller
     private function runParamsValidate(string $method, Request $request):array
     {
 
+        $ref = ReflectionCache::getInstance()->getClassReflection(static::class);
+        $allowMethod = ReflectionCache::getInstance()->allowMethodReflections($ref);
+        //如果是存在于用户定义的方法，才允许缓存起来。
+        //不然无限制方法会引起内存溢出
+        if(!isset($allowMethod[$method])){
+            return [];
+        }
+
         $actionParams = AttributeCache::getInstance()->getClassMethodFullParams(static::class,$method);
         if($actionParams === null){
             $actionParams = [];
-            $ref = ReflectionCache::getInstance()->getClassReflection(static::class);
             $onRequestParams = $ref->getMethod("onRequest")->getAttributes(Param::class);
             $controllerGlobalParams = [];
             $gTemp = $ref->getAttributes(Param::class);
@@ -102,6 +109,7 @@ abstract class AnnotationController extends Controller
                 }
             }
 
+            $cacheActionParamKeys = [];
 
             if($ref->hasMethod($method)){
                 $actionMethodRef = $ref->getMethod($method);
@@ -115,7 +123,12 @@ abstract class AnnotationController extends Controller
                         throw new Annotation($msg);
                     }
 
-                    $actionParams = $apiTag->requestParam;
+                    /** @var Param $item */
+                    foreach ($apiTag->requestParam as $item){
+                        $actionParams[$item->name] = $item;
+                        $cacheActionParamKeys[$item->name] = $item->name;
+                    }
+
                     if($apiTag->allowMethod instanceof HttpMethod){
                         $allowRequestMethod = [$apiTag->allowMethod];
                     }else{
@@ -139,33 +152,22 @@ abstract class AnnotationController extends Controller
                     throw new Annotation($msg);
                 }
 
-                $hit = false;
-                foreach ($actionParams as $actionParam){
-                    if($actionParam->name == $onRequestParam->name){
-                        $hit = true;
-                        break;
-                    }
-                }
-                if(!$hit){
-                    $actionParams[] = $onRequestParam;
+                if(!isset($actionParam[$onRequestParam->name])){
+                    $actionParam[$onRequestParam->name] = $onRequestParam;
                 }
             }
 
             //全局定义的重复参数名，优先度低于method声明的
-            foreach ($actionParams as $param){
-                if(isset($controllerGlobalParams[$param->name])){
-                    unset($controllerGlobalParams[$param->name]);
+            foreach ($controllerGlobalParams as $param){
+                if(!in_array($method,$param->ignoreAction)){
+                    if(!isset($actionParams[$param->name])){
+                        $actionParams[$param->name] = $param;
+                        $cacheActionParamKeys[$param->name] = $param->name;
+                    }
                 }
             }
-            foreach ($controllerGlobalParams as $param){
-                $actionParams[] = $param;
-            }
-
-            $allowMethod = ReflectionCache::getInstance()->allowMethodReflections($ref);
-            //如果是存在于用户定义的方法，才允许缓存起来。
-            if(isset($allowMethod[$method])){
-                AttributeCache::getInstance()->setClassMethodFullParams(static::class,$method,$actionParams);
-            }
+            AttributeCache::getInstance()->setClassMethodFullParams(static::class,$method,$actionParams);
+            AttributeCache::getInstance()->setClassMethodParams(static::class,$method,$cacheActionParamKeys);
         }
 
         $preHandler = function (Param $param)use(&$preHandler,$request){
