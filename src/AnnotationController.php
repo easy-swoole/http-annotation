@@ -47,11 +47,14 @@ abstract class AnnotationController extends Controller
             $ref = ReflectionCache::getInstance()->getClassReflection(static::class);
             if($ref->hasMethod($this->getActionName())){
                 $ref = $ref->getMethod($this->getActionName());
+                $type = null;
                 $parameters = $ref->getParameters();
-                //如果用数组来接收全部参数
-                $type = $parameters[0]->getType();
-                if($type){
-                    $type = $type->getName();
+                if(!empty($parameters)){
+                    //如果用数组来接收全部参数
+                    $type = $parameters[0]->getType();
+                    if($type){
+                        $type = $type->getName();
+                    }
                 }
                 if(count($parameters) == 1 && $type == "array"){
                     $key = $parameters[0]->name;
