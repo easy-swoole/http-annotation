@@ -3,10 +3,10 @@
 namespace EasySwoole\HttpAnnotation\Attributes;
 
 #[\Attribute(\Attribute::TARGET_METHOD)]
-class ExtendParentParams
+class ExtendParam
 {
     public function __construct(
-        public ?array $params = []
+        public ?array $parentParams = []
     )
     {
 
