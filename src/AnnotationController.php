@@ -85,7 +85,7 @@ abstract class AnnotationController extends Controller
             return ;
         }
         /*
-         * $onRequestArg 是全部定义的参数，而$actionArg 是方法定义与控制器全局定义的参数合集
+         * $onRequestArg 是全部定义的参数，而$actionArg 是方法定义参数
          */
 
         parent::__hook($actionArg,$onRequestArg);
@@ -173,7 +173,6 @@ abstract class AnnotationController extends Controller
                 if(!in_array($method,$param->ignoreAction)){
                     if(!isset($actionParams[$param->name])){
                         $actionParams[$param->name] = $param;
-                        $cacheActionParamKeys[$param->name] = $param->name;
                     }
                 }
             }
