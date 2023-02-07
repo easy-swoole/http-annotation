@@ -74,8 +74,9 @@ abstract class AnnotationController extends Controller
             $this->onException($exception);
             return ;
         }
-        $onRequestArg = $actionParams;
-
+        if($onRequestArg == null){
+            $onRequestArg = $actionParams;
+        }
         parent::__hook($actionArg,$onRequestArg);
     }
 
