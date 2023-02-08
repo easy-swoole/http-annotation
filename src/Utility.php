@@ -10,10 +10,10 @@ use FastRoute\RouteCollector;
 
 class Utility
 {
-    public static function parseMethodParams(\ReflectionClass $reflectionClass,string $methodName):?array
+    public static function parseMethodParams(\ReflectionClass $reflectionClass,string $methodName):array
     {
         if(!$reflectionClass->hasMethod($methodName)){
-            return null;
+            return [];
         }
         $actionMethodRef = $reflectionClass->getMethod($methodName);
         $actionApiTags = $actionMethodRef->getAttributes(Api::class);
@@ -26,7 +26,6 @@ class Utility
                     $finalParams[$item->name] = $item;
                 }
             }catch (\Throwable $exception){
-                $class = static::class;
                 $msg = "{$exception->getMessage()} in controller: {$reflectionClass->name} method: {$methodName}";
                 throw new Annotation($msg);
             }
@@ -47,12 +46,35 @@ class Utility
             }
         }
 
+
         //检查是否继承父类
         $extendParents = [];
         $extendParent = $actionMethodRef->getAttributes(ExtendParam::class);
         if(!empty($extendParent)){
             $extendParent = new ExtendParam(...$extendParent[0]->getArguments());
+            $parentClass = $reflectionClass->getParentClass();
+            if($parentClass){
+                $parentParams = self::parseMethodParams(new \ReflectionClass($parentClass->name),$methodName);
+                if(!empty($extendParent->parentParams)){
+                    $temp = [];
+                    foreach ($extendParent->parentParams as $paramName){
+                        if(isset($parentParams[$paramName])){
+                            $temp[$paramName] = $parentParams[$paramName];
+                        }else{
+                            $msg = "param {$paramName} is not define in parent method {$methodName} of class {$reflectionClass->name}";
+                            throw new Annotation($msg);
+                        }
+                    }
+                    $parentParams = $temp;
+                }
+                foreach ($parentParams as $paramName => $param){
+                    if(!isset($finalParams[$paramName])){
+                        $finalParams[$paramName] = $param;
+                    }
+                }
+            }
         }
+
 
         return $finalParams;
     }
