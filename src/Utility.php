@@ -12,6 +12,10 @@ class Utility
 {
     public static function parseMethodParams(\ReflectionClass $reflectionClass,string $methodName):array
     {
+        $temp = AttributeCache::getInstance()->getClassMethodParams($reflectionClass->name,$methodName);
+        if($temp !== null){
+            return $temp;
+        }
         if(!$reflectionClass->hasMethod($methodName)){
             return [];
         }
@@ -48,7 +52,6 @@ class Utility
 
 
         //检查是否继承父类
-        $extendParents = [];
         $extendParent = $actionMethodRef->getAttributes(ExtendParam::class);
         if(!empty($extendParent)){
             $extendParent = new ExtendParam(...$extendParent[0]->getArguments());
@@ -75,6 +78,7 @@ class Utility
             }
         }
 
+        AttributeCache::getInstance()->setClassMethodParams($reflectionClass->name,$methodName,$finalParams);
 
         return $finalParams;
     }

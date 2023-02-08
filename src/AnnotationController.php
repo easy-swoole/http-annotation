@@ -25,12 +25,9 @@ abstract class AnnotationController extends Controller
 {
     public function __hook(?array $actionArg = [],?array $onRequestArg = null)
     {
-        if($onRequestArg == null){
-            $onRequestArg = [];
-        }
         try{
             $this->preHandleProperty();
-            $actionParams = $this->runParamsValidate($this->getActionName(),$this->request());
+            $onRequestArg = $this->runParamsValidate($this->getActionName(),$this->request());
             $handler = function (Param $param)use(&$handler){
                 if(!empty($param->subObject)){
                     $temp = [];
@@ -44,9 +41,8 @@ abstract class AnnotationController extends Controller
                 }
             };
             /** @var Param $actionParam */
-            foreach ($actionParams as $actionParam){
-                $actionParams[$actionParam->name] = $handler($actionParam);
-                $onRequestArg[$actionParam->name] = $actionParams[$actionParam->name];
+            foreach ($onRequestArg as $actionParam){
+                $onRequestArg[$actionParam->name] = $handler($actionParam);
             }
             $ref = ReflectionCache::getInstance()->getClassReflection(static::class);
             if($ref->hasMethod($this->getActionName())){
@@ -66,14 +62,14 @@ abstract class AnnotationController extends Controller
                     $temps = AttributeCache::getInstance()
                         ->getClassMethodParams(static::class,$this->getActionName());
                     foreach ($temps as $keyKey => $temp){
-                        $temps[$keyKey] = $actionParams[$keyKey] !== null ? $actionParams[$keyKey] : null;
+                        $temps[$keyKey] = $onRequestArg[$keyKey] !== null ? $onRequestArg[$keyKey] : null;
                     }
                     $actionArg[$key] = $temps;
                 }else{
                     foreach ($parameters as $parameter){
                         $key = $parameter->name;
-                        if(key_exists($key,$actionParams)){
-                            $actionArg[$key] = $actionParams[$key];
+                        if(key_exists($key,$onRequestArg)){
+                            $actionArg[$key] = $onRequestArg[$key];
                         }else{
                             throw new ParamError("method {$this->getActionName()}() require arg: {$key} , but not define in any controller annotation");
                         }
@@ -87,7 +83,10 @@ abstract class AnnotationController extends Controller
         /*
          * $onRequestArg 是全部定义的参数，而$actionArg 是方法定义参数
          */
-
+        $temps = Utility::parseMethodParams($ref,$this->getActionName());
+        foreach ($temps as $name => $temp){
+            $actionArg[$name] = $onRequestArg[$name];
+        }
         parent::__hook($actionArg,$onRequestArg);
     }
 
@@ -104,8 +103,7 @@ abstract class AnnotationController extends Controller
 
         $actionParams = AttributeCache::getInstance()->getClassMethodFullParams(static::class,$method);
         if($actionParams === null){
-            $actionParams = [];
-            $onRequestParams = $ref->getMethod("onRequest")->getAttributes(Param::class);
+            $onRequestParams = Utility::parseMethodParams($ref,"onRequest");
             $controllerGlobalParams = [];
             $gTemp = $ref->getAttributes(Param::class);
             foreach ($gTemp as $g){
@@ -120,7 +118,8 @@ abstract class AnnotationController extends Controller
                 }
             }
 
-            $cacheActionParamKeys = [];
+
+            $actionParams = Utility::parseMethodParams($ref,$method);
 
             if($ref->hasMethod($method)){
                 $actionMethodRef = $ref->getMethod($method);
@@ -132,12 +131,6 @@ abstract class AnnotationController extends Controller
                         $class = static::class;
                         $msg = "{$exception->getMessage()} in controller: {$class} method: {$method}";
                         throw new Annotation($msg);
-                    }
-
-                    /** @var Param $item */
-                    foreach ($apiTag->requestParam as $item){
-                        $actionParams[$item->name] = $item;
-                        $cacheActionParamKeys[$item->name] = $item->name;
                     }
 
                     if($apiTag->allowMethod instanceof HttpMethod){
@@ -154,15 +147,6 @@ abstract class AnnotationController extends Controller
             }
 
             foreach ($onRequestParams as $onRequestParam){
-                $args = $onRequestParam->getArguments();
-                try{
-                    $onRequestParam = new Param(...$args);
-                }catch (\Throwable $exception){
-                    $controller = static::class;
-                    $msg = "{$exception->getMessage()} in controller: {$controller} onRequest Method";
-                    throw new Annotation($msg);
-                }
-
                 if(!isset($actionParams[$onRequestParam->name])){
                     $actionParams[$onRequestParam->name] = $onRequestParam;
                 }
@@ -177,7 +161,6 @@ abstract class AnnotationController extends Controller
                 }
             }
             AttributeCache::getInstance()->setClassMethodFullParams(static::class,$method,$actionParams);
-            AttributeCache::getInstance()->setClassMethodParams(static::class,$method,$cacheActionParamKeys);
         }
 
         $preHandler = function (Param $param)use(&$preHandler,$request){
