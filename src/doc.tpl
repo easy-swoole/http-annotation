@@ -55,7 +55,7 @@
         }
         td,
         th {
-            text-align: center;
+            /*text-align: center;*/
             border: 1px solid #ddd;
             padding: 3px 10px;
         }
