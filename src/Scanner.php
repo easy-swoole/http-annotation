@@ -114,20 +114,7 @@ class Scanner
                 }
             }
 
-            $onRequestParams = $reflection->getMethod("onRequest")->getAttributes(Param::class);
-            $temp = [];
-            foreach ($onRequestParams as $onRequestParam){
-                $args = $onRequestParam->getArguments();
-                try{
-                    $onRequestParam = new Param(...$args);
-                }catch (\Throwable $exception){
-                    $controller = static::class;
-                    $msg = "{$exception->getMessage()} in controller: {$controller} onRequest Method";
-                    throw new Annotation($msg);
-                }
-                $temp[$onRequestParam->name] = $onRequestParam;
-            }
-            $onRequestParams = $temp;
+            $onRequestParams = Utility::parseMethodParams($reflection,"onRequest");
 
             //全局定义的重复参数名，优先度低于onRequest声明的
             foreach ($controllerGlobalParams as $param){
@@ -160,7 +147,7 @@ class Scanner
                             $tag->requestPath = "/{$controllerRequestPrefix}/{$controllerMethodRef->name}";
                         }
 
-                        $tempArr = $tag->requestParam;
+                        $tempArr = Utility::parseMethodParams($reflection,$controllerMethodRef->name);
 
                         //全局和onRequest处定义的，优先度低于action定义
                         $tempOnRequestParams = $onRequestParams;

@@ -46,9 +46,9 @@ abstract class AnnotationController extends Controller
             }
             $ref = ReflectionCache::getInstance()->getClassReflection(static::class);
             if($ref->hasMethod($this->getActionName())){
-                $ref = $ref->getMethod($this->getActionName());
+                $methodRef = $ref->getMethod($this->getActionName());
                 $type = null;
-                $parameters = $ref->getParameters();
+                $parameters = $methodRef->getParameters();
                 if(!empty($parameters)){
                     //如果用数组来接收全部参数
                     $type = $parameters[0]->getType();
@@ -58,9 +58,8 @@ abstract class AnnotationController extends Controller
                 }
                 if(count($parameters) == 1 && $type == "array"){
                     $key = $parameters[0]->name;
-                    //传递全部参数的时候，去除onRequest定义的参数。
-                    $temps = AttributeCache::getInstance()
-                        ->getClassMethodParams(static::class,$this->getActionName());
+                    //传递全部参数的时候，仅仅保留函数定义的参数。
+                    $temps = Utility::parseMethodParams($ref,$this->getActionName());
                     foreach ($temps as $keyKey => $temp){
                         $temps[$keyKey] = $onRequestArg[$keyKey] !== null ? $onRequestArg[$keyKey] : null;
                     }
