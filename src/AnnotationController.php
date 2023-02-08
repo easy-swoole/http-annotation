@@ -80,12 +80,8 @@ abstract class AnnotationController extends Controller
             return ;
         }
         /*
-         * $onRequestArg 是全部定义的参数，而$actionArg 是方法定义参数
-         */
-        $temps = Utility::parseMethodParams($ref,$this->getActionName());
-        foreach ($temps as $name => $temp){
-            $actionArg[$name] = $onRequestArg[$name];
-        }
+        * $onRequestArg 是全部定义的参数，而$actionArg 是方法定义参数
+        */
         parent::__hook($actionArg,$onRequestArg);
     }
 
