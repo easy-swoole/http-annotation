@@ -12,7 +12,7 @@ use EasySwoole\Http\AbstractInterface\AbstractRouter;
 use EasySwoole\Http\Dispatcher;
 use EasySwoole\Http\Request;
 use EasySwoole\Http\Response;
-use EasySwoole\HttpAnnotation\Scanner;
+use EasySwoole\HttpAnnotation\Utility;
 use Swoole\Http\Server;
 
 $nameSpace = 'EasySwoole\HttpAnnotation\Tests\ControllerExample';
@@ -20,7 +20,7 @@ $dispatcher = new Dispatcher();
 $dispatcher->setNamespacePrefix($nameSpace);
 $dispatcher->enableFakeRouter();
 $dispatcher->setOnRouterCreate(function (AbstractRouter $router)use($nameSpace){
-    Scanner::mappingRouter($router->getRouteCollector(),"tests/ControllerExample",$nameSpace);
+    Utility::mappingRouter($router->getRouteCollector(),"tests/ControllerExample",$nameSpace);
 });
 $http = new Server("127.0.0.1", 9501);
 $http->set([

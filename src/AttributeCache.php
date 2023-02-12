@@ -19,7 +19,6 @@ class AttributeCache
         $this->classMethodFullParams[$key][$action] = $data;
     }
 
-
     /*
      * 注意引用克隆
      */
