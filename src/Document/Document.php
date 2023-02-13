@@ -30,6 +30,11 @@ class Document
         $this->config = new Config();
     }
 
+    public function getConfig():Config
+    {
+        return $this->config;
+    }
+
     function scan()
     {
         $list = [];
