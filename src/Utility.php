@@ -7,6 +7,7 @@ use EasySwoole\Http\UrlParser;
 use EasySwoole\HttpAnnotation\Attributes\Api;
 use EasySwoole\HttpAnnotation\Attributes\ExtendParam;
 use EasySwoole\HttpAnnotation\Attributes\Param;
+use EasySwoole\HttpAnnotation\Enum\HttpMethod;
 use EasySwoole\HttpAnnotation\Exception\Annotation;
 use EasySwoole\Utility\File;
 use FastRoute\RouteCollector;
@@ -167,8 +168,16 @@ class Utility
                     }
                     $realPath = "/{$controllerRequestPrefix}/{$methodRef->name}";
                     if(!empty($apiAttr->requestPath) && $apiAttr->requestPath != $realPath){
-                        if (!empty($apiAttr->allow)) {
-                            $allow = $apiAttr->allow;
+                        if (!empty($apiAttr->allowMethod)) {
+                            $allow = [];
+                            if($apiAttr->allowMethod instanceof HttpMethod){
+                                $allow[] = $apiAttr->allowMethod->toString();
+                            }else{
+                                /** @var HttpMethod $item */
+                                foreach ($apiAttr->allowMethod as $item){
+                                    $allow[] = $item->toString();
+                                }
+                            }
                         } else {
                             $allow = ['POST', 'GET', 'PUT', 'PATCH', 'DELETE', 'HEAD', 'OPTIONS'];
                         }
