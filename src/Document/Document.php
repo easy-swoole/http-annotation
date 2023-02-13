@@ -188,7 +188,7 @@ class Document
                 $finalDoc = $this->buildLine($finalDoc);
                 $params = $apiTag->requestParam;
                 if(!empty($params)){
-                    $finalDoc .= self::buildRequestParamsTable($params);
+                    $finalDoc .= $this->buildRequestParamsTable($params);
                 }else{
                     $finalDoc .= "No Any Request Params Defined";
                 }
@@ -202,7 +202,7 @@ class Document
                 $finalDoc = $this->buildLine($finalDoc);
                 $params = $apiTag->responseParam;
                 if(!empty($params)){
-                    $finalDoc .= self::buildExampleParamsTable($params);
+                    $finalDoc .= $this->buildExampleParamsTable($params);
                 }else{
                     $finalDoc .= "No Any Response Params Defined";
                 }
@@ -218,7 +218,7 @@ class Document
                         $finalDoc .= "**Request Example{$count}:**";
                         $finalDoc = $this->buildLine($finalDoc);
                         if($example->params){
-                            $finalDoc .= self::buildExampleParamsTable($example->params);
+                            $finalDoc .= $this->buildExampleParamsTable($example->params);
                             $finalDoc = $this->buildLine($finalDoc);
                             $finalDoc = $this->buildLine($finalDoc);
                         }
@@ -238,7 +238,7 @@ class Document
                             }
                             $finalDoc = $this->buildLine($finalDoc);
                             $finalDoc = $this->buildLine($finalDoc);
-                            $finalDoc .= self::parseDescription($example->description);
+                            $finalDoc .= $this->parseDescription($example->description);
                             $finalDoc = $this->buildLine($finalDoc);
                             $finalDoc = $this->buildLine($finalDoc);
                         }
@@ -262,7 +262,7 @@ class Document
                         $finalDoc .= "**Response Example{$count}:**";
                         $finalDoc = $this->buildLine($finalDoc);
                         if($example->params){
-                            $finalDoc .= self::buildExampleParamsTable($example->params);
+                            $finalDoc .= $this->buildExampleParamsTable($example->params);
                             $finalDoc = $this->buildLine($finalDoc);
                             $finalDoc = $this->buildLine($finalDoc);
                         }
@@ -283,7 +283,7 @@ class Document
                             $finalDoc = $this->buildLine($finalDoc);
                             $finalDoc = $this->buildLine($finalDoc);
 
-                            $finalDoc .= self::parseDescription($example->description);
+                            $finalDoc .= $this->parseDescription($example->description);
                             $finalDoc = $this->buildLine($finalDoc);
                             $finalDoc = $this->buildLine($finalDoc);
                         }
@@ -398,9 +398,9 @@ class Document
             $validate = $temp;
 
 
-            $desc = self::parseDescription($item->description);
+            $desc = $this->parseDescription($item->description);
 
-            $default = self::valueHandler($item);
+            $default = $this->valueHandler($item);
 
             //检查是否有下级
             $next = "";
