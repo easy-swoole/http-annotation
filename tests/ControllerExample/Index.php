@@ -8,6 +8,7 @@ use EasySwoole\HttpAnnotation\Attributes\Param;
 use EasySwoole\HttpAnnotation\Attributes\Validator\MaxLength;
 use EasySwoole\HttpAnnotation\Attributes\Validator\Optional;
 use EasySwoole\HttpAnnotation\Attributes\Validator\Required;
+use EasySwoole\HttpAnnotation\Document\Document;
 use EasySwoole\HttpAnnotation\Enum\HttpMethod;
 use EasySwoole\HttpAnnotation\Enum\ParamFrom;
 use EasySwoole\HttpAnnotation\Scanner;
@@ -55,7 +56,7 @@ class Index extends Base
     {
         $path = __DIR__;
         $namespace = 'EasySwoole\HttpAnnotation\Tests\ControllerExample';
-        $doc = Scanner::scanToHtml($path,"auth",$namespace);
-        $this->response()->write($doc);
+        $doc = new Document($path,$namespace);
+        $this->response()->write($doc->scanToHtml());
     }
 }

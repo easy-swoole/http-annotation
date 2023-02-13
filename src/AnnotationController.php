@@ -26,6 +26,20 @@ abstract class AnnotationController extends Controller
     public function __hook(?array $actionArg = [],?array $onRequestArg = null)
     {
         try{
+            $apiTag = AttributeCache::getInstance()->getClassMethodApiTag(static::class,$this->getActionName());
+            if($apiTag){
+                if($apiTag->allowMethod instanceof HttpMethod){
+                    $allowRequestMethod = [$apiTag->allowMethod];
+                }else{
+                    $allowRequestMethod = $apiTag->allowMethod;
+                }
+                $currentRequestMethod = $this->request()->getMethod();
+                $test = constant(HttpMethod::class."::".$currentRequestMethod);
+                if(!in_array($test,$allowRequestMethod)){
+                    throw new RequestMethodNotAllow("http {$currentRequestMethod} method is not allow for this request");
+                }
+            }
+
             $this->preHandleProperty();
             $onRequestArg = $this->runParamsValidate($this->getActionName(),$this->request());
             $handler = function (Param $param)use(&$handler){
@@ -100,28 +114,6 @@ abstract class AnnotationController extends Controller
         $actionParams = AttributeCache::getInstance()->getClassActionParams(static::class,$method);
         if($actionParams === null){
             $actionParams = Utility::parseActionParams($ref,$method);
-        }
-
-        $actionApiTags = $actionMethodRef->getAttributes(Api::class);
-        if(!empty($actionApiTags)){
-            try{
-                $apiTag = new Api(...$actionApiTags[0]->getArguments());
-            }catch (\Throwable $exception){
-                $class = static::class;
-                $msg = "{$exception->getMessage()} in controller: {$class} method: {$method}";
-                throw new Annotation($msg);
-            }
-
-            if($apiTag->allowMethod instanceof HttpMethod){
-                $allowRequestMethod = [$apiTag->allowMethod];
-            }else{
-                $allowRequestMethod = $apiTag->allowMethod;
-            }
-            $currentRequestMethod = $request->getMethod();
-            $test = constant(HttpMethod::class."::".$currentRequestMethod);
-            if(!in_array($test,$allowRequestMethod)){
-                throw new RequestMethodNotAllow("http {$currentRequestMethod} method is not allow for this request");
-            }
         }
 
         $preHandler = function (Param $param)use(&$preHandler,$request){
