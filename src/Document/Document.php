@@ -3,6 +3,7 @@
 namespace EasySwoole\HttpAnnotation\Document;
 
 use EasySwoole\Http\ReflectionCache;
+use EasySwoole\HttpAnnotation\Attributes\Api;
 use EasySwoole\HttpAnnotation\Attributes\ApiGroup;
 use EasySwoole\HttpAnnotation\Exception\Annotation;
 use EasySwoole\HttpAnnotation\Utility;
@@ -29,6 +30,7 @@ class Document
                 throw new Annotation("class {$controllerClass} namespace not complete with {$this->controllerNameSpace}");
             }
             $ref = ReflectionCache::getInstance()->getClassReflection($controllerClass);
+            //判断分组
             $g = $ref->getAttributes(ApiGroup::class);
             if(!empty($g)){
                 $g = new ApiGroup(...$g[0]->getArguments());
@@ -48,11 +50,24 @@ class Document
                     }
                 }
             }
+            /** @var Group $group */
+            $group = $list[$g->groupName];
 
             $methods = ReflectionCache::getInstance()->allowMethodReflections($ref);
 
+            /**
+             * @var  $name
+             * @var \ReflectionMethod $method
+             */
             foreach ($methods as $name => $method){
-
+                $api = $method->getAttributes(Api::class);
+                if(!empty($api)){
+                    $api = new Api(...$api[0]->getArguments());
+                    $api->requestParam = Utility::parseActionParams($ref,$name);
+                    if(!$group->addApi($api)){
+                        throw new Annotation("cannot redefine apiName {$api->apiName} in apiGroup {$group->getName()}");
+                    }
+                }
             }
 
         }

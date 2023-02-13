@@ -86,6 +86,51 @@ class Utility
         return $finalParams;
     }
 
+    public static function parseActionParams(\ReflectionClass $reflectionClass,string $methodName):array
+    {
+        $actionParams = AttributeCache::getInstance()->getClassMethodFullParams(static::class,$methodName);
+        if($actionParams !== null){
+            return $actionParams;
+        }
+        $actionParams = self::parseMethodParams($reflectionClass,$methodName);
+        $onRequestParams = self::parseMethodParams($reflectionClass,"onRequest");
+
+        //获取控制器全局参数注解
+        $controllerGlobalParams = [];
+        $gTemp = $reflectionClass->getAttributes(Param::class);
+        foreach ($gTemp as $g){
+            $args = $g->getArguments();
+            try{
+                $test = new Param(...$args);
+                $controllerGlobalParams[$test->name] = $test;
+            }catch (\Throwable $exception){
+                $controller = static::class;
+                $msg = "{$exception->getMessage()} in controller: {$controller} global param";
+                throw new Annotation($msg);
+            }
+        }
+
+        //onRequest的重复参数名，优先度低于method声明的
+        foreach ($onRequestParams as $onRequestParam){
+            if(!isset($actionParams[$onRequestParam->name])){
+                $actionParams[$onRequestParam->name] = $onRequestParam;
+            }
+        }
+
+        //全局定义的重复参数名，优先度低于method声明的
+        foreach ($controllerGlobalParams as $param){
+            if(!in_array($methodName,$param->ignoreAction)){
+                if(!isset($actionParams[$param->name])){
+                    $actionParams[$param->name] = $param;
+                }
+            }
+        }
+
+        AttributeCache::getInstance()->setClassMethodFullParams(static::class,$methodName,$actionParams);
+
+        return $actionParams;
+    }
+
     static function mappingRouter(
         RouteCollector $routeCollector,
         string $controllerPath,
