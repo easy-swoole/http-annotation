@@ -69,7 +69,12 @@ class Document
                     }
                 }
             }
-
         }
+        return $list;
+    }
+
+    function scanToMarkdown()
+    {
+        
     }
 }
