@@ -118,9 +118,10 @@ abstract class AnnotationController extends Controller
         $finalParams = [];
         /** @var Param $param */
         foreach ($actionParams as $param){
-            if(!in_array($method,$param->ignoreAction)){
-                $finalParams[$param->name] = $preHandler($param);
-            }
+//            if(!in_array($method,$param->ignoreAction)){
+//                $finalParams[$param->name] = $preHandler($param);
+//            }
+            $finalParams[$param->name] = $preHandler($param);
         }
 
         $validateFunc = function (Param $param)use($request,$finalParams,&$validateFunc){

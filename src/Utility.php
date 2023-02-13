@@ -113,9 +113,12 @@ class Utility
         }
 
         //onRequest的重复参数名，优先度低于method声明的
+        /** @var Param $onRequestParam */
         foreach ($onRequestParams as $onRequestParam){
             if(!isset($actionParams[$onRequestParam->name])){
-                $actionParams[$onRequestParam->name] = $onRequestParam;
+                if(!in_array($methodName,$onRequestParam->ignoreAction)){
+                    $actionParams[$onRequestParam->name] = $onRequestParam;
+                }
             }
         }
 
