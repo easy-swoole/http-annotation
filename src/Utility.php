@@ -19,6 +19,7 @@ class Utility
         if($temp !== null){
             return $temp;
         }
+        //不缓存、解析无定义方法，防止构造任意action攻击导致内存泄漏
         if(!$reflectionClass->hasMethod($methodName)){
             return [];
         }
@@ -126,8 +127,10 @@ class Utility
             }
         }
 
-        AttributeCache::getInstance()->setClassActionParams(static::class,$methodName,$actionParams);
-
+        //不缓存、解析无定义方法，防止构造任意action攻击导致内存泄漏
+        if($reflectionClass->hasMethod($methodName)){
+            AttributeCache::getInstance()->setClassActionParams(static::class,$methodName,$actionParams);
+        }
         return $actionParams;
     }
 
