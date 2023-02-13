@@ -18,6 +18,7 @@ use EasySwoole\ParserDown\ParserDown;
 
 class Document
 {
+    private Config $config;
     public function __construct(
         private string $controllerPath,
         private string $controllerNameSpace = 'App\HttpController'
@@ -26,6 +27,7 @@ class Document
         if(!(is_file($controllerPath) || is_dir($controllerPath))){
             throw new Annotation("{$controllerPath} not exist");
         }
+        $this->config = new Config();
     }
 
     function scan()
@@ -91,6 +93,7 @@ class Document
                     if(empty($api->requestPath)){
                         $api->requestPath = "/{$controllerRequestPrefix}/{$method->name}";
                     }
+                    $api->requestPath = $this->config->getHost().$api->requestPath;
 
                     if(!$group->addApi($api)){
                         throw new Annotation("cannot redefine apiName {$api->apiName} in apiGroup {$group->getName()}");
