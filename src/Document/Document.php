@@ -63,6 +63,21 @@ class Document
 
             $methods = ReflectionCache::getInstance()->allowMethodReflections($ref);
 
+            //用于构建控制器路径
+            $trimClass = ltrim(str_replace($this->controllerNameSpace,"",$controllerClass),"\\");
+            $controllerRequestPrefix = str_replace("\\","/",$trimClass);
+            //替换首字母为小写。
+            $arr = explode("/",$controllerRequestPrefix);
+            $controllerRequestPrefix = "";
+            while ($a = array_shift($arr)){
+                $controllerRequestPrefix .= lcfirst($a);
+                if(!empty($arr)){
+                    $controllerRequestPrefix .= "/";
+                }
+            }
+
+
+
             /**
              * @var  $name
              * @var \ReflectionMethod $method
@@ -72,6 +87,11 @@ class Document
                 if(!empty($api)){
                     $api = new Api(...$api[0]->getArguments());
                     $api->requestParam = Utility::parseActionParams($ref,$name);
+
+                    if(empty($api->requestPath)){
+                        $api->requestPath = "/{$controllerRequestPrefix}/{$method->name}";
+                    }
+
                     if(!$group->addApi($api)){
                         throw new Annotation("cannot redefine apiName {$api->apiName} in apiGroup {$group->getName()}");
                     }
