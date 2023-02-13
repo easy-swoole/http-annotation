@@ -91,71 +91,37 @@ abstract class AnnotationController extends Controller
         $ref = ReflectionCache::getInstance()->getClassReflection(static::class);
         $allowMethod = ReflectionCache::getInstance()->allowMethodReflections($ref);
         //如果是存在于用户定义的方法，才允许缓存起来。
-        //不然无限制方法会引起内存溢出
         if(!isset($allowMethod[$method])){
             return [];
         }
 
-        $actionParams = AttributeCache::getInstance()->getClassMethodFullParams(static::class,$method);
+        /** @var \ReflectionMethod $actionMethodRef */
+        $actionMethodRef = $allowMethod[$method];
+        $actionParams = AttributeCache::getInstance()->getClassActionParams(static::class,$method);
         if($actionParams === null){
-            $onRequestParams = Utility::parseMethodParams($ref,"onRequest");
-            $controllerGlobalParams = [];
-            $gTemp = $ref->getAttributes(Param::class);
-            foreach ($gTemp as $g){
-                $args = $g->getArguments();
-                try{
-                    $test = new Param(...$args);
-                    $controllerGlobalParams[$test->name] = $test;
-                }catch (\Throwable $exception){
-                    $controller = static::class;
-                    $msg = "{$exception->getMessage()} in controller: {$controller} global param";
-                    throw new Annotation($msg);
-                }
+            $actionParams = Utility::parseActionParams($ref,$method);
+        }
+
+        $actionApiTags = $actionMethodRef->getAttributes(Api::class);
+        if(!empty($actionApiTags)){
+            try{
+                $apiTag = new Api(...$actionApiTags[0]->getArguments());
+            }catch (\Throwable $exception){
+                $class = static::class;
+                $msg = "{$exception->getMessage()} in controller: {$class} method: {$method}";
+                throw new Annotation($msg);
             }
 
-
-            $actionParams = Utility::parseMethodParams($ref,$method);
-
-            if($ref->hasMethod($method)){
-                $actionMethodRef = $ref->getMethod($method);
-                $actionApiTags = $actionMethodRef->getAttributes(Api::class);
-                if(!empty($actionApiTags)){
-                    try{
-                        $apiTag = new Api(...$actionApiTags[0]->getArguments());
-                    }catch (\Throwable $exception){
-                        $class = static::class;
-                        $msg = "{$exception->getMessage()} in controller: {$class} method: {$method}";
-                        throw new Annotation($msg);
-                    }
-
-                    if($apiTag->allowMethod instanceof HttpMethod){
-                        $allowRequestMethod = [$apiTag->allowMethod];
-                    }else{
-                        $allowRequestMethod = $apiTag->allowMethod;
-                    }
-                    $currentRequestMethod = $request->getMethod();
-                    $test = constant(HttpMethod::class."::".$currentRequestMethod);
-                    if(!in_array($test,$allowRequestMethod)){
-                        throw new RequestMethodNotAllow("http {$currentRequestMethod} method is not allow for this request");
-                    }
-                }
+            if($apiTag->allowMethod instanceof HttpMethod){
+                $allowRequestMethod = [$apiTag->allowMethod];
+            }else{
+                $allowRequestMethod = $apiTag->allowMethod;
             }
-
-            foreach ($onRequestParams as $onRequestParam){
-                if(!isset($actionParams[$onRequestParam->name])){
-                    $actionParams[$onRequestParam->name] = $onRequestParam;
-                }
+            $currentRequestMethod = $request->getMethod();
+            $test = constant(HttpMethod::class."::".$currentRequestMethod);
+            if(!in_array($test,$allowRequestMethod)){
+                throw new RequestMethodNotAllow("http {$currentRequestMethod} method is not allow for this request");
             }
-
-            //全局定义的重复参数名，优先度低于method声明的
-            foreach ($controllerGlobalParams as $param){
-                if(!in_array($method,$param->ignoreAction)){
-                    if(!isset($actionParams[$param->name])){
-                        $actionParams[$param->name] = $param;
-                    }
-                }
-            }
-            AttributeCache::getInstance()->setClassMethodFullParams(static::class,$method,$actionParams);
         }
 
         $preHandler = function (Param $param)use(&$preHandler,$request){

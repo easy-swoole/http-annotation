@@ -88,7 +88,7 @@ class Utility
 
     public static function parseActionParams(\ReflectionClass $reflectionClass,string $methodName):array
     {
-        $actionParams = AttributeCache::getInstance()->getClassMethodFullParams(static::class,$methodName);
+        $actionParams = AttributeCache::getInstance()->getClassActionParams(static::class,$methodName);
         if($actionParams !== null){
             return $actionParams;
         }
@@ -126,7 +126,7 @@ class Utility
             }
         }
 
-        AttributeCache::getInstance()->setClassMethodFullParams(static::class,$methodName,$actionParams);
+        AttributeCache::getInstance()->setClassActionParams(static::class,$methodName,$actionParams);
 
         return $actionParams;
     }

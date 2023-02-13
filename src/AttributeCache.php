@@ -9,24 +9,27 @@ class AttributeCache
 {
     use Singleton;
 
-    protected array $classMethodFullParams = [];
+    /** @var array
+     *包括了method、onRequest和控制器全局
+     */
+    protected array $classActionParams = [];
 
     protected array $classMethodParams = [];
 
-    function setClassMethodFullParams(string $class, $action, array $data):void
+    function setClassActionParams(string $class, $action, array $data):void
     {
         $key = md5($class);
-        $this->classMethodFullParams[$key][$action] = $data;
+        $this->classActionParams[$key][$action] = $data;
     }
 
     /*
      * 注意引用克隆
      */
-    function getClassMethodFullParams(string $class,string $action):?array
+    function getClassActionParams(string $class, string $action):?array
     {
         $key = md5($class);
-        if(isset($this->classMethodFullParams[$key][$action])){
-            return $this->classMethodFullParams[$key][$action];
+        if(isset($this->classActionParams[$key][$action])){
+            return $this->classActionParams[$key][$action];
         }
         return null;
     }
@@ -37,7 +40,7 @@ class AttributeCache
         $this->classMethodParams[$key][$action] = $data;
     }
 
-    function getClassMethodParams(string $class,string $action)
+    function getClassMethodParams(string $class,string $action):?array
     {
         $key = md5($class);
         if(isset($this->classMethodParams[$key][$action])){
