@@ -40,9 +40,10 @@ class RegexTest extends TestCase
         $param = new Param(name:"phone");
         $param->parsedValue($request);
 
-        $rule = new Regex(rule: '/^1\d{10}$/');
+        $regex = '/^1\d{10}$/';
+        $rule = new Regex(rule: $regex);
         $this->assertEquals(false, $rule->execute($param, $request));
-        $this->assertEquals("phone must meet specified rules",$rule->errorMsg());
+        $this->assertEquals("phone must meet specified rule: {$regex}",$rule->errorMsg());
     }
 
     /*
