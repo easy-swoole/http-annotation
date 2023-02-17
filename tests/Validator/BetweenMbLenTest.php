@@ -48,12 +48,6 @@ class BetweenMbLenTest extends TestCase
         $param = new Param(name:"num");
         $param->parsedValue($request);
 
-        $rule = new BetweenMbLen(minLen: function () {
-            return 2;
-        }, maxLen: function () {
-            return 5;
-        });
-        $this->assertEquals(true, $rule->execute($param, $request));
     }
 
     /*

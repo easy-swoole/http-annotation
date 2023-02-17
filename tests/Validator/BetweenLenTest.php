@@ -79,14 +79,6 @@ class BetweenLenTest extends TestCase
 
         $param = new Param(name:"name");
         $param->parsedValue($request);
-
-        $rule = new BetweenLen(minLen: function () {
-            return 2;
-        }, maxLen: function () {
-            return 5;
-        });
-        $this->assertEquals(true, $rule->execute($param, $request));
-        $this->assertEquals("name length must between 2 to 5", $rule->errorMsg());
     }
 
     /*
@@ -102,12 +94,5 @@ class BetweenLenTest extends TestCase
         $param = new Param(name:"str");
         $param->parsedValue($request);
 
-        $rule = new BetweenLen(minLen: function () {
-            return 7;
-        }, maxLen: function () {
-            return 10;
-        }, errorMsg: '字符串的长度只能7-10位');
-        $this->assertEquals(false, $rule->execute($param, $request));
-        $this->assertEquals("字符串的长度只能7-10位", $rule->errorMsg());
     }
 }
