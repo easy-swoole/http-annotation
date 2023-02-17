@@ -91,8 +91,16 @@ class BetweenLenTest extends TestCase
             "str" => '测试' // 6
         ]);
 
-        $param = new Param(name:"str");
+        $param = new Param(
+            name:"str"
+        );
         $param->parsedValue($request);
+
+        $rule = new BetweenLen(minLen: 5, maxLen: 10,errorMsg: "testCustomErrorMsgCase");
+        $rule->execute($param, $request);
+
+        $this->assertEquals("testCustomErrorMsgCase", $rule->errorMsg());
+
 
     }
 }

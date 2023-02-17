@@ -81,5 +81,10 @@ class BetweenMbLenTest extends TestCase
         $param = new Param(name:"name");
         $param->parsedValue($request);
 
+        $rule = new BetweenMbLen(minLen: 5, maxLen: 10,errorMsg: "testCustomErrorMsgCase");
+        $rule->execute($param, $request);
+
+        $this->assertEquals("testCustomErrorMsgCase", $rule->errorMsg());
+
     }
 }
