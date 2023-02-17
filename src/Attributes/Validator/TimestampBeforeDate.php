@@ -10,7 +10,7 @@ class TimestampBeforeDate extends AbstractValidator
 {
     public $date;
 
-    function __construct(string|callable $date,?string $errorMsg = null)
+    function __construct(string $date,?string $errorMsg = null)
     {
         if(empty($errorMsg)){
             $errorMsg = "{#name} must be timestamp before {#date}";
@@ -24,10 +24,6 @@ class TimestampBeforeDate extends AbstractValidator
         $itemData = $param->parsedValue();
         if (!is_numeric($itemData)) {
             return false;
-        }
-
-        if(is_callable($this->date)){
-            $this->date = call_user_func($this->date,$this);
         }
 
         $time = strtotime($this->date);

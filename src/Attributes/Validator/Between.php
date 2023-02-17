@@ -10,7 +10,7 @@ class Between extends AbstractValidator
     protected $min;
     protected $max;
 
-    function __construct(callable|int $min,callable|int $max,?string $errorMsg = null)
+    function __construct(float|int|string $min,float|int|string $max,?string $errorMsg = null)
     {
         $this->min = $min;
         $this->max = $max;
@@ -25,13 +25,6 @@ class Between extends AbstractValidator
         $data = $param->parsedValue();
         if (!is_numeric($data) && !is_string($data)) {
             return false;
-        }
-        if(is_callable($this->min)){
-            $this->min = call_user_func($this->min,$this);
-        }
-
-        if(is_callable($this->max)){
-            $this->max = call_user_func($this->max,$this);
         }
 
         if ($data <= $this->max && $data >= $this->min) {

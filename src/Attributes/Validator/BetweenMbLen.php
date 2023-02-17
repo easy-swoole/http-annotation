@@ -10,7 +10,7 @@ class BetweenMbLen extends AbstractValidator
     public $minLen;
     public $maxLen;
 
-    function __construct(callable|int $minLen,callable|int $maxLen,?string $errorMsg = null)
+    function __construct(int $minLen,int $maxLen,?string $errorMsg = null)
     {
         $this->minLen = $minLen;
         $this->maxLen = $maxLen;
@@ -25,13 +25,6 @@ class BetweenMbLen extends AbstractValidator
         $data = $param->parsedValue();
         if (!is_numeric($data) && !is_string($data)) {
             return false;
-        }
-        if(is_callable($this->minLen)){
-            $this->minLen = call_user_func($this->minLen,$this);
-        }
-
-        if(is_callable($this->maxLen)){
-            $this->maxLen = call_user_func($this->maxLen,$this);
         }
 
         if (mb_strlen($data) >= $this->minLen && mb_strlen($data) <= $this->maxLen) {

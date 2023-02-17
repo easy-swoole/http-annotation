@@ -11,7 +11,7 @@ class Equal extends AbstractValidator
     private bool $strict;
     public $compare;
 
-    function __construct($compare,bool $strict = false,string $errorMsg = null)
+    function __construct(string|int|null|float $compare,bool $strict = false,string $errorMsg = null)
     {
         $this->compare = $compare;
         $this->strict = $strict;
@@ -24,9 +24,6 @@ class Equal extends AbstractValidator
 
     protected function validate(Param $param, ServerRequestInterface $request): bool
     {
-        if(is_callable($this->compare)){
-            $this->compare = call_user_func($this->compare,$this);
-        }
         $itemData = $param->parsedValue();
         return ($this->strict ? $itemData === $this->compare : $itemData == $this->compare);
     }

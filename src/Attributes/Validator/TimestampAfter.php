@@ -10,7 +10,7 @@ class TimestampAfter extends AbstractValidator
 {
     public $date;
 
-    function __construct(string|callable $date,?string $errorMsg = null)
+    function __construct(string $date,?string $errorMsg = null)
     {
         if(empty($errorMsg)){
             $errorMsg = "{#name} must be timestamp after {#date}";
@@ -22,10 +22,6 @@ class TimestampAfter extends AbstractValidator
     protected function validate(Param $param, ServerRequestInterface $request): bool
     {
         $itemData = $param->parsedValue();
-
-        if(is_callable($this->date)){
-            $this->date = call_user_func($this->date,$this);
-        }
 
         if (is_numeric($itemData) && is_numeric($this->date)) {
             return intval($itemData) > intval($this->date);

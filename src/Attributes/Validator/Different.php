@@ -10,7 +10,7 @@ class Different extends AbstractValidator
     public $compare;
     private bool $strict;
 
-    function __construct($compare,bool $strict = false,string $errorMsg = null)
+    function __construct(string|float|int $compare,bool $strict = false,string $errorMsg = null)
     {
         $this->compare = $compare;
         $this->strict = $strict;
@@ -22,9 +22,6 @@ class Different extends AbstractValidator
 
     protected function validate(Param $param, ServerRequestInterface $request): bool
     {
-        if(is_callable($this->compare)){
-            $this->compare = call_user_func($this->compare,$this);
-        }
         $itemData = $param->parsedValue();
         return !($this->strict ? $itemData === $this->compare : $itemData == $this->compare);
     }
