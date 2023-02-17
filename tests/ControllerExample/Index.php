@@ -8,7 +8,7 @@ use EasySwoole\HttpAnnotation\Attributes\Param;
 use EasySwoole\HttpAnnotation\Document\Document;
 use EasySwoole\HttpAnnotation\Enum\HttpMethod;
 use EasySwoole\HttpAnnotation\Enum\ParamFrom;
-use EasySwoole\HttpAnnotation\Scanner;
+use EasySwoole\HttpAnnotation\Validator\IsUrl;
 use EasySwoole\HttpAnnotation\Validator\MaxLength;
 use EasySwoole\HttpAnnotation\Validator\Optional;
 use EasySwoole\HttpAnnotation\Validator\Required;
@@ -58,5 +58,21 @@ class Index extends Base
         $namespace = 'EasySwoole\HttpAnnotation\Tests\ControllerExample';
         $doc = new Document($path,$namespace);
         $this->response()->write($doc->scanToHtml());
+    }
+
+    #[Api(
+        apiName: 'url',
+        requestParam: [
+            new Param(
+                name: "url",
+                validate: [
+                    new IsUrl()
+                ]
+            )
+        ]
+    )]
+    function url()
+    {
+
     }
 }

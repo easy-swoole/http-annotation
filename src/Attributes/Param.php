@@ -247,4 +247,13 @@ class Param
    {
        return $this->hasSet;
    }
+
+   function __clone()
+   {
+       $temp = [];
+       foreach ($this->validate as $item){
+           $temp[] = clone $item;
+       }
+       $this->validate = $temp;
+   }
 }

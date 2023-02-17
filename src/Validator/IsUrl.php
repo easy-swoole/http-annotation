@@ -7,6 +7,7 @@ use Psr\Http\Message\ServerRequestInterface;
 
 class IsUrl extends AbstractValidator
 {
+    private $test = false;
     function __construct(?string $errorMsg = null)
     {
         if(empty($errorMsg)){
