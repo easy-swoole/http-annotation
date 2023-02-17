@@ -28,7 +28,7 @@ class DateBefore extends AbstractValidator
         }
 
         if(is_callable($this->date)){
-            $this->date = call_user_func($this->date);
+            $this->date = call_user_func($this->date,$this);
         }
 
         if(is_numeric($this->date) && (strlen($this->date) == 10)){

@@ -6,15 +6,13 @@ use EasySwoole\HttpAnnotation\Attributes\Param;
 use EasySwoole\HttpAnnotation\Exception\Annotation;
 use Psr\Http\Message\ServerRequestInterface;
 
-class DateAfter extends AbstractValidator
+class DateFrom extends AbstractValidator
 {
-    public $date;
-
     function __construct(string|callable $date,?string $errorMsg = null)
     {
         $this->date = $date;
         if(empty($errorMsg)){
-            $errorMsg = "{#name} must be date after {#date}";
+            $errorMsg = "{#name} must be date from {#date}";
         }
         $this->errorMsg($errorMsg);
     }
@@ -56,6 +54,6 @@ class DateAfter extends AbstractValidator
 
     function ruleName(): string
     {
-        return "DateAfter";
+        return 'DateFrom';
     }
 }
