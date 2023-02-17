@@ -34,7 +34,11 @@ class DateBefore extends AbstractValidator
         if(is_numeric($this->date) && (strlen($this->date) == 10)){
             $beforeUnixTime = $this->date;
         }else{
-            $beforeUnixTime = strtotime($this->date);
+            if($this->date == 'today'){
+                $beforeUnixTime = strtotime(date("Y-m-d"));
+            }else{
+                $beforeUnixTime = strtotime($this->date);
+            }
         }
 
 

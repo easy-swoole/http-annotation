@@ -33,7 +33,11 @@ class DateAfter extends AbstractValidator
         if(is_numeric($this->date) && (strlen($this->date) == 10)){
             $afterUnixTime = $this->date;
         }else{
-            $afterUnixTime = strtotime($this->date);
+            if($this->date == 'today'){
+                $afterUnixTime = strtotime(date("Y-m-d"));
+            }else{
+                $afterUnixTime = strtotime($this->date);
+            }
         }
 
 
