@@ -13,9 +13,6 @@ class TimestampAfterDate extends AbstractValidator
     function __construct(string|callable $date,?string $errorMsg = null)
     {
         if(empty($errorMsg)){
-            if(is_callable($date)){
-                $date = call_user_func($date,$this);
-            }
             $errorMsg = "{#name} must be timestamp after {#date}";
         }
         $this->errorMsg($errorMsg);
