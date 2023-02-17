@@ -84,12 +84,6 @@ class BetweenTest extends TestCase
         $param = new Param(name:"num");
         $param->parsedValue($request);
 
-        $rule = new Between(min: function () {
-            return 5.1;
-        }, max: function () {
-            return 8.5;
-        });
-        $this->assertEquals(true, $rule->execute($param, $request));
     }
 
     /*

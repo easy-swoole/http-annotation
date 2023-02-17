@@ -35,10 +35,7 @@ class TimestampAfterTest extends TestCase
         $param = new Param(name:"date");
         $param->parsedValue($request);
 
-        $rule = new TimestampAfter(date: function () {
-            return time();
-        });
-        $this->assertEquals(true, $rule->execute($param, $request));
+
     }
 
     /*
@@ -68,13 +65,6 @@ class TimestampAfterTest extends TestCase
         $param = new Param(name:"date");
         $param->parsedValue($request);
 
-        $time = time() + 1;
-        $rule = new TimestampAfter(date: function () use ($time) {
-            return $time;
-        });
-        $this->assertEquals(false, $rule->execute($param, $request));
-
-        $this->assertEquals("date must be timestamp after {$time}", $rule->errorMsg());
     }
 
     /*

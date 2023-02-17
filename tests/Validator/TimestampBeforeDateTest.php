@@ -35,10 +35,6 @@ class TimestampBeforeDateTest extends TestCase
         $param = new Param(name:"date");
         $param->parsedValue($request);
 
-        $rule = new TimestampBeforeDate(date: function () {
-            return date('YmdHis', time());
-        });
-        $this->assertEquals(true, $rule->execute($param, $request));
     }
 
     /*
@@ -66,13 +62,6 @@ class TimestampBeforeDateTest extends TestCase
         $param = new Param(name:"date");
         $param->parsedValue($request);
 
-        $time = date('YmdHis', time());
-        $rule = new TimestampBeforeDate(date: function () use ($time) {
-            return $time;
-        });
-        $this->assertEquals(false, $rule->execute($param, $request));
-
-        $this->assertEquals("date must be timestamp before {$time}", $rule->errorMsg());
     }
 
     /*

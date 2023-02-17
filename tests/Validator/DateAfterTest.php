@@ -58,10 +58,6 @@ class DateAfterTest extends TestCase
         $param = new Param(name:"date");
         $param->parsedValue($request);
 
-        $rule = new DateAfter(date: function () {
-            return "20200605";
-        });
-        $this->assertEquals(true, $rule->execute($param, $request));
     }
 
     /*

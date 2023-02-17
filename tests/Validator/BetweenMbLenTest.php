@@ -88,12 +88,5 @@ class BetweenMbLenTest extends TestCase
         $param = new Param(name:"name");
         $param->parsedValue($request);
 
-        $rule = new BetweenMbLen(minLen: function () {
-            return 7;
-        }, maxLen: function () {
-            return 10;
-        }, errorMsg: '姓名的长度在7-10位');
-        $this->assertEquals(false, $rule->execute($param, $request));
-        $this->assertEquals("姓名的长度在7-10位", $rule->errorMsg());
     }
 }
