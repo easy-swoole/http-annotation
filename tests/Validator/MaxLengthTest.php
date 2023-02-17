@@ -4,8 +4,7 @@ namespace EasySwoole\HttpAnnotation\Tests\Validator;
 
 use EasySwoole\Http\Request;
 use EasySwoole\HttpAnnotation\Attributes\Param;
-use EasySwoole\HttpAnnotation\Attributes\Validator\MaxLength;
-use EasySwoole\HttpAnnotation\Enum\ParamFrom;
+use EasySwoole\HttpAnnotation\Validator\MaxLength;
 use PHPUnit\Framework\TestCase;
 
 class MaxLengthTest extends TestCase

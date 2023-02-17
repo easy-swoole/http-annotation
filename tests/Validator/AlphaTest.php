@@ -4,9 +4,7 @@ namespace EasySwoole\HttpAnnotation\Tests\Validator;
 
 use EasySwoole\Http\Request;
 use EasySwoole\HttpAnnotation\Attributes\Param;
-use EasySwoole\HttpAnnotation\Attributes\Validator\AllDigital;
-use EasySwoole\HttpAnnotation\Attributes\Validator\Alpha;
-use EasySwoole\HttpAnnotation\Enum\ParamFrom;
+use EasySwoole\HttpAnnotation\Validator\Alpha;
 use PHPUnit\Framework\TestCase;
 
 class AlphaTest extends TestCase

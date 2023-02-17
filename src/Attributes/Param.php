@@ -5,12 +5,10 @@ namespace EasySwoole\HttpAnnotation\Attributes;
 use EasySwoole\Component\Context\ContextManager;
 use EasySwoole\Component\Di as IOC;
 use EasySwoole\Http\AbstractInterface\AbstractRouter;
-use EasySwoole\HttpAnnotation\Attributes\Validator\Optional;
-use EasySwoole\HttpAnnotation\Enum\HttpMethod;
-use EasySwoole\HttpAnnotation\Enum\ParamType;
 use EasySwoole\HttpAnnotation\Enum\ParamFrom;
+use EasySwoole\HttpAnnotation\Enum\ParamType;
 use EasySwoole\HttpAnnotation\Exception\Annotation;
-use EasySwoole\Spl\SplArray;
+use EasySwoole\HttpAnnotation\Validator\Optional;
 use Psr\Http\Message\ServerRequestInterface;
 
 #[\Attribute(\Attribute::TARGET_ALL|\Attribute::IS_REPEATABLE)]

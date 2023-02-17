@@ -8,12 +8,12 @@ use EasySwoole\HttpAnnotation\Attributes\ApiGroup;
 use EasySwoole\HttpAnnotation\Attributes\Description;
 use EasySwoole\HttpAnnotation\Attributes\Example;
 use EasySwoole\HttpAnnotation\Attributes\Param;
-use EasySwoole\HttpAnnotation\Attributes\Validator\AbstractValidator;
 use EasySwoole\HttpAnnotation\Enum\HttpMethod;
 use EasySwoole\HttpAnnotation\Enum\ParamFrom;
 use EasySwoole\HttpAnnotation\Enum\ParamType;
 use EasySwoole\HttpAnnotation\Exception\Annotation;
 use EasySwoole\HttpAnnotation\Utility;
+use EasySwoole\HttpAnnotation\Validator\AbstractValidator;
 use EasySwoole\ParserDown\ParserDown;
 
 class Document

@@ -4,15 +4,10 @@ namespace EasySwoole\HttpAnnotation\Tests\Validator;
 
 use EasySwoole\Component\Context\ContextManager;
 use EasySwoole\Component\Di;
-use EasySwoole\Http\AbstractInterface\AbstractRouter;
-use EasySwoole\Http\Dispatcher;
 use EasySwoole\Http\Request;
 use EasySwoole\HttpAnnotation\Attributes\Param;
-use EasySwoole\HttpAnnotation\Attributes\Validator\ActiveUrl;
-use EasySwoole\HttpAnnotation\Enum\ParamFrom;
-use http\Encoding\Stream;
+use EasySwoole\HttpAnnotation\Validator\ActiveUrl;
 use PHPUnit\Framework\TestCase;
-use Psr\Http\Message\StreamInterface;
 
 class ActiveUrlTest extends TestCase
 {

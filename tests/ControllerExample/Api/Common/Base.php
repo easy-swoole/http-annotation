@@ -3,8 +3,8 @@
 namespace EasySwoole\HttpAnnotation\Tests\ControllerExample\Api\Common;
 
 use EasySwoole\HttpAnnotation\Attributes\Param;
-use EasySwoole\HttpAnnotation\Attributes\Validator\Required;
 use EasySwoole\HttpAnnotation\Tests\ControllerExample\Api\ApiBase;
+use EasySwoole\HttpAnnotation\Validator\Required;
 
 class Base extends ApiBase
 {

@@ -1,0 +1,36 @@
+<?php
+
+namespace EasySwoole\HttpAnnotation\Validator;
+
+use EasySwoole\HttpAnnotation\Attributes\Param;
+use Psr\Http\Message\ServerRequestInterface;
+
+class TimestampAfter extends AbstractValidator
+{
+    public $date;
+
+    function __construct(string $date,?string $errorMsg = null)
+    {
+        if(empty($errorMsg)){
+            $errorMsg = "{#name} must be timestamp after {#date}";
+        }
+        $this->errorMsg($errorMsg);
+        $this->date = $date;
+    }
+
+    protected function validate(Param $param, ServerRequestInterface $request): bool
+    {
+        $itemData = $param->parsedValue();
+
+        if (is_numeric($itemData) && is_numeric($this->date)) {
+            return intval($itemData) > intval($this->date);
+        }
+
+        return false;
+    }
+
+    function ruleName(): string
+    {
+        return "TimestampAfter";
+    }
+}

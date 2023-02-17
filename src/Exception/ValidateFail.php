@@ -2,7 +2,7 @@
 
 namespace EasySwoole\HttpAnnotation\Exception;
 
-use EasySwoole\HttpAnnotation\Attributes\Validator\AbstractValidator;
+use EasySwoole\HttpAnnotation\Validator\AbstractValidator;
 
 class ValidateFail extends Annotation
 {

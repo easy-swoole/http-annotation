@@ -5,13 +5,13 @@ namespace EasySwoole\HttpAnnotation\Tests\ControllerExample;
 use EasySwoole\HttpAnnotation\Attributes\Api;
 use EasySwoole\HttpAnnotation\Attributes\Description;
 use EasySwoole\HttpAnnotation\Attributes\Param;
-use EasySwoole\HttpAnnotation\Attributes\Validator\MaxLength;
-use EasySwoole\HttpAnnotation\Attributes\Validator\Optional;
-use EasySwoole\HttpAnnotation\Attributes\Validator\Required;
 use EasySwoole\HttpAnnotation\Document\Document;
 use EasySwoole\HttpAnnotation\Enum\HttpMethod;
 use EasySwoole\HttpAnnotation\Enum\ParamFrom;
 use EasySwoole\HttpAnnotation\Scanner;
+use EasySwoole\HttpAnnotation\Validator\MaxLength;
+use EasySwoole\HttpAnnotation\Validator\Optional;
+use EasySwoole\HttpAnnotation\Validator\Required;
 
 class Index extends Base
 {
