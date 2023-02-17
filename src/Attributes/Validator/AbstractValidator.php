@@ -118,7 +118,7 @@ abstract class AbstractValidator
         return $this->errorMsg;
     }
 
-    function isIgnoreCheck(Param $param):bool
+    protected function isIgnoreCheck(Param $param):bool
     {
         //当配置了option选项，且传参不是null,也就是没传的时候，允许忽略检查
         if($param->isOptional() && (!$param->hasSet()) && ($param->parsedValue() === null)){
