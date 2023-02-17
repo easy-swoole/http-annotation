@@ -11,7 +11,7 @@ class DateBefore extends AbstractValidator
 
     public $date;
 
-    function __construct(string|callable $date,?string $errorMsg = null)
+    function __construct(string $date,?string $errorMsg = null)
     {
         $this->date = $date;
         if(empty($errorMsg)){
@@ -25,10 +25,6 @@ class DateBefore extends AbstractValidator
         $itemData = $param->parsedValue();
         if (!is_string($itemData)) {
             return false;
-        }
-
-        if(is_callable($this->date)){
-            $this->date = call_user_func($this->date,$this);
         }
 
         if(is_numeric($this->date) && (strlen($this->date) == 10)){
