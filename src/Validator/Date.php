@@ -4,6 +4,7 @@ namespace EasySwoole\HttpAnnotation\Validator;
 
 use EasySwoole\HttpAnnotation\Attributes\Param;
 use EasySwoole\HttpAnnotation\Exception\Annotation;
+use EasySwoole\HttpAnnotation\Validator\AbstractInterface\AbstractValidator;
 use Psr\Http\Message\ServerRequestInterface;
 
 class Date extends AbstractValidator
@@ -13,7 +14,7 @@ class Date extends AbstractValidator
     {
         $this->date = $date;
         if(empty($errorMsg)){
-            $errorMsg = "{#name} must be date after {#date}";
+            $errorMsg = "{#name} must be date {#date}";
         }
         $this->errorMsg($errorMsg);
     }

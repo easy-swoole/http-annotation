@@ -29,7 +29,5 @@ class DateTest extends TestCase
 
         $rule = new Date('-1 day');
         $this->assertEquals(false, $rule->execute($param, $request));
-
-        var_dump($rule->errorMsg());
     }
 }

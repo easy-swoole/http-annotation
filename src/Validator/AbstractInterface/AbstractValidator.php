@@ -1,6 +1,6 @@
 <?php
 
-namespace EasySwoole\HttpAnnotation\Validator;
+namespace EasySwoole\HttpAnnotation\Validator\AbstractInterface;
 
 use EasySwoole\HttpAnnotation\Attributes\Param;
 use Psr\Http\Message\ServerRequestInterface;
@@ -99,11 +99,13 @@ abstract class AbstractValidator
             $tpl = str_replace('{#name}',$this->currentParam->name,$tpl);
             foreach ($this->getRuleArgs() as $key => $val){
                 if(is_callable($val)){
-                    $val = "Custom Func Exec Result";
+                    $val = "Custom Func";
                 }elseif (is_array($val)){
                     $val = json_encode($val,JSON_UNESCAPED_SLASHES|JSON_UNESCAPED_UNICODE);
                 }elseif(is_object($val)){
-                    if(method_exists($val,"__toString")){
+                    if($val instanceof ValidateFuncInterface){
+                        $val = (string)$val->errorMsg();
+                    }else if(method_exists($val,"__toString")){
                         $val = $val->__toString();
                     }else{
                         $val = (string)$val;

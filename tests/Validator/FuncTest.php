@@ -4,8 +4,9 @@ namespace EasySwoole\HttpAnnotation\Tests\Validator;
 
 use EasySwoole\Http\Request;
 use EasySwoole\HttpAnnotation\Attributes\Param;
-use EasySwoole\HttpAnnotation\Validator\AbstractValidator;
+use EasySwoole\HttpAnnotation\Validator\AbstractInterface\AbstractValidator;
 use EasySwoole\HttpAnnotation\Validator\Func;
+use EasySwoole\HttpAnnotation\Validator\Funcs\Equal1;
 use PHPUnit\Framework\TestCase;
 
 class FuncTest extends TestCase
@@ -70,6 +71,21 @@ class FuncTest extends TestCase
 
         $this->assertEquals(false, $rule->execute($param, $request));
         $this->assertEquals("测试提示",$rule->errorMsg());
+    }
+
+    function testEqual1()
+    {
+        $request = new Request();
+        $request->withQueryParams([
+            "fun" => '1',
+        ]);
+
+        $param = new Param(name:"fun");
+        $param->parsedValue($request);
+
+        $rule = new Func(new Equal1());
+        $this->assertEquals(true, $rule->execute($param, $request));
+//        $this->assertEquals("测试提示",$rule->errorMsg());
     }
 }
 

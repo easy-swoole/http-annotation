@@ -16,7 +16,7 @@ use EasySwoole\HttpAnnotation\Exception\Annotation;
 use EasySwoole\HttpAnnotation\Exception\ParamError;
 use EasySwoole\HttpAnnotation\Exception\RequestMethodNotAllow;
 use EasySwoole\HttpAnnotation\Exception\ValidateFail;
-use EasySwoole\HttpAnnotation\Validator\AbstractValidator;
+use EasySwoole\HttpAnnotation\Validator\AbstractInterface\AbstractValidator;
 
 
 abstract class AnnotationController extends Controller
