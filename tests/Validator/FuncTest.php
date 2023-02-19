@@ -6,7 +6,7 @@ use EasySwoole\Http\Request;
 use EasySwoole\HttpAnnotation\Attributes\Param;
 use EasySwoole\HttpAnnotation\Validator\AbstractInterface\AbstractValidator;
 use EasySwoole\HttpAnnotation\Validator\Func;
-use EasySwoole\HttpAnnotation\Validator\Funcs\Equal1;
+use EasySwoole\HttpAnnotation\Validator\Funcs\EqualFunc;
 use PHPUnit\Framework\TestCase;
 
 class FuncTest extends TestCase
@@ -83,9 +83,15 @@ class FuncTest extends TestCase
         $param = new Param(name:"fun");
         $param->parsedValue($request);
 
-        $rule = new Func(new Equal1());
+        $rule = new Func(new EqualFunc(1));
         $this->assertEquals(true, $rule->execute($param, $request));
-//        $this->assertEquals("测试提示",$rule->errorMsg());
+        $this->assertEquals("fun validate fail in Equal1 function",$rule->errorMsg());
+
+        $param = new Param(name:"fun");
+        $param->parsedValue($request);
+
+        $rule = new Func(new EqualFunc(2));
+        $this->assertEquals(false, $rule->execute($param, $request));
     }
 }
 
