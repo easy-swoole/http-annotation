@@ -106,12 +106,10 @@ abstract class AbstractValidator
                 }elseif (is_array($val)){
                     $val = json_encode($val,JSON_UNESCAPED_SLASHES|JSON_UNESCAPED_UNICODE);
                 }elseif(is_object($val)){
-                    if($val instanceof ValidateFuncInterface){
-                        $val = (string)$val->errorMsg();
-                    }else if(method_exists($val,"__toString")){
+                    if(method_exists($val,"__toString")){
                         $val = $val->__toString();
                     }else{
-                        $val = (string)$val;
+                        $val = json_encode($val,JSON_UNESCAPED_SLASHES|JSON_UNESCAPED_UNICODE);
                     }
                 }else{
                     $val = (string)$val;

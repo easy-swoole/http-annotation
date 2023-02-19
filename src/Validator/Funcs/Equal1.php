@@ -14,8 +14,10 @@ class Equal1 implements ValidateFuncInterface
         return $value == 1;
     }
 
-    public function errorMsg(): ?string
+    public function functionName(): string
     {
-        return null;
+        return 'Equal1';
     }
+
+
 }
