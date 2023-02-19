@@ -88,11 +88,14 @@ abstract class AbstractValidator
         return $this->args;
     }
 
-    function errorMsg(?string $msg = null):?string
+    function errorMsg(?string $msg = null,?bool $returnRaw = false):?string
     {
         if(!empty($msg)){
             $this->errorMsg = $msg;
             return null;
+        }
+        if($returnRaw){
+            return $this->errorMsg;
         }
         if(!empty($this->errorMsg)){
             $tpl = $this->errorMsg;
