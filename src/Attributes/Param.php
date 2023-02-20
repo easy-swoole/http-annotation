@@ -8,6 +8,7 @@ use EasySwoole\Http\AbstractInterface\AbstractRouter;
 use EasySwoole\HttpAnnotation\Enum\ParamFrom;
 use EasySwoole\HttpAnnotation\Enum\ParamType;
 use EasySwoole\HttpAnnotation\Exception\Annotation;
+use EasySwoole\HttpAnnotation\Validator\AbstractInterface\AbstractValidator;
 use EasySwoole\HttpAnnotation\Validator\Optional;
 use Psr\Http\Message\ServerRequestInterface;
 
@@ -42,6 +43,14 @@ class Param
                 throw new Annotation("description only allow PLAIN_TEXT type in Param attribute");
             }
         }
+        //处理validate as key => val
+        $temp = [];
+        /** @var AbstractValidator $item */
+        foreach ($this->validate as $item){
+            $temp[$item->ruleName()] = $item;
+        }
+        $this->validate = $temp;
+
         if(!empty($this->subObject)){
             /** @var Param $item */
             $temp = $this->parentStack;
@@ -251,8 +260,9 @@ class Param
    function __clone()
    {
        $temp = [];
+       /** @var AbstractValidator $item */
        foreach ($this->validate as $item){
-           $temp[] = clone $item;
+           $temp[$item->ruleName()] = clone $item;
        }
        $this->validate = $temp;
    }
