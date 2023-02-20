@@ -102,51 +102,15 @@ abstract class AnnotationController extends Controller
         $ref = ReflectionCache::getInstance()->getClassReflection(static::class);
         $actionParams = Utility::parseActionParams($ref,$method);
 
-        $preHandler = function (Param $param)use(&$preHandler,$request){
-            //这边需要进行克隆再进行真实值的解析
-            $temp = clone $param;
-            $subItems = [];
-            foreach ($temp->subObject as $item){
-                $subItems[] = $preHandler($item);
-            }
-            $temp->subObject = $subItems;
-            return $temp;
-        };
-
         $finalParams = [];
         /** @var Param $param */
         foreach ($actionParams as $param){
-//            if(!in_array($method,$param->ignoreAction)){
-//                $finalParams[$param->name] = $preHandler($param);
-//            }
-            $finalParams[$param->name] = $preHandler($param);
+            $finalParams[$param->name] = clone $param;
+            $finalParams[$param->name]->parsedValue($request);
         }
 
-        $validateFunc = function (Param $param)use($request,$finalParams,&$validateFunc){
-            //当有下级的时候，当级校验没有意义
-            if(!empty($param->subObject)){
-                foreach ($param->subObject as $sub){
-                    $validateFunc($sub);
-                }
-            }else{
-                $param->parsedValue($request);
-                $rules = $param->validate;
-                /** @var AbstractValidator $rule */
-                foreach ($rules as $rule){
-                    $rule->allCheckParams($finalParams);
-                    $ret = $rule->execute($param,$request);
-                    if(!$ret){
-                        $msg = $rule->errorMsg();
-                        $ex = new ValidateFail($msg);
-                        $ex->setFailRule($rule);
-                        throw $ex;
-                    }
-                }
-            }
-        };
-
         foreach ($finalParams as $param){
-            $validateFunc($param);
+            $this->paramValidate($param,$finalParams,$request);
         }
         return $finalParams;
     }
@@ -178,6 +142,30 @@ abstract class AnnotationController extends Controller
                             break;
                         }
                     }
+                }
+            }
+        }
+    }
+
+
+    private function paramValidate(Param $param,array $allDefineParams,Request $request)
+    {
+        //当有下级的时候，当级校验没有意义
+        if(!empty($param->subObject)){
+            foreach ($param->subObject as $sub){
+                $this->paramValidate($sub,$allDefineParams,$request);
+            }
+        }else{
+            $rules = $param->validate;
+            /** @var AbstractValidator $rule */
+            foreach ($rules as $rule){
+                $rule->allCheckParams($allDefineParams);
+                $ret = $rule->execute($param,$request);
+                if(!$ret){
+                    $msg = $rule->errorMsg();
+                    $ex = new ValidateFail($msg);
+                    $ex->setFailRule($rule);
+                    throw $ex;
                 }
             }
         }
