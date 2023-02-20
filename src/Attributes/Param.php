@@ -16,7 +16,6 @@ use Psr\Http\Message\ServerRequestInterface;
 class Param
 {
     private bool $isParsed = false;
-    private bool|null $isOptional = null;
     private bool $hasSet = false;
     private array $parentStack = [];
 
@@ -236,20 +235,6 @@ class Param
             $this->isParsed = true;
         }
         return $this->value;
-    }
-
-    public function isOptional(): bool
-    {
-        if($this->isOptional === null){
-            foreach ($this->validate as $rule){
-                if($rule instanceof Optional){
-                    $this->isOptional = true;
-                    return $this->isOptional;
-                }
-            }
-            $this->isOptional = false;
-        }
-        return $this->isOptional;
     }
 
    public function hasSet():bool

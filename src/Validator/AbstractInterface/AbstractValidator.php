@@ -123,8 +123,14 @@ abstract class AbstractValidator
 
     protected function isIgnoreCheck(Param $param):bool
     {
+        $rules = $param->validate;
+        if(isset($rules['Optional'])){
+            $isOptional = true;
+        }else{
+            $isOptional = false;
+        }
         //当配置了option选项，且传参不是null,也就是没传的时候，允许忽略检查
-        if($param->isOptional() && (!$param->hasSet()) && ($param->parsedValue() === null)){
+        if($isOptional && (!$param->hasSet()) && ($param->parsedValue() === null)){
             return true;
         }
         return false;
