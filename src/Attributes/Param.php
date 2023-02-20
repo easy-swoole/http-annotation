@@ -51,6 +51,7 @@ class Param
         $this->validate = $temp;
 
         if(!empty($this->subObject)){
+            //记录key层级，类似   ['result','userInfo','userName']
             $temp = $this->parentStack;
             $temp[] = $this->name;
             $list = [];
@@ -268,8 +269,6 @@ class Param
        foreach ($this->subObject as $item){
            $temp[$item->name] = $item;
        }
-       $this->subObject = [];
-
-
+       $this->subObject = $temp;
    }
 }

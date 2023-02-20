@@ -138,6 +138,12 @@ abstract class AbstractValidator
 
         }
 
+        if(isset($rules['OptionalIfParamSet'])){
+
+        }
+
+
+
         return false;
     }
 }
