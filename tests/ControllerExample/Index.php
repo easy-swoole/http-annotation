@@ -14,6 +14,7 @@ use EasySwoole\HttpAnnotation\Validator\MaxLength;
 use EasySwoole\HttpAnnotation\Validator\Min;
 use EasySwoole\HttpAnnotation\Validator\MinLength;
 use EasySwoole\HttpAnnotation\Validator\Optional;
+use EasySwoole\HttpAnnotation\Validator\OptionalIfParamMiss;
 use EasySwoole\HttpAnnotation\Validator\OptionalIfParamSet;
 use EasySwoole\HttpAnnotation\Validator\Required;
 
@@ -101,6 +102,31 @@ class Index extends Base
         ]
     )]
     function optionalSet()
+    {
+
+    }
+
+    #[Api(
+        apiName: 'optionalMiss',
+        requestParam: [
+            new Param(
+                name: "a",
+                validate: [
+                    new Optional(),
+                    new MinLength("5")
+                ]
+            ),
+            new Param(
+                name: "b",
+                validate: [
+                    new OptionalIfParamMiss("a"),
+                    new Integer(),
+                    new Min(1)
+                ]
+            )
+        ]
+    )]
+    function optionalMiss()
     {
 
     }
