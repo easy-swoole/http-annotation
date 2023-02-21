@@ -23,24 +23,19 @@ class TimestampAfter extends AbstractValidator
     protected function validate(Param $param, ServerRequestInterface $request): bool
     {
         $itemData = $param->parsedValue();
+        if(!is_numeric($itemData)){
+            return false;
+        }
 
-        if (is_numeric($itemData) && is_numeric($this->compare)) {
-            return intval($itemData) > intval($this->compare);
-        }else{
-            $itemData = $param->parsedValue();
-            $unixTime = strtotime($itemData);
-            if(is_bool($unixTime)){
-                return false;
-            }
-            $compare = strtotime($this->compare);
-
-            if (is_bool($compare)) {
+        $compare = $this->compare;
+        if(!is_numeric($compare)){
+            $compare = strtotime($compare);
+            if(!$compare){
                 throw new Annotation("error arg:compare for TimestampAfter validate rule");
             }
-
-            if ($unixTime > $unixTime) {
-                return true;
-            }
+        }
+        if($itemData > $compare){
+            return true;
         }
 
         return false;
