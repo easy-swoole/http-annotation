@@ -81,26 +81,26 @@ class Index extends Base
     }
 
     #[Api(
-        apiName: 'sendSms',
+        apiName: 'optionalSet',
         requestParam: [
             new Param(
-                name: "content",
+                name: "a",
                 validate: [
-                    new OptionalIfParamSet("templateId"),
+                    new OptionalIfParamSet("b"),
                     new MinLength("5")
                 ]
             ),
             new Param(
-                name: "templateId",
+                name: "b",
                 validate: [
-                    new OptionalIfParamSet("content"),
+                    new OptionalIfParamSet("a"),
                     new Integer(),
                     new Min(1)
                 ]
             )
         ]
     )]
-    function sendSms()
+    function optionalSet()
     {
 
     }
