@@ -22,7 +22,7 @@ class TimestampBeforeTest extends TestCase
         $param = new Param(name:"date");
         $param->parsedValue($request);
 
-        $rule = new TimestampBefore(date: time());
+        $rule = new TimestampBefore(compare: time());
         $this->assertEquals(true, $rule->execute($param, $request));
 
         // func
@@ -76,7 +76,7 @@ class TimestampBeforeTest extends TestCase
         $param = new Param(name:"date");
         $param->parsedValue($request);
 
-        $rule = new TimestampBefore(date: time(), errorMsg: '无效时间戳');
+        $rule = new TimestampBefore(compare: time(), errorMsg: '无效时间戳');
         $this->assertEquals(false, $rule->execute($param, $request));
         $this->assertEquals("无效时间戳", $rule->errorMsg());
     }

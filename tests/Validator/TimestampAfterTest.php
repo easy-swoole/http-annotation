@@ -22,7 +22,7 @@ class TimestampAfterTest extends TestCase
         $param = new Param(name:"date");
         $param->parsedValue($request);
 
-        $rule = new TimestampAfter(date:time());
+        $rule = new TimestampAfter(compare:time());
         $this->assertEquals(true, $rule->execute($param, $request));
 
         // func
@@ -51,7 +51,7 @@ class TimestampAfterTest extends TestCase
         $param->parsedValue($request);
 
         $time = time() + 1;
-        $rule = new TimestampAfter(date:$time);
+        $rule = new TimestampAfter(compare:$time);
         $this->assertEquals(false, $rule->execute($param, $request));
         $this->assertEquals("date must be timestamp after {$time}", $rule->errorMsg());
 
@@ -80,7 +80,7 @@ class TimestampAfterTest extends TestCase
         $param->parsedValue($request);
 
         $time = time() + 1;
-        $rule = new TimestampAfter(date: $time, errorMsg: '无效时间戳');
+        $rule = new TimestampAfter(compare: $time, errorMsg: '无效时间戳');
         $this->assertEquals(false, $rule->execute($param, $request));
         $this->assertEquals("无效时间戳", $rule->errorMsg());
     }
