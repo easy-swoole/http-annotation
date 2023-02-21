@@ -3,6 +3,7 @@
 namespace EasySwoole\HttpAnnotation\Validator\AbstractInterface;
 
 use EasySwoole\HttpAnnotation\Attributes\Param;
+use EasySwoole\HttpAnnotation\Validator\OptionalIfParamSet;
 use Psr\Http\Message\ServerRequestInterface;
 
 abstract class AbstractValidator
@@ -135,15 +136,38 @@ abstract class AbstractValidator
         }
 
         if(isset($rules['OptionalIfParamMiss'])){
-
+            /** @var OptionalIfParamSet $if */
+            $if = $rules['OptionalIfParamMiss'];
+            $targetParamName = $if->getRuleArgs()['paramName'];
+            if(!is_array($targetParamName)){
+                $targetParamName = [$targetParamName];
+            }
+            $all = $this->allCheckParams();
+            foreach ($targetParamName as $paramName){
+                if(isset($all[$paramName])){
+                    /** @var Param $param */
+                    $param = $all[$paramName];
+                    return !$param->hasSet();
+                }
+            }
         }
 
         if(isset($rules['OptionalIfParamSet'])){
-
+            /** @var OptionalIfParamSet $if */
+            $if = $rules['OptionalIfParamSet'];
+            $targetParamName = $if->getRuleArgs()['paramName'];
+            if(!is_array($targetParamName)){
+                $targetParamName = [$targetParamName];
+            }
+            $all = $this->allCheckParams();
+            foreach ($targetParamName as $paramName){
+                if(isset($all[$paramName])){
+                    /** @var Param $param */
+                    $param = $all[$paramName];
+                    return $param->hasSet();
+                }
+            }
         }
-
-
-
         return false;
     }
 }

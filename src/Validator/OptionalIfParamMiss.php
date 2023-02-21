@@ -8,10 +8,15 @@ use Psr\Http\Message\ServerRequestInterface;
 
 class OptionalIfParamMiss extends AbstractValidator
 {
+    protected string $paramName;
 
-    function __construct(string $paramName,?string $errorMsg = null)
+    function __construct(array|string $paramName,?string $errorMsg = null)
     {
+        $this->paramName = $paramName;
         if(empty($errorMsg)){
+            if(is_array($paramName)){
+                $paramName = implode(",",$paramName);
+            }
             $errorMsg = "{#name} is optional when param {$paramName} miss";
         }
         $this->errorMsg($errorMsg);
@@ -19,7 +24,7 @@ class OptionalIfParamMiss extends AbstractValidator
 
     protected function validate(Param $param, ServerRequestInterface $request): bool
     {
-        // TODO: Implement validate() method.
+        return true;
     }
 
     function ruleName(): string

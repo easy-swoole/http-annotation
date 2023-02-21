@@ -8,9 +8,13 @@ use EasySwoole\HttpAnnotation\Attributes\Param;
 use EasySwoole\HttpAnnotation\Document\Document;
 use EasySwoole\HttpAnnotation\Enum\HttpMethod;
 use EasySwoole\HttpAnnotation\Enum\ParamFrom;
+use EasySwoole\HttpAnnotation\Validator\Integer;
 use EasySwoole\HttpAnnotation\Validator\IsUrl;
 use EasySwoole\HttpAnnotation\Validator\MaxLength;
+use EasySwoole\HttpAnnotation\Validator\Min;
+use EasySwoole\HttpAnnotation\Validator\MinLength;
 use EasySwoole\HttpAnnotation\Validator\Optional;
+use EasySwoole\HttpAnnotation\Validator\OptionalIfParamSet;
 use EasySwoole\HttpAnnotation\Validator\Required;
 
 class Index extends Base
@@ -72,6 +76,31 @@ class Index extends Base
         ]
     )]
     function url()
+    {
+
+    }
+
+    #[Api(
+        apiName: 'sendSms',
+        requestParam: [
+            new Param(
+                name: "content",
+                validate: [
+                    new OptionalIfParamSet("templateId"),
+                    new MinLength("5")
+                ]
+            ),
+            new Param(
+                name: "templateId",
+                validate: [
+                    new OptionalIfParamSet("content"),
+                    new Integer(),
+                    new Min(1)
+                ]
+            )
+        ]
+    )]
+    function sendSms()
     {
 
     }
