@@ -90,7 +90,7 @@ class Utility
 
     public static function parseActionParams(\ReflectionClass $reflectionClass,string $methodName):array
     {
-        $actionParams = AttributeCache::getInstance()->getClassActionParams(static::class,$methodName);
+        $actionParams = AttributeCache::getInstance()->getClassActionParams($reflectionClass->name,$methodName);
         if($actionParams !== null){
             return $actionParams;
         }
@@ -106,8 +106,7 @@ class Utility
                 $test = new Param(...$args);
                 $controllerGlobalParams[$test->name] = $test;
             }catch (\Throwable $exception){
-                $controller = static::class;
-                $msg = "{$exception->getMessage()} in controller: {$controller} global param";
+                $msg = "{$exception->getMessage()} in controller: {$reflectionClass->name} global param";
                 throw new Annotation($msg);
             }
         }
@@ -133,7 +132,7 @@ class Utility
 
         //不缓存、解析无定义方法，防止构造任意action攻击导致内存泄漏
         if($reflectionClass->hasMethod($methodName)){
-            AttributeCache::getInstance()->setClassActionParams(static::class,$methodName,$actionParams);
+            AttributeCache::getInstance()->setClassActionParams($reflectionClass->name,$methodName,$actionParams);
         }
         return $actionParams;
     }
