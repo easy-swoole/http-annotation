@@ -358,7 +358,34 @@
         h2 > sup.deprecated {
             font-size: 14px;
         }
-        /*# sourceMappingURL=defaultTheme.css.map */
+
+        .fixed-btn__top {
+            bottom: 40px;
+        }
+
+        .fixed-btn {
+            position: fixed;
+            right: 40px;
+            width: 54px;
+            height: 54px;
+            border-radius: 100%;
+            background: rgba(0,0,0,.04);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .fixed-btn__inner {
+            text-align: center;
+            cursor: pointer;
+        }
+        .fixed-btn__icon {
+            display: inline-block;
+            width: 16px;
+            height: 16px;
+            background-size: contain;
+            background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg width='16' height='16' xmlns='http://www.w3.org/2000/svg'%3e%3cpath d='M7.50815128.70791839c.26930382-.27722452.71439362-.27722452.98369744 0l5.99999998 6.17647059-.9836974.95559179L8.68515128 2.875l.00056301 12.6489496H7.31428571L7.31415128 2.874 2.49184872 7.83998077l-.98369744-.95559179z' fill='%23000' fill-rule='nonzero' opacity='.5'/%3e%3c/svg%3e");
+        }
+
     </style>
 </head>
 <body>
@@ -374,6 +401,13 @@
         <footer class="m-footer">
             <p>Build by <a href="https://www.easyswoole.com/">EasySwoole</a></p>
         </footer>
+
+        <a href="#" class="fixed-btn fixed-btn__top" style="">
+            <div class="fixed-btn__inner">
+                <span class="fixed-btn__icon">
+                </span>
+            </div>
+        </a>
     </div>
 </div>
 
