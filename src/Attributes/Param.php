@@ -285,7 +285,8 @@ class Param implements \JsonSerializable
         $validate = [];
         /** @var AbstractValidator $item */
         foreach ($this->validate as $item){
-            $validate[$item->ruleName()] = $item->errorMsg(null,true);
+            $item->setCurrentParam($this);
+            $validate[$item->ruleName()] = $item->errorMsg(null);
         }
 
         $type = null;
