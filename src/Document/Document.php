@@ -157,7 +157,7 @@ class Document
 
         $finalDoc .= "# Api List";
         $finalDoc = $this->buildLine($finalDoc);
-        
+
 
         //构建分组详情
         foreach ($groupDetail as $groupName => $group){
@@ -397,7 +397,9 @@ class Document
             }
 
             $name = str_repeat("&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;",$subCount).$item->name;
-
+            if($item->type == ParamType::LIST){
+                $name = "{$name}[0-N]";
+            }
 
             $fromStr = "";
             if($item->from instanceof ParamFrom){
@@ -517,6 +519,9 @@ class Document
 
             $name = $dom->createElement("td");
             $name->nodeValue = str_repeat("&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;",$subCount).$item->name;
+            if($item->type == ParamType::LIST){
+                $name->nodeValue = "{$name->nodeValue}[0-N]";
+            }
             $line->appendChild($name);
 
             $desc = $dom->createElement("td");
