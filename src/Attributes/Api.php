@@ -14,8 +14,8 @@ class Api implements \JsonSerializable
         public bool          $registerRouter = false,
         public array         $requestParam = [],
         public array         $responseParam = [],
-        public array         $requestExample = [],
-        public array         $responseExample = [],
+        public array         $requestExamples = [],
+        public array         $responseExamples = [],
         public Description|string|null $description = null,
         public bool          $deprecated = false,
     ){}
@@ -44,7 +44,11 @@ class Api implements \JsonSerializable
             'requestPath'=>$this->requestPath,
             'registerRouter'=>$this->registerRouter,
             'requestParam'=>$this->requestParam,
-            'description'=>$desc
+            'responseParam'=>$this->responseParam,
+            'description'=>$desc,
+            'deprecated'=>$this->deprecated,
+            'requestExamples'=>$this->requestExamples,
+            'responseExamples'=>$this->responseExamples
         ];
     }
 }

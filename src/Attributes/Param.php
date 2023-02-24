@@ -306,7 +306,8 @@ class Param implements \JsonSerializable
             'deprecated'=>$this->deprecated,
             'type'=>$type,
             'subObject'=>$this->subObject,
-            'description'=>$this->description
+            'description'=>$this->description,
+            'parentStack'=>$this->parentStack
         ];
     }
 }

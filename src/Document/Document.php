@@ -92,13 +92,18 @@ class Document
             foreach ($methods as $name => $method){
                 $api = $method->getAttributes(Api::class);
                 if(!empty($api)){
-                    $api = new Api(...$api[0]->getArguments());
-                    $api->requestParam = Utility::parseActionParams($ref,$name);
+                    try{
+                        $api = new Api(...$api[0]->getArguments());
+                        $api->requestParam = Utility::parseActionParams($ref,$name);
 
-                    if(empty($api->requestPath)){
-                        $api->requestPath = "/{$controllerRequestPrefix}/{$method->name}";
+                        if(empty($api->requestPath)){
+                            $api->requestPath = "/{$controllerRequestPrefix}/{$method->name}";
+                        }
+                        $api->requestPath = $this->config->getHost().$api->requestPath;
+                    }catch (\Throwable $throwable){
+                        throw new Annotation("{$throwable->getMessage()} in class {$method->class} method {$method->name}");
                     }
-                    $api->requestPath = $this->config->getHost().$api->requestPath;
+
 
                     if(!$group->addApi($api)){
                         throw new Annotation("cannot redefine apiName {$api->apiName} in apiGroup {$group->getName()}");
