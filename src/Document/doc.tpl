@@ -613,9 +613,16 @@
 
             var fromStr = param.from.join(',');
             var rules = '';
+            var ruleCount = 1;
+            for(var ruleName in param.validate){
+                rules += "<p>"+param.validate[ruleName]+"</p>"
+            }
 
             var desc = parseDesc(param.description,false)
-            var defaultVal = '';
+            var defaultVal = '-';
+            if(param.value != null){
+                defaultVal = param.value
+            }
 
             var next = '';
             subCount++;
@@ -631,7 +638,7 @@
             final += hanlder(params[i],0)
         }
 
-        return "<table> <tr> <td>Name</td> <td>From</td> <td>Validate</td> <td>Description</td> <td>Default</td> </tr>"+final+"</table>";
+        return "<table> <tr> <td>Name</td> <td>From</td> <td>Validate</td> <td>Description</td> <td>Default Value</td> </tr>"+final+"</table>";
     }
 
     function buildResponseParamTable(params){
