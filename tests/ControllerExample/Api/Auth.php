@@ -43,9 +43,12 @@ class Auth extends ApiBase
                 ])
         ],
         responseParam: [
-            new Param("code"),
+            new Param(
+                name: "code",type: ParamType::STRING
+            ),
             new Param(
                 name: "Result",
+                type: ParamType::LIST,
                 subObject: [
                     new Param("token"),
                     new Param("expire")

@@ -638,6 +638,9 @@
 
         var hanlder = function (param,subCount,paramFrom = null){
             var name = "&nbsp;&nbsp;&nbsp;&nbsp;".repeat(subCount)+param.name
+            if(param.type === "LIST"){
+                name += "[0-N]"
+            }
             var desc = parseDesc(param.description,false)
             var type = param.type;
 
