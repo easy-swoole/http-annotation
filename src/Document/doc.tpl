@@ -205,7 +205,7 @@
             if(!(groupApis.apiList instanceof Array)){
                 sideBarHtml = sideBarHtml + "<li>"+groupName+"<ul>";
                 for(var apiName in groupApis.apiList){
-                    sideBarHtml = sideBarHtml + "<li><a>"+apiName+"</a></li>"
+                    sideBarHtml = sideBarHtml + "<li><a groupName='"+groupName+"' apiName='"+apiName+"'>"+apiName+"</a></li>"
                 }
                 sideBarHtml = sideBarHtml + "</ul></li>";
 
@@ -231,6 +231,15 @@
                 }
             }
         });
+        $('.sideBar ul li a').on('click', function () {
+            $.each($('.sideBar ul li a'), function () {
+                $(this).filter("a").css("text-decoration", "none").css('color','#2c3e50');
+            });
+            $(this).filter("a").css("text-decoration", "underline").css('color','#0080ff');
+            var groupName = $(this).attr('groupName');
+            var apiName = $(this).attr('apiName');
+        })
+
     });
 </script>
 </body>
