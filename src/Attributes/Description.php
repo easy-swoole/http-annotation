@@ -3,7 +3,7 @@
 namespace EasySwoole\HttpAnnotation\Attributes;
 
 #[\Attribute]
-class Description
+class Description implements \JsonSerializable
 {
     const PLAIN_TEXT = 1;
     const JSON = 2;
@@ -12,5 +12,13 @@ class Description
 
     function __construct(public string $desc,public int $type = Description::PLAIN_TEXT)
     {
+    }
+
+    public function jsonSerialize(): mixed
+    {
+        return [
+            "desc"=>$this->desc,
+            "type"=>$this->type
+        ];
     }
 }

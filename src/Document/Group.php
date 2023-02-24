@@ -5,7 +5,7 @@ namespace EasySwoole\HttpAnnotation\Document;
 use EasySwoole\HttpAnnotation\Attributes\Api;
 use EasySwoole\HttpAnnotation\Attributes\Description;
 
-class Group
+class Group implements \JsonSerializable
 {
 
     private array $apis = [];
@@ -42,5 +42,17 @@ class Group
         }
         $this->apis[$api->apiName] = $api;
         return true;
+    }
+
+    public function jsonSerialize(): mixed
+    {
+        $desc = $this->description;
+        if(is_string($desc)){
+            $desc = new Description($desc,Description::PLAIN_TEXT);
+        }
+        return [
+            "groupName"=>$this->name,
+            'description'=>$desc
+        ];
     }
 }
