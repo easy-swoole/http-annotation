@@ -84,7 +84,6 @@ class Document
             }
 
 
-
             /**
              * @var  $name
              * @var \ReflectionMethod $method
@@ -95,6 +94,20 @@ class Document
                     try{
                         $api = new Api(...$api[0]->getArguments());
                         $api->requestParam = Utility::parseActionParams($ref,$name);
+
+                        //处理参数验证
+                        /**
+                         * @var  $key
+                         * @var Param $item
+                         */
+                        foreach ($api->requestParam as $key => $item){
+                            $rules = $item->validate;
+                            /** @var AbstractValidator $rule */
+                            foreach ($rules as $rule){
+                                $rule->setCurrentParam($item);
+                                $rule->allCheckParams($api->requestParam);
+                            }
+                        }
 
                         if(empty($api->requestPath)){
                             $api->requestPath = "/{$controllerRequestPrefix}/{$method->name}";

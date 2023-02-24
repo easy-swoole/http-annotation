@@ -18,7 +18,14 @@ class Api implements \JsonSerializable
         public array         $responseExamples = [],
         public Description|string|null $description = null,
         public bool          $deprecated = false,
-    ){}
+    ){
+        $temp = [];
+        /** @var Param $item */
+        foreach ($this->requestParam as $item){
+            $temp[$item->name] = $item;
+        }
+        $this->requestParam = $temp;
+    }
 
     public function jsonSerialize(): mixed
     {
