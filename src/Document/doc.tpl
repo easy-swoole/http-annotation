@@ -571,16 +571,24 @@
 
         html += '<h3><strong>Request Params:</strong></h3>'
 
-        var str = buildRequestParamTable(api.requestParam)
-        html += str;
-
-        // html += '<p>Empty Request Params</p>'
+        if(api.requestParam instanceof Array){
+            html += '<p>Empty Request Params</p>'
+        }else{
+          html += buildRequestParamTable(api.requestParam)
+        }
 
         html += '<h3><strong>Request Example:</strong></h3>'
         html += '<p>Empty Request Example</p>'
 
         html += '<h3><strong>Response Params:</strong></h3>'
-        html += '<p>Empty Response Params</p>'
+
+        if(api.responseParam instanceof Array){
+            html += '<p>Empty Response Params</p>'
+        }else{
+            html += buildResponseParamTable(api.responseParam)
+        }
+
+
 
         html += '<h3><strong>Response Example:</strong></h3>'
         html += '<p>Empty Response Example</p>'
@@ -590,7 +598,6 @@
 
     function buildGroupDesc(apiGroup){
         var html = "";
-        console.log(apiGroup)
         html += '<h2 >'+apiGroup.groupName+'</h2>'
         if(apiGroup.description){
             $("#content").html(html)
@@ -601,8 +608,8 @@
 
     function buildRequestParamTable(params){
 
-        var hanlder = function (param,subCount = 0,paramFrom = null){
-            var name = " ".repeat(subCount)+param.name
+        var hanlder = function (param,subCount,paramFrom){
+            var name = "&nbsp;&nbsp;&nbsp;&nbsp;".repeat(subCount)+param.name
 
             var fromStr = param.from.join(',');
             var rules = '';
@@ -621,12 +628,34 @@
         }
         var final = '';
         for (var i in params){
-            final += hanlder(params[i])
+            final += hanlder(params[i],0)
         }
 
-        console.log(final)
-
         return "<table> <tr> <td>Name</td> <td>From</td> <td>Validate</td> <td>Description</td> <td>Default</td> </tr>"+final+"</table>";
+    }
+
+    function buildResponseParamTable(params){
+
+        var hanlder = function (param,subCount,paramFrom = null){
+            var name = "&nbsp;&nbsp;&nbsp;&nbsp;".repeat(subCount)+param.name
+            var desc = parseDesc(param.description,false)
+            var type = param.type;
+
+            var next = '';
+            subCount++;
+
+            for (var sub in param.subObject){
+                next += hanlder(param.subObject[sub],subCount,param.from)
+            }
+
+            return "<tr><td>"+name+"</td> <td>"+desc+"</td> <td>"+type+"</td></tr>"+next;
+        }
+        var final = '';
+        for (var i in params){
+            final += hanlder(params[i],0)
+        }
+
+        return "<table> <tr> <td>Name</td><td>Description</td> <td>Type</td> </tr>"+final+"</table>";
     }
 
     $(function (){

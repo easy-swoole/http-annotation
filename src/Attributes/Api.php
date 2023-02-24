@@ -45,13 +45,18 @@ class Api implements \JsonSerializable
             $desc = new Description($desc,Description::PLAIN_TEXT);
         }
 
+        $responseParam = [];
+        foreach ($this->responseParam as $item){
+            $responseParam[$item->name] = $item;
+        }
+
         return [
             'apiName'=>$this->apiName,
             'allowMethod'=>$temp,
             'requestPath'=>$this->requestPath,
             'registerRouter'=>$this->registerRouter,
             'requestParam'=>$this->requestParam,
-            'responseParam'=>$this->responseParam,
+            'responseParam'=>$responseParam,
             'description'=>$desc,
             'deprecated'=>$this->deprecated,
             'requestExamples'=>$this->requestExamples,
