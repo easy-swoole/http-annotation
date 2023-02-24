@@ -52,7 +52,8 @@ class Group implements \JsonSerializable
         }
         return [
             "groupName"=>$this->name,
-            'description'=>$desc
+            'description'=>$desc,
+            "apiList"=>$this->apis
         ];
     }
 }

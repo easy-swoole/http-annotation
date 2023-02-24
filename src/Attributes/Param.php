@@ -13,7 +13,7 @@ use EasySwoole\HttpAnnotation\Validator\Optional;
 use Psr\Http\Message\ServerRequestInterface;
 
 #[\Attribute(\Attribute::TARGET_ALL|\Attribute::IS_REPEATABLE)]
-class Param
+class Param implements \JsonSerializable
 {
     private bool $isParsed = false;
     private bool $hasSet = false;
@@ -28,7 +28,6 @@ class Param
         public ?array                  $validate = [],
         public                         $value = null,
         public bool                    $deprecated = false,
-        public bool                    $unset = false,
         public Description|string|null $description = null,
         public ?ParamType              $type = null,
         public array                   $subObject = [],
@@ -271,4 +270,43 @@ class Param
        }
        $this->subObject = $temp;
    }
+
+    public function jsonSerialize(): mixed
+    {
+        $from = [];
+        if(is_array($this->from)){
+            foreach ($this->from as $item){
+                $from[] = $item->name;
+            }
+        }else{
+            $from[] = $this->from->name;
+        }
+
+        $validate = [];
+        /** @var AbstractValidator $item */
+        foreach ($this->validate as $item){
+            $validate[$item->ruleName()] = $item->errorMsg(null,true);
+        }
+
+        $type = null;
+        if($this->type){
+            $type = $this->type->name;
+        }
+
+        $desc = $this->description;
+        if(is_string($desc)){
+            $desc = new Description($desc,Description::PLAIN_TEXT);
+        }
+
+        return [
+            'name'=>$this->name,
+            'from'=>$from,
+            'validate'=>$validate,
+            'value'=>$this->value,
+            'deprecated'=>$this->deprecated,
+            'type'=>$type,
+            'subObject'=>$this->subObject,
+            'description'=>$this->description
+        ];
+    }
 }
