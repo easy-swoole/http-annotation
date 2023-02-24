@@ -539,6 +539,25 @@
 <script>
     var jsonData = {{$docData}}
 
+    function parseDesc(desc,addHtml = true){
+        if(desc){
+            if(desc.type === 2){
+
+            }
+            if(desc.type === 3){
+
+            }
+            if(addHtml){
+                return '<pre>'+desc.desc+'</pre>'
+            }
+            return desc.desc
+        }else{
+            if(addHtml){
+                return '<pre>Not Any Description</pre>'
+            }
+            return 'Not Any Description'
+        }
+    }
 
     function buildApiContent(api){
         console.log(api)
@@ -548,10 +567,14 @@
         html += '<h3><strong>Allow Method:</strong> '+api.allowMethod+'</h3>'
 
         html += '<h3><strong>Api Description:</strong></h3>'
-        html += '<p>Empty Method Description</p>'
+        html += parseDesc(api.description)
 
         html += '<h3><strong>Request Params:</strong></h3>'
-        html += '<p>Empty Request Params</p>'
+
+        var str = buildRequestParamTable(api.requestParam)
+        html += str;
+
+        // html += '<p>Empty Request Params</p>'
 
         html += '<h3><strong>Request Example:</strong></h3>'
         html += '<p>Empty Request Example</p>'
@@ -574,7 +597,36 @@
         }else{
 
         }
+    }
 
+    function buildRequestParamTable(params){
+
+        var hanlder = function (param,subCount = 0,paramFrom = null){
+            var name = " ".repeat(subCount)+param.name
+
+            var fromStr = param.from.join(',');
+            var rules = '';
+
+            var desc = parseDesc(param.description,false)
+            var defaultVal = '';
+
+            var next = '';
+            subCount++;
+
+            for (var sub in param.subObject){
+                next += hanlder(param.subObject[sub],subCount,param.from)
+            }
+
+            return "<tr><td>"+name+"</td> <td>"+fromStr+"</td> <td>"+rules+"</td> <td>"+desc+"</td> <td>"+defaultVal+"</td></tr>"+next;
+        }
+        var final = '';
+        for (var i in params){
+            final += hanlder(params[i])
+        }
+
+        console.log(final)
+
+        return "<table> <tr> <td>Name</td> <td>From</td> <td>Validate</td> <td>Description</td> <td>Default</td> </tr>"+final+"</table>";
     }
 
     $(function (){
@@ -628,7 +680,6 @@
             }
 
         })
-
     });
 </script>
 </body>
