@@ -9,8 +9,7 @@ use EasySwoole\HttpAnnotation\Tests\ControllerExample\Base;
 #[ApiGroup(
     groupName: "Api",
     description: new Description(
-        desc: "tests/res/description.md",
-        type: Description::MARKDOWN
+        desc: "tests/res/description.md"
     ),
 )]
 class ApiBase extends Base
