@@ -228,10 +228,6 @@
         a img {
             border: none;
         }
-        p {
-            padding-left: 10px;
-            margin-bottom: 9px;
-        }
         h1,
         h2,
         h3,
@@ -611,11 +607,12 @@
         var hanlder = function (param,subCount,paramFrom){
             var name = "&nbsp;&nbsp;&nbsp;&nbsp;".repeat(subCount)+param.name
 
-            var fromStr = param.from.join(',');
-            var rules = '';
-            var ruleCount = 1;
+            var fromStr = param.from.join(',')
+            var rules = ''
+            var ruleCount = 1
             for(var ruleName in param.validate){
-                rules += "<p>"+param.validate[ruleName]+"</p>"
+                rules += "<p>"+ruleCount+"."+param.validate[ruleName]+"</p>"
+                ruleCount++
             }
 
             var desc = parseDesc(param.description,false)
