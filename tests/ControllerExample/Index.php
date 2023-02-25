@@ -35,7 +35,7 @@ class Index extends Base
                 description: new Description("翻页参数")
             )
         ],
-        description: new Description("这是一个接口说明啊啊啊啊 for home")
+        description: new Description(__DIR__.'/../res/description.md',Description::MARKDOWN_FILE)
     )]
     function index(string $account){
         $this->writeJson(200,null,"account is {$account}");

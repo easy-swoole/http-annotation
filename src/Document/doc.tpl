@@ -7,6 +7,7 @@
     <meta name="description" content="Description"/>
     <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0"/>
     <script src="https://code.jquery.com/jquery-2.1.1.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
     <link href="https://cdn.bootcdn.net/ajax/libs/font-awesome/6.3.0/css/all.min.css" rel="stylesheet">
     <style>
 
@@ -537,20 +538,11 @@
 
     function parseDesc(desc,addHtml = true){
         if(desc){
-            if(desc.type === 2){
-
-            }
-            if(desc.type === 3){
-
-            }
-            if(addHtml){
-                return '<pre>'+desc.desc+'</pre>'
+            if(desc.type === "MARKDOWN" || desc.type === 'MARKDOWN_FILE'){
+                return marked.parse(desc.desc);
             }
             return desc.desc
         }else{
-            if(addHtml){
-                return '<pre>Not Any Description</pre>'
-            }
             return 'Not Any Description'
         }
     }

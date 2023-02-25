@@ -7,7 +7,7 @@ class Description implements \JsonSerializable
 {
     const PLAIN_TEXT = 'PLAIN_TEXT';
 
-    const  PLAIN_TEXT_FILE = 'PLAIN_TEXT';
+    const  PLAIN_TEXT_FILE = 'PLAIN_TEXT_FILE';
 
     const JSON = 'JSON';
     const JSON_FILE = 'JSON_FILE';
@@ -28,6 +28,7 @@ class Description implements \JsonSerializable
     {
         $des = $this->desc;
         if(in_array($this->type,[self::PLAIN_TEXT_FILE,self::JSON_FILE,self::MARKDOWN_FILE])){
+
             $des = file_get_contents($this->desc);
         }
 
@@ -39,6 +40,7 @@ class Description implements \JsonSerializable
         if($this->type == self::XML || $this->type == self::XML_FILE){
 
         }
+
 
         return [
             "desc"=>$des,
