@@ -8,7 +8,6 @@
     <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0"/>
     <script src="https://code.jquery.com/jquery-2.1.1.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
-    <link href="https://cdn.bootcdn.net/ajax/libs/font-awesome/6.3.0/css/all.min.css" rel="stylesheet">
     <style>
 
         .container .navBar {
@@ -109,7 +108,7 @@
             display: list-item;
             text-align: -webkit-match-parent;
             list-style-type: none;
-            padding: 0.3em 0.3em;
+            padding: 0.1em 0.1rem 0.2em 0.1rem;
             cursor: pointer;
         }
 
@@ -461,22 +460,7 @@
         .m-header .nav a:hover {
             color: #59d69d;
         }
-        .m-footer {
-            border-top: 1px solid #ddd;
-            padding-top: 16px;
-            padding-bottom: 16px;
-        }
-        h4.response-params,
-        h4.api-fail-example,
-        h4.api-success-example {
-            clear: both;
-            font-weight: 200;
-            margin-top: 20px;
-            margin-bottom: 20px;
-            border-left: 3px solid #FFB800;
-            padding-left: 8px;
-            font-size: 16px;
-        }
+
         #extra > p {
             margin-bottom: 9px;
             margin-top: 9px;
@@ -504,13 +488,63 @@
         #extra a {
             text-decoration: underline;
         }
-        sup.deprecated {
-            color: red;
+
+        .right-menu{
+            width: 230px;
+            position: fixed;
+            right: 15px;
+            top: 120px;
+            min-height: 1px;
+            z-index: 99;
+            border: 1px solid #EEEEEE;
+            border-radius: 0 3px 3px 3px;
+            background-color: #fff;
+            padding: 10px;
+            max-height: 70%;
+            overflow-y: auto;
         }
-        h2 > sup.deprecated {
-            font-size: 14px;
+        .right-menu::-webkit-scrollbar{
+            display:none;
+        }
+        .right-menu > .title {
+            color: #aaaaaa;
+            background-color: #fff;
+            width: 100%;
+            right: 15px;
+            padding-left: 0.1em;
+            line-height: 200%;
+            border-bottom: 1px solid #EEEEEE;
+            cursor: pointer;
+        }
+        @media (max-width: 600px) {
+            .right-menu {
+                display:none;
+            }
+            #live2d-widget {
+                display: none;
+            }
         }
 
+        .right-menu > li{
+            list-style-type: none;
+            padding-left:5px;
+            padding-top: 5px;
+        }
+        .right-menu > li > a.active{
+            color:#ff0006;
+        }
+
+        .arrow-right{
+            list-style: none;
+            padding-right: 1rem;
+            background: url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAB6ElEQVRYR82WPUvDQBjHmzbYDoIiiG8dpDi4KOKi38A3/BhuugSSJtghDk2TUlPQza8iWN911S/g4O6cRGj9P9BAKMXc5a7WLnell/v97n/PXaPkxvxRxszP/X8B27bVYrH4qCjKRj6f3zEM405maqkJOI6zBfArQXu9XoD+frVa7ciSSBWgBEql0gOA232JCO2eZVk3MiRSBQgCiUlIUPSbfWiINHYhcSsqwSRAENd1p9BQEmsyJZgFCOr7/kwURbRqaRJcArFEGIZPOBWrMpLgFiAoTsYsBO6TEugf4nRc89ZEJoGExDPAK33oN/oHvBKZBQjabDbnu93uC7rLWSWEBAjqeV4ZR5JORyYJYYGEBCVR5k1CigBBG41GBQ0V5hJ9RyoR/kMWNE37+q0wpQkQBJfVFZqjGFgoFCq6rn/8iQDg5wBpCZhjmuZp2rGUkgDiv0T0xwlYC3A9DU6/CwuIwIUFROFCAjLgmQUGqx0TMe/5YF1w18AgHMVn4/4/Yym4YWO4BIasXEe1t7LCubZgFHBmAcAvMPgksVILK3dFVh4/m7oF9Xp9HVfqW/wA7ngTL6OeDDhTAu12ezoIgncU2yIeMLByXxacSYAG4bV8QlXVuVqt9ikTziwgG5qcL7UGRgmnuX8A4ie8ITn6AnkAAAAASUVORK5CYII=") no-repeat;
+        }
+
+        .arrow-down{
+            list-style: none;
+            padding-right: 1rem;
+            background: url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAABk0lEQVRYR+2Vy06DUBCGe1jUNix8HxfGGBeoiTHGhU/A5WXYctmwcUXSxC7UJnZhXPg4EBdG8QLONGAGSstwiqkLmpBCOP3/b/6ZcyoGW/6ILfsPeoA+gf+XgOd5u4ZhvPzF7qjTLiXg+/5ZlmXXQghN1/XnLiFAew+0Z3BdmaZ5V2j/Ariuq4HxFF4MYdGboihHXUGgeZqmc9Afg/4HfJ+C9hwhKMAEXlyQql8B5ARonzZJAgrbB12sWCU6E2jzZQkgDMNhFEVTjL9YuGkSlcoXsqD5gAkAwGcJAB+6hOCYLwGsg8B2WJb1yGmH4zgHGHve89rKl4aQCq9IIgEIrQkiN5+B+Q5pZSl26rXyIJKBaGte2wLZJGTMGwHWzESpHbLmLIAmiIWIEOyeV4eY/WeEMxHH8Q0IHBOR9/x+RAYOp/+82OdNu4YNQJK4B4PDOuHqIdNkzm4BFQqCYJQkyW0VQsZcCgB/VIWQNZcGoBBw/03Pdk7srIOII2Tb9lhV1S/uwNVpthpCDlTbNT1An0CfwA8NqzYw/4+BawAAAABJRU5ErkJggg==") no-repeat;
+        }
 
     </style>
 </head>
@@ -529,8 +563,8 @@
     </aside>
     <section class="mainContent">
         <div class="content" id="content">
-            <p>测试内容</p>
         </div>
+        <div class="right-menu" id="right-menu" style="display: none"></div>
     </section>
 </div>
 <script>
@@ -551,12 +585,10 @@
     }
 
     function buildApiContent(api){
-        console.log(api)
         var html = "";
         html += '<h1>'+api.apiName+'</h1>'
-        html += '<h3><strong>Request Path:</strong> <a>'+api.requestPath+'</a></h3>'
-        html += '<h3><strong>Allow Method:</strong> '+api.allowMethod+'</h3>'
-
+        html += '<h3><strong>Request Path:</strong> </h3>'
+        html += '<pre>'+api.allowMethod+": "+api.requestPath+'</pre>'
         html += '<h3><strong>Api Description:</strong></h3>'
         html += parseDesc(api.description)
 
@@ -619,11 +651,8 @@
     function buildGroupDesc(apiGroup){
         var html = "";
         html += '<h2 >'+apiGroup.groupName+'</h2>'
-        if(apiGroup.description){
-            $("#content").html(html)
-        }else{
-
-        }
+        html += parseDesc(apiGroup.description)
+        $("#content").html(html)
     }
 
     function buildRequestParamTable(params){
@@ -698,6 +727,54 @@
         return "<table> <tr> <td>Name</td><td>Description</td> <td>Type</td><td>Default Value</td> </tr>"+final+"</table>";
     }
 
+    function renderRightMenu()
+    {
+        var rightMenu = [];
+        $(".content").children().each(function(index, element) {
+            var tagName=$(this).get(0).tagName;
+            if(tagName.substr(0,1).toUpperCase()=="H"){
+                var contentH=$(this).text();//获取内容
+                var markid="mark-"+tagName+"-"+index.toString();
+                $(this).attr("id",contentH);//为当前h标签设置id
+                var level = tagName.substr(1,2);
+                rightMenu.push({
+                    level: level,
+                    content: contentH,
+                    markid: markid,
+                });
+            }
+        });
+        $('.right-menu').empty();
+
+        if(rightMenu.length === 0){
+            $('#right-menu').hide()
+            return
+        }else{
+            $('#right-menu').show()
+        }
+
+        $('.right-menu').append("<div class='title'><i class='fa fa-list'></i> 本章导航</div>");
+        $.each(rightMenu, function (index, item) {
+            var padding_left = (item.level - 1) * 12 +"px";
+            $('.right-menu').append("<li style='padding-left:"+padding_left+"'><a href='#"+item.content+"' class='right-menu-item'>"+item.content+"</a></li>");
+        });
+        // 防止点击的导航是最底部，拉取滑动的只会到倒数其他菜单
+        $('.right-menu').on('click','a',function(){
+            // 延迟执行 等滚动完
+            var that = $(this);
+            setTimeout(function (that) {
+                $(".right-menu-item.active").removeClass("active");
+                that.addClass("active");
+            }, 50, that);
+        });
+        // 切换导航显示
+        $('.right-menu .title').on('click', function(){
+            $(this).siblings().toggle();
+        });
+        //默认缩略
+        $('.right-menu .title').click()
+    }
+
     $(function (){
         var sideBarHtml = "";
         for(var groupName in jsonData){
@@ -705,10 +782,6 @@
             //说明不是空
             if(!(groupApi.apiList instanceof Array)){
                 sideBarHtml = sideBarHtml + "<li>"+groupName+"<ul>";
-                if(groupApi.description){
-                    sideBarHtml = sideBarHtml + "<li><a groupName='"+groupName+"' apiName=''>分组说明</a></li>"
-                }
-
                 for(var apiName in groupApi.apiList){
                     sideBarHtml = sideBarHtml + "<li><a groupName='"+groupName+"' apiName='"+apiName+"'>"+apiName+"</a></li>"
                 }
@@ -717,7 +790,7 @@
         }
         $("#sideBar").html("<ul>"+sideBarHtml+"</ul>")
         $.each($('.sideBar li:has(li)'), function () {
-            $(this).attr('isOpen', 0).addClass('fa fa-angle-right');
+            $(this).attr('isOpen', 0).addClass('arrow-right');
         });
 
         $('.sideBar li:has(ul)').click(function (event) {
@@ -725,12 +798,12 @@
                 $(this).children().toggle('fast');
                 if ($(this).attr('isOpen') == 1) {
                     $(this).attr('isOpen', 0);
-                    $(this).removeClass('fa fa-angle-down');
-                    $(this).addClass('fa fa-angle-right');
+                    $(this).removeClass('arrow-down');
+                    $(this).addClass('arrow-right');
                 } else {
                     $(this).attr('isOpen', 1);
-                    $(this).removeClass('fa fa-angle-right');
-                    $(this).addClass('fa fa-angle-down');
+                    $(this).removeClass('arrow-right');
+                    $(this).addClass('arrow-down');
                 }
             }
         });
@@ -747,7 +820,7 @@
             }else{
                 buildGroupDesc(groupApi)
             }
-
+            renderRightMenu()
         })
     });
 </script>

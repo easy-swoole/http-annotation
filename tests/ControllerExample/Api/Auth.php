@@ -14,7 +14,7 @@ use EasySwoole\HttpAnnotation\Validator\MaxLength;
 use EasySwoole\HttpAnnotation\Validator\Required;
 
 #[ApiGroup(
-    groupName: "Api.Auth", description: "Api.Auth 的文本描述 "
+    groupName: "Api.Auth", description: new Description(__DIR__.'/../../res/description.md',Description::MARKDOWN_FILE)
 )]
 class Auth extends ApiBase
 {
