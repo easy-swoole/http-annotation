@@ -566,7 +566,23 @@
         }
 
         html += '<h3><strong>Request Example:</strong></h3>'
-        html += '<p>Empty Request Example</p>'
+
+        if(api.requestExamples.length > 0){
+            for(var i in api.requestExamples){
+                var example = api.requestExamples[i]
+                html += "<h5>Request Example "+(parseInt(i)  + 1)+"</h5>"
+
+                if(example.exampleType === 'PARAM_ARRAY'){
+                    html += buildResponseParamTable(example.example)
+                }else{
+
+                }
+            }
+        }else{
+            html += '<p>Empty Request Example</p>'
+        }
+
+
 
         html += '<h3><strong>Response Params:</strong></h3>'
 
@@ -638,23 +654,32 @@
                 name += "[0-N]"
             }
             var desc = parseDesc(param.description,false)
-            var type = param.type;
+            if(param.type){
+                var type = param.type
+            }else{
+                var type = '-'
+            }
 
             var next = '';
             subCount++;
+
+            var defaultVal = '-';
+            if(param.value != null){
+                defaultVal = param.value
+            }
 
             for (var sub in param.subObject){
                 next += hanlder(param.subObject[sub],subCount,param.from)
             }
 
-            return "<tr><td>"+name+"</td> <td>"+desc+"</td> <td>"+type+"</td></tr>"+next;
+            return "<tr><td>"+name+"</td> <td>"+desc+"</td> <td>"+type+"</td><td>"+defaultVal+"</td></tr>"+next;
         }
         var final = '';
         for (var i in params){
             final += hanlder(params[i],0)
         }
 
-        return "<table> <tr> <td>Name</td><td>Description</td> <td>Type</td> </tr>"+final+"</table>";
+        return "<table> <tr> <td>Name</td><td>Description</td> <td>Type</td><td>Default Value</td> </tr>"+final+"</table>";
     }
 
     $(function (){

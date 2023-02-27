@@ -62,8 +62,7 @@ class Auth extends ApiBase
                     new Param(name: "account", value: "1111", description: "账号"),
                     new Param(name: "password", value: "1111", description: "密码"),
                     new Param(name: "verify", value: "1111", description: new Description('验证码')),
-                ],
-                new Description('正常请求', Description::PLAIN_TEXT)
+                ]
             ),
             new Example(
                 new Description('tests/res/json.json', Description::JSON)
@@ -80,15 +79,13 @@ class Auth extends ApiBase
                         new Param(name: "name", value: "八九", description: "昵称")
                     ]),
                     new Param(name: "code", value: "200", description: "状态码"),
-                ],
-                new Description('成功返回值', Description::PLAIN_TEXT)
+                ]
             ),
             new Example(
                 [
                     new Param(name: "result", value: "fail", description: "结果"),
                     new Param(name: "code", value: "500", description: "状态码"),
-                ],
-                new Description('失败返回值', Description::PLAIN_TEXT)
+                ]
             ),
             new Example(
                  new Description('tests/res/json.json', Description::JSON)

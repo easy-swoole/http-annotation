@@ -28,7 +28,6 @@ class Description implements \JsonSerializable
     {
         $des = $this->desc;
         if(in_array($this->type,[self::PLAIN_TEXT_FILE,self::JSON_FILE,self::MARKDOWN_FILE])){
-
             $des = file_get_contents($this->desc);
         }
 
