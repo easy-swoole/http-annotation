@@ -2,7 +2,6 @@
 <html>
 <head>
     <meta charset="UTF-8"/>
-    <title>{{$projectName}}</title>
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"/>
     <meta name="description" content="Description"/>
     <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0"/>
@@ -504,6 +503,10 @@
 <script>
     var jsonData = {{$docData}}
 
+    var config = {{$config}}
+
+    document.title = config.projectName
+
     function parseDesc(desc,parseToHtml = true){
         if(desc){
             if(parseToHtml){
@@ -522,7 +525,7 @@
         var html = "";
         html += '<h1>'+api.apiName+'</h1>'
         html += '<h3><strong>Request Path:</strong> </h3>'
-        html += '<pre>'+api.allowMethod+": "+api.requestPath+'</pre>'
+        html += '<pre>'+api.allowMethod+": "+ config.host + api.requestPath+'</pre>'
         html += '<h3><strong>Api Description:</strong></h3>'
         html += parseDesc(api.description)
 
@@ -747,9 +750,6 @@
                 var groupName = $(this).attr('groupName');
                 var groupApi = jsonData[groupName]
                 buildGroupDesc(groupApi)
-
-
-
             }
         });
         $('.sideBar ul li a').on('click', function () {

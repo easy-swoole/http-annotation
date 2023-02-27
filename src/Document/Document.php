@@ -111,7 +111,6 @@ class Document
                         if(empty($api->requestPath)){
                             $api->requestPath = "/{$controllerRequestPrefix}/{$method->name}";
                         }
-                        $api->requestPath = $this->config->getHost().$api->requestPath;
                     }catch (\Throwable $throwable){
                         throw new Annotation("{$throwable->getMessage()} in class {$method->class} method {$method->name}");
                     }
@@ -126,11 +125,11 @@ class Document
         return $list;
     }
 
-    function scanToHtml(string $projectName = "EasySwoole")
+    function scanToHtml()
     {
         $json = json_encode($this->scan());
         $temp = file_get_contents(__DIR__ . '/doc.tpl');
         $temp = str_replace('{{$docData}}',$json,$temp);
-        return str_replace('{{$projectName}}',$projectName,$temp);
+        return str_replace('{{$config}}',json_encode($this->config),$temp);
     }
 }
