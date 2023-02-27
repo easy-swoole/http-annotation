@@ -536,10 +536,13 @@
 <script>
     var jsonData = {{$docData}}
 
-    function parseDesc(desc,addHtml = true){
+    function parseDesc(desc,parseToHtml = true){
         if(desc){
-            if(desc.type === "MARKDOWN" || desc.type === 'MARKDOWN_FILE'){
-                return marked.parse(desc.desc);
+            if(parseToHtml){
+                if(desc.type === "MARKDOWN" || desc.type === 'MARKDOWN_FILE'){
+                    return marked.parse(desc.desc);
+                }
+                return "<pre><xmp>"+desc.desc+"</xmp></pre>"
             }
             return desc.desc
         }else{
@@ -575,7 +578,7 @@
                 if(example.exampleType === 'PARAM_ARRAY'){
                     html += buildResponseParamTable(example.example)
                 }else{
-
+                    html += parseDesc(example.example)
                 }
             }
         }else{
@@ -595,7 +598,20 @@
 
 
         html += '<h3><strong>Response Example:</strong></h3>'
-        html += '<p>Empty Response Example</p>'
+        if(api.responseExamples.length > 0){
+            for(var i in api.responseExamples){
+                var example = api.responseExamples[i]
+                html += "<h5>Response Example "+(parseInt(i)  + 1)+"</h5>"
+
+                if(example.exampleType === 'PARAM_ARRAY'){
+                    html += buildResponseParamTable(example.example)
+                }else{
+                    html += parseDesc(example.example)
+                }
+            }
+        }else{
+            html += '<p>Empty Response Example</p>'
+        }
 
         $("#content").html(html)
     }

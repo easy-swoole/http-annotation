@@ -65,10 +65,10 @@ class Auth extends ApiBase
                 ]
             ),
             new Example(
-                new Description('tests/res/json.json', Description::JSON)
+                new Description('tests/res/json.json', Description::JSON_FILE)
             ),
             new Example(
-                 new Description('tests/res/xml.xml', Description::XML)
+                 new Description('tests/res/xml.xml', Description::XML_FILE)
             ),
         ],
         responseExamples: [
@@ -88,10 +88,10 @@ class Auth extends ApiBase
                 ]
             ),
             new Example(
-                 new Description('tests/res/json.json', Description::JSON)
+                 new Description('tests/res/json.json', Description::JSON_FILE)
             ),
             new Example(
-               new Description('tests/res/xml.xml', Description::XML)
+               new Description('tests/res/xml.xml', Description::XML_FILE)
             ),
         ],
         description: new Description("这是一个接口说明啊啊啊啊")

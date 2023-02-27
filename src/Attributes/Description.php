@@ -27,14 +27,15 @@ class Description implements \JsonSerializable
     public function jsonSerialize(): mixed
     {
         $des = $this->desc;
-        if(in_array($this->type,[self::PLAIN_TEXT_FILE,self::JSON_FILE,self::MARKDOWN_FILE])){
+        if(in_array($this->type,[self::PLAIN_TEXT_FILE,self::JSON_FILE,self::MARKDOWN_FILE,self::XML_FILE])){
             $des = file_get_contents($this->desc);
         }
 
         if($this->type == self::JSON || $this->type == self::JSON_FILE){
-            $des = json_decode($this->desc,true);
+            $des = json_decode($des,true);
             $des = json_encode($des,JSON_PRETTY_PRINT);
         }
+
 
         if($this->type == self::XML || $this->type == self::XML_FILE){
 
