@@ -713,6 +713,11 @@
     }
 
     $(function (){
+        if(config.description){
+            $("#content").html(parseDesc(config.description))
+        }else{
+            $("#content").html("<h1>"+config.projectName+"</h1>")
+        }
         var sideBarHtml = "";
         for(var groupName in jsonData){
             var groupApi = jsonData[groupName]
