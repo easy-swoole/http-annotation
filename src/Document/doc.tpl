@@ -163,21 +163,7 @@
             line-height: 1.7rem !important;
         }
 
-        html,
-        body,
-        h1,
-        h2,
-        h3,
-        h4,
-        h5,
-        h6,
-        p,
-        blockquote {
-            margin: 0;
-            padding: 0;
-            font-weight: normal;
-            -webkit-font-smoothing: antialiased;
-        }
+
         /* 设置滚动条的样式 */
         ::-webkit-scrollbar {
             width: 6px;
@@ -401,65 +387,7 @@
         body > pre {
             margin-left: 30px;
         }
-        .curProject {
-            position: fixed;
-            top: 20px;
-            font-size: 25px;
-            color: black;
-            margin-left: -240px;
-            width: 240px;
-            padding: 5px;
-            line-height: 25px;
-            box-sizing: border-box;
-        }
-        .es-doc {
-            margin-top: 56px;
-            padding-top: 24px;
-            display: flex;
-            justify-content: center;
-        }
-        .curproject-name {
-            font-size: 42px;
-        }
-        .m-header {
-            background: #32363a;
-            height: 56px;
-            line-height: 56px;
-            display: flex;
-            align-items: center;
-            position: fixed;
-            z-index: 9;
-            top: 0;
-            left: 0;
-            right: 0;
-        }
-        .m-header .title {
-            font-size: 22px;
-            color: #fff;
-            font-weight: normal;
-            -webkit-font-smoothing: antialiased;
-            margin: 0;
-            margin-left: 16px;
-            padding: 0;
-            line-height: 56px;
-            border: none;
-        }
-        .m-header .nav {
-            color: #fff;
-            font-size: 16px;
-            position: absolute;
-            right: 32px;
-            top: 0;
-        }
-        .m-header .nav a {
-            color: #fff;
-            margin-left: 16px;
-            padding: 8px;
-            transition: color .2s;
-        }
-        .m-header .nav a:hover {
-            color: #59d69d;
-        }
+
 
         #extra > p {
             margin-bottom: 9px;
