@@ -88,7 +88,6 @@
 
         .container .sideBar>ul {
             padding: 1.5rem 0;
-            line-height: 1.7;
             display: block;
             margin-block-start: 1em;
             margin-block-end: 1em;
@@ -464,13 +463,21 @@
 
         .arrow-right{
             list-style: none;
-            padding-right: 1rem;
+            padding-right: 1.5rem;
             background: url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAB6ElEQVRYR82WPUvDQBjHmzbYDoIiiG8dpDi4KOKi38A3/BhuugSSJtghDk2TUlPQza8iWN911S/g4O6cRGj9P9BAKMXc5a7WLnell/v97n/PXaPkxvxRxszP/X8B27bVYrH4qCjKRj6f3zEM405maqkJOI6zBfArQXu9XoD+frVa7ciSSBWgBEql0gOA232JCO2eZVk3MiRSBQgCiUlIUPSbfWiINHYhcSsqwSRAENd1p9BQEmsyJZgFCOr7/kwURbRqaRJcArFEGIZPOBWrMpLgFiAoTsYsBO6TEugf4nRc89ZEJoGExDPAK33oN/oHvBKZBQjabDbnu93uC7rLWSWEBAjqeV4ZR5JORyYJYYGEBCVR5k1CigBBG41GBQ0V5hJ9RyoR/kMWNE37+q0wpQkQBJfVFZqjGFgoFCq6rn/8iQDg5wBpCZhjmuZp2rGUkgDiv0T0xwlYC3A9DU6/CwuIwIUFROFCAjLgmQUGqx0TMe/5YF1w18AgHMVn4/4/Yym4YWO4BIasXEe1t7LCubZgFHBmAcAvMPgksVILK3dFVh4/m7oF9Xp9HVfqW/wA7ngTL6OeDDhTAu12ezoIgncU2yIeMLByXxacSYAG4bV8QlXVuVqt9ikTziwgG5qcL7UGRgmnuX8A4ie8ITn6AnkAAAAASUVORK5CYII=") no-repeat;
+            background-size: 1.5rem;
+            display: inline;
+            *display: inline;
+            zoom: 1;
         }
+
 
         .arrow-down{
             list-style: none;
-            padding-right: 1rem;
+            padding-right: 1.5rem;
+            background-size: 1.5rem;
+            display: inline;
+            *display: inline;
             background: url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAABk0lEQVRYR+2Vy06DUBCGe1jUNix8HxfGGBeoiTHGhU/A5WXYctmwcUXSxC7UJnZhXPg4EBdG8QLONGAGSstwiqkLmpBCOP3/b/6ZcyoGW/6ILfsPeoA+gf+XgOd5u4ZhvPzF7qjTLiXg+/5ZlmXXQghN1/XnLiFAew+0Z3BdmaZ5V2j/Ariuq4HxFF4MYdGboihHXUGgeZqmc9Afg/4HfJ+C9hwhKMAEXlyQql8B5ARonzZJAgrbB12sWCU6E2jzZQkgDMNhFEVTjL9YuGkSlcoXsqD5gAkAwGcJAB+6hOCYLwGsg8B2WJb1yGmH4zgHGHve89rKl4aQCq9IIgEIrQkiN5+B+Q5pZSl26rXyIJKBaGte2wLZJGTMGwHWzESpHbLmLIAmiIWIEOyeV4eY/WeEMxHH8Q0IHBOR9/x+RAYOp/+82OdNu4YNQJK4B4PDOuHqIdNkzm4BFQqCYJQkyW0VQsZcCgB/VIWQNZcGoBBw/03Pdk7srIOII2Tb9lhV1S/uwNVpthpCDlTbNT1An0CfwA8NqzYw/4+BawAAAABJRU5ErkJggg==") no-repeat;
         }
 
@@ -487,7 +494,6 @@
     </header>
 
     <aside class="sideBar" id="sideBar">
-
     </aside>
     <section class="mainContent">
         <div class="content" id="content">
@@ -709,7 +715,7 @@
             var groupApi = jsonData[groupName]
             //说明不是空
             if(!(groupApi.apiList instanceof Array)){
-                sideBarHtml = sideBarHtml + "<li>"+groupName+"<ul>";
+                sideBarHtml = sideBarHtml + "<li groupName='"+groupName+"'><i></i>"+groupName+"<ul>";
                 for(var apiName in groupApi.apiList){
                     sideBarHtml = sideBarHtml + "<li><a groupName='"+groupName+"' apiName='"+apiName+"'>"+apiName+"</a></li>"
                 }
@@ -718,7 +724,8 @@
         }
         $("#sideBar").html("<ul>"+sideBarHtml+"</ul>")
         $.each($('.sideBar li:has(li)'), function () {
-            $(this).attr('isOpen', 0).addClass('arrow-right');
+            $(this).attr('isOpen', 0)
+            $(this).find('i').addClass('arrow-right');
         });
 
         $('.sideBar li:has(ul)').click(function (event) {
@@ -726,13 +733,23 @@
                 $(this).children().toggle('fast');
                 if ($(this).attr('isOpen') == 1) {
                     $(this).attr('isOpen', 0);
-                    $(this).removeClass('arrow-down');
-                    $(this).addClass('arrow-right');
+                    $(this).find('i').removeClass('arrow-down');
+                    $(this).find('i').addClass('arrow-right');
                 } else {
                     $(this).attr('isOpen', 1);
-                    $(this).removeClass('arrow-right');
-                    $(this).addClass('arrow-down');
+                    $(this).find('i').removeClass('arrow-right');
+                    $(this).find('i').addClass('arrow-down');
                 }
+                $(this).find('i').css({
+                    "display":"inline"
+                })
+
+                var groupName = $(this).attr('groupName');
+                var groupApi = jsonData[groupName]
+                buildGroupDesc(groupApi)
+
+
+
             }
         });
         $('.sideBar ul li a').on('click', function () {
@@ -743,11 +760,7 @@
             var groupName = $(this).attr('groupName');
             var apiName = $(this).attr('apiName');
             var groupApi = jsonData[groupName]
-            if(apiName.length > 0){
-                buildApiContent(groupApi.apiList[apiName])
-            }else{
-                buildGroupDesc(groupApi)
-            }
+            buildApiContent(groupApi.apiList[apiName])
             renderRightMenu()
         })
     });
