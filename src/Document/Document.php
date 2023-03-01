@@ -114,7 +114,11 @@ class Document
                         }
 
                         if(empty($api->requestPath)){
-                            $api->requestPath = "/{$controllerRequestPrefix}/{$method->name}";
+                            if($method->name != "index"){
+                                $api->requestPath = "/{$controllerRequestPrefix}";
+                            }else{
+                                $api->requestPath = "/{$controllerRequestPrefix}/{$method->name}";
+                            }
                         }
                     }catch (\Throwable $throwable){
                         throw new Annotation("{$throwable->getMessage()} in class {$method->class} method {$method->name}");
