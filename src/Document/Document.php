@@ -77,7 +77,7 @@ class Document
             $arr = explode("/",$controllerRequestPrefix);
             $controllerRequestPrefix = "";
             while ($a = array_shift($arr)){
-                if($a != "Index"){
+                if(strtolower($a) != "index"){
                     $controllerRequestPrefix .= lcfirst($a);
                     if(!empty($arr)){
                         $controllerRequestPrefix .= "/";
@@ -114,7 +114,7 @@ class Document
                         }
 
                         if(empty($api->requestPath)){
-                            if($method->name != "index"){
+                            if(strtolower($method->name) != "index"){
                                 $api->requestPath = "/{$controllerRequestPrefix}";
                             }else{
                                 $api->requestPath = "/{$controllerRequestPrefix}/{$method->name}";
