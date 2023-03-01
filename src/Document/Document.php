@@ -77,9 +77,14 @@ class Document
             $arr = explode("/",$controllerRequestPrefix);
             $controllerRequestPrefix = "";
             while ($a = array_shift($arr)){
-                $controllerRequestPrefix .= lcfirst($a);
-                if(!empty($arr)){
-                    $controllerRequestPrefix .= "/";
+                if($a != "Index"){
+                    $controllerRequestPrefix .= lcfirst($a);
+                    if(!empty($arr)){
+                        $controllerRequestPrefix .= "/";
+                    }
+                }else{
+                    //当是index的时候，去除上一步构建的  xxx/ 的斜杆
+                    $controllerRequestPrefix = substr($controllerRequestPrefix,0,-1);
                 }
             }
 
