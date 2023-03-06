@@ -114,7 +114,7 @@ class Document
                         }
 
                         if(empty($api->requestPath)){
-                            if(strtolower($method->name) != "index"){
+                            if(strtolower($method->name) == "index"){
                                 $api->requestPath = "/{$controllerRequestPrefix}";
                             }else{
                                 $api->requestPath = "/{$controllerRequestPrefix}/{$method->name}";
