@@ -77,9 +77,14 @@ class Document
             $arr = explode("/",$controllerRequestPrefix);
             $controllerRequestPrefix = "";
             while ($a = array_shift($arr)){
-                $controllerRequestPrefix .= lcfirst($a);
-                if(!empty($arr)){
-                    $controllerRequestPrefix .= "/";
+                if(strtolower($a) != "index"){
+                    $controllerRequestPrefix .= lcfirst($a);
+                    if(!empty($arr)){
+                        $controllerRequestPrefix .= "/";
+                    }
+                }else{
+                    //当是index的时候，去除上一步构建的  xxx/ 的斜杆
+                    $controllerRequestPrefix = substr($controllerRequestPrefix,0,-1);
                 }
             }
 
@@ -109,7 +114,11 @@ class Document
                         }
 
                         if(empty($api->requestPath)){
-                            $api->requestPath = "/{$controllerRequestPrefix}/{$method->name}";
+                            if(strtolower($method->name) != "index"){
+                                $api->requestPath = "/{$controllerRequestPrefix}";
+                            }else{
+                                $api->requestPath = "/{$controllerRequestPrefix}/{$method->name}";
+                            }
                         }
                     }catch (\Throwable $throwable){
                         throw new Annotation("{$throwable->getMessage()} in class {$method->class} method {$method->name}");

@@ -151,9 +151,14 @@ class Utility
             $arr = explode("/",$controllerRequestPrefix);
             $controllerRequestPrefix = "";
             while ($a = array_shift($arr)){
-                $controllerRequestPrefix .= lcfirst($a);
-                if(!empty($arr)){
-                    $controllerRequestPrefix .= "/";
+                if(strtolower($a) != "index"){
+                    $controllerRequestPrefix .= lcfirst($a);
+                    if(!empty($arr)){
+                        $controllerRequestPrefix .= "/";
+                    }
+                }else{
+                    //当是index的时候，去除上一步构建的  xxx/ 的斜杆
+                    $controllerRequestPrefix = substr($controllerRequestPrefix,0,-1);
                 }
             }
 
@@ -168,7 +173,13 @@ class Utility
                         $msg = "{$exception->getMessage()} in controller: {$controller} methodRef: {$methodRef->name}";
                         throw new Annotation($msg);
                     }
-                    $realPath = "/{$controllerRequestPrefix}/{$methodRef->name}";
+                    if(strtolower($methodRef->name) != "index"){
+                        $realPath = "/{$controllerRequestPrefix}/{$methodRef->name}";
+                    }else{
+                        $realPath = "/{$controllerRequestPrefix}";
+                    }
+
+
                     if(!empty($apiAttr->requestPath) && $apiAttr->requestPath != $realPath){
                         if (!empty($apiAttr->allowMethod)) {
                             $allow = [];
