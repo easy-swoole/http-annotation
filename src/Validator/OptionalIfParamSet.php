@@ -17,7 +17,7 @@ class OptionalIfParamSet extends AbstractValidator
             if(is_array($paramName)){
                 $paramName = implode(",",$paramName);
             }
-            $errorMsg = "{#name} is optional when param {$paramName} miss";
+            $errorMsg = "{#name} is optional when param {$paramName} set";
         }
         $this->errorMsg($errorMsg);
     }
