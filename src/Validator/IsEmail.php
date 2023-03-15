@@ -6,15 +6,16 @@ use EasySwoole\HttpAnnotation\Attributes\Param;
 use EasySwoole\HttpAnnotation\Validator\AbstractInterface\AbstractValidator;
 use Psr\Http\Message\ServerRequestInterface;
 
-class IsUrl extends AbstractValidator
+class IsEmail extends AbstractValidator
 {
     function __construct(?string $errorMsg = null)
     {
         if(empty($errorMsg)){
-            $errorMsg = "{#name} must be a url";
+            $errorMsg = "{#name} must be a email address";
         }
         $this->errorMsg($errorMsg);
     }
+
 
     protected function validate(Param $param, ServerRequestInterface $request): bool
     {
@@ -23,7 +24,7 @@ class IsUrl extends AbstractValidator
             return false;
         }
 
-        if (!filter_var($itemData, FILTER_VALIDATE_URL)) {
+        if (!filter_var($itemData, FILTER_VALIDATE_EMAIL)) {
             return false;
         }
         return true;
@@ -31,6 +32,6 @@ class IsUrl extends AbstractValidator
 
     function ruleName(): string
     {
-        return 'IsUrl';
+        return 'IsEmail';
     }
 }
