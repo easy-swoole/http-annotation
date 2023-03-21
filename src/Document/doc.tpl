@@ -524,12 +524,12 @@
     function buildApiContent(api){
         var html = "";
         html += '<h1>'+api.apiName+'</h1>'
-        html += '<h3><strong>Request Path:</strong> </h3>'
+        html += '<h3><strong>Request Path</strong> </h3>'
         html += '<pre>'+api.allowMethod+": "+ config.host + api.requestPath+'</pre>'
-        html += '<h3><strong>Api Description:</strong></h3>'
+        html += '<h3><strong>Api Description</strong></h3>'
         html += parseDesc(api.description)
 
-        html += '<h3><strong>Request Params:</strong></h3>'
+        html += '<h3><strong>Request Params</strong></h3>'
 
         if(api.requestParam instanceof Array){
             html += '<p>Empty Request Params</p>'
@@ -537,7 +537,7 @@
           html += buildRequestParamTable(api.requestParam)
         }
 
-        html += '<h3><strong>Request Example:</strong></h3>'
+        html += '<h3><strong>Request Example</strong></h3>'
 
         if(api.requestExamples.length > 0){
             for(var i in api.requestExamples){
@@ -556,7 +556,7 @@
 
 
 
-        html += '<h3><strong>Response Params:</strong></h3>'
+        html += '<h3><strong>Response Params</strong></h3>'
 
         if(api.responseParam instanceof Array){
             html += '<p>Empty Response Params</p>'
@@ -566,7 +566,7 @@
 
 
 
-        html += '<h3><strong>Response Example:</strong></h3>'
+        html += '<h3><strong>Response Example</strong></h3>'
         if(api.responseExamples.length > 0){
             for(var i in api.responseExamples){
                 var example = api.responseExamples[i]
@@ -708,8 +708,6 @@
         $('.right-menu .title').on('click', function(){
             $(this).siblings().toggle();
         });
-        //默认缩略
-        $('.right-menu .title').click()
     }
 
     $(function (){
@@ -755,6 +753,8 @@
                 var groupName = $(this).attr('groupName');
                 var groupApi = jsonData[groupName]
                 buildGroupDesc(groupApi)
+                //隐藏章节导航
+                $('.right-menu').hide()
             }
         });
         $('.sideBar ul li a').on('click', function () {
@@ -767,6 +767,7 @@
             var groupApi = jsonData[groupName]
             buildApiContent(groupApi.apiList[apiName])
             renderRightMenu()
+            $('.right-menu').show()
         })
     });
 </script>

@@ -2,6 +2,8 @@
 
 namespace EasySwoole\HttpAnnotation\Attributes;
 
+use EasySwoole\HttpAnnotation\Document\Document;
+
 #[\Attribute]
 class Description implements \JsonSerializable
 {
@@ -61,7 +63,12 @@ class Description implements \JsonSerializable
 
 
         if($this->type == self::XML || $this->type == self::XML_FILE){
-
+            $dom = new \DOMDocument('1.0');
+            $dom->preserveWhiteSpace = false;
+            $dom->formatOutput = true;
+            if($dom->loadXML($des)){
+                $des = $dom->saveXML();
+            }
         }
 
 
