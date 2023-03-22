@@ -23,11 +23,11 @@ class OptionalIfParamValNoInArray extends AbstractValidator
     }
     protected function validate(Param $param, ServerRequestInterface $request): bool
     {
-        // TODO: Implement validate() method.
+        return true;
     }
 
     function ruleName(): string
     {
-        // TODO: Implement ruleName() method.
+        return 'OptionalIfParamValNoInArray';
     }
 }

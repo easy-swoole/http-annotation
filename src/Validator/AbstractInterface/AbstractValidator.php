@@ -4,6 +4,8 @@ namespace EasySwoole\HttpAnnotation\Validator\AbstractInterface;
 
 use EasySwoole\HttpAnnotation\Attributes\Param;
 use EasySwoole\HttpAnnotation\Validator\OptionalIfParamSet;
+use EasySwoole\HttpAnnotation\Validator\OptionalIfParamValInArray;
+use EasySwoole\HttpAnnotation\Validator\OptionalIfParamValNoInArray;
 use Psr\Http\Message\ServerRequestInterface;
 
 abstract class AbstractValidator
@@ -168,6 +170,41 @@ abstract class AbstractValidator
                 }
             }
         }
+
+        if(isset($rules['OptionalIfParamValInArray'])){
+            /** @var OptionalIfParamValInArray $if */
+            $if = $rules['OptionalIfParamValInArray'];
+            $targetParamName = $if->getRuleArgs()['paramName'];
+            $inVal = $if->getRuleArgs()['inVal'];
+            $all = $this->allCheckParams();
+            if(isset($all[$targetParamName])){
+                /** @var Param $param */
+                $param = $all[$targetParamName];
+                if($param->hasSet()){
+                    $com = $param->parsedValue();
+                    return in_array($com,$inVal);
+                }
+            }
+            return false;
+        }
+
+        if(isset($rules['OptionalIfParamValNoInArray'])){
+            /** @var OptionalIfParamValNoInArray $if */
+            $if = $rules['OptionalIfParamValNoInArray'];
+            $targetParamName = $if->getRuleArgs()['paramName'];
+            $inVal = $if->getRuleArgs()['inVal'];
+            $all = $this->allCheckParams();
+            if(isset($all[$targetParamName])){
+                /** @var Param $param */
+                $param = $all[$targetParamName];
+                if($param->hasSet()){
+                    $com = $param->parsedValue();
+                    return !in_array($com,$inVal);
+                }
+            }
+            return true;
+        }
+
         return false;
     }
 }
