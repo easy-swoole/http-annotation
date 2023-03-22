@@ -4,33 +4,41 @@ namespace EasySwoole\HttpAnnotation\Tests\Validator;
 
 use EasySwoole\Http\Request;
 use EasySwoole\HttpAnnotation\Attributes\Param;
+use EasySwoole\HttpAnnotation\Exception\ValidateFail;
 use EasySwoole\HttpAnnotation\Validator\AbstractInterface\AbstractValidator;
+use EasySwoole\HttpAnnotation\Validator\DifferentWithColumn;
 use EasySwoole\HttpAnnotation\Validator\Integer;
 use EasySwoole\HttpAnnotation\Validator\Optional;
+use EasySwoole\HttpAnnotation\Validator\OptionalIfParamMiss;
 use EasySwoole\HttpAnnotation\Validator\OptionalIfParamSet;
+use EasySwoole\HttpAnnotation\Validator\Required;
 use PHPUnit\Framework\TestCase;
 
-class OptionalTest extends TestCase
+class OptionIfParamMissTest extends TestCase
 {
-
     function testNormal()
     {
         $request = new Request();
         $request->withQueryParams([
-            'account' => "easyAccount"
+
         ]);
 
         $num = new Param(
             name:"num",
             validate: [
-                new Optional(),
+                new OptionalIfParamMiss('account'),
                 new Integer()
             ]
         );
         $num->parsedValue($request);
 
+        $account = new Param(
+            name: "account"
+        );
+        $account->parsedValue($request);
 
         $allDefineParams = [
+            'account'=>$account,
             'num'=>$num,
         ];
 
@@ -48,25 +56,29 @@ class OptionalTest extends TestCase
         $this->assertEquals(true,$ret);
     }
 
-
     function testEmpty()
     {
         $request = new Request();
         $request->withQueryParams([
-            'num' => ""
+            "account"=>""
         ]);
 
         $num = new Param(
             name:"num",
             validate: [
-                new Optional(),
+                new OptionalIfParamMiss('account'),
                 new Integer()
             ]
         );
         $num->parsedValue($request);
 
+        $account = new Param(
+            name: "account"
+        );
+        $account->parsedValue($request);
 
         $allDefineParams = [
+            'account'=>$account,
             'num'=>$num,
         ];
 
@@ -84,25 +96,31 @@ class OptionalTest extends TestCase
         $this->assertEquals(false,$ret);
     }
 
+
     function testFail()
     {
         $request = new Request();
         $request->withQueryParams([
-            'account' => "easyAccount",
-            "num"=>"asd"
+            "account"=>"1221",
+            "num"=>'asd'
         ]);
 
         $num = new Param(
             name:"num",
             validate: [
-                new Optional(),
+                new OptionalIfParamMiss('account'),
                 new Integer()
             ]
         );
         $num->parsedValue($request);
 
+        $account = new Param(
+            name: "account"
+        );
+        $account->parsedValue($request);
 
         $allDefineParams = [
+            'account'=>$account,
             'num'=>$num,
         ];
 
@@ -125,21 +143,26 @@ class OptionalTest extends TestCase
     {
         $request = new Request();
         $request->withQueryParams([
-            'account' => "easyAccount",
-            "num"=>1
+            "account"=>"1221",
+            "num"=>111
         ]);
 
         $num = new Param(
             name:"num",
             validate: [
-                new Optional(),
+                new OptionalIfParamMiss('account'),
                 new Integer()
             ]
         );
         $num->parsedValue($request);
 
+        $account = new Param(
+            name: "account"
+        );
+        $account->parsedValue($request);
 
         $allDefineParams = [
+            'account'=>$account,
             'num'=>$num,
         ];
 
