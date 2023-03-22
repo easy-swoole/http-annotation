@@ -10,13 +10,10 @@ class OptionalIfParamMiss extends AbstractValidator
 {
     protected string $paramName;
 
-    function __construct(array|string $paramName,?string $errorMsg = null)
+    function __construct(string $paramName,?string $errorMsg = null)
     {
         $this->paramName = $paramName;
         if(empty($errorMsg)){
-            if(is_array($paramName)){
-                $paramName = implode(",",$paramName);
-            }
             $errorMsg = "{#name} is optional when param {$paramName} miss";
         }
         $this->errorMsg($errorMsg);

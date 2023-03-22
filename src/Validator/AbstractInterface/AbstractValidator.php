@@ -134,50 +134,36 @@ abstract class AbstractValidator
         }
         //当配置了option选项，且传参不是null,也就是没传的时候，允许忽略检查
         if($isOptional && (!$param->hasSet()) && ($param->parsedValue() === null)){
-            $isOptional = true;
+            return true;
+        }
+        //如果自己已经传值。则返回fasle
+
+        if($param->hasSet()){
+            return false;
         }
 
         if(isset($rules['OptionalIfParamMiss'])){
             /** @var OptionalIfParamSet $if */
             $if = $rules['OptionalIfParamMiss'];
-            $targetParamName = $if->getRuleArgs()['paramName'];
-            if(!is_array($targetParamName)){
-                $targetParamName = [$targetParamName];
-            }
+            $paramName = $if->getRuleArgs()['paramName'];
             $all = $this->allCheckParams();
-            foreach ($targetParamName as $paramName){
-                if(isset($all[$paramName])){
-                    /** @var Param $param */
-                    $param = $all[$paramName];
-                    $isOptional = !$param->hasSet();
-                    break;
-                }
+            if(isset($all[$paramName])){
+                /** @var Param $param */
+                $comParam = $all[$paramName];
+                return !$comParam->hasSet();
             }
+            return true;
         }
-
-        if(!$isOptional){
-            return false;
-        }
-
         if(isset($rules['OptionalIfParamSet'])){
             /** @var OptionalIfParamSet $if */
             $if = $rules['OptionalIfParamSet'];
-            $targetParamName = $if->getRuleArgs()['paramName'];
-            if(!is_array($targetParamName)){
-                $targetParamName = [$targetParamName];
-            }
+            $paramName = $if->getRuleArgs()['paramName'];
             $all = $this->allCheckParams();
-            foreach ($targetParamName as $paramName){
-                if(isset($all[$paramName])){
-                    /** @var Param $param */
-                    $param = $all[$paramName];
-                    $isOptional = $param->hasSet();
-                    break;
-                }
+            if(isset($all[$paramName])){
+                /** @var Param $param */
+                $comParam = $all[$paramName];
+                return $comParam->hasSet();
             }
-        }
-
-        if(!$isOptional){
             return false;
         }
 
@@ -189,17 +175,12 @@ abstract class AbstractValidator
             $all = $this->allCheckParams();
             if(isset($all[$targetParamName])){
                 /** @var Param $param */
-                $param = $all[$targetParamName];
-                if($param->hasSet()){
-                    $com = $param->parsedValue();
-                    $isOptional = in_array($com,$inVal);
+                $comParam = $all[$targetParamName];
+                if($comParam->hasSet()){
+                    $com = $comParam->parsedValue();
+                    return in_array($com,$inVal);
                 }
-            }else{
-                $isOptional = false;
             }
-        }
-
-        if(!$isOptional){
             return false;
         }
 
@@ -211,16 +192,15 @@ abstract class AbstractValidator
             $all = $this->allCheckParams();
             if(isset($all[$targetParamName])){
                 /** @var Param $param */
-                $param = $all[$targetParamName];
-                if($param->hasSet()){
-                    $com = $param->parsedValue();
-                    $isOptional = !in_array($com,$inVal);
+                $comParam = $all[$targetParamName];
+                if($comParam->hasSet()){
+                    $com = $comParam->parsedValue();
+                    return !in_array($com,$inVal);
                 }
-            }else{
-                $isOptional = true;
             }
+            return true;
         }
 
-        return $isOptional;
+        return false;
     }
 }

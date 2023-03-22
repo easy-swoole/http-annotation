@@ -10,13 +10,10 @@ class OptionalIfParamSet extends AbstractValidator
 {
 
     protected string $paramName;
-    function __construct(string|array $paramName,?string $errorMsg = null)
+    function __construct(string $paramName,?string $errorMsg = null)
     {
         $this->paramName = $paramName;
         if(empty($errorMsg)){
-            if(is_array($paramName)){
-                $paramName = implode(",",$paramName);
-            }
             $errorMsg = "{#name} is optional when param {$paramName} set";
         }
         $this->errorMsg($errorMsg);
