@@ -134,7 +134,7 @@ abstract class AbstractValidator
         }
         //当配置了option选项，且传参不是null,也就是没传的时候，允许忽略检查
         if($isOptional && (!$param->hasSet()) && ($param->parsedValue() === null)){
-            return true;
+            $isOptional = true;
         }
 
         if(isset($rules['OptionalIfParamMiss'])){
@@ -149,9 +149,14 @@ abstract class AbstractValidator
                 if(isset($all[$paramName])){
                     /** @var Param $param */
                     $param = $all[$paramName];
-                    return !$param->hasSet();
+                    $isOptional = !$param->hasSet();
+                    break;
                 }
             }
+        }
+
+        if(!$isOptional){
+            return false;
         }
 
         if(isset($rules['OptionalIfParamSet'])){
@@ -166,9 +171,14 @@ abstract class AbstractValidator
                 if(isset($all[$paramName])){
                     /** @var Param $param */
                     $param = $all[$paramName];
-                    return $param->hasSet();
+                    $isOptional = $param->hasSet();
+                    break;
                 }
             }
+        }
+
+        if(!$isOptional){
+            return false;
         }
 
         if(isset($rules['OptionalIfParamValInArray'])){
@@ -182,9 +192,14 @@ abstract class AbstractValidator
                 $param = $all[$targetParamName];
                 if($param->hasSet()){
                     $com = $param->parsedValue();
-                    return in_array($com,$inVal);
+                    $isOptional = in_array($com,$inVal);
                 }
+            }else{
+                $isOptional = false;
             }
+        }
+
+        if(!$isOptional){
             return false;
         }
 
@@ -199,12 +214,13 @@ abstract class AbstractValidator
                 $param = $all[$targetParamName];
                 if($param->hasSet()){
                     $com = $param->parsedValue();
-                    return !in_array($com,$inVal);
+                    $isOptional = !in_array($com,$inVal);
                 }
+            }else{
+                $isOptional = true;
             }
-            return true;
         }
 
-        return false;
+        return $isOptional;
     }
 }

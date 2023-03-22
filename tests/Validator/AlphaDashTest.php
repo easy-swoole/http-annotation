@@ -24,7 +24,7 @@ class AlphaDashTest extends TestCase
         $param->parsedValue($request);
 
         $rule = new AlphaDash();
-        $this->assertEquals(true, $rule->execute($param, $request));
+        $this->assertEquals(false, $rule->execute($param, $request));
     }
 
     /*
