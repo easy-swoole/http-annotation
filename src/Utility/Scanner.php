@@ -140,12 +140,12 @@ class Scanner
         for ($i = 0; $i < count($tokens); $i++) {
             if ($tokens[$i][0] === T_NAMESPACE) {
                 for ($j = $i + 1; $j < count($tokens); $j++) {
-                    if ($tokens[$j][0] === T_STRING) {
-                        $namespace .= '\\' . $tokens[$j][1];
-                    } else if ($tokens[$j] === '{' || $tokens[$j] === ';') {
+                    if ($tokens[$j] === '{' || $tokens[$j] === ';') {
                         break;
                     }
+                    $namespace .=  $tokens[$j][1];
                 }
+                $namespace = trim($namespace);
             }
             if ($tokens[$i][0] === T_CLASS) {
                 for ($j = $i + 1; $j < count($tokens); $j++) {
@@ -160,8 +160,7 @@ class Scanner
         }
         if (!empty($class)) {
             if (!empty($namespace)) {
-                //去除第一个\
-                $namespace = substr($namespace, 1);
+                $ss = $namespace . '\\' . $class;
             }
             return $namespace . '\\' . $class;
         } else {
