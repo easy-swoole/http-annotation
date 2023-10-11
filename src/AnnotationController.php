@@ -40,21 +40,9 @@ abstract class AnnotationController extends Controller
 
             $this->preHandleProperty();
             $onRequestArg = $this->runParamsValidate($this->getActionName(),$this->request());
-            $handler = function (Param $param)use(&$handler){
-                if(!empty($param->subObject)){
-                    $temp = [];
-                    /** @var Param $item */
-                    foreach ($param->subObject as $item){
-                        $temp[$item->name] = $handler($item);
-                    }
-                    return $temp;
-                }else{
-                    return $param->parsedValue();
-                }
-            };
             /** @var Param $actionParam */
             foreach ($onRequestArg as $actionParam){
-                $onRequestArg[$actionParam->name] = $handler($actionParam);
+                $onRequestArg[$actionParam->name] = self::handlerParam($actionParam);
             }
             $ref = ReflectionCache::getInstance()->getClassReflection(static::class);
             if($ref->hasMethod($this->getActionName())){
@@ -168,6 +156,20 @@ abstract class AnnotationController extends Controller
                     throw $ex;
                 }
             }
+        }
+    }
+
+    protected static function handlerParam(Param $param)
+    {
+        if(!empty($param->subObject)){
+            $temp = [];
+            /** @var Param $item */
+            foreach ($param->subObject as $item){
+                $temp[$item->name] = self::handlerParam($item);
+            }
+            return $temp;
+        }else{
+            return $param->parsedValue();
         }
     }
 }

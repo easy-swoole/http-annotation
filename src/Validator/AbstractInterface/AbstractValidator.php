@@ -38,7 +38,14 @@ abstract class AbstractValidator
         if($this->isIgnoreCheck($param)){
             return true;
         }
-        return $this->validate($param,$request);
+        try {
+            return $this->validate($param,$request);
+        } finally {
+            //清除循环引用
+            $this->request = null;
+            $this->currentParam = null;
+        }
+
     }
 
     /**
