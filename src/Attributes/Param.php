@@ -256,12 +256,13 @@ class Param implements \JsonSerializable
 
    function __clone()
    {
-       $temp = [];
-       /** @var AbstractValidator $item */
-       foreach ($this->validate as $item){
-           $temp[$item->ruleName()] = clone $item;
-       }
-       $this->validate = $temp;
+       //规则在调用层做克隆，不然循环引用。
+//       $temp = [];
+//       /** @var AbstractValidator $item */
+//       foreach ($this->validate as $item){
+//           $temp[$item->ruleName()] = clone $item;
+//       }
+//       $this->validate = $temp;
 
        $temp = [];
        /** @var Param $item */

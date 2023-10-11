@@ -147,6 +147,7 @@ abstract class AnnotationController extends Controller
             $rules = $param->validate;
             /** @var AbstractValidator $rule */
             foreach ($rules as $rule){
+                $rule = clone  $rule;
                 $rule->allCheckParams($allDefineParams);
                 $ret = $rule->execute($param,$request);
                 if(!$ret){
