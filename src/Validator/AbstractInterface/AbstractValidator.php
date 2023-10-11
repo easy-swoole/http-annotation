@@ -43,7 +43,6 @@ abstract class AbstractValidator
         } finally {
             //清除循环引用
             $this->request = null;
-            $this->currentParam = null;
         }
 
     }
