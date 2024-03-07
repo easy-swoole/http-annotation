@@ -6,6 +6,7 @@ use EasySwoole\Component\Singleton;
 use EasySwoole\Http\ReflectionCache;
 use EasySwoole\HttpAnnotation\Attributes\Api;
 use EasySwoole\HttpAnnotation\Attributes\ApiGroup;
+use EasySwoole\HttpAnnotation\Attributes\PreCall;
 use EasySwoole\HttpAnnotation\Enum\HttpMethod;
 use EasySwoole\HttpAnnotation\Exception\Annotation;
 use EasySwoole\HttpAnnotation\Exception\RequestMethodNotAllow;
@@ -22,6 +23,8 @@ class AttributeCache
     protected array $classMethodParams = [];
 
     protected array $classMethodApiTags = [];
+
+    protected array $classMethodPreCallTags = [];
 
     function setClassActionParams(string $class, $action, array $data):void
     {
@@ -86,6 +89,43 @@ class AttributeCache
             return $apiTag;
         }else{
             $this->classMethodApiTags[$key][$action] = true;
+        }
+        return null;
+    }
+
+    function getClassMethodPreCallTag(string $class,string $action):?array
+    {
+        $key = md5($class);
+        if(isset($this->classMethodPreCallTags[$key][$action])){
+            if(is_array($this->classMethodPreCallTags[$key][$action])){
+                return $this->classMethodPreCallTags[$key][$action];
+            }
+            return  null;
+        }
+        $class = ReflectionCache::getInstance()->getClassReflection($class);
+        $ref = ReflectionCache::getInstance()->allowMethodReflections($class);
+        if(!isset($ref[$action])){
+            return null;
+        }
+        /** @var \ReflectionMethod $ref */
+        $ref = $ref[$action];
+        $actionPreCallTags = $ref->getAttributes(PreCall::class);
+        if(!empty($actionPreCallTags)){
+            $final = [];
+            foreach ($actionPreCallTags as $callTag){
+                try{
+                    $callTag = new Api(...$callTag->getArguments());
+                    $final[] = $callTag;
+                }catch (\Throwable $exception){
+                    $class = static::class;
+                    $msg = "{$exception->getMessage()} in controller: {$class} method: {$action}";
+                    throw new Annotation($msg);
+                }
+            }
+            $this->classMethodPreCallTags[$key][$action] = $final;
+            return $final;
+        }else{
+            $this->classMethodPreCallTags[$key][$action] = true;
         }
         return null;
     }
