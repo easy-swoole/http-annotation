@@ -89,6 +89,9 @@ abstract class AnnotationController extends Controller
                     if($ret === false){
                         return;
                     }
+                    if(!empty($call->injectParamName)){
+                        $onRequestArg[$call->injectParamName] = $ret;
+                    }
                 }
             }
         }catch (\Throwable $exception){

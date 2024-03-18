@@ -8,8 +8,10 @@ use EasySwoole\HttpAnnotation\Enum\HttpMethod;
 class PreCall
 {
     public $call;
-    function __construct(callable $call)
+    public ?string $injectParamName = null;
+    function __construct(callable $call,string $injectParamName = null)
     {
         $this->call = $call;
+        $this->injectParamName = $injectParamName;
     }
 }
