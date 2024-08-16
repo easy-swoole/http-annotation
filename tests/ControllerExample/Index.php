@@ -2,6 +2,7 @@
 
 namespace EasySwoole\HttpAnnotation\Tests\ControllerExample;
 
+use EasySwoole\Http\Message\Status;
 use EasySwoole\HttpAnnotation\Attributes\Api;
 use EasySwoole\HttpAnnotation\Attributes\Description;
 use EasySwoole\HttpAnnotation\Attributes\Param;
@@ -13,6 +14,7 @@ use EasySwoole\HttpAnnotation\Validator\IsUrl;
 use EasySwoole\HttpAnnotation\Validator\MaxLength;
 use EasySwoole\HttpAnnotation\Validator\Min;
 use EasySwoole\HttpAnnotation\Validator\MinLength;
+use EasySwoole\HttpAnnotation\Validator\NotEmpty;
 use EasySwoole\HttpAnnotation\Validator\Optional;
 use EasySwoole\HttpAnnotation\Validator\OptionalIfParamMiss;
 use EasySwoole\HttpAnnotation\Validator\OptionalIfParamSet;
@@ -26,7 +28,14 @@ class Index extends Base
         requestPath: "/test/index.html",
         requestParam: [
             new Param(
-                name: "account",
+                name: 'account',
+                validate: [
+                    new Required()
+                ]
+            )
+            ,
+            new Param(
+                name: "page",
                 from: ParamFrom::GET,
                 validate: [
                     new Optional()
@@ -129,5 +138,35 @@ class Index extends Base
     function optionalMiss()
     {
 
+    }
+
+    #[Api(
+        apiName: 'testArray',
+        requestParam: [
+            new Param(
+                name: 'a',
+                validate: [
+                    new Required(),
+                    new NotEmpty()
+                ]
+            ),
+            new Param(
+                name: 'b',
+                validate: [
+                    new Optional(),
+                ]
+            ),
+            new Param(
+                name: 'c',
+                validate: [
+                    new Optional(),
+                ],
+                ignorePassArgWhenNull: true
+            ),
+        ]
+    )]
+    function testArray(array $data)
+    {
+        $this->writeJson(Status::CODE_OK,$data);
     }
 }

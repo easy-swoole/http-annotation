@@ -59,10 +59,17 @@ abstract class AnnotationController extends Controller
                 }
                 if(count($parameters) == 1 && $type == "array"){
                     $key = $parameters[0]->name;
-                    //传递全部参数的时候，仅仅保留函数定义的参数。
+                    //传递全部参数的时候，仅仅保留注解定义的参数。
                     $temps = Utility::parseMethodParams($ref,$this->getActionName());
+                    /**
+                     * @var  $keyKey
+                     * @var Param  $temp
+                     */
                     foreach ($temps as $keyKey => $temp){
                         $temps[$keyKey] = $onRequestArg[$keyKey] !== null ? $onRequestArg[$keyKey] : null;
+                        if($temp->ignorePassArgWhenNull && $temps[$keyKey] === null){
+                            unset($temps[$keyKey]);
+                        }
                     }
                     $actionArg[$key] = $temps;
                 }else{
