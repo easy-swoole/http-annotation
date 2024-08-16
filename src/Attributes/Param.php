@@ -268,6 +268,8 @@ class Param implements \JsonSerializable
        $temp = [];
        /** @var Param $item */
        foreach ($this->subObject as $item){
+           $item->isParsed = false;
+           $item->value = null;
            $temp[$item->name] = $item;
        }
        $this->subObject = $temp;
