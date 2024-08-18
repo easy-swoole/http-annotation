@@ -9,6 +9,7 @@ use EasySwoole\HttpAnnotation\Attributes\Param;
 use EasySwoole\HttpAnnotation\Document\Document;
 use EasySwoole\HttpAnnotation\Enum\HttpMethod;
 use EasySwoole\HttpAnnotation\Enum\ParamFrom;
+use EasySwoole\HttpAnnotation\Validator\BigThanColumn;
 use EasySwoole\HttpAnnotation\Validator\Integer;
 use EasySwoole\HttpAnnotation\Validator\IsUrl;
 use EasySwoole\HttpAnnotation\Validator\MaxLength;
@@ -19,6 +20,7 @@ use EasySwoole\HttpAnnotation\Validator\Optional;
 use EasySwoole\HttpAnnotation\Validator\OptionalIfParamMiss;
 use EasySwoole\HttpAnnotation\Validator\OptionalIfParamSet;
 use EasySwoole\HttpAnnotation\Validator\Required;
+use EasySwoole\HttpAnnotation\Validator\SmallThanColumn;
 
 class Index extends Base
 {
@@ -166,6 +168,36 @@ class Index extends Base
         ]
     )]
     function testArray(array $data)
+    {
+        $this->writeJson(Status::CODE_OK,$data);
+    }
+
+    #[Api(
+        apiName: 'compare',
+        requestParam: [
+            new Param(
+                name: "a",
+                validate: [
+                    new Integer(),
+                    new BigThanColumn('b')
+                ]
+            ),
+            new Param(
+                name: "b",
+                validate: [
+                    new Integer()
+                ]
+            ),
+            new Param(
+                name: 'c',
+                validate: [
+                    new Integer(),
+                    new SmallThanColumn('b')
+                ]
+            )
+        ]
+    )]
+    function compare(array $data)
     {
         $this->writeJson(Status::CODE_OK,$data);
     }

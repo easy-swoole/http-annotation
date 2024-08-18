@@ -26,7 +26,7 @@ class SmallThanColumn extends AbstractValidator
             throw new Annotation("compare param: {$this->paramName} require in SmallThanColumn rule ,but not define in any controller annotation");
         }
         $compare = $list[$this->paramName]->parsedValue();
-        if($itemData > $compare){
+        if($itemData >= $compare){
             return false;
         }else{
             return true;
