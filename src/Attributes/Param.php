@@ -196,7 +196,8 @@ class Param implements \JsonSerializable
                             break;
                         }
                         case ParamFrom::HEADER:{
-                            $data = $request->getHeader($this->name);
+                            //swoole header的key，全部都是小写
+                            $data = $request->getHeader(strtolower($this->name));
                             $this->hasSet = true;
                             if(!empty($data)){
                                 $this->value = $data[0];
