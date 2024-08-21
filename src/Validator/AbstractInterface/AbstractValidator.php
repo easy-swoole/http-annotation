@@ -142,8 +142,14 @@ abstract class AbstractValidator
         if($isOptional && (!$param->hasSet()) && ($param->parsedValue() === null)){
             return true;
         }
-        //如果自己已经传值。则返回fasle
 
+        if(isset($rules['IgnoreValidatorWhenEmpty'])){
+            if((!$param->hasSet()) || empty($param->parsedValue())){
+                return true;
+            }
+        }
+
+        //如果自己已经传值。则返回fasle
         if($param->hasSet()){
             return false;
         }

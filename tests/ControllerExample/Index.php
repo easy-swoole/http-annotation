@@ -10,6 +10,7 @@ use EasySwoole\HttpAnnotation\Document\Document;
 use EasySwoole\HttpAnnotation\Enum\HttpMethod;
 use EasySwoole\HttpAnnotation\Enum\ParamFrom;
 use EasySwoole\HttpAnnotation\Validator\BigThanColumn;
+use EasySwoole\HttpAnnotation\Validator\IgnoreValidatorWhenEmpty;
 use EasySwoole\HttpAnnotation\Validator\Integer;
 use EasySwoole\HttpAnnotation\Validator\IsUrl;
 use EasySwoole\HttpAnnotation\Validator\MaxLength;
@@ -198,6 +199,25 @@ class Index extends Base
         ]
     )]
     function compare(array $data)
+    {
+        $this->writeJson(Status::CODE_OK,$data);
+    }
+
+
+    #[Api(
+        apiName: 'ignoreValidatorWhenEmpty',
+        requestParam: [
+            new Param(
+                name: "a",
+                validate: [
+                    new Integer(),
+                    new IgnoreValidatorWhenEmpty()
+                ],
+                ignorePassArgWhenNull: true
+            ),
+        ]
+    )]
+    function ignoreValidatorWhenEmpty(array $data)
     {
         $this->writeJson(Status::CODE_OK,$data);
     }
