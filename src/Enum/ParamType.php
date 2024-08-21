@@ -13,4 +13,5 @@ enum ParamType
     case LIST;
     case OBJECT;
     case FILE;
+    case NULL_WHILE_EMPTY;
 }

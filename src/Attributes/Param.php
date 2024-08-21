@@ -240,6 +240,12 @@ class Param implements \JsonSerializable
                             $this->value = (bool)$this->value;
                             break;
                         }
+                        case ParamType::NULL_WHILE_EMPTY:{
+                            if(empty($this->value) && $this->value != 0){
+                                $this->value = null;
+                            }
+                            break;
+                        }
                     }
                 }
             }
