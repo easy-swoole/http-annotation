@@ -40,7 +40,7 @@ abstract class AnnotationController extends Controller
             }
 
             $this->preHandleProperty();
-            $onRequestArg = $this->runParamsValidate($this->getActionName(),$this->request());
+            $onRequestArg = $cloneOnRequestArg =  $this->runParamsValidate($this->getActionName(),$this->request());
             /** @var Param $actionParam */
             foreach ($onRequestArg as $actionParam){
                 $onRequestArg[$actionParam->name] = self::handlerParam($actionParam);
@@ -59,7 +59,7 @@ abstract class AnnotationController extends Controller
                 }
                 if(count($parameters) == 1 && $type == "array"){
                     $key = $parameters[0]->name;
-                    //传递全部参数的时候，仅仅保留注解定义的参数。
+                    //传递全部参数的时候，仅仅保留注解定义的参数。且做忽略判断
                     $temps = Utility::parseMethodParams($ref,$this->getActionName());
                     /**
                      * @var  $keyKey
@@ -67,7 +67,9 @@ abstract class AnnotationController extends Controller
                      */
                     foreach ($temps as $keyKey => $temp){
                         $temps[$keyKey] = $onRequestArg[$keyKey] !== null ? $onRequestArg[$keyKey] : null;
-                        if($temp->ignorePassArgWhenNull && $temps[$keyKey] === null){
+                        //找出解析后的param实例
+                        $test = $cloneOnRequestArg[$keyKey];
+                        if($test->ignorePassArgWhenNull && !$test->hasSet()){
                             unset($temps[$keyKey]);
                         }
                     }
