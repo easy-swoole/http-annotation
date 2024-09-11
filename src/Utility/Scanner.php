@@ -143,7 +143,7 @@ class Scanner
                     if ($tokens[$j] === '{' || $tokens[$j] === ';') {
                         break;
                     }
-                    $namespace .=  $tokens[$j][1];
+                    $namespace .= $tokens[$j][1];
                 }
                 $namespace = trim($namespace);
             }
@@ -159,9 +159,6 @@ class Scanner
             }
         }
         if (!empty($class)) {
-            if (!empty($namespace)) {
-                $ss = $namespace . '\\' . $class;
-            }
             return $namespace . '\\' . $class;
         } else {
             return null;
