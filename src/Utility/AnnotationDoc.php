@@ -126,6 +126,11 @@ class AnnotationDoc
             $methods = $objectAnnotation->getMethod();
             ksort($methods);
             $controllerAnnotation = $objectAnnotation->getController();
+			if(!$controllerAnnotation){
+                $controllerName = 'default';
+            }else{
+                $controllerName = $controllerAnnotation->value;
+            }
             foreach ($methods as $methodName => $method) {
                 //仅仅渲染有api标记的方法
                 $apiTag = $method->getApiTag();
@@ -135,12 +140,12 @@ class AnnotationDoc
                         $globalInfo = '';
                     }
 
-                    $groupList[$currentGroupName][$method->getMethodName()] = $method;
+                    $groupList[$currentGroupName][$controllerName.'-'.$method->getMethodName()] = $method;
                     $deprecated = '';
                     if ($apiTag->deprecated) {
                         $deprecated .= "<sup class='deprecated'>已废弃</sup>";
                     }
-                    $html .= "<h2 class='api-method {$currentGroupName}' id='{$currentGroupName}-{$methodName}'>{$apiTag->name}{$deprecated}</h2>{$this->CLRF}";
+                    $html .= "<h2 class='api-method {$currentGroupName}' id='{$currentGroupName}-{$controllerName}-{$methodName}'>{$apiTag->name}{$deprecated}</h2>{$this->CLRF}";
 
                     $html .= "<h3 class='method-description'>基本信息</h3>{$this->CLRF}";
                     //兼容api指定
