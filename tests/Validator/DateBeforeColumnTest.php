@@ -30,7 +30,7 @@ class DateBeforeColumnTest extends TestCase
 
         $rule = new DateBeforeColumn(compare: "date1");
 
-        $rule->allCheckParams([
+        $rule->allRequestParams([
             "date"  => $param,
             "date1" => $date1
         ]);
@@ -51,7 +51,7 @@ class DateBeforeColumnTest extends TestCase
 
         $rule = new DateBeforeColumn(compare: "date1");
 
-        $rule->allCheckParams([
+        $rule->allRequestParams([
             "date"  => $param,
             "date1" => $date1
         ]);
@@ -72,7 +72,7 @@ class DateBeforeColumnTest extends TestCase
 
         $rule = new DateBeforeColumn(compare: "date1");
 
-        $rule->allCheckParams([
+        $rule->allRequestParams([
             "date"  => $param,
             "date1" => $date1
         ]);
@@ -100,7 +100,7 @@ class DateBeforeColumnTest extends TestCase
 
         $rule = new DateBeforeColumn(compare: "date1");
 
-        $rule->allCheckParams([
+        $rule->allRequestParams([
             "date"  => $param,
             "date1" => $date1
         ]);
@@ -123,7 +123,7 @@ class DateBeforeColumnTest extends TestCase
 
         $rule = new DateBeforeColumn(compare: "date1");
 
-        $rule->allCheckParams([
+        $rule->allRequestParams([
             "date"  => $param,
             "date1" => $date1
         ]);
@@ -146,7 +146,7 @@ class DateBeforeColumnTest extends TestCase
 
         $rule = new DateBeforeColumn(compare: "date1");
 
-        $rule->allCheckParams([
+        $rule->allRequestParams([
             "date"  => $param,
             "date1" => $date1
         ]);
@@ -174,7 +174,7 @@ class DateBeforeColumnTest extends TestCase
 
         $rule = new DateBeforeColumn(compare: "date1", errorMsg: "日期不合法");
 
-        $rule->allCheckParams([
+        $rule->allRequestParams([
             "date"  => $param,
             "date1" => $date1
         ]);

@@ -68,7 +68,7 @@ abstract class AbstractValidator
 
     abstract function ruleName():string;
 
-    function allCheckParams(?array $params = null):array
+    function allRequestParams(?array $params = null):array
     {
         if($params === null){
             return $this->params;
@@ -158,7 +158,7 @@ abstract class AbstractValidator
             /** @var OptionalIfParamSet $if */
             $if = $rules['OptionalIfParamMiss'];
             $paramName = $if->getRuleArgs()['paramName'];
-            $all = $this->allCheckParams();
+            $all = $this->allRequestParams();
             if(isset($all[$paramName])){
                 /** @var Param $param */
                 $comParam = $all[$paramName];
@@ -170,7 +170,7 @@ abstract class AbstractValidator
             /** @var OptionalIfParamSet $if */
             $if = $rules['OptionalIfParamSet'];
             $paramName = $if->getRuleArgs()['paramName'];
-            $all = $this->allCheckParams();
+            $all = $this->allRequestParams();
             if(isset($all[$paramName])){
                 /** @var Param $param */
                 $comParam = $all[$paramName];
@@ -184,7 +184,7 @@ abstract class AbstractValidator
             $if = $rules['OptionalIfParamValInArray'];
             $targetParamName = $if->getRuleArgs()['paramName'];
             $inVal = $if->getRuleArgs()['inVal'];
-            $all = $this->allCheckParams();
+            $all = $this->allRequestParams();
             if(isset($all[$targetParamName])){
                 /** @var Param $param */
                 $comParam = $all[$targetParamName];
@@ -201,7 +201,7 @@ abstract class AbstractValidator
             $if = $rules['OptionalIfParamValNoInArray'];
             $targetParamName = $if->getRuleArgs()['paramName'];
             $inVal = $if->getRuleArgs()['inVal'];
-            $all = $this->allCheckParams();
+            $all = $this->allRequestParams();
             if(isset($all[$targetParamName])){
                 /** @var Param $param */
                 $comParam = $all[$targetParamName];

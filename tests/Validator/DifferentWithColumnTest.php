@@ -30,7 +30,7 @@ class DifferentWithColumnTest extends TestCase
         $rule = new DifferentWithColumn(compare: "account");
 
 
-        $rule->allCheckParams([
+        $rule->allRequestParams([
             "str" => $param,
             "account" => $account
         ]);
@@ -52,7 +52,7 @@ class DifferentWithColumnTest extends TestCase
 
         $rule = new DifferentWithColumn(compare: "account",strict: true);
 
-        $rule->allCheckParams([
+        $rule->allRequestParams([
             "str" => $param,
             "account" => $account
         ]);
@@ -80,7 +80,7 @@ class DifferentWithColumnTest extends TestCase
 
         $rule = new DifferentWithColumn(compare: "account",strict: true);
 
-        $rule->allCheckParams([
+        $rule->allRequestParams([
             "str" => $param,
             "account" => $account
         ]);
@@ -102,7 +102,7 @@ class DifferentWithColumnTest extends TestCase
 
         $rule = new DifferentWithColumn(compare: "account");
 
-        $rule->allCheckParams([
+        $rule->allRequestParams([
             "str" => $param,
             "account" => $account
         ]);
@@ -125,7 +125,7 @@ class DifferentWithColumnTest extends TestCase
 
         $rule = new DifferentWithColumn(compare: "account");
 
-        $rule->allCheckParams([
+        $rule->allRequestParams([
             "str" => $param,
             "account" => $account
         ]);
@@ -153,7 +153,7 @@ class DifferentWithColumnTest extends TestCase
 
         $rule = new DifferentWithColumn(compare: "account",strict: true,errorMsg: '两个参数不能一样');
 
-        $rule->allCheckParams([
+        $rule->allRequestParams([
             "str" => $param,
             "account" => $account
         ]);

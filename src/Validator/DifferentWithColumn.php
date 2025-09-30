@@ -25,7 +25,7 @@ class DifferentWithColumn extends AbstractValidator
     protected function validate(Param $param, ServerRequestInterface $request): bool
     {
         $itemData = $param->parsedValue();
-        $list = $this->allCheckParams();
+        $list = $this->allRequestParams();
         if(!isset($list[$this->compare])){
             throw new Annotation("compare param: {$this->compare} require in DifferentWithColumn rule ,but not define in any controller annotation");
         }

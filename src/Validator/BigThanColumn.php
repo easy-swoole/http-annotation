@@ -21,7 +21,7 @@ class BigThanColumn extends AbstractValidator
     protected function validate(Param $param, ServerRequestInterface $request): bool
     {
         $itemData = $param->parsedValue();
-        $list = $this->allCheckParams();
+        $list = $this->allRequestParams();
         if(!isset($list[$this->paramName])){
             throw new Annotation("compare param: {$this->paramName} require in BigThanColumn rule ,but not define in any controller annotation");
         }

@@ -26,7 +26,7 @@ class EqualWithColumnTest extends TestCase
 
         $rule = new EqualWithColumn(compare: "account");
 
-        $rule->allCheckParams([
+        $rule->allRequestParams([
             "str" => $param,
             "account" => $account
         ]);
@@ -48,7 +48,7 @@ class EqualWithColumnTest extends TestCase
 
         $rule = new EqualWithColumn(compare: "account");
 
-        $rule->allCheckParams([
+        $rule->allRequestParams([
             "str" => $param,
             "account" => $account
         ]);
@@ -69,7 +69,7 @@ class EqualWithColumnTest extends TestCase
         // 严格模式 "0" != 0
         $rule = new EqualWithColumn(compare: "account", strict: true);
 
-        $rule->allCheckParams([
+        $rule->allRequestParams([
             "str" => $param,
             "account" => $account
         ]);
@@ -91,7 +91,7 @@ class EqualWithColumnTest extends TestCase
         $account->parsedValue($request);
 
         $rule = new EqualWithColumn(compare: "account", strict: true, errorMsg: '测试提示');
-        $rule->allCheckParams([
+        $rule->allRequestParams([
             "str" => $param,
             "account" => $account
         ]);
@@ -123,7 +123,7 @@ class EqualWithColumnTest extends TestCase
 
         $rule = new EqualWithColumn(compare: "account");
 
-        $rule->allCheckParams([
+        $rule->allRequestParams([
             "str" => $param,
             "account" => $account
         ]);
@@ -145,7 +145,7 @@ class EqualWithColumnTest extends TestCase
 
         $rule = new EqualWithColumn(compare: "account");
 
-        $rule->allCheckParams([
+        $rule->allRequestParams([
             "str" => $param,
             "account" => $account
         ]);
@@ -175,7 +175,7 @@ class EqualWithColumnTest extends TestCase
 
         $rule = new EqualWithColumn(compare: "account",strict: true);
 
-        $rule->allCheckParams([
+        $rule->allRequestParams([
             "str" => $param,
             "account" => $account
         ]);
@@ -198,7 +198,7 @@ class EqualWithColumnTest extends TestCase
 
         $rule = new EqualWithColumn(compare: "account");
 
-        $rule->allCheckParams([
+        $rule->allRequestParams([
             "str" => $param,
             "account" => $account
         ]);
@@ -220,7 +220,7 @@ class EqualWithColumnTest extends TestCase
 
         $rule = new EqualWithColumn(compare: "account");
 
-        $rule->allCheckParams([
+        $rule->allRequestParams([
             "str" => $param,
             "account" => $account
         ]);
@@ -248,7 +248,7 @@ class EqualWithColumnTest extends TestCase
 
         $rule = new EqualWithColumn(compare: "account",errorMsg: '两个参数必须一样');
 
-        $rule->allCheckParams([
+        $rule->allRequestParams([
             "str" => $param,
             "account" => $account
         ]);

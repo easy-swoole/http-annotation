@@ -50,7 +50,7 @@ class OptionIfParamNotInArrayTest extends TestCase
         $rules = $num->validate;
         /** @var AbstractValidator $rule */
         foreach ($rules as $rule){
-            $rule->allCheckParams($allDefineParams);
+            $rule->allRequestParams($allDefineParams);
             $ret = $rule->execute($num,$request);
             if(!$ret){
                 break;
@@ -92,7 +92,7 @@ class OptionIfParamNotInArrayTest extends TestCase
         $rules = $num->validate;
         /** @var AbstractValidator $rule */
         foreach ($rules as $rule){
-            $rule->allCheckParams($allDefineParams);
+            $rule->allRequestParams($allDefineParams);
             $ret = $rule->execute($num,$request);
             if(!$ret){
                 break;
@@ -135,7 +135,7 @@ class OptionIfParamNotInArrayTest extends TestCase
         $rules = $num->validate;
         /** @var AbstractValidator $rule */
         foreach ($rules as $rule){
-            $rule->allCheckParams($allDefineParams);
+            $rule->allRequestParams($allDefineParams);
             $ret = $rule->execute($num,$request);
             if(!$ret){
                 break;
@@ -179,7 +179,7 @@ class OptionIfParamNotInArrayTest extends TestCase
         $rules = $num->validate;
         /** @var AbstractValidator $rule */
         foreach ($rules as $rule){
-            $rule->allCheckParams($allDefineParams);
+            $rule->allRequestParams($allDefineParams);
             $ret = $rule->execute($num,$request);
             if(!$ret){
                 break;

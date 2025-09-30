@@ -109,7 +109,7 @@ class Document
                             $rules = $item->validate;
                             /** @var AbstractValidator $rule */
                             foreach ($rules as $rule){
-                                $rule->allCheckParams($api->requestParam);
+                                $rule->allRequestParams($api->requestParam);
                             }
                         }
 

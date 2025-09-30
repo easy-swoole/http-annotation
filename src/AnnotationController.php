@@ -43,7 +43,7 @@ abstract class AnnotationController extends Controller
             $onRequestArg = $cloneOnRequestArg =  $this->runParamsValidate($this->getActionName(),$this->request());
             /** @var Param $actionParam */
             foreach ($onRequestArg as $actionParam){
-                $onRequestArg[$actionParam->name] = self::handlerParam($actionParam);
+                $onRequestArg[$actionParam->name] = self::getParamRealValue($actionParam);
             }
             $ref = ReflectionCache::getInstance()->getClassReflection(static::class);
             if($ref->hasMethod($this->getActionName())){
@@ -176,7 +176,7 @@ abstract class AnnotationController extends Controller
             /** @var AbstractValidator $rule */
             foreach ($rules as $rule){
                 $rule = clone  $rule;
-                $rule->allCheckParams($allDefineParams);
+                $rule->allRequestParams($allDefineParams);
                 $ret = $rule->execute($param,$request);
                 if(!$ret){
                     $msg = $rule->errorMsg();
@@ -188,13 +188,13 @@ abstract class AnnotationController extends Controller
         }
     }
 
-    protected static function handlerParam(Param $param)
+    protected static function getParamRealValue(Param $param)
     {
         if(!empty($param->subObject)){
             $temp = [];
             /** @var Param $item */
             foreach ($param->subObject as $item){
-                $temp[$item->name] = self::handlerParam($item);
+                $temp[$item->name] = self::getParamRealValue($item);
             }
             return $temp;
         }else{
