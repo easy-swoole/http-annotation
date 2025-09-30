@@ -217,8 +217,8 @@ class Index extends Base
             ),
         ]
     )]
-    function ignoreValidatorWhenEmpty(array $data)
+    function ignoreValidatorWhenEmpty(?string $a = null)
     {
-        $this->writeJson(Status::CODE_OK,$data);
+        $this->writeJson(Status::CODE_OK,$a);
     }
 }

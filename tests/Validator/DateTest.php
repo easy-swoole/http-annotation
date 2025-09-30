@@ -6,6 +6,7 @@ use EasySwoole\Http\Request;
 use EasySwoole\HttpAnnotation\Attributes\Param;
 use EasySwoole\HttpAnnotation\Validator\Between;
 use EasySwoole\HttpAnnotation\Validator\Date;
+use EasySwoole\HttpAnnotation\Validator\DateFormat;
 use PHPUnit\Framework\TestCase;
 
 class DateTest extends TestCase
@@ -14,7 +15,7 @@ class DateTest extends TestCase
     {
         $request = new Request();
         $request->withQueryParams([
-            "date" => \date("Y-m-d")
+            "date" => date("Y-m-d")
         ]);
 
         $param = new Param(name:"date");
@@ -28,6 +29,15 @@ class DateTest extends TestCase
         $param->parsedValue($request);
 
         $rule = new Date('-1 day');
+        $this->assertEquals(false, $rule->execute($param, $request));
+
+        $rule = new DateFormat('Y-m-d');
+        $this->assertEquals(true, $rule->execute($param, $request));
+
+        $rule = new DateFormat('Ymd');
+        $this->assertEquals(false, $rule->execute($param, $request));
+
+        $rule = new DateFormat('Y-m-d h:i:s');
         $this->assertEquals(false, $rule->execute($param, $request));
     }
 }

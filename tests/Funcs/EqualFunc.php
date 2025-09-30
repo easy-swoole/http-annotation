@@ -1,6 +1,6 @@
 <?php
 
-namespace EasySwoole\HttpAnnotation\Validator\Funcs;
+namespace EasySwoole\HttpAnnotation\Tests\Funcs;
 
 use EasySwoole\HttpAnnotation\Validator\AbstractInterface\AbstractValidator;
 use EasySwoole\HttpAnnotation\Validator\AbstractInterface\ValidateFuncInterface;
@@ -9,10 +9,7 @@ class EqualFunc implements ValidateFuncInterface
 {
     function __construct(
         private readonly int $equal
-    )
-    {
-
-    }
+    ){}
 
     public function execute(AbstractValidator $validator)
     {
@@ -22,7 +19,7 @@ class EqualFunc implements ValidateFuncInterface
 
     public function functionName(): string
     {
-        return 'Equal1';
+        return 'Equal';
     }
 
 

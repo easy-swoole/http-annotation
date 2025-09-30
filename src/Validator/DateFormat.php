@@ -2,6 +2,7 @@
 
 namespace EasySwoole\HttpAnnotation\Validator;
 
+use DateTime;
 use EasySwoole\HttpAnnotation\Attributes\Param;
 use EasySwoole\HttpAnnotation\Validator\AbstractInterface\AbstractValidator;
 use Psr\Http\Message\ServerRequestInterface;
@@ -24,11 +25,14 @@ class DateFormat extends AbstractValidator
         if(empty($itemData)){
             return false;
         }
-        $test = date($this->format, strtotime($itemData));
-        if($test != $itemData){
-            return false;
+
+        $test = DateTime::createFromFormat($this->format, $itemData);
+
+        if($test){
+            return true;
         }
-        return true;
+
+        return false;
     }
 
     function ruleName(): string
