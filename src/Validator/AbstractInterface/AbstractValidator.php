@@ -68,6 +68,10 @@ abstract class AbstractValidator
 
     abstract function ruleName():string;
 
+    /**
+     * @param array<Param>|null $params
+     * @return array
+     */
     function allRequestParams(?array $params = null):array
     {
         if($params === null){

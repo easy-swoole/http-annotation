@@ -118,17 +118,17 @@ abstract class AnnotationController extends Controller
         $ref = ReflectionCache::getInstance()->getClassReflection(static::class);
         $actionParams = Utility::parseActionParams($ref,$method);
 
-        $finalParams = [];
+        $actionDefinedParams = [];
         /** @var Param $param */
         foreach ($actionParams as $param){
-            $finalParams[$param->name] = clone $param;
-            $finalParams[$param->name]->parsedValue($request);
+            $actionDefinedParams[$param->name] = clone $param;
+            $actionDefinedParams[$param->name]->parsedValue($request);
         }
 
-        foreach ($finalParams as $param){
-            $this->paramValidate($param,$finalParams,$request);
+        foreach ($actionDefinedParams as $param){
+            $this->paramValidate($param,$actionDefinedParams,$request);
         }
-        return $finalParams;
+        return $actionDefinedParams;
     }
 
     private function preHandleProperty()
@@ -164,19 +164,19 @@ abstract class AnnotationController extends Controller
     }
 
 
-    private function paramValidate(Param $param,array $allDefineParams,Request $request)
+    private function paramValidate(Param $param, array $actionDefineParams, Request $request)
     {
         //当有下级的时候，当级校验没有意义
         if(!empty($param->subObject)){
             foreach ($param->subObject as $sub){
-                $this->paramValidate($sub,$allDefineParams,$request);
+                $this->paramValidate($sub,$actionDefineParams,$request);
             }
         }else{
             $rules = $param->validate;
             /** @var AbstractValidator $rule */
             foreach ($rules as $rule){
                 $rule = clone  $rule;
-                $rule->allRequestParams($allDefineParams);
+                $rule->allRequestParams($actionDefineParams);
                 $ret = $rule->execute($param,$request);
                 if(!$ret){
                     $msg = $rule->errorMsg();
