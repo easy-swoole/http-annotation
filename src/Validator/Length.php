@@ -9,7 +9,7 @@ use Psr\Http\Message\ServerRequestInterface;
 class Length extends AbstractValidator
 {
     protected int $length;
-    function __construct(int $length,?string $errorMsg = null)
+    function __construct(int $length,string|null $errorMsg = null)
     {
         if(empty($errorMsg)){
             $errorMsg = "{#name} length must be {#length}";

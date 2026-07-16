@@ -13,7 +13,7 @@ class InArray extends AbstractValidator
 
     private bool $strict;
 
-    function __construct(array $array,bool $strict = false,string $errorMsg = null)
+    function __construct(array $array,bool $strict = false,string|null $errorMsg = null)
     {
         $this->array = $array;
         $this->strict = $strict;

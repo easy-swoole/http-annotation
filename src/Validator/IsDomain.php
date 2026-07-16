@@ -227,7 +227,7 @@ class IsDomain extends AbstractValidator
         'ZERO', 'ZIP', 'ZM', 'ZONE', 'ZUERICH', 'ZW',
     ];
 
-    public function __construct(?string $errorMsg = null)
+    public function __construct(string|null $errorMsg = null)
     {
         if (empty($errorMsg)) {
             $errorMsg = "{#name} must be a valid domain name format";

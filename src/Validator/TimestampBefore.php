@@ -11,7 +11,7 @@ class TimestampBefore extends AbstractValidator
 {
     public $compare;
 
-    function __construct(string $compare, ?string $errorMsg = null)
+    function __construct(string $compare, string|null $errorMsg = null)
     {
         if(empty($errorMsg)){
             $errorMsg = "{#name} must be timestamp before {#compare}";

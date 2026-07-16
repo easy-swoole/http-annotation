@@ -11,12 +11,12 @@ class IsFile extends AbstractValidator
 {
 
     //单位  字节
-    public ?int $maxSize = null;
+    public int|null $maxSize = null;
     //ext不需要加.全部小写。客户端上传会自动转小写比对
-    public ?array $allowExt = null;
+    public array|null $allowExt = null;
 
 
-    function __construct(?int $maxSize = null,?array $allowExt = null,?string $errorMsg = null)
+    function __construct(int|null $maxSize = null,array|null $allowExt = null,string|null $errorMsg = null)
     {
         if(empty($errorMsg)){
             $this->maxSize = $maxSize;

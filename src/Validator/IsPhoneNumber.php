@@ -9,7 +9,7 @@ use Psr\Http\Message\ServerRequestInterface;
 class IsPhoneNumber extends AbstractValidator
 {
 
-    function __construct(?string $errorMsg = null)
+    function __construct(string|null $errorMsg = null)
     {
         if(empty($errorMsg)){
             $errorMsg = "{#name} must be phone number";

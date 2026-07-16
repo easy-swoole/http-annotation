@@ -11,7 +11,7 @@ class MinMbLength extends AbstractValidator
 {
     protected int $minLen;
 
-    function __construct(int $minLen,?string $errorMsg = null)
+    function __construct(int $minLen,string|null $errorMsg = null)
     {
         $this->minLen = $minLen;
         if(empty($errorMsg)){

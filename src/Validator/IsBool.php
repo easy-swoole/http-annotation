@@ -8,7 +8,7 @@ use Psr\Http\Message\ServerRequestInterface;
 
 class IsBool extends AbstractValidator
 {
-    function __construct(?string $errorMsg = null)
+    function __construct(string|null $errorMsg = null)
     {
         if(empty($errorMsg)){
             $errorMsg = "{#name} must be bool";

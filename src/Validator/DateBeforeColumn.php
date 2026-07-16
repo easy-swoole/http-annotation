@@ -11,7 +11,7 @@ class DateBeforeColumn extends AbstractValidator
 {
     public $compare;
 
-    public function __construct(string $compare, ?string $errorMsg = null)
+    public function __construct(string $compare, string|null $errorMsg = null)
     {
         if (empty($errorMsg)) {
             $errorMsg = "{#name} must be date before {#compare} column";

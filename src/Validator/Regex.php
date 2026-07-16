@@ -12,7 +12,7 @@ class Regex extends AbstractValidator
 
     protected $rule;
 
-    function __construct(string $rule,?string $errorMsg = null)
+    function __construct(string $rule,string|null $errorMsg = null)
     {
         if(empty($errorMsg)){
             $errorMsg = "{#name} must meet specified rule: {$rule}";

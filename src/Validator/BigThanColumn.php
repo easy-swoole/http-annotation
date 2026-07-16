@@ -10,7 +10,7 @@ use Psr\Http\Message\ServerRequestInterface;
 class BigThanColumn extends AbstractValidator
 {
 
-    function __construct(public string $paramName,?string $errorMsg = null)
+    function __construct(public string $paramName,string|null $errorMsg = null)
     {
         if(empty($errorMsg)){
             $errorMsg = "{#name} value must big than {$paramName} value";

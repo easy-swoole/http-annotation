@@ -11,7 +11,7 @@ class BetweenLen extends AbstractValidator
     public $minLen;
     public $maxLen;
 
-    function __construct(int $minLen,int $maxLen,?string $errorMsg = null)
+    function __construct(int $minLen,int $maxLen,string|null $errorMsg = null)
     {
         $this->minLen = $minLen;
         $this->maxLen = $maxLen;

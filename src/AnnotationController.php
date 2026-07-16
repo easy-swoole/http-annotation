@@ -22,7 +22,7 @@ use EasySwoole\HttpAnnotation\Validator\AbstractInterface\AbstractValidator;
 
 abstract class AnnotationController extends Controller
 {
-    public function __hook(?array $actionArg = [],?array $onRequestArg = null)
+    public function __hook(array|null $actionArg = [],array|null $onRequestArg = null)
     {
         try{
             $apiTag = AttributeCache::getInstance()->getClassMethodApiTag(static::class,$this->getActionName());

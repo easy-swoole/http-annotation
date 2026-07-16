@@ -10,7 +10,7 @@ use Psr\Http\Message\ServerRequestInterface;
 class DateFormat extends AbstractValidator
 {
     private string $format;
-    function __construct(string $dateFormat,?string $errorMsg = null)
+    function __construct(string $dateFormat,string|null $errorMsg = null)
     {
         $this->format = $dateFormat;
         if(empty($errorMsg)){

@@ -8,9 +8,9 @@ use Psr\Http\Message\ServerRequestInterface;
 
 class Money extends AbstractValidator
 {
-    public ?int $precision; // null 0 1 2
+    public int|null $precision; // null 0 1 2
 
-    function __construct(?int $precision = null, ?string $errorMsg = null)
+    function __construct(int|null $precision = null, string|null $errorMsg = null)
     {
         if (empty($errorMsg)) {
             $errorMsg = "{#name} must be legal amount";

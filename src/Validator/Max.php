@@ -10,7 +10,7 @@ class Max extends AbstractValidator
 {
     protected int|float $max;
 
-    function __construct(int|float $max,?string $errorMsg = null)
+    function __construct(int|float $max,string|null $errorMsg = null)
     {
         $this->max = $max;
         if(empty($errorMsg)){

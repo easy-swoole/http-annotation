@@ -11,7 +11,7 @@ class Between extends AbstractValidator
     protected $min;
     protected $max;
 
-    function __construct(float|int|string $min,float|int|string $max,?string $errorMsg = null)
+    function __construct(float|int|string $min,float|int|string $max,string|null $errorMsg = null)
     {
         $this->min = $min;
         $this->max = $max;

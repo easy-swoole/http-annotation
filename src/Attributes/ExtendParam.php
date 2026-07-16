@@ -6,7 +6,7 @@ namespace EasySwoole\HttpAnnotation\Attributes;
 class ExtendParam
 {
     public function __construct(
-        public ?array $parentParams = []
+        public array|null $parentParams = []
     )
     {
 

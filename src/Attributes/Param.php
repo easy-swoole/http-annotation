@@ -24,7 +24,7 @@ class Param implements \JsonSerializable
     public function __construct(
         public string                  $name,
         public ParamFrom|array         $from = [ParamFrom::GET,ParamFrom::POST],
-        public ?array                  $validate = [],
+        public array|null                  $validate = [],
         public                         $value = null,
         public bool                    $deprecated = false,
         public Description|string|null $description = null,
@@ -63,7 +63,7 @@ class Param implements \JsonSerializable
         }
     }
 
-    function parentStack(?array $stack = null):array
+    function parentStack(array|null $stack = null):array
     {
         if($stack !== null){
             $this->parentStack = $stack;

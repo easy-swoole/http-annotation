@@ -10,7 +10,7 @@ class Min extends AbstractValidator
 {
     protected int|float $min;
 
-    function __construct(int|float $min,?string $errorMsg = null)
+    function __construct(int|float $min,string|null $errorMsg = null)
     {
         $this->min = $min;
         if(empty($errorMsg)){

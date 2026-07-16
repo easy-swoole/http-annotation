@@ -11,7 +11,7 @@ class MaxLength extends AbstractValidator
 {
     protected int $maxLen;
 
-    function __construct(int $maxLen,?string $errorMsg = null)
+    function __construct(int $maxLen,string|null $errorMsg = null)
     {
         if(empty($errorMsg)){
             $errorMsg = "{#name} max length is {#maxLen}";

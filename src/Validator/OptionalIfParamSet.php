@@ -10,7 +10,7 @@ class OptionalIfParamSet extends AbstractValidator
 {
 
     protected string $paramName;
-    function __construct(string $paramName,?string $errorMsg = null)
+    function __construct(string $paramName,string|null $errorMsg = null)
     {
         $this->paramName = $paramName;
         if(empty($errorMsg)){

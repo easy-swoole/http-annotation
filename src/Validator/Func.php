@@ -13,7 +13,7 @@ class Func extends AbstractValidator
 
     protected $call;
 
-    function __construct(ValidateFuncInterface|callable $func,?string $errorMsg = null)
+    function __construct(ValidateFuncInterface|callable $func,string|null $errorMsg = null)
     {
         if(empty($errorMsg)){
             if($func instanceof ValidateFuncInterface){

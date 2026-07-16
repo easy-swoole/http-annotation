@@ -10,7 +10,7 @@ use Psr\Http\Message\ServerRequestInterface;
 class SmallThanColumn extends AbstractValidator
 {
 
-    function __construct(public string $paramName,?string $errorMsg = null)
+    function __construct(public string $paramName,string|null $errorMsg = null)
     {
         if(empty($errorMsg)){
             $errorMsg = "{#name} value must small than {$paramName} value";

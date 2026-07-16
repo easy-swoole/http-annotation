@@ -11,7 +11,7 @@ class DateAfter extends AbstractValidator
 {
     public $date;
 
-    function __construct(string $date,?string $errorMsg = null)
+    function __construct(string $date,string|null $errorMsg = null)
     {
         $this->date = $date;
         if(empty($errorMsg)){

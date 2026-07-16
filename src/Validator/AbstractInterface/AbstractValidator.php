@@ -13,7 +13,7 @@ abstract class AbstractValidator
     /**
      * @var string|null
      */
-    private ?string $errorMsg;
+    private string|null $errorMsg;
 
     private array $params = [];
 
@@ -72,7 +72,7 @@ abstract class AbstractValidator
      * @param array<Param>|null $params
      * @return array
      */
-    function allRequestParams(?array $params = null):array
+    function allRequestParams(array|null $params = null):array
     {
         if($params === null){
             return $this->params;
@@ -101,7 +101,7 @@ abstract class AbstractValidator
         return $this->args;
     }
 
-    function errorMsg(?string $msg = null,?bool $returnRaw = false):?string
+    function errorMsg(string|null $msg = null,?bool $returnRaw = false):string|null
     {
         if(!empty($msg)){
             $this->errorMsg = $msg;

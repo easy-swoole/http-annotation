@@ -35,7 +35,7 @@ class AttributeCache
     /*
      * 注意引用克隆
      */
-    function getClassActionParams(string $class, string $action):?array
+    function getClassActionParams(string $class, string $action):array|null
     {
         $key = md5($class);
         if(isset($this->classActionParams[$key][$action])){
@@ -50,7 +50,7 @@ class AttributeCache
         $this->classMethodParams[$key][$action] = $data;
     }
 
-    function getClassMethodParams(string $class,string $action):?array
+    function getClassMethodParams(string $class,string $action):array|null
     {
         $key = md5($class);
         if(isset($this->classMethodParams[$key][$action])){
@@ -93,7 +93,7 @@ class AttributeCache
         return null;
     }
 
-    function getClassMethodPreCallTag(string $class,string $action):?array
+    function getClassMethodPreCallTag(string $class,string $action):array|null
     {
         $key = md5($class);
         if(isset($this->classMethodPreCallTags[$key][$action])){

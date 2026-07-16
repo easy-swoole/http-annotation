@@ -11,7 +11,7 @@ class OptionalIfParamValInArray extends AbstractValidator
     protected string $paramName;
     protected array $inVal;
 
-    function __construct(string $paramName,array $inVal,?string $errorMsg = null)
+    function __construct(string $paramName,array $inVal,string|null $errorMsg = null)
     {
         $this->inVal = $inVal;
         $this->paramName = $paramName;

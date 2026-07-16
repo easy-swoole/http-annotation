@@ -9,7 +9,7 @@ use Psr\Http\Message\ServerRequestInterface;
 class MbLength extends AbstractValidator
 {
     protected int $length;
-    function __construct(int $length,?string $errorMsg = null)
+    function __construct(int $length,string|null $errorMsg = null)
     {
         if(empty($errorMsg)){
             $errorMsg = "{#name} mb length must be {#length}";

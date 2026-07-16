@@ -8,9 +8,9 @@ use Psr\Http\Message\ServerRequestInterface;
 
 class Decimal extends AbstractValidator
 {
-    public ?int $accuracy;
+    public int|null $accuracy;
 
-    function __construct(?int $accuracy = null,?string $errorMsg = null)
+    function __construct(int|null $accuracy = null,string|null $errorMsg = null)
     {
         if($accuracy !== null && $accuracy < 0){
             $accuracy = 0;
