@@ -12,7 +12,7 @@ class DifferentWithColumn extends AbstractValidator
     public $compare;
     private bool $strict;
 
-    function __construct(string $compare,bool $strict = false,string $errorMsg = null)
+    function __construct(string $compare,bool $strict = false,string|null $errorMsg = null)
     {
         $this->compare = $compare;
         $this->strict = $strict;

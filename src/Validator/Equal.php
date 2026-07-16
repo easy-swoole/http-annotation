@@ -12,7 +12,7 @@ class Equal extends AbstractValidator
     private bool $strict;
     public $compare;
 
-    function __construct(string|int|null|float $compare,bool $strict = false,string $errorMsg = null)
+    function __construct(string|int|null|float $compare,bool $strict = false,string|null $errorMsg = null)
     {
         $this->compare = $compare;
         $this->strict = $strict;
