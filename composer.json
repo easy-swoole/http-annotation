@@ -40,8 +40,5 @@
         "psr-4": {
             "EasySwoole\\HttpAnnotation\\Tests\\": "tests/"
         }
-    },
-    "bin": [
-      "bin/annotation-doc.php"
-    ]
+    }
 }
