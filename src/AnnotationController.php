@@ -94,7 +94,7 @@ abstract class AnnotationController extends Controller
             if($preCalls){
                 /** @var PreCall $call */
                 foreach ($preCalls as $call){
-                    $ret = call_user_func($call->call,$this->request(),$this->response(),$this);
+                    $ret = call_user_func($call->call,$this->request(),$this->response(),$onRequestArg);
                     if($ret === false){
                         return;
                     }
