@@ -164,7 +164,7 @@ class Index extends Base
                 validate: [
                     new Optional(),
                 ],
-                ignorePassArgWhenNull: true
+                ignorePassArgWhenNotSet: true
             ),
         ]
     )]
@@ -213,7 +213,7 @@ class Index extends Base
                     new Integer(),
                     new IgnoreValidatorWhenEmpty()
                 ],
-                ignorePassArgWhenNull: true
+                ignorePassArgWhenNotSet: true
             ),
         ]
     )]

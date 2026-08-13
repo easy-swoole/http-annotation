@@ -31,7 +31,7 @@ class Param implements \JsonSerializable
         public ?ParamType              $type = null,
         public array                   $subObject = [],
         public array                   $ignoreAction = [],
-        public bool                    $ignorePassArgWhenNull = false,
+        public bool                    $ignorePassArgWhenNotSet = false,
     ){
         if($this->description){
             if(!$this->description instanceof Description){

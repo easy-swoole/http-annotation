@@ -69,7 +69,7 @@ abstract class AnnotationController extends Controller
                         $temps[$keyKey] = $onRequestArg[$keyKey] !== null ? $onRequestArg[$keyKey] : null;
                         //找出解析后的param实例
                         $test = $cloneOnRequestArg[$keyKey];
-                        if($test->ignorePassArgWhenNull && !$test->hasSet()){
+                        if($test->ignorePassArgWhenNotSet && !$test->hasSet()){
                             unset($temps[$keyKey]);
                         }
                     }
