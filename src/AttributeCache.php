@@ -6,127 +6,100 @@ use EasySwoole\Component\Singleton;
 use EasySwoole\Http\ReflectionCache;
 use EasySwoole\HttpAnnotation\Attributes\Api;
 use EasySwoole\HttpAnnotation\Attributes\ApiGroup;
+use EasySwoole\HttpAnnotation\Attributes\ExtendParam;
+use EasySwoole\HttpAnnotation\Attributes\Param;
 use EasySwoole\HttpAnnotation\Attributes\PreCall;
+use EasySwoole\HttpAnnotation\Bean\ClassInfo;
+use EasySwoole\HttpAnnotation\Bean\ClassMethod;
 use EasySwoole\HttpAnnotation\Enum\HttpMethod;
 use EasySwoole\HttpAnnotation\Exception\Annotation;
 use EasySwoole\HttpAnnotation\Exception\RequestMethodNotAllow;
+use ReflectionClass;
 
 class AttributeCache
 {
     use Singleton;
 
-    /** @var array
-     *包括了method、onRequest和控制器全局
-     */
-    protected array $classActionParams = [];
+    private const forbidMethodList = [
+        '__hook', '__destruct',
+        '__clone', '__construct', '__call',
+        '__callStatic', '__get', '__set',
+        '__isset', '__unset', '__sleep',
+        '__wakeup', '__toString', '__invoke',
+        '__set_state', '__clone', '__debugInfo',
+        'onRequest'
+    ];
 
-    protected array $classMethodParams = [];
 
-    protected array $classMethodApiTags = [];
+    protected array $map = [];
 
-    protected array $classMethodPreCallTags = [];
-
-    function setClassActionParams(string $class, $action, array $data):void
+    function parseClass(string $className)
     {
-        $key = md5($class);
-        $this->classActionParams[$key][$action] = $data;
-    }
-
-    /*
-     * 注意引用克隆
-     */
-    function getClassActionParams(string $class, string $action):array|null
-    {
-        $key = md5($class);
-        if(isset($this->classActionParams[$key][$action])){
-            return $this->classActionParams[$key][$action];
+        if(isset($this->map[$className])){
+            return $this->map[$className];
         }
-        return null;
-    }
+        $classInfo = new ClassInfo();
+        $this->map[$className] = $classInfo;
 
-    function setClassMethodParams(string $class,string $action, array $data):void
-    {
-        $key = md5($class);
-        $this->classMethodParams[$key][$action] = $data;
-    }
-
-    function getClassMethodParams(string $class,string $action):array|null
-    {
-        $key = md5($class);
-        if(isset($this->classMethodParams[$key][$action])){
-            return $this->classMethodParams[$key][$action];
-        }
-        return null;
-    }
-
-    function getClassMethodApiTag(string $class,string $action)
-    {
-        $key = md5($class);
-        if(isset($this->classMethodApiTags[$key][$action])){
-            if($this->classMethodApiTags[$key][$action] instanceof Api){
-                return $this->classMethodApiTags[$key][$action];
+        $reflectionClass = new \ReflectionClass($className);
+        $apiGroup = $reflectionClass->getAttributes(ApiGroup::class);
+        if(!empty($apiGroup)){
+            $apiGroup = $apiGroup[0];
+            try {
+                $classInfo->apiGroup = $apiGroup->newInstance();
+            }catch (\Throwable $throwable){
+               throw new Annotation($throwable->getMessage());
             }
-            return  null;
         }
-        $class = ReflectionCache::getInstance()->getClassReflection($class);
-        $ref = ReflectionCache::getInstance()->allowMethodReflections($class);
-        if(!isset($ref[$action])){
-            return null;
+
+        $globalParams = $reflectionClass->getAttributes(Param::class);
+        foreach ($globalParams as $param) {
+            /** @var Param $param */
+            try {
+                $param = $param->newInstance();
+                $classInfo->globalParams[$param->name] = $param;
+            }catch (\Throwable $throwable){
+                throw new Annotation($throwable->getMessage());
+            }
         }
-        /** @var \ReflectionMethod $ref */
-        $ref = $ref[$action];
-        $actionApiTags = $ref->getAttributes(Api::class);
-        if(!empty($actionApiTags)){
+        //检查是否继承父类参数
+        $extendParam = $reflectionClass->getAttributes(ExtendParam::class);
+        if(!empty($extendParam)){
             try{
-                $apiTag = new Api(...$actionApiTags[0]->getArguments());
-            }catch (\Throwable $exception){
-                $class = static::class;
-                $msg = "{$exception->getMessage()} in controller: {$class} method: {$action}";
-                throw new Annotation($msg);
+                $classInfo->extendParam = $extendParam[0]->newInstance();
+            }catch (\Throwable $throwable){
+                throw new Annotation($throwable->getMessage());
             }
-
-            $this->classMethodApiTags[$key][$action] = $apiTag;
-            return $apiTag;
-        }else{
-            $this->classMethodApiTags[$key][$action] = true;
         }
-        return null;
-    }
 
-    function getClassMethodPreCallTag(string $class,string $action):array|null
-    {
-        $key = md5($class);
-        if(isset($this->classMethodPreCallTags[$key][$action])){
-            if(is_array($this->classMethodPreCallTags[$key][$action])){
-                return $this->classMethodPreCallTags[$key][$action];
+
+        $globalPreCall = $reflectionClass->getAttributes(PreCall::class);
+        foreach ($globalPreCall as $preCall) {
+            /** @var PreCall $preCall */
+            try {
+                $preCall = $preCall->newInstance();
+                $classInfo->globalPreCall[] = $preCall;
+            }catch (\Throwable $throwable){
+                throw new Annotation($throwable->getMessage());
             }
-            return  null;
         }
-        $class = ReflectionCache::getInstance()->getClassReflection($class);
-        $ref = ReflectionCache::getInstance()->allowMethodReflections($class);
-        if(!isset($ref[$action])){
-            return null;
-        }
-        /** @var \ReflectionMethod $ref */
-        $ref = $ref[$action];
-        $actionPreCallTags = $ref->getAttributes(PreCall::class);
-        if(!empty($actionPreCallTags)){
-            $final = [];
-            foreach ($actionPreCallTags as $callTag){
-                try{
-                    $callTag = new Api(...$callTag->getArguments());
-                    $final[] = $callTag;
-                }catch (\Throwable $exception){
-                    $class = static::class;
-                    $msg = "{$exception->getMessage()} in controller: {$class} method: {$action}";
-                    throw new Annotation($msg);
+
+        $public = $reflectionClass->getMethods(\ReflectionMethod::IS_PUBLIC);
+        foreach ($public as $item) {
+            if((!in_array($item->getName(),self::forbidMethodList)) && (!$item->isStatic())){
+                $api = $item->getAttributes(Api::class);
+                if(!empty($api)){
+                    try {
+                        $apiTag = $api[0]->newInstance();
+                        $classInfo->apis[$item->getName()] = $apiTag;
+                    }catch (\Throwable $throwable){
+                        $msg = "{$throwable->getMessage()} in {$className} method {$item->getName()}";
+                        throw new Annotation(message: $msg);
+                    }
                 }
             }
-            $this->classMethodPreCallTags[$key][$action] = $final;
-            return $final;
-        }else{
-            $this->classMethodPreCallTags[$key][$action] = true;
         }
-        return null;
+        return $classInfo;
+
     }
 }

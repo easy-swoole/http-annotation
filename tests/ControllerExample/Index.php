@@ -4,8 +4,10 @@ namespace EasySwoole\HttpAnnotation\Tests\ControllerExample;
 
 use EasySwoole\Http\Message\Status;
 use EasySwoole\HttpAnnotation\Attributes\Api;
+use EasySwoole\HttpAnnotation\Attributes\ApiGroup;
 use EasySwoole\HttpAnnotation\Attributes\Description;
 use EasySwoole\HttpAnnotation\Attributes\Param;
+use EasySwoole\HttpAnnotation\Attributes\PreCall;
 use EasySwoole\HttpAnnotation\Document\Document;
 use EasySwoole\HttpAnnotation\Enum\HttpMethod;
 use EasySwoole\HttpAnnotation\Enum\ParamFrom;
@@ -23,6 +25,10 @@ use EasySwoole\HttpAnnotation\Validator\OptionalIfParamSet;
 use EasySwoole\HttpAnnotation\Validator\Required;
 use EasySwoole\HttpAnnotation\Validator\SmallThanColumn;
 
+#[ApiGroup(
+    groupName: 'index'
+)]
+#[Param(name: 'g')]
 class Index extends Base
 {
     #[Api(
@@ -49,7 +55,8 @@ class Index extends Base
         ],
         description: new Description(__DIR__.'/../res/description.md',Description::MARKDOWN_FILE)
     )]
-    function index(string $account){
+    function index(){
+        $account = 1;
         $this->writeJson(200,null,"account is {$account}");
     }
 

@@ -2,11 +2,11 @@
 
 namespace EasySwoole\HttpAnnotation\Attributes;
 
-#[\Attribute(\Attribute::TARGET_METHOD)]
+#[\Attribute(\Attribute::TARGET_CLASS||\Attribute::TARGET_METHOD)]
 class ExtendParam
 {
     public function __construct(
-        public array|null $parentParams = []
+        public array|null $parentParamsName = []
     )
     {
 
