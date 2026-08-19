@@ -13,7 +13,7 @@ class Optional extends AbstractValidator
     function __construct(string|null $errorMsg = null)
     {
         if(empty($errorMsg)){
-            $errorMsg = "{#name} is optional";
+            $errorMsg = "{#validateParam} is optional";
         }
         $this->errorMsgTpl($errorMsg);
     }

@@ -61,7 +61,7 @@ abstract class AbstractValidator
     function errorMsg(ValidateRequest $validateRequest):string
     {
         $tpl = $this->errorMsgTpl;
-        $tpl = str_replace('{#name}',$validateRequest->validateParam->name,$tpl);
+        $tpl = str_replace('{#validateParam}',$validateRequest->validateParam->name,$tpl);
         foreach ($this->getRuleArgs() as $key => $val){
             if(is_callable($val)){
                 $val = "Custom Func";

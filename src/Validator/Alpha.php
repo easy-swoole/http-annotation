@@ -12,7 +12,7 @@ class Alpha extends AbstractValidator
     function __construct(string|null $errorMsg = null)
     {
         if(empty($errorMsg)){
-            $errorMsg = "{#name} must be all alpha";
+            $errorMsg = "{#validateParam} must be all alpha";
         }
         $this->errorMsgTpl($errorMsg);
     }

@@ -15,7 +15,7 @@ class Min extends AbstractValidator
     {
         $this->min = $min;
         if(empty($errorMsg)){
-            $errorMsg = "{#name} min value is {#min}";
+            $errorMsg = "{#validateParam} min value is {#min}";
         }
         $this->errorMsgTpl($errorMsg);
     }

@@ -15,7 +15,7 @@ class Date extends AbstractValidator
     {
         $this->date = $date;
         if(empty($errorMsg)){
-            $errorMsg = "{#name} must be date {#date}";
+            $errorMsg = "{#validateParam} must be date {#date}";
         }
         $this->errorMsgTpl($errorMsg);
     }

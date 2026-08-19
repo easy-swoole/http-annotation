@@ -15,7 +15,7 @@ class DateFormat extends AbstractValidator
     {
         $this->format = $dateFormat;
         if(empty($errorMsg)){
-            $errorMsg = "{#name} must be date format {#format}";
+            $errorMsg = "{#validateParam} must be date format {#format}";
         }
         $this->errorMsgTpl($errorMsg);
     }

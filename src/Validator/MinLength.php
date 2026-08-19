@@ -16,7 +16,7 @@ class MinLength extends AbstractValidator
     {
         $this->minLen = $minLen;
         if(empty($errorMsg)){
-            $errorMsg = "{#name} min length is {#minLen}";
+            $errorMsg = "{#validateParam} min length is {#minLen}";
         }
         $this->errorMsgTpl($errorMsg);
     }

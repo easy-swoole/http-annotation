@@ -13,7 +13,7 @@ class AllDigital extends AbstractValidator
     function __construct(string|null $errorMsg = null)
     {
         if(empty($errorMsg)){
-            $errorMsg = "{#name} must be all digital";
+            $errorMsg = "{#validateParam} must be all digital";
         }
         $this->errorMsgTpl($errorMsg);
     }

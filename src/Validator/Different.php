@@ -17,7 +17,7 @@ class Different extends AbstractValidator
         $this->compare = $compare;
         $this->strict = $strict;
         if(empty($errorMsg)){
-            $errorMsg = "{#name} must different with {#compare}";
+            $errorMsg = "{#validateParam} must different with {#compare}";
         }
         $this->errorMsgTpl($errorMsg);
     }

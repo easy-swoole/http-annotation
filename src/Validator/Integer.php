@@ -12,7 +12,7 @@ class Integer extends AbstractValidator
     function __construct(string|null $errorMsg = null)
     {
         if(empty($errorMsg)){
-            $errorMsg = "{#name} must be integer";
+            $errorMsg = "{#validateParam} must be integer";
         }
         $this->errorMsgTpl($errorMsg);
     }

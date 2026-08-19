@@ -15,7 +15,7 @@ class OptionalIfParamMiss extends AbstractValidator
     {
         $this->paramName = $paramName;
         if(empty($errorMsg)){
-            $errorMsg = "{#name} is optional when param {$paramName} miss";
+            $errorMsg = "{#validateParam} is optional when param {$paramName} miss";
         }
         $this->errorMsgTpl($errorMsg);
     }

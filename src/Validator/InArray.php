@@ -19,7 +19,7 @@ class InArray extends AbstractValidator
         $this->array = $array;
         $this->strict = $strict;
         if(empty($errorMsg)){
-            $errorMsg = "{#name} must in array of {#array}";
+            $errorMsg = "{#validateParam} must in array of {#array}";
         }
         $this->errorMsgTpl($errorMsg);
     }

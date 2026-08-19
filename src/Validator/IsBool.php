@@ -12,7 +12,7 @@ class IsBool extends AbstractValidator
     function __construct(string|null $errorMsg = null)
     {
         if(empty($errorMsg)){
-            $errorMsg = "{#name} must be bool";
+            $errorMsg = "{#validateParam} must be bool";
         }
         $this->errorMsgTpl($errorMsg);
     }

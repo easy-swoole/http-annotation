@@ -13,7 +13,7 @@ class Timestamp extends AbstractValidator
     function __construct(string|null $errorMsg = null)
     {
         if(empty($errorMsg)){
-            $errorMsg = "{#name} must be timestamp";
+            $errorMsg = "{#validateParam} must be timestamp";
         }
         $this->errorMsgTpl($errorMsg);
     }

@@ -15,7 +15,7 @@ class MaxMbLength extends AbstractValidator
     function __construct(int $maxLen,string|null $errorMsg = null)
     {
         if(empty($errorMsg)){
-            $errorMsg = "{#name} max mb Length is {#maxLen}";
+            $errorMsg = "{#validateParam} max mb Length is {#maxLen}";
         }
         $this->errorMsgTpl($errorMsg);
         $this->maxLen = $maxLen;

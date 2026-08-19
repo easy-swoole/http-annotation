@@ -15,7 +15,7 @@ class TimestampAfter extends AbstractValidator
     function __construct(string $compare, string|null $errorMsg = null)
     {
         if(empty($errorMsg)){
-            $errorMsg = "{#name} must be timestamp after {#compare}";
+            $errorMsg = "{#validateParam} must be timestamp after {#compare}";
         }
         $this->errorMsgTpl($errorMsg);
         $this->compare = $compare;

@@ -15,7 +15,7 @@ class Max extends AbstractValidator
     {
         $this->max = $max;
         if(empty($errorMsg)){
-            $errorMsg = "{#name} max value is {#max}";
+            $errorMsg = "{#validateParam} max value is {#max}";
         }
         $this->errorMsgTpl($errorMsg);
     }

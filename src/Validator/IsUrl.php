@@ -12,7 +12,7 @@ class IsUrl extends AbstractValidator
     function __construct(string|null $errorMsg = null)
     {
         if(empty($errorMsg)){
-            $errorMsg = "{#name} must be a url";
+            $errorMsg = "{#validateParam} must be a url";
         }
         $this->errorMsgTpl($errorMsg);
     }

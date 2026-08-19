@@ -18,7 +18,7 @@ class DifferentWithColumn extends AbstractValidator
         $this->compare = $compare;
         $this->strict = $strict;
         if(empty($errorMsg)){
-            $errorMsg = "{#name} must different with {#compare} column";
+            $errorMsg = "{#validateParam} must different with {#compare} column";
         }
         $this->errorMsgTpl($errorMsg);
     }

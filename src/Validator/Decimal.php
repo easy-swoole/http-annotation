@@ -18,7 +18,7 @@ class Decimal extends AbstractValidator
         }
         $this->accuracy = $accuracy;
         if(empty($errorMsg)){
-            $errorMsg = "{#name} must be decimal";
+            $errorMsg = "{#validateParam} must be decimal";
             if($accuracy > 0){
                 $errorMsg = $errorMsg ." with {$accuracy} accuracy";
             }

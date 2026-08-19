@@ -16,7 +16,7 @@ class DateAfter extends AbstractValidator
     {
         $this->date = $date;
         if(empty($errorMsg)){
-            $errorMsg = "{#name} must be date after {#date}";
+            $errorMsg = "{#validateParam} must be date after {#date}";
         }
         $this->errorMsgTpl($errorMsg);
     }

@@ -12,7 +12,7 @@ class NotEmpty extends AbstractValidator
     function __construct(string|null $errorMsg = null)
     {
         if(empty($errorMsg)){
-            $errorMsg = "{#name} is notEmpty";
+            $errorMsg = "{#validateParam} is notEmpty";
         }
         $this->errorMsgTpl($errorMsg);
     }

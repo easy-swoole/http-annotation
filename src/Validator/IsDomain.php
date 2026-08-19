@@ -231,7 +231,7 @@ class IsDomain extends AbstractValidator
     public function __construct(string|null $errorMsg = null)
     {
         if (empty($errorMsg)) {
-            $errorMsg = "{#name} must be a valid domain name format";
+            $errorMsg = "{#validateParam} must be a valid domain name format";
         }
         $this->errorMsgTpl($errorMsg);
     }

@@ -19,7 +19,7 @@ class NotInArray extends AbstractValidator
         $this->array = $array;
         $this->strict = $strict;
         if(empty($errorMsg)){
-            $errorMsg = "{#name} must not in array of {#array}";
+            $errorMsg = "{#validateParam} must not in array of {#array}";
         }
         $this->errorMsgTpl($errorMsg);
     }

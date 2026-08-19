@@ -18,7 +18,7 @@ class OptionalIfParamValNoInArray extends AbstractValidator
         $this->inVal = $inVal;
         $this->paramName = $paramName;
         if(empty($errorMsg)){
-            $errorMsg = "{#name} is optional when param {$paramName} value is not in ".json_encode($inVal);
+            $errorMsg = "{#validateParam} is optional when param {$paramName} value is not in ".json_encode($inVal);
         }
         $this->errorMsgTpl($errorMsg);
     }

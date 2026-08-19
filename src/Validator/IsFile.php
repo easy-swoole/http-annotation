@@ -22,7 +22,7 @@ class IsFile extends AbstractValidator
         if(empty($errorMsg)){
             $this->maxSize = $maxSize;
             $this->allowExt = $allowExt;
-            $errorMsg = "{#name} file validate fail";
+            $errorMsg = "{#validateParam} file validate fail";
             if(!empty($this->maxSize)){
                 $errorMsg .= " case size must below {#maxSize}";
             }

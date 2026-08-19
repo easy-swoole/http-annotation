@@ -13,7 +13,7 @@ class IgnoreValidatorWhenEmpty extends AbstractValidator
     function __construct(string|null $errorMsg = null)
     {
         if(empty($errorMsg)){
-            $errorMsg = "{#name} is ignore validator when value empty";
+            $errorMsg = "{#validateParam} is ignore validator when value empty";
         }
         $this->errorMsgTpl($errorMsg);
     }

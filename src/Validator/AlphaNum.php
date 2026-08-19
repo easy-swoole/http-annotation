@@ -12,7 +12,7 @@ class AlphaNum extends AbstractValidator
     function __construct(string|null $errorMsg = null)
     {
         if(empty($errorMsg)){
-            $errorMsg = "{#name} must be all AlphaNum";
+            $errorMsg = "{#validateParam} must be all AlphaNum";
         }
         $this->errorMsgTpl($errorMsg);
     }

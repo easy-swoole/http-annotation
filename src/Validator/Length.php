@@ -13,7 +13,7 @@ class Length extends AbstractValidator
     function __construct(int $length,string|null $errorMsg = null)
     {
         if(empty($errorMsg)){
-            $errorMsg = "{#name} length must be {#length}";
+            $errorMsg = "{#validateParam} length must be {#length}";
         }
         $this->errorMsgTpl($errorMsg);
         $this->length = $length;

@@ -12,7 +12,7 @@ class IsEmail extends AbstractValidator
     function __construct(string|null $errorMsg = null)
     {
         if(empty($errorMsg)){
-            $errorMsg = "{#name} must be a email address";
+            $errorMsg = "{#validateParam} must be a email address";
         }
         $this->errorMsgTpl($errorMsg);
     }

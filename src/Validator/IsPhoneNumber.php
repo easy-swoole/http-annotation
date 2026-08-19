@@ -13,7 +13,7 @@ class IsPhoneNumber extends AbstractValidator
     function __construct(string|null $errorMsg = null)
     {
         if(empty($errorMsg)){
-            $errorMsg = "{#name} must be phone number";
+            $errorMsg = "{#validateParam} must be phone number";
         }
         $this->errorMsgTpl($errorMsg);
     }

@@ -12,7 +12,7 @@ class IsIp extends AbstractValidator
     function __construct(string|null $errorMsg = null)
     {
         if(empty($errorMsg)){
-            $errorMsg = "{#name} must be a ip format";
+            $errorMsg = "{#validateParam} must be a ip format";
         }
         $this->errorMsgTpl($errorMsg);
     }

@@ -18,7 +18,7 @@ class Equal extends AbstractValidator
         $this->compare = $compare;
         $this->strict = $strict;
         if(empty($errorMsg)){
-            $errorMsg = "{#name} must equal with {#compare}";
+            $errorMsg = "{#validateParam} must equal with {#compare}";
         }
         $this->errorMsgTpl($errorMsg);
     }

@@ -17,7 +17,7 @@ class DateBefore extends AbstractValidator
     {
         $this->date = $date;
         if(empty($errorMsg)){
-            $errorMsg = "{#name} must be date before {#date}";
+            $errorMsg = "{#validateParam} must be date before {#date}";
         }
         $this->errorMsgTpl($errorMsg);
     }

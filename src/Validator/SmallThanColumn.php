@@ -14,7 +14,7 @@ class SmallThanColumn extends AbstractValidator
     function __construct(public string $paramName,string|null $errorMsg = null)
     {
         if(empty($errorMsg)){
-            $errorMsg = "{#name} value must small than {$paramName} value";
+            $errorMsg = "{#validateParam} value must small than {$paramName} value";
         }
         $this->errorMsgTpl($errorMsg);
     }

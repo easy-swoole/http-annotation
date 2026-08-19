@@ -16,7 +16,7 @@ class Regex extends AbstractValidator
     function __construct(string $rule,string|null $errorMsg = null)
     {
         if(empty($errorMsg)){
-            $errorMsg = "{#name} must meet specified rule: {$rule}";
+            $errorMsg = "{#validateParam} must meet specified rule: {$rule}";
         }
         $this->errorMsgTpl($errorMsg);
         $this->rule = $rule;

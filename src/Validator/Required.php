@@ -12,7 +12,7 @@ class Required extends AbstractValidator
     function __construct(string|null $errorMsg = null)
     {
         if(empty($errorMsg)){
-            $errorMsg = "{#name} is required";
+            $errorMsg = "{#validateParam} is required";
         }
         $this->errorMsgTpl($errorMsg);
     }

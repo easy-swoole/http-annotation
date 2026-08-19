@@ -12,7 +12,7 @@ class IsFloat extends AbstractValidator
     function __construct(string|null $errorMsg = null)
     {
         if(empty($errorMsg)){
-            $errorMsg = "{#name} must be float";
+            $errorMsg = "{#validateParam} must be float";
         }
         $this->errorMsgTpl($errorMsg);
     }
