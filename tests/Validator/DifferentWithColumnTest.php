@@ -4,6 +4,7 @@ namespace EasySwoole\HttpAnnotation\Tests\Validator;
 
 use EasySwoole\Http\Request;
 use EasySwoole\HttpAnnotation\Attributes\Param;
+use EasySwoole\HttpAnnotation\Validator\Bean\ValidateRequest;
 use EasySwoole\HttpAnnotation\Validator\DifferentWithColumn;
 use PHPUnit\Framework\TestCase;
 
@@ -29,13 +30,13 @@ class DifferentWithColumnTest extends TestCase
 
         $rule = new DifferentWithColumn(compare: "account");
 
-
-        $rule->allRequestParams([
+        $request = new ValidateRequest($param);
+        $request->allDefineParams = [
             "str" => $param,
             "account" => $account
-        ]);
+        ];
 
-        $this->assertEquals(true, $rule->execute($param, $request));
+        $this->assertEquals(true, $rule->execute( $request));
 
         // 值相等,但类型不一样
         $request = new Request();
@@ -52,12 +53,13 @@ class DifferentWithColumnTest extends TestCase
 
         $rule = new DifferentWithColumn(compare: "account",strict: true);
 
-        $rule->allRequestParams([
+        $request = new ValidateRequest($param);
+        $request->allDefineParams = [
             "str" => $param,
             "account" => $account
-        ]);
+        ];
 
-        $this->assertEquals(true, $rule->execute($param, $request));
+        $this->assertEquals(true, $rule->execute( $request));
     }
 
     /*
@@ -80,13 +82,13 @@ class DifferentWithColumnTest extends TestCase
 
         $rule = new DifferentWithColumn(compare: "account",strict: true);
 
-        $rule->allRequestParams([
+        $request = new ValidateRequest($param);
+        $request->allDefineParams = [
             "str" => $param,
             "account" => $account
-        ]);
-
-        $this->assertEquals(false, $rule->execute($param, $request));
-        $this->assertEquals("str must different with account column", $rule->errorMsg());
+        ];
+        $this->assertEquals(false, $rule->execute( $request));
+        $this->assertEquals("str must different with account column", $rule->errorMsg($request));
 
         $request = new Request();
         $request->withQueryParams([
@@ -102,13 +104,14 @@ class DifferentWithColumnTest extends TestCase
 
         $rule = new DifferentWithColumn(compare: "account");
 
-        $rule->allRequestParams([
+        $request = new ValidateRequest($param);
+        $request->allDefineParams = [
             "str" => $param,
             "account" => $account
-        ]);
+        ];
 
-        $this->assertEquals(false, $rule->execute($param, $request));
-        $this->assertEquals("str must different with account column", $rule->errorMsg());
+        $this->assertEquals(false, $rule->execute( $request));
+        $this->assertEquals("str must different with account column", $rule->errorMsg($request));
 
         // 值相等,但类型不一样
         $request = new Request();
@@ -125,13 +128,14 @@ class DifferentWithColumnTest extends TestCase
 
         $rule = new DifferentWithColumn(compare: "account");
 
-        $rule->allRequestParams([
+        $request = new ValidateRequest($param);
+        $request->allDefineParams = [
             "str" => $param,
             "account" => $account
-        ]);
+        ];
 
-        $this->assertEquals(false, $rule->execute($param, $request));
-        $this->assertEquals("str must different with account column", $rule->errorMsg());
+        $this->assertEquals(false, $rule->execute( $request));
+        $this->assertEquals("str must different with account column", $rule->errorMsg($request));
     }
 
     /*
@@ -153,12 +157,13 @@ class DifferentWithColumnTest extends TestCase
 
         $rule = new DifferentWithColumn(compare: "account",strict: true,errorMsg: '两个参数不能一样');
 
-        $rule->allRequestParams([
+        $request = new ValidateRequest($param);
+        $request->allDefineParams = [
             "str" => $param,
             "account" => $account
-        ]);
+        ];
 
-        $this->assertEquals(false, $rule->execute($param, $request));
-        $this->assertEquals("两个参数不能一样", $rule->errorMsg());
+        $this->assertEquals(false, $rule->execute( $request));
+        $this->assertEquals("两个参数不能一样", $rule->errorMsg($request));
     }
 }

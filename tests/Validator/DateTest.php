@@ -4,6 +4,7 @@ namespace EasySwoole\HttpAnnotation\Tests\Validator;
 
 use EasySwoole\Http\Request;
 use EasySwoole\HttpAnnotation\Attributes\Param;
+use EasySwoole\HttpAnnotation\Validator\Bean\ValidateRequest;
 use EasySwoole\HttpAnnotation\Validator\Between;
 use EasySwoole\HttpAnnotation\Validator\Date;
 use EasySwoole\HttpAnnotation\Validator\DateFormat;
@@ -22,22 +23,25 @@ class DateTest extends TestCase
         $param->parsedValue($request);
 
         $rule = new Date('today');
-        $this->assertEquals(true, $rule->execute($param, $request));
+
+        $v = new ValidateRequest($param);
+
+        $this->assertEquals(true, $rule->execute( $v));
 
 
         $param = new Param(name:"date");
         $param->parsedValue($request);
 
         $rule = new Date('-1 day');
-        $this->assertEquals(false, $rule->execute($param, $request));
+        $this->assertEquals(false, $rule->execute( $v));
 
         $rule = new DateFormat('Y-m-d');
-        $this->assertEquals(true, $rule->execute($param, $request));
+        $this->assertEquals(true, $rule->execute( $v));
 
         $rule = new DateFormat('Ymd');
-        $this->assertEquals(false, $rule->execute($param, $request));
+        $this->assertEquals(false, $rule->execute( $v));
 
         $rule = new DateFormat('Y-m-d h:i:s');
-        $this->assertEquals(false, $rule->execute($param, $request));
+        $this->assertEquals(false, $rule->execute( $v));
     }
 }

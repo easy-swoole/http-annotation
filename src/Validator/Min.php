@@ -4,6 +4,7 @@ namespace EasySwoole\HttpAnnotation\Validator;
 
 use EasySwoole\HttpAnnotation\Attributes\Param;
 use EasySwoole\HttpAnnotation\Validator\AbstractInterface\AbstractValidator;
+use EasySwoole\HttpAnnotation\Validator\Bean\ValidateRequest;
 use Psr\Http\Message\ServerRequestInterface;
 
 class Min extends AbstractValidator
@@ -16,12 +17,12 @@ class Min extends AbstractValidator
         if(empty($errorMsg)){
             $errorMsg = "{#name} min value is {#min}";
         }
-        $this->errorMsg($errorMsg);
+        $this->errorMsgTpl($errorMsg);
     }
 
-    protected function validate(Param $param, ServerRequestInterface $request): bool
+    protected function validate(ValidateRequest $validateRequest): bool
     {
-        $data = $param->parsedValue();
+        $data = $validateRequest->validateParam->parsedValue();
         if(!is_numeric($data)){
             return false;
         }

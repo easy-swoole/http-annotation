@@ -4,13 +4,14 @@ namespace EasySwoole\HttpAnnotation\Validator;
 
 use EasySwoole\HttpAnnotation\Attributes\Param;
 use EasySwoole\HttpAnnotation\Validator\AbstractInterface\AbstractValidator;
+use EasySwoole\HttpAnnotation\Validator\Bean\ValidateRequest;
 use Psr\Http\Message\ServerRequestInterface;
 
 class Equal extends AbstractValidator
 {
 
     private bool $strict;
-    public $compare;
+    public mixed $compare;
 
     function __construct(string|int|null|float $compare,bool $strict = false,string|null $errorMsg = null)
     {
@@ -19,13 +20,13 @@ class Equal extends AbstractValidator
         if(empty($errorMsg)){
             $errorMsg = "{#name} must equal with {#compare}";
         }
-        $this->errorMsg($errorMsg);
+        $this->errorMsgTpl($errorMsg);
     }
 
 
-    protected function validate(Param $param, ServerRequestInterface $request): bool
+    protected function validate(ValidateRequest $validateRequest): bool
     {
-        $itemData = $param->parsedValue();
+        $itemData = $validateRequest->validateParam->parsedValue();
         return ($this->strict ? $itemData === $this->compare : $itemData == $this->compare);
     }
 

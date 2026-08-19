@@ -5,6 +5,7 @@ namespace EasySwoole\HttpAnnotation\Tests\Validator;
 use EasySwoole\Http\Request;
 use EasySwoole\HttpAnnotation\Attributes\Param;
 use EasySwoole\HttpAnnotation\Validator\AlphaDash;
+use EasySwoole\HttpAnnotation\Validator\Bean\ValidateRequest;
 use PHPUnit\Framework\TestCase;
 
 class AlphaDashTest extends TestCase
@@ -24,7 +25,8 @@ class AlphaDashTest extends TestCase
         $param->parsedValue($request);
 
         $rule = new AlphaDash();
-        $this->assertEquals(false, $rule->execute($param, $request));
+        $request = new ValidateRequest($param);
+        $this->assertEquals(false, $rule->execute($request));
     }
 
     /*
@@ -41,8 +43,9 @@ class AlphaDashTest extends TestCase
         $param->parsedValue($request);
 
         $rule = new AlphaDash();
-        $this->assertEquals(false, $rule->execute($param, $request));
-        $this->assertEquals("str must be all AlphaDash", $rule->errorMsg());
+        $request = new ValidateRequest($param);
+        $this->assertEquals(false, $rule->execute($request));
+        $this->assertEquals("str must be all AlphaDash", $rule->errorMsg($request));
     }
 
     /*
@@ -59,7 +62,8 @@ class AlphaDashTest extends TestCase
         $param->parsedValue($request);
 
         $rule = new AlphaDash(errorMsg: '只能由字母数字下划线和破折号构成');
-        $this->assertEquals(false, $rule->execute($param, $request));
-        $this->assertEquals("只能由字母数字下划线和破折号构成", $rule->errorMsg());
+        $request = new ValidateRequest($param);
+        $this->assertEquals(false, $rule->execute($request));
+        $this->assertEquals("只能由字母数字下划线和破折号构成", $rule->errorMsg($request));
     }
 }

@@ -4,6 +4,7 @@ namespace EasySwoole\HttpAnnotation\Validator;
 
 use EasySwoole\HttpAnnotation\Attributes\Param;
 use EasySwoole\HttpAnnotation\Validator\AbstractInterface\AbstractValidator;
+use EasySwoole\HttpAnnotation\Validator\Bean\ValidateRequest;
 use Psr\Http\Message\ServerRequestInterface;
 
 class Money extends AbstractValidator
@@ -18,13 +19,13 @@ class Money extends AbstractValidator
                 $errorMsg = $errorMsg . " with {$precision} precision";
             }
         }
-        $this->errorMsg($errorMsg);
+        $this->errorMsgTpl($errorMsg);
         $this->precision = $precision;
     }
 
-    protected function validate(Param $param, ServerRequestInterface $request): bool
+    protected function validate(ValidateRequest $validateRequest): bool
     {
-        $itemData = $param->parsedValue();
+        $itemData = $validateRequest->validateParam->parsedValue();
         $precision = $this->precision;
 
         $regex = "/^-?(([1-9]\d*)|0)\.\d{1,{$precision}}$/";

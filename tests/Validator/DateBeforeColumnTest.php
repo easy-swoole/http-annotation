@@ -4,6 +4,7 @@ namespace EasySwoole\HttpAnnotation\Tests\Validator;
 
 use EasySwoole\Http\Request;
 use EasySwoole\HttpAnnotation\Attributes\Param;
+use EasySwoole\HttpAnnotation\Validator\Bean\ValidateRequest;
 use EasySwoole\HttpAnnotation\Validator\DateBefore;
 use EasySwoole\HttpAnnotation\Validator\DateBeforeColumn;
 use PHPUnit\Framework\TestCase;
@@ -30,12 +31,13 @@ class DateBeforeColumnTest extends TestCase
 
         $rule = new DateBeforeColumn(compare: "date1");
 
-        $rule->allRequestParams([
+        $request = new ValidateRequest($param);
+        $request->allDefineParams = [
             "date"  => $param,
             "date1" => $date1
-        ]);
+        ];
 
-        $this->assertEquals(true, $rule->execute($param, $request));
+        $this->assertEquals(true, $rule->execute( $request));
 
         $request = new Request();
         $request->withQueryParams([
@@ -51,12 +53,13 @@ class DateBeforeColumnTest extends TestCase
 
         $rule = new DateBeforeColumn(compare: "date1");
 
-        $rule->allRequestParams([
+        $request = new ValidateRequest($param);
+        $request->allDefineParams = [
             "date"  => $param,
             "date1" => $date1
-        ]);
+        ];
 
-        $this->assertEquals(true, $rule->execute($param, $request));
+        $this->assertEquals(true, $rule->execute( $request));
 
         $request = new Request();
         $request->withQueryParams([
@@ -72,12 +75,13 @@ class DateBeforeColumnTest extends TestCase
 
         $rule = new DateBeforeColumn(compare: "date1");
 
-        $rule->allRequestParams([
+        $request = new ValidateRequest($param);
+        $request->allDefineParams = [
             "date"  => $param,
             "date1" => $date1
-        ]);
+        ];
 
-        $this->assertEquals(true, $rule->execute($param, $request));
+        $this->assertEquals(true, $rule->execute( $request));
     }
 
     /*
@@ -100,13 +104,14 @@ class DateBeforeColumnTest extends TestCase
 
         $rule = new DateBeforeColumn(compare: "date1");
 
-        $rule->allRequestParams([
+        $request = new ValidateRequest($param);
+        $request->allDefineParams = [
             "date"  => $param,
             "date1" => $date1
-        ]);
+        ];
 
-        $this->assertEquals(false, $rule->execute($param, $request));
-        $this->assertEquals("date must be date before date1 column", $rule->errorMsg());
+        $this->assertEquals(false, $rule->execute( $request));
+        $this->assertEquals("date must be date before date1 column", $rule->errorMsg($request));
 
         // 非法参数
         $request = new Request();
@@ -123,13 +128,14 @@ class DateBeforeColumnTest extends TestCase
 
         $rule = new DateBeforeColumn(compare: "date1");
 
-        $rule->allRequestParams([
+        $request = new ValidateRequest($param);
+        $request->allDefineParams = [
             "date"  => $param,
             "date1" => $date1
-        ]);
+        ];
 
-        $this->assertEquals(false, $rule->execute($param, $request));
-        $this->assertEquals("date must be date before date1 column", $rule->errorMsg());
+        $this->assertEquals(false, $rule->execute( $request));
+        $this->assertEquals("date must be date before date1 column", $rule->errorMsg($request));
 
         //字段必须是日期格式。因此传时间戳，失败
         $request = new Request();
@@ -146,13 +152,13 @@ class DateBeforeColumnTest extends TestCase
 
         $rule = new DateBeforeColumn(compare: "date1");
 
-        $rule->allRequestParams([
+        $request = new ValidateRequest($param);
+        $request->allDefineParams = [
             "date"  => $param,
             "date1" => $date1
-        ]);
-
-        $this->assertEquals(false, $rule->execute($param, $request));
-        $this->assertEquals("date must be date before date1 column", $rule->errorMsg());
+        ];
+        $this->assertEquals(false, $rule->execute( $request));
+        $this->assertEquals("date must be date before date1 column", $rule->errorMsg($request));
     }
 
     /*
@@ -174,12 +180,13 @@ class DateBeforeColumnTest extends TestCase
 
         $rule = new DateBeforeColumn(compare: "date1", errorMsg: "日期不合法");
 
-        $rule->allRequestParams([
+        $request = new ValidateRequest($param);
+        $request->allDefineParams = [
             "date"  => $param,
             "date1" => $date1
-        ]);
+        ];
 
-        $this->assertEquals(false, $rule->execute($param, $request));
-        $this->assertEquals("日期不合法", $rule->errorMsg());
+        $this->assertEquals(false, $rule->execute( $request));
+        $this->assertEquals("日期不合法", $rule->errorMsg($request));
     }
 }

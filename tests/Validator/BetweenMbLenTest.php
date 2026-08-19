@@ -4,6 +4,7 @@ namespace EasySwoole\HttpAnnotation\Tests\Validator;
 
 use EasySwoole\Http\Request;
 use EasySwoole\HttpAnnotation\Attributes\Param;
+use EasySwoole\HttpAnnotation\Validator\Bean\ValidateRequest;
 use EasySwoole\HttpAnnotation\Validator\BetweenMbLen;
 use PHPUnit\Framework\TestCase;
 
@@ -23,9 +24,9 @@ class BetweenMbLenTest extends TestCase
 
         $param = new Param(name:"name");
         $param->parsedValue($request);
-
+        $request = new ValidateRequest($param);
         $rule = new BetweenMbLen(minLen: 5, maxLen: 10);
-        $this->assertEquals(true, $rule->execute($param, $request));
+        $this->assertEquals(true, $rule->execute( $request));
 
         // 英文
         $request = new Request();
@@ -35,9 +36,9 @@ class BetweenMbLenTest extends TestCase
 
         $param = new Param(name:"name");
         $param->parsedValue($request);
-
+        $request = new ValidateRequest($param);
         $rule = new BetweenMbLen(minLen: 5, maxLen: 10);
-        $this->assertEquals(true, $rule->execute($param, $request));
+        $this->assertEquals(true, $rule->execute( $request));
 
         // func
         $request = new Request();
@@ -62,10 +63,10 @@ class BetweenMbLenTest extends TestCase
 
         $param = new Param(name:"name");
         $param->parsedValue($request);
-
+        $request = new ValidateRequest($param);
         $rule = new BetweenMbLen(minLen: 2, maxLen: 4);
-        $this->assertEquals(false, $rule->execute($param, $request));
-        $this->assertEquals("name length must between 2 to 4", $rule->errorMsg());
+        $this->assertEquals(false, $rule->execute( $request));
+        $this->assertEquals("name length must between 2 to 4", $rule->errorMsg($request));
     }
 
     /*
@@ -80,11 +81,11 @@ class BetweenMbLenTest extends TestCase
 
         $param = new Param(name:"name");
         $param->parsedValue($request);
-
+        $request = new ValidateRequest($param);
         $rule = new BetweenMbLen(minLen: 5, maxLen: 10,errorMsg: "testCustomErrorMsgCase");
-        $rule->execute($param, $request);
+        $rule->execute( $request);
 
-        $this->assertEquals("testCustomErrorMsgCase", $rule->errorMsg());
+        $this->assertEquals("testCustomErrorMsgCase", $rule->errorMsg($request));
 
     }
 }

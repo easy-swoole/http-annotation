@@ -6,6 +6,7 @@ use EasySwoole\Http\Request;
 use EasySwoole\HttpAnnotation\Attributes\Param;
 use EasySwoole\HttpAnnotation\Exception\ValidateFail;
 use EasySwoole\HttpAnnotation\Validator\AbstractInterface\AbstractValidator;
+use EasySwoole\HttpAnnotation\Validator\Bean\ValidateRequest;
 use EasySwoole\HttpAnnotation\Validator\DifferentWithColumn;
 use EasySwoole\HttpAnnotation\Validator\Integer;
 use EasySwoole\HttpAnnotation\Validator\Optional;
@@ -36,17 +37,17 @@ class OptionIfParamSetTest extends TestCase
         );
         $account->parsedValue($request);
 
-        $allDefineParams = [
-            'account'=>$account,
+        $request = new ValidateRequest($num);
+        $request->allDefineParams = [
             'num'=>$num,
+            'account'=>$account,
         ];
 
         $ret = true;
         $rules = $num->validate;
         /** @var AbstractValidator $rule */
         foreach ($rules as $rule){
-            $rule->allRequestParams($allDefineParams);
-            $ret = $rule->execute($num,$request);
+            $ret = $rule->execute($request);
             if(!$ret){
                 break;
             }
@@ -78,17 +79,17 @@ class OptionIfParamSetTest extends TestCase
         );
         $account->parsedValue($request);
 
-        $allDefineParams = [
-            'account'=>$account,
+        $request = new ValidateRequest($num);
+        $request->allDefineParams = [
             'num'=>$num,
+            'account'=>$account,
         ];
 
         $ret = true;
         $rules = $num->validate;
         /** @var AbstractValidator $rule */
         foreach ($rules as $rule){
-            $rule->allRequestParams($allDefineParams);
-            $ret = $rule->execute($num,$request);
+            $ret = $rule->execute($request);
             if(!$ret){
                 break;
             }
@@ -120,17 +121,16 @@ class OptionIfParamSetTest extends TestCase
         );
         $account->parsedValue($request);
 
-        $allDefineParams = [
-            'account'=>$account,
+        $request = new ValidateRequest($num);
+        $request->allDefineParams = [
             'num'=>$num,
+            'account'=>$account,
         ];
-
         $ret = true;
         $rules = $num->validate;
         /** @var AbstractValidator $rule */
         foreach ($rules as $rule){
-            $rule->allRequestParams($allDefineParams);
-            $ret = $rule->execute($num,$request);
+            $ret = $rule->execute($request);
             if(!$ret){
                 break;
             }

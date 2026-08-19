@@ -5,6 +5,7 @@ namespace EasySwoole\HttpAnnotation\Validator;
 use EasySwoole\HttpAnnotation\Attributes\Param;
 use EasySwoole\HttpAnnotation\Validator\AbstractInterface\AbstractValidator;
 use EasySwoole\HttpAnnotation\Validator\AbstractInterface\ValidateFuncInterface;
+use EasySwoole\HttpAnnotation\Validator\Bean\ValidateRequest;
 use Psr\Http\Message\ServerRequestInterface;
 
 
@@ -22,11 +23,11 @@ class Func extends AbstractValidator
                 $errorMsg = "{#name} validate fail in custom function";
             }
         }
-        $this->errorMsg($errorMsg);
+        $this->errorMsgTpl($errorMsg);
         $this->call = $func;
     }
 
-    protected function validate(Param $param,ServerRequestInterface $request): bool
+    protected function validate(ValidateRequest $validateRequest): bool
     {
         if($this->call instanceof ValidateFuncInterface){
             return $this->call->execute($this);

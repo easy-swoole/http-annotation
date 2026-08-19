@@ -4,6 +4,7 @@ namespace EasySwoole\HttpAnnotation\Tests\Validator;
 
 use EasySwoole\Http\Request;
 use EasySwoole\HttpAnnotation\Attributes\Param;
+use EasySwoole\HttpAnnotation\Validator\Bean\ValidateRequest;
 use EasySwoole\HttpAnnotation\Validator\Between;
 use PHPUnit\Framework\TestCase;
 
@@ -22,9 +23,9 @@ class BetweenTest extends TestCase
 
         $param = new Param(name:"num");
         $param->parsedValue($request);
-
+        $request = new ValidateRequest($param);
         $rule = new Between(min: 5, max: 10);
-        $this->assertEquals(true, $rule->execute($param, $request));
+        $this->assertEquals(true, $rule->execute( $request));
 
         // 小数
         $request = new Request();
@@ -34,9 +35,9 @@ class BetweenTest extends TestCase
 
         $param = new Param(name:"num");
         $param->parsedValue($request);
-
+        $request = new ValidateRequest($param);
         $rule = new Between(min: 5, max: 10);
-        $this->assertEquals(true, $rule->execute($param, $request));
+        $this->assertEquals(true, $rule->execute( $request));
 
         // 字符串
         $request = new Request();
@@ -46,9 +47,9 @@ class BetweenTest extends TestCase
 
         $param = new Param(name:"num");
         $param->parsedValue($request);
-
+        $request = new ValidateRequest($param);
         $rule = new Between(min: 5, max: 10);
-        $this->assertEquals(true, $rule->execute($param, $request));
+        $this->assertEquals(true, $rule->execute( $request));
 
         // 等于最小值
         $request = new Request();
@@ -58,9 +59,9 @@ class BetweenTest extends TestCase
 
         $param = new Param(name:"num");
         $param->parsedValue($request);
-
+        $request = new ValidateRequest($param);
         $rule = new Between(min: 5, max: 10);
-        $this->assertEquals(true, $rule->execute($param, $request));
+        $this->assertEquals(true, $rule->execute( $request));
 
         // 等于最大值
         $request = new Request();
@@ -70,9 +71,9 @@ class BetweenTest extends TestCase
 
         $param = new Param(name:"num");
         $param->parsedValue($request);
-
+        $request = new ValidateRequest($param);
         $rule = new Between(min: 5, max: 10);
-        $this->assertEquals(true, $rule->execute($param, $request));
+        $this->assertEquals(true, $rule->execute( $request));
 
         // func
         $request = new Request();
@@ -98,10 +99,10 @@ class BetweenTest extends TestCase
 
         $param = new Param(name:"num");
         $param->parsedValue($request);
-
+        $request = new ValidateRequest($param);
         $rule = new Between(min: 5, max: 10);
-        $this->assertEquals(false, $rule->execute($param, $request));
-        $this->assertEquals("num must between 5 to 10", $rule->errorMsg());
+        $this->assertEquals(false, $rule->execute( $request));
+        $this->assertEquals("num must between 5 to 10", $rule->errorMsg($request));
 
         // 不是合法值
         $request = new Request();
@@ -111,10 +112,10 @@ class BetweenTest extends TestCase
 
         $param = new Param(name:"num");
         $param->parsedValue($request);
-
+        $request = new ValidateRequest($param);
         $rule = new Between(min: 5, max: 10);
-        $this->assertEquals(false, $rule->execute($param, $request));
-        $this->assertEquals("num must between 5 to 10", $rule->errorMsg());
+        $this->assertEquals(false, $rule->execute( $request));
+        $this->assertEquals("num must between 5 to 10", $rule->errorMsg($request));
     }
 
     /*
@@ -129,9 +130,9 @@ class BetweenTest extends TestCase
 
         $param = new Param(name:"num");
         $param->parsedValue($request);
-
+        $request = new ValidateRequest($param);
         $rule = new Between(min: 5, max: 10,errorMsg: '您输入的年龄不符');
-        $this->assertEquals(false, $rule->execute($param, $request));
-        $this->assertEquals("您输入的年龄不符", $rule->errorMsg());
+        $this->assertEquals(false, $rule->execute( $request));
+        $this->assertEquals("您输入的年龄不符", $rule->errorMsg($request));
     }
 }

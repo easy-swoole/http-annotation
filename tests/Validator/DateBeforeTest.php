@@ -4,6 +4,7 @@ namespace EasySwoole\HttpAnnotation\Tests\Validator;
 
 use EasySwoole\Http\Request;
 use EasySwoole\HttpAnnotation\Attributes\Param;
+use EasySwoole\HttpAnnotation\Validator\Bean\ValidateRequest;
 use EasySwoole\HttpAnnotation\Validator\DateBefore;
 use PHPUnit\Framework\TestCase;
 
@@ -22,9 +23,9 @@ class DateBeforeTest extends TestCase
 
         $param = new Param(name:"date");
         $param->parsedValue($request);
-
+        $request = new ValidateRequest($param);
         $rule = new DateBefore(date: "20220430");
-        $this->assertEquals(true, $rule->execute($param, $request));
+        $this->assertEquals(true, $rule->execute( $request));
 
         $request = new Request();
         $request->withQueryParams([
@@ -33,9 +34,9 @@ class DateBeforeTest extends TestCase
 
         $param = new Param(name:"date");
         $param->parsedValue($request);
-
+        $request = new ValidateRequest($param);
         $rule = new DateBefore(date: "20220630");
-        $this->assertEquals(true, $rule->execute($param, $request));
+        $this->assertEquals(true, $rule->execute( $request));
 
         $request = new Request();
         $request->withQueryParams([
@@ -44,9 +45,9 @@ class DateBeforeTest extends TestCase
 
         $param = new Param(name:"date");
         $param->parsedValue($request);
-
+        $request = new ValidateRequest($param);
         $rule = new DateBefore(date: "20220630");
-        $this->assertEquals(true, $rule->execute($param, $request));
+        $this->assertEquals(true, $rule->execute( $request));
 
         // func
         $request = new Request();
@@ -73,10 +74,10 @@ class DateBeforeTest extends TestCase
 
         $param = new Param(name:"date");
         $param->parsedValue($request);
-
+        $request = new ValidateRequest($param);
         $rule = new DateBefore(date: "20220530");
-        $this->assertEquals(false, $rule->execute($param, $request));
-        $this->assertEquals("date must be date before 20220530", $rule->errorMsg());
+        $this->assertEquals(false, $rule->execute( $request));
+        $this->assertEquals("date must be date before 20220530", $rule->errorMsg($request));
 
         // 非法参数
         $request = new Request();
@@ -86,10 +87,10 @@ class DateBeforeTest extends TestCase
 
         $param = new Param(name:"date");
         $param->parsedValue($request);
-
+        $request = new ValidateRequest($param);
         $rule = new DateBefore(date: "20220530");
-        $this->assertEquals(false, $rule->execute($param, $request));
-        $this->assertEquals("date must be date before 20220530", $rule->errorMsg());
+        $this->assertEquals(false, $rule->execute( $request));
+        $this->assertEquals("date must be date before 20220530", $rule->errorMsg($request));
 
         //字段必须是日期格式。因此传时间戳，失败
         $request = new Request();
@@ -99,10 +100,10 @@ class DateBeforeTest extends TestCase
 
         $param = new Param(name:"date");
         $param->parsedValue($request);
-
+        $request = new ValidateRequest($param);
         $rule = new DateBefore(date: "20220530");
-        $this->assertEquals(false, $rule->execute($param, $request));
-        $this->assertEquals("date must be date before 20220530", $rule->errorMsg());
+        $this->assertEquals(false, $rule->execute( $request));
+        $this->assertEquals("date must be date before 20220530", $rule->errorMsg($request));
     }
 
     /*
@@ -117,9 +118,9 @@ class DateBeforeTest extends TestCase
 
         $param = new Param(name:"date");
         $param->parsedValue($request);
-
+        $request = new ValidateRequest($param);
         $rule = new DateBefore(date: "20220530", errorMsg: '日期不合法');
-        $this->assertEquals(false, $rule->execute($param, $request));
-        $this->assertEquals("日期不合法",$rule->errorMsg());
+        $this->assertEquals(false, $rule->execute( $request));
+        $this->assertEquals("日期不合法",$rule->errorMsg($request));
     }
 }

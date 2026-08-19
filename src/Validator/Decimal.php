@@ -4,6 +4,7 @@ namespace EasySwoole\HttpAnnotation\Validator;
 
 use EasySwoole\HttpAnnotation\Attributes\Param;
 use EasySwoole\HttpAnnotation\Validator\AbstractInterface\AbstractValidator;
+use EasySwoole\HttpAnnotation\Validator\Bean\ValidateRequest;
 use Psr\Http\Message\ServerRequestInterface;
 
 class Decimal extends AbstractValidator
@@ -22,12 +23,12 @@ class Decimal extends AbstractValidator
                 $errorMsg = $errorMsg ." with {$accuracy} accuracy";
             }
         }
-        $this->errorMsg($errorMsg);
+        $this->errorMsgTpl($errorMsg);
     }
 
-    protected function validate(Param $param, ServerRequestInterface $request): bool
+    protected function validate(ValidateRequest $validateRequest): bool
     {
-        $itemData = $param->parsedValue();
+        $itemData = $validateRequest->validateParam->parsedValue();
         //没有传参则降级验证为浮点数即可
         if ($this->accuracy === null) {
             if (is_float($itemData)) {

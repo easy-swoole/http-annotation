@@ -11,8 +11,8 @@ use EasySwoole\HttpAnnotation\Exception\Annotation;
 use EasySwoole\HttpAnnotation\Validator\AbstractInterface\AbstractValidator;
 use Psr\Http\Message\ServerRequestInterface;
 
-#[\Attribute(\Attribute::TARGET_ALL|\Attribute::IS_REPEATABLE)]
-class Param implements \JsonSerializable
+#[\Attribute(\Attribute::TARGET_METHOD|\Attribute::IS_REPEATABLE)]
+class Param
 {
     private bool $isParsed = false;
     private bool $hasSet = false;
@@ -263,13 +263,12 @@ class Param implements \JsonSerializable
 
    function __clone()
    {
-       //规则在调用层做克隆，不然循环引用。
-//       $temp = [];
-//       /** @var AbstractValidator $item */
-//       foreach ($this->validate as $item){
-//           $temp[$item->ruleName()] = clone $item;
-//       }
-//       $this->validate = $temp;
+       $temp = [];
+       /** @var AbstractValidator $item */
+       foreach ($this->validate as $item){
+           $temp[$item->ruleName()] = clone $item;
+       }
+       $this->validate = $temp;
 
        $temp = [];
        /** @var Param $item */
@@ -280,45 +279,4 @@ class Param implements \JsonSerializable
        }
        $this->subObject = $temp;
    }
-
-    public function jsonSerialize(): mixed
-    {
-        $from = [];
-        if(is_array($this->from)){
-            foreach ($this->from as $item){
-                $from[] = $item->name;
-            }
-        }else{
-            $from[] = $this->from->name;
-        }
-
-        $validate = [];
-        /** @var AbstractValidator $item */
-        foreach ($this->validate as $item){
-            $item->setCurrentParam($this);
-            $validate[$item->ruleName()] = $item->errorMsg(null);
-        }
-
-        $type = null;
-        if($this->type){
-            $type = $this->type->name;
-        }
-
-        $desc = $this->description;
-        if(is_string($desc)){
-            $desc = new Description($desc,Description::PLAIN_TEXT);
-        }
-
-        return [
-            'name'=>$this->name,
-            'from'=>$from,
-            'validate'=>$validate,
-            'value'=>$this->value,
-            'deprecated'=>$this->deprecated,
-            'type'=>$type,
-            'subObject'=>$this->subObject,
-            'description'=>$this->description,
-            'parentStack'=>$this->parentStack
-        ];
-    }
 }

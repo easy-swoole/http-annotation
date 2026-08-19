@@ -5,6 +5,7 @@ namespace EasySwoole\HttpAnnotation\Validator;
 use EasySwoole\HttpAnnotation\Attributes\Param;
 use EasySwoole\HttpAnnotation\Exception\Annotation;
 use EasySwoole\HttpAnnotation\Validator\AbstractInterface\AbstractValidator;
+use EasySwoole\HttpAnnotation\Validator\Bean\ValidateRequest;
 use Psr\Http\Message\ServerRequestInterface;
 
 class TimestampAfter extends AbstractValidator
@@ -16,13 +17,13 @@ class TimestampAfter extends AbstractValidator
         if(empty($errorMsg)){
             $errorMsg = "{#name} must be timestamp after {#compare}";
         }
-        $this->errorMsg($errorMsg);
+        $this->errorMsgTpl($errorMsg);
         $this->compare = $compare;
     }
 
-    protected function validate(Param $param, ServerRequestInterface $request): bool
+    protected function validate(ValidateRequest $validateRequest): bool
     {
-        $itemData = $param->parsedValue();
+        $itemData = $validateRequest->validateParam->parsedValue();
         if(!is_numeric($itemData)){
             return false;
         }

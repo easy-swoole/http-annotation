@@ -5,6 +5,7 @@ namespace EasySwoole\HttpAnnotation\Validator;
 use EasySwoole\HttpAnnotation\Attributes\Param;
 use EasySwoole\HttpAnnotation\Exception\Annotation;
 use EasySwoole\HttpAnnotation\Validator\AbstractInterface\AbstractValidator;
+use EasySwoole\HttpAnnotation\Validator\Bean\ValidateRequest;
 use Psr\Http\Message\ServerRequestInterface;
 
 class DateBeforeColumn extends AbstractValidator
@@ -17,12 +18,12 @@ class DateBeforeColumn extends AbstractValidator
             $errorMsg = "{#name} must be date before {#compare} column";
         }
         $this->compare = $compare;
-        $this->errorMsg($errorMsg);
+        $this->errorMsgTpl($errorMsg);
     }
 
-    protected function validate(Param $param, ServerRequestInterface $request): bool
+    protected function validate(ValidateRequest $validateRequest): bool
     {
-        $list = $this->allRequestParams();
+        $list = $validateRequest->allDefineParams;
 
         if (!isset($list[$this->compare])) {
             throw new Annotation("compare param: {$this->compare} require in DateBeforeColumn rule, but not define in any controller annotation");
@@ -40,7 +41,7 @@ class DateBeforeColumn extends AbstractValidator
             throw new Annotation("error arg: error compare param: {$this->compare} for DateBeforeColumn validate rule");
         }
 
-        $itemData = $param->parsedValue();
+        $itemData = $validateRequest->validateParam->parsedValue();
 
         if (!is_string($itemData)) {
             return false;

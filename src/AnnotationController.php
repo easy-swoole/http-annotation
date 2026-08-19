@@ -18,13 +18,63 @@ use EasySwoole\HttpAnnotation\Exception\ParamError;
 use EasySwoole\HttpAnnotation\Exception\RequestMethodNotAllow;
 use EasySwoole\HttpAnnotation\Exception\ValidateFail;
 use EasySwoole\HttpAnnotation\Validator\AbstractInterface\AbstractValidator;
+use EasySwoole\Http\Context as HttpContext;
+use EasySwoole\HttpAnnotation\Validator\Bean\ValidateRequest;
 
 
 abstract class AnnotationController extends Controller
 {
     public function __hook(array|null $actionArg = [],array|null $onRequestArg = null)
     {
-        AttributeCache::getInstance()->parseClass(static::class);
+        $attributeInfo = AttributeCache::getInstance()->parseClass(static::class);
+        $apiTag = $attributeInfo->apiTag($this->getActionName());
+        if($apiTag){
+            HttpContext::getInstance()->set(HttpContext::KEY_HTTP_REQUEST,$this->request());
+
+            $actionArg = [];
+            $onRequestArg = [];
+
+            $actionArgsInTag = $apiTag->requestParam;
+            $onRequestArgsInTag = $attributeInfo->onRequest->onRequestParams;
+            //如果有重复定义，则覆盖onRequest参数
+            /** @var Param $param */
+            foreach ($actionArgsInTag as $param){
+                if(isset($onRequestArgsInTag[$param->name])){
+                    $onRequestArgsInTag[$param->name] = $param;
+                }
+            }
+            $allParams = $actionArgsInTag + $onRequestArgsInTag;
+            foreach ($allParams as $paramName => $param){
+                $param = clone $param;
+                $allParams[$paramName] = $param;
+                $param->parsedValue($this->request());
+            }
+            foreach ($allParams as $param){
+                $this->validateParam($param,$allParams);
+            }
+
+        }
         parent::__hook($actionArg,$onRequestArg);
+    }
+
+    private function validateParam(Param $param,array $allParams)
+    {
+        //当有下级的时候，当级校验没有意义
+        if(!empty($param->subObject)){
+            foreach ($param->subObject as $sub){
+                $this->validateParam($sub,$allParams);
+            }
+        }else{
+            $req = new ValidateRequest(
+                validateParam: $param,
+                request: $this->request(),
+                allDefineParams: $allParams
+            );
+            $rules = $param->validate;
+            /** @var AbstractValidator $rule */
+            foreach ($rules as $rule){
+                $ret = $rule->execute($req);
+            }
+        }
     }
 }

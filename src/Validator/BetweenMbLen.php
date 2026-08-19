@@ -4,12 +4,13 @@ namespace EasySwoole\HttpAnnotation\Validator;
 
 use EasySwoole\HttpAnnotation\Attributes\Param;
 use EasySwoole\HttpAnnotation\Validator\AbstractInterface\AbstractValidator;
+use EasySwoole\HttpAnnotation\Validator\Bean\ValidateRequest;
 use Psr\Http\Message\ServerRequestInterface;
 
 class BetweenMbLen extends AbstractValidator
 {
-    public $minLen;
-    public $maxLen;
+    public int $minLen;
+    public int $maxLen;
 
     function __construct(int $minLen,int $maxLen,string|null $errorMsg = null)
     {
@@ -18,12 +19,12 @@ class BetweenMbLen extends AbstractValidator
         if(empty($errorMsg)){
             $errorMsg = "{#name} length must between {#minLen} to {#maxLen}";
         }
-        $this->errorMsg($errorMsg);
+        $this->errorMsgTpl($errorMsg);
     }
 
-    protected function validate(Param $param, ServerRequestInterface $request): bool
+    protected function validate(ValidateRequest $validateRequest): bool
     {
-        $data = $param->parsedValue();
+        $data = $validateRequest->validateParam->parsedValue();
         if (!is_numeric($data) && !is_string($data)) {
             return false;
         }

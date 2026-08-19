@@ -5,6 +5,7 @@ namespace EasySwoole\HttpAnnotation\Tests\Validator;
 use EasySwoole\Http\Request;
 use EasySwoole\HttpAnnotation\Attributes\Param;
 use EasySwoole\HttpAnnotation\Validator\AllDigital;
+use EasySwoole\HttpAnnotation\Validator\Bean\ValidateRequest;
 use PHPUnit\Framework\TestCase;
 
 class AllDigitalTest extends TestCase
@@ -23,7 +24,10 @@ class AllDigitalTest extends TestCase
         $param->parsedValue($request);
 
         $rule = new AllDigital();
-        $this->assertEquals(true, $rule->execute($param, $request));
+
+        $request = new ValidateRequest($param);
+
+        $this->assertEquals(true, $rule->execute($request));
 
 
         $request = new Request();
@@ -34,8 +38,10 @@ class AllDigitalTest extends TestCase
         $param = new Param(name:"no");
         $param->parsedValue($request);
 
+        $request = new ValidateRequest($param);
+
         $rule = new AllDigital();
-        $this->assertEquals(true, $rule->execute($param, $request));
+        $this->assertEquals(true, $rule->execute($request));
     }
 
     /*
@@ -53,8 +59,9 @@ class AllDigitalTest extends TestCase
         $param->parsedValue($request);
 
         $rule = new AllDigital();
-        $this->assertEquals(false, $rule->execute($param, $request));
-        $this->assertEquals("no must be all digital", $rule->errorMsg());
+        $request = new ValidateRequest($param);
+        $this->assertEquals(false, $rule->execute($request));
+        $this->assertEquals("no must be all digital", $rule->errorMsg($request));
 
         // 含有小数点
         $request = new Request();
@@ -66,8 +73,9 @@ class AllDigitalTest extends TestCase
         $param->parsedValue($request);
 
         $rule = new AllDigital();
-        $this->assertEquals(false, $rule->execute($param, $request));
-        $this->assertEquals("no must be all digital", $rule->errorMsg());
+        $request = new ValidateRequest($param);
+        $this->assertEquals(false, $rule->execute($request));
+        $this->assertEquals("no must be all digital", $rule->errorMsg($request));
     }
 
     /*
@@ -84,7 +92,8 @@ class AllDigitalTest extends TestCase
         $param->parsedValue($request);
 
         $rule = new AllDigital(errorMsg: '学号只能由数字构成');
-        $this->assertEquals(false, $rule->execute($param, $request));
-        $this->assertEquals("学号只能由数字构成", $rule->errorMsg());
+        $request = new ValidateRequest($param);
+        $this->assertEquals(false, $rule->execute($request));
+        $this->assertEquals("学号只能由数字构成", $rule->errorMsg($request));
     }
 }

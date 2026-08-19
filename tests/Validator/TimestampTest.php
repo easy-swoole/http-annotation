@@ -4,6 +4,7 @@ namespace EasySwoole\HttpAnnotation\Tests\Validator;
 
 use EasySwoole\Http\Request;
 use EasySwoole\HttpAnnotation\Attributes\Param;
+use EasySwoole\HttpAnnotation\Validator\Bean\ValidateRequest;
 use EasySwoole\HttpAnnotation\Validator\Timestamp;
 use PHPUnit\Framework\TestCase;
 
@@ -21,9 +22,9 @@ class TimestampTest extends TestCase
 
         $param = new Param(name:"date");
         $param->parsedValue($request);
-
+        $request = new ValidateRequest($param);
         $rule = new Timestamp();
-        $this->assertEquals(false, $rule->execute($param, $request));
+        $this->assertEquals(false, $rule->execute( $request));
 
 
         $request = new Request();
@@ -33,13 +34,11 @@ class TimestampTest extends TestCase
 
         $param = new Param(name:"date");
         $param->parsedValue($request);
-
+        $request = new ValidateRequest($param);
         $rule = new Timestamp(errorMsg: '测试提示');
-        $this->assertEquals(false, $rule->execute($param, $request));
+        $this->assertEquals(false, $rule->execute( $request));
 
-        $rule->currentCheckParam($param);
-
-        $this->assertEquals("测试提示",$rule->errorMsg());
+        $this->assertEquals("测试提示",$rule->errorMsg($request));
     }
 
     /*
@@ -54,9 +53,9 @@ class TimestampTest extends TestCase
 
         $param = new Param(name:"date");
         $param->parsedValue($request);
-
+        $request = new ValidateRequest($param);
         $rule = new Timestamp();
-        $this->assertEquals(true, $rule->execute($param, $request));
+        $this->assertEquals(true, $rule->execute( $request));
     }
 
     /*
@@ -71,10 +70,10 @@ class TimestampTest extends TestCase
 
         $param = new Param(name:"date");
         $param->parsedValue($request);
-
+        $request = new ValidateRequest($param);
         $rule = new Timestamp();
-        $this->assertEquals(false, $rule->execute($param, $request));
-        $this->assertEquals("date must be timestamp",$rule->errorMsg());
+        $this->assertEquals(false, $rule->execute( $request));
+        $this->assertEquals("date must be timestamp",$rule->errorMsg($request));
     }
 
     /*
@@ -89,9 +88,9 @@ class TimestampTest extends TestCase
 
         $param = new Param(name:"date");
         $param->parsedValue($request);
-
+        $request = new ValidateRequest($param);
         $rule = new Timestamp(errorMsg: '无效时间戳');
-        $this->assertEquals(false, $rule->execute($param, $request));
-        $this->assertEquals("无效时间戳",$rule->errorMsg());
+        $this->assertEquals(false, $rule->execute( $request));
+        $this->assertEquals("无效时间戳",$rule->errorMsg($request));
     }
 }

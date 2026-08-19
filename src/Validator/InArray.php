@@ -4,6 +4,7 @@ namespace EasySwoole\HttpAnnotation\Validator;
 
 use EasySwoole\HttpAnnotation\Attributes\Param;
 use EasySwoole\HttpAnnotation\Validator\AbstractInterface\AbstractValidator;
+use EasySwoole\HttpAnnotation\Validator\Bean\ValidateRequest;
 use Psr\Http\Message\ServerRequestInterface;
 
 class InArray extends AbstractValidator
@@ -20,12 +21,12 @@ class InArray extends AbstractValidator
         if(empty($errorMsg)){
             $errorMsg = "{#name} must in array of {#array}";
         }
-        $this->errorMsg($errorMsg);
+        $this->errorMsgTpl($errorMsg);
     }
 
-    protected function validate(Param $param, ServerRequestInterface $request): bool
+    protected function validate(ValidateRequest $validateRequest): bool
     {
-        return in_array($param->parsedValue(), $this->array, $this->strict);
+        return in_array($validateRequest->validateParam->parsedValue(), $this->array, $this->strict);
     }
 
     function ruleName(): string

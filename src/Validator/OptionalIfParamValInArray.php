@@ -4,6 +4,7 @@ namespace EasySwoole\HttpAnnotation\Validator;
 
 use EasySwoole\HttpAnnotation\Attributes\Param;
 use EasySwoole\HttpAnnotation\Validator\AbstractInterface\AbstractValidator;
+use EasySwoole\HttpAnnotation\Validator\Bean\ValidateRequest;
 use Psr\Http\Message\ServerRequestInterface;
 
 class OptionalIfParamValInArray extends AbstractValidator
@@ -18,9 +19,9 @@ class OptionalIfParamValInArray extends AbstractValidator
         if(empty($errorMsg)){
             $errorMsg = "{#name} is optional when param {$paramName} value is in ".json_encode($inVal);
         }
-        $this->errorMsg($errorMsg);
+        $this->errorMsgTpl($errorMsg);
     }
-    protected function validate(Param $param, ServerRequestInterface $request): bool
+    protected function validate(ValidateRequest $validateRequest): bool
     {
         return true;
     }

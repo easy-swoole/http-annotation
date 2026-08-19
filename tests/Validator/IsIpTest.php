@@ -4,6 +4,7 @@ namespace EasySwoole\HttpAnnotation\Tests\Validator;
 
 use EasySwoole\Http\Request;
 use EasySwoole\HttpAnnotation\Attributes\Param;
+use EasySwoole\HttpAnnotation\Validator\Bean\ValidateRequest;
 use EasySwoole\HttpAnnotation\Validator\IsIp;
 use PHPUnit\Framework\TestCase;
 
@@ -22,9 +23,9 @@ class IsIpTest extends TestCase
 
         $param = new Param(name:"ip");
         $param->parsedValue($request);
-
+        $request = new ValidateRequest($param);
         $rule = new IsIp();
-        $this->assertEquals(true, $rule->execute($param, $request));
+        $this->assertEquals(true, $rule->execute( $request));
 
         // 合法的IPv6
         $request = new Request();
@@ -34,9 +35,9 @@ class IsIpTest extends TestCase
 
         $param = new Param(name:"ip");
         $param->parsedValue($request);
-
+        $request = new ValidateRequest($param);
         $rule = new IsIp();
-        $this->assertEquals(true, $rule->execute($param, $request));
+        $this->assertEquals(true, $rule->execute( $request));
     }
 
     /*
@@ -52,10 +53,10 @@ class IsIpTest extends TestCase
 
         $param = new Param(name:"ip");
         $param->parsedValue($request);
-
+        $request = new ValidateRequest($param);
         $rule = new IsIp();
-        $this->assertEquals(false, $rule->execute($param, $request));
-        $this->assertEquals("ip must be a ip format",$rule->errorMsg());
+        $this->assertEquals(false, $rule->execute( $request));
+        $this->assertEquals("ip must be a ip format",$rule->errorMsg($request));
 
         // 范围不合法
         $request = new Request();
@@ -65,10 +66,10 @@ class IsIpTest extends TestCase
 
         $param = new Param(name:"ip");
         $param->parsedValue($request);
-
+        $request = new ValidateRequest($param);
         $rule = new IsIp();
-        $this->assertEquals(false, $rule->execute($param, $request));
-        $this->assertEquals("ip must be a ip format",$rule->errorMsg());
+        $this->assertEquals(false, $rule->execute( $request));
+        $this->assertEquals("ip must be a ip format",$rule->errorMsg($request));
     }
 
     /*
@@ -83,9 +84,9 @@ class IsIpTest extends TestCase
 
         $param = new Param(name:"ip");
         $param->parsedValue($request);
-
+        $request = new ValidateRequest($param);
         $rule = new IsIp(errorMsg: '请输入合法的IP地址');
-        $this->assertEquals(false, $rule->execute($param, $request));
-        $this->assertEquals("请输入合法的IP地址",$rule->errorMsg());
+        $this->assertEquals(false, $rule->execute( $request));
+        $this->assertEquals("请输入合法的IP地址",$rule->errorMsg($request));
     }
 }

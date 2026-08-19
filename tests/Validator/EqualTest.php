@@ -4,6 +4,7 @@ namespace EasySwoole\HttpAnnotation\Tests\Validator;
 
 use EasySwoole\Http\Request;
 use EasySwoole\HttpAnnotation\Attributes\Param;
+use EasySwoole\HttpAnnotation\Validator\Bean\ValidateRequest;
 use EasySwoole\HttpAnnotation\Validator\Equal;
 use PHPUnit\Framework\TestCase;
 
@@ -25,7 +26,9 @@ class EqualTest extends TestCase
 
         $rule = new Equal(compare: "easyswoole");
 
-        $this->assertEquals(true, $rule->execute($param, $request));
+        $request = new ValidateRequest($param);
+
+        $this->assertEquals(true, $rule->execute( $request));
 
         $request = new Request();
         $request->withQueryParams([
@@ -37,7 +40,9 @@ class EqualTest extends TestCase
 
         $rule = new Equal(compare: 89);
 
-        $this->assertEquals(true, $rule->execute($param, $request));
+        $request = new ValidateRequest($param);
+
+        $this->assertEquals(true, $rule->execute( $request));
 
     }
 
@@ -57,8 +62,10 @@ class EqualTest extends TestCase
 
         $rule = new Equal(compare: "easySwoole");
 
-        $this->assertEquals(false, $rule->execute($param, $request));
-        $this->assertEquals("str must equal with easySwoole",$rule->errorMsg());
+        $request = new ValidateRequest($param);
+
+        $this->assertEquals(false, $rule->execute( $request));
+        $this->assertEquals("str must equal with easySwoole",$rule->errorMsg($request));
 
         // 值相等,类型不一样
         $request = new Request();
@@ -70,9 +77,9 @@ class EqualTest extends TestCase
         $param->parsedValue($request);
 
         $rule = new Equal(compare: 89,strict: true);
-
-        $this->assertEquals(false, $rule->execute($param, $request));
-        $this->assertEquals("str must equal with 89",$rule->errorMsg());
+        $request = new ValidateRequest($param);
+        $this->assertEquals(false, $rule->execute( $request));
+        $this->assertEquals("str must equal with 89",$rule->errorMsg($request));
     }
 
     /*
@@ -89,8 +96,8 @@ class EqualTest extends TestCase
         $param->parsedValue($request);
 
         $rule = new Equal(compare: "easySwoole",errorMsg: '参数必须为easyswoole');
-
-        $this->assertEquals(false, $rule->execute($param, $request));
-        $this->assertEquals("参数必须为easyswoole",$rule->errorMsg());
+        $request = new ValidateRequest($param);
+        $this->assertEquals(false, $rule->execute( $request));
+        $this->assertEquals("参数必须为easyswoole",$rule->errorMsg($request));
     }
 }

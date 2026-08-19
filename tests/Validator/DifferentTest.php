@@ -4,6 +4,7 @@ namespace EasySwoole\HttpAnnotation\Tests\Validator;
 
 use EasySwoole\Http\Request;
 use EasySwoole\HttpAnnotation\Attributes\Param;
+use EasySwoole\HttpAnnotation\Validator\Bean\ValidateRequest;
 use EasySwoole\HttpAnnotation\Validator\Different;
 use PHPUnit\Framework\TestCase;
 
@@ -24,8 +25,8 @@ class DifferentTest extends TestCase
         $param->parsedValue($request);
 
         $rule = new Different(compare: "easySwoole");
-
-        $this->assertEquals(true, $rule->execute($param, $request));
+        $request = new ValidateRequest($param);
+        $this->assertEquals(true, $rule->execute( $request));
 
         // 值相等,但类型不一样
         $request = new Request();
@@ -37,8 +38,8 @@ class DifferentTest extends TestCase
         $param->parsedValue($request);
 
         $rule = new Different(compare: 12,strict: true);
-
-        $this->assertEquals(true, $rule->execute($param, $request));
+        $request = new ValidateRequest($param);
+        $this->assertEquals(true, $rule->execute( $request));
     }
 
     /*
@@ -56,9 +57,9 @@ class DifferentTest extends TestCase
         $param->parsedValue($request);
 
         $rule = new Different(compare: "easyswoole",strict: true);
-
-        $this->assertEquals(false, $rule->execute($param, $request));
-        $this->assertEquals("str must different with easyswoole",$rule->errorMsg());
+        $request = new ValidateRequest($param);
+        $this->assertEquals(false, $rule->execute( $request));
+        $this->assertEquals("str must different with easyswoole",$rule->errorMsg($request));
 
         // 值相等,但类型不一样
         $request = new Request();
@@ -70,9 +71,9 @@ class DifferentTest extends TestCase
         $param->parsedValue($request);
 
         $rule = new Different(compare: "12");
-
-        $this->assertEquals(false, $rule->execute($param, $request));
-        $this->assertEquals("str must different with 12",$rule->errorMsg());
+        $request = new ValidateRequest($param);
+        $this->assertEquals(false, $rule->execute( $request));
+        $this->assertEquals("str must different with 12",$rule->errorMsg($request));
     }
 
     /*
@@ -89,8 +90,8 @@ class DifferentTest extends TestCase
         $param->parsedValue($request);
 
         $rule = new Different(compare: "0",errorMsg: '参数必须不等于0');
-
-        $this->assertEquals(false, $rule->execute($param, $request));
-        $this->assertEquals("参数必须不等于0",$rule->errorMsg());
+        $request = new ValidateRequest($param);
+        $this->assertEquals(false, $rule->execute( $request));
+        $this->assertEquals("参数必须不等于0",$rule->errorMsg($request));
     }
 }

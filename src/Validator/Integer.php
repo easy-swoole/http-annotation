@@ -4,6 +4,7 @@ namespace EasySwoole\HttpAnnotation\Validator;
 
 use EasySwoole\HttpAnnotation\Attributes\Param;
 use EasySwoole\HttpAnnotation\Validator\AbstractInterface\AbstractValidator;
+use EasySwoole\HttpAnnotation\Validator\Bean\ValidateRequest;
 use Psr\Http\Message\ServerRequestInterface;
 
 class Integer extends AbstractValidator
@@ -13,13 +14,13 @@ class Integer extends AbstractValidator
         if(empty($errorMsg)){
             $errorMsg = "{#name} must be integer";
         }
-        $this->errorMsg($errorMsg);
+        $this->errorMsgTpl($errorMsg);
     }
 
 
-    protected function validate(Param $param, ServerRequestInterface $request): bool
+    protected function validate(ValidateRequest $validateRequest): bool
     {
-        return filter_var($param->parsedValue(), FILTER_VALIDATE_INT) !== false;
+        return filter_var($validateRequest->validateParam->parsedValue(), FILTER_VALIDATE_INT) !== false;
     }
 
     function ruleName(): string

@@ -4,6 +4,7 @@ namespace EasySwoole\HttpAnnotation\Validator;
 
 use EasySwoole\HttpAnnotation\Attributes\Param;
 use EasySwoole\HttpAnnotation\Validator\AbstractInterface\AbstractValidator;
+use EasySwoole\HttpAnnotation\Validator\Bean\ValidateRequest;
 use Psr\Http\Message\ServerRequestInterface;
 
 class IsIp extends AbstractValidator
@@ -13,12 +14,12 @@ class IsIp extends AbstractValidator
         if(empty($errorMsg)){
             $errorMsg = "{#name} must be a ip format";
         }
-        $this->errorMsg($errorMsg);
+        $this->errorMsgTpl($errorMsg);
     }
 
-    protected function validate(Param $param, ServerRequestInterface $request): bool
+    protected function validate(ValidateRequest $validateRequest): bool
     {
-        return filter_var($param->parsedValue(), FILTER_VALIDATE_IP) !== false;
+        return filter_var($validateRequest->validateParam->parsedValue(), FILTER_VALIDATE_IP) !== false;
     }
 
     function ruleName(): string

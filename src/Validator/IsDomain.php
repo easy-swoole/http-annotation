@@ -4,6 +4,7 @@ namespace EasySwoole\HttpAnnotation\Validator;
 
 use EasySwoole\HttpAnnotation\Attributes\Param;
 use EasySwoole\HttpAnnotation\Validator\AbstractInterface\AbstractValidator;
+use EasySwoole\HttpAnnotation\Validator\Bean\ValidateRequest;
 use Psr\Http\Message\ServerRequestInterface;
 
 class IsDomain extends AbstractValidator
@@ -232,7 +233,7 @@ class IsDomain extends AbstractValidator
         if (empty($errorMsg)) {
             $errorMsg = "{#name} must be a valid domain name format";
         }
-        $this->errorMsg($errorMsg);
+        $this->errorMsgTpl($errorMsg);
     }
 
     private function checkTLD($input): bool
@@ -265,29 +266,29 @@ class IsDomain extends AbstractValidator
         return true;
     }
 
-    protected function validate(Param $param, ServerRequestInterface $request): bool
+    protected function validate(ValidateRequest $validateRequest): bool
     {
-        if (!is_string($param->parsedValue())) {
+        if (!is_string($validateRequest->validateParam->parsedValue())) {
             return false;
         }
 
-        if (is_scalar($param->parsedValue()) === false) {
+        if (is_scalar($validateRequest->validateParam->parsedValue()) === false) {
             return false;
         }
 
-        if (preg_match('#\s#', $param->parsedValue())) {
+        if (preg_match('#\s#', $validateRequest->validateParam->parsedValue())) {
             return false;
         }
 
-        if (!str_contains($param->parsedValue(), '.')) {
+        if (!str_contains($validateRequest->validateParam->parsedValue(), '.')) {
             return false;
         }
 
-        if (strlen($param->parsedValue()) <= 3) {
+        if (strlen($validateRequest->validateParam->parsedValue()) <= 3) {
             return false;
         }
 
-        $parts = explode('.', $param->parsedValue());
+        $parts = explode('.', $validateRequest->validateParam->parsedValue());
         if (count($parts) >= 2) {
             if (!$this->checkTLD(array_pop($parts))) {
                 return false;

@@ -4,6 +4,7 @@ namespace EasySwoole\HttpAnnotation\Validator;
 
 use EasySwoole\HttpAnnotation\Attributes\Param;
 use EasySwoole\HttpAnnotation\Validator\AbstractInterface\AbstractValidator;
+use EasySwoole\HttpAnnotation\Validator\Bean\ValidateRequest;
 use Psr\Http\Message\ServerRequestInterface;
 
 
@@ -16,13 +17,13 @@ class MaxLength extends AbstractValidator
         if(empty($errorMsg)){
             $errorMsg = "{#name} max length is {#maxLen}";
         }
-        $this->errorMsg($errorMsg);
+        $this->errorMsgTpl($errorMsg);
         $this->maxLen = $maxLen;
     }
 
-    protected function validate(Param $param,ServerRequestInterface $request): bool
+    protected function validate(ValidateRequest $validateRequest): bool
     {
-        $itemData = $param->parsedValue();
+        $itemData = $validateRequest->validateParam->parsedValue();
         if (is_numeric($itemData) || is_string($itemData)) {
             return strlen($itemData) <= $this->maxLen;
         }

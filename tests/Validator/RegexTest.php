@@ -4,6 +4,7 @@ namespace EasySwoole\HttpAnnotation\Tests\Validator;
 
 use EasySwoole\Http\Request;
 use EasySwoole\HttpAnnotation\Attributes\Param;
+use EasySwoole\HttpAnnotation\Validator\Bean\ValidateRequest;
 use EasySwoole\HttpAnnotation\Validator\Regex;
 use PHPUnit\Framework\TestCase;
 
@@ -21,9 +22,9 @@ class RegexTest extends TestCase
 
         $param = new Param(name:"phone");
         $param->parsedValue($request);
-
+        $request = new ValidateRequest($param);
         $rule = new Regex(rule: '/^1\d{10}$/');
-        $this->assertEquals(true, $rule->execute($param, $request));
+        $this->assertEquals(true, $rule->execute( $request));
     }
 
     /*
@@ -38,11 +39,11 @@ class RegexTest extends TestCase
 
         $param = new Param(name:"phone");
         $param->parsedValue($request);
-
+        $request = new ValidateRequest($param);
         $regex = '/^1\d{10}$/';
         $rule = new Regex(rule: $regex);
-        $this->assertEquals(false, $rule->execute($param, $request));
-        $this->assertEquals("phone must meet specified rule: {$regex}",$rule->errorMsg());
+        $this->assertEquals(false, $rule->execute( $request));
+        $this->assertEquals("phone must meet specified rule: {$regex}",$rule->errorMsg($request));
     }
 
     /*
@@ -57,9 +58,9 @@ class RegexTest extends TestCase
 
         $param = new Param(name:"phone");
         $param->parsedValue($request);
-
+        $request = new ValidateRequest($param);
         $rule = new Regex(rule: '/^1\d{10}$/',errorMsg: '手机号码格式不对');
-        $this->assertEquals(false, $rule->execute($param, $request));
-        $this->assertEquals("手机号码格式不对",$rule->errorMsg());
+        $this->assertEquals(false, $rule->execute( $request));
+        $this->assertEquals("手机号码格式不对",$rule->errorMsg($request));
     }
 }

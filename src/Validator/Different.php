@@ -4,11 +4,12 @@ namespace EasySwoole\HttpAnnotation\Validator;
 
 use EasySwoole\HttpAnnotation\Attributes\Param;
 use EasySwoole\HttpAnnotation\Validator\AbstractInterface\AbstractValidator;
+use EasySwoole\HttpAnnotation\Validator\Bean\ValidateRequest;
 use Psr\Http\Message\ServerRequestInterface;
 
 class Different extends AbstractValidator
 {
-    public $compare;
+    public mixed $compare;
     private bool $strict;
 
     function __construct(string|float|int $compare,bool $strict = false,string|null $errorMsg = null)
@@ -18,12 +19,12 @@ class Different extends AbstractValidator
         if(empty($errorMsg)){
             $errorMsg = "{#name} must different with {#compare}";
         }
-        $this->errorMsg($errorMsg);
+        $this->errorMsgTpl($errorMsg);
     }
 
-    protected function validate(Param $param, ServerRequestInterface $request): bool
+    protected function validate(ValidateRequest $validateRequest): bool
     {
-        $itemData = $param->parsedValue();
+        $itemData = $validateRequest->validateParam->parsedValue();
         return !($this->strict ? $itemData === $this->compare : $itemData == $this->compare);
     }
 

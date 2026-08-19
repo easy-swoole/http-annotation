@@ -4,6 +4,7 @@ namespace EasySwoole\HttpAnnotation\Tests\Validator;
 
 use EasySwoole\Http\Request;
 use EasySwoole\HttpAnnotation\Attributes\Param;
+use EasySwoole\HttpAnnotation\Validator\Bean\ValidateRequest;
 use EasySwoole\HttpAnnotation\Validator\NotEmpty;
 use PHPUnit\Framework\TestCase;
 
@@ -24,8 +25,8 @@ class NotEmptyTest extends TestCase
         $param->parsedValue($request);
 
         $rule = new NotEmpty();
-
-        $this->assertEquals(true, $rule->execute($param, $request));
+        $request = new ValidateRequest($param);
+        $this->assertEquals(true, $rule->execute( $request));
 
         // 数值0
         $request = new Request();
@@ -37,8 +38,8 @@ class NotEmptyTest extends TestCase
         $param->parsedValue($request);
 
         $rule = new NotEmpty();
-
-        $this->assertEquals(true, $rule->execute($param, $request));
+        $request = new ValidateRequest($param);
+        $this->assertEquals(true, $rule->execute( $request));
 
         // 字符0
         $request = new Request();
@@ -50,8 +51,8 @@ class NotEmptyTest extends TestCase
         $param->parsedValue($request);
 
         $rule = new NotEmpty();
-
-        $this->assertEquals(true, $rule->execute($param, $request));
+        $request = new ValidateRequest($param);
+        $this->assertEquals(true, $rule->execute( $request));
 
     }
 
@@ -70,9 +71,9 @@ class NotEmptyTest extends TestCase
         $param->parsedValue($request);
 
         $rule = new NotEmpty();
-
-        $this->assertEquals(false, $rule->execute($param, $request));
-        $this->assertEquals("str is notEmpty",$rule->errorMsg());
+        $request = new ValidateRequest($param);
+        $this->assertEquals(false, $rule->execute( $request));
+        $this->assertEquals("str is notEmpty",$rule->errorMsg($request));
 
         // null
         $request = new Request();
@@ -84,9 +85,9 @@ class NotEmptyTest extends TestCase
         $param->parsedValue($request);
 
         $rule = new NotEmpty();
-
-        $this->assertEquals(false, $rule->execute($param, $request));
-        $this->assertEquals("str is notEmpty",$rule->errorMsg());
+        $request = new ValidateRequest($param);
+        $this->assertEquals(false, $rule->execute( $request));
+        $this->assertEquals("str is notEmpty",$rule->errorMsg($request));
     }
 
     /*
@@ -103,8 +104,8 @@ class NotEmptyTest extends TestCase
         $param->parsedValue($request);
 
         $rule = new NotEmpty(errorMsg: '名字必填');
-
-        $this->assertEquals(false, $rule->execute($param, $request));
-        $this->assertEquals("名字必填",$rule->errorMsg());
+        $request = new ValidateRequest($param);
+        $this->assertEquals(false, $rule->execute( $request));
+        $this->assertEquals("名字必填",$rule->errorMsg($request));
     }
 }

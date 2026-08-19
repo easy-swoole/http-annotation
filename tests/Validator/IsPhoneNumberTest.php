@@ -4,6 +4,7 @@ namespace EasySwoole\HttpAnnotation\Tests\Validator;
 
 use EasySwoole\Http\Request;
 use EasySwoole\HttpAnnotation\Attributes\Param;
+use EasySwoole\HttpAnnotation\Validator\Bean\ValidateRequest;
 use EasySwoole\HttpAnnotation\Validator\IsPhoneNumber;
 use EasySwoole\HttpAnnotation\Validator\Length;
 use PHPUnit\Framework\TestCase;
@@ -19,9 +20,9 @@ class IsPhoneNumberTest extends TestCase
 
         $param = new Param(name:"phone");
         $param->parsedValue($request);
-
+        $request = new ValidateRequest($param);
         $rule = new IsPhoneNumber();
-        $this->assertEquals(false, $rule->execute($param, $request));
+        $this->assertEquals(false, $rule->execute( $request));
 
 
         $request = new Request();
@@ -31,8 +32,8 @@ class IsPhoneNumberTest extends TestCase
 
         $param = new Param(name:"phone");
         $param->parsedValue($request);
-
+        $request = new ValidateRequest($param);
         $rule = new IsPhoneNumber();
-        $this->assertEquals(true, $rule->execute($param, $request));
+        $this->assertEquals(true, $rule->execute( $request));
     }
 }

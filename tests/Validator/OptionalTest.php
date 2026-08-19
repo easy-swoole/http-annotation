@@ -5,6 +5,7 @@ namespace EasySwoole\HttpAnnotation\Tests\Validator;
 use EasySwoole\Http\Request;
 use EasySwoole\HttpAnnotation\Attributes\Param;
 use EasySwoole\HttpAnnotation\Validator\AbstractInterface\AbstractValidator;
+use EasySwoole\HttpAnnotation\Validator\Bean\ValidateRequest;
 use EasySwoole\HttpAnnotation\Validator\Integer;
 use EasySwoole\HttpAnnotation\Validator\Optional;
 use EasySwoole\HttpAnnotation\Validator\OptionalIfParamSet;
@@ -29,8 +30,8 @@ class OptionalTest extends TestCase
         );
         $num->parsedValue($request);
 
-
-        $allDefineParams = [
+        $request = new ValidateRequest($num);
+        $request->allDefineParams = [
             'num'=>$num,
         ];
 
@@ -38,8 +39,7 @@ class OptionalTest extends TestCase
         $rules = $num->validate;
         /** @var AbstractValidator $rule */
         foreach ($rules as $rule){
-            $rule->allRequestParams($allDefineParams);
-            $ret = $rule->execute($num,$request);
+            $ret = $rule->execute($request);
             if(!$ret){
                 break;
             }
@@ -65,17 +65,15 @@ class OptionalTest extends TestCase
         );
         $num->parsedValue($request);
 
-
-        $allDefineParams = [
+        $request = new ValidateRequest($num);
+        $request->allDefineParams = [
             'num'=>$num,
         ];
-
         $ret = true;
         $rules = $num->validate;
         /** @var AbstractValidator $rule */
         foreach ($rules as $rule){
-            $rule->allRequestParams($allDefineParams);
-            $ret = $rule->execute($num,$request);
+            $ret = $rule->execute($request);
             if(!$ret){
                 break;
             }
@@ -102,7 +100,8 @@ class OptionalTest extends TestCase
         $num->parsedValue($request);
 
 
-        $allDefineParams = [
+        $request = new ValidateRequest($num);
+        $request->allDefineParams = [
             'num'=>$num,
         ];
 
@@ -110,8 +109,7 @@ class OptionalTest extends TestCase
         $rules = $num->validate;
         /** @var AbstractValidator $rule */
         foreach ($rules as $rule){
-            $rule->allRequestParams($allDefineParams);
-            $ret = $rule->execute($num,$request);
+            $ret = $rule->execute($request);
             if(!$ret){
                 break;
             }
@@ -139,7 +137,8 @@ class OptionalTest extends TestCase
         $num->parsedValue($request);
 
 
-        $allDefineParams = [
+        $request = new ValidateRequest($num);
+        $request->allDefineParams = [
             'num'=>$num,
         ];
 
@@ -147,8 +146,7 @@ class OptionalTest extends TestCase
         $rules = $num->validate;
         /** @var AbstractValidator $rule */
         foreach ($rules as $rule){
-            $rule->allRequestParams($allDefineParams);
-            $ret = $rule->execute($num,$request);
+            $ret = $rule->execute($request);
             if(!$ret){
                 break;
             }

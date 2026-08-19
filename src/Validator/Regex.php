@@ -4,6 +4,7 @@ namespace EasySwoole\HttpAnnotation\Validator;
 
 use EasySwoole\HttpAnnotation\Attributes\Param;
 use EasySwoole\HttpAnnotation\Validator\AbstractInterface\AbstractValidator;
+use EasySwoole\HttpAnnotation\Validator\Bean\ValidateRequest;
 use Psr\Http\Message\ServerRequestInterface;
 
 
@@ -17,13 +18,13 @@ class Regex extends AbstractValidator
         if(empty($errorMsg)){
             $errorMsg = "{#name} must meet specified rule: {$rule}";
         }
-        $this->errorMsg($errorMsg);
+        $this->errorMsgTpl($errorMsg);
         $this->rule = $rule;
     }
 
-    protected function validate(Param $param,ServerRequestInterface $request): bool
+    protected function validate(ValidateRequest $validateRequest): bool
     {
-        $itemData = $param->parsedValue();
+        $itemData = $validateRequest->validateParam->parsedValue();
         if (!is_numeric($itemData) && !is_string($itemData)) {
             return false;
         }

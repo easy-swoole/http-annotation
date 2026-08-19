@@ -4,6 +4,7 @@ namespace EasySwoole\HttpAnnotation\Tests\Validator;
 
 use EasySwoole\Http\Request;
 use EasySwoole\HttpAnnotation\Attributes\Param;
+use EasySwoole\HttpAnnotation\Validator\Bean\ValidateRequest;
 use EasySwoole\HttpAnnotation\Validator\IsBool;
 use PHPUnit\Framework\TestCase;
 
@@ -23,9 +24,9 @@ class IsBoolTest extends TestCase
 
         $param = new Param(name:"bool");
         $param->parsedValue($request);
-
+        $request = new ValidateRequest($param);
         $rule = new IsBool();
-        $this->assertEquals(true, $rule->execute($param, $request));
+        $this->assertEquals(true, $rule->execute( $request));
 
         // 值为 1 等同于 true
         $request = new Request();
@@ -35,9 +36,9 @@ class IsBoolTest extends TestCase
 
         $param = new Param(name:"bool");
         $param->parsedValue($request);
-
+        $request = new ValidateRequest($param);
         $rule = new IsBool();
-        $this->assertEquals(true, $rule->execute($param, $request));
+        $this->assertEquals(true, $rule->execute( $request));
 
         // 值为 1 等同于 true
         $request = new Request();
@@ -47,9 +48,9 @@ class IsBoolTest extends TestCase
 
         $param = new Param(name:"bool");
         $param->parsedValue($request);
-
+        $request = new ValidateRequest($param);
         $rule = new IsBool();
-        $this->assertEquals(true, $rule->execute($param, $request));
+        $this->assertEquals(true, $rule->execute( $request));
 
         // 值为false
         $request = new Request();
@@ -59,9 +60,9 @@ class IsBoolTest extends TestCase
 
         $param = new Param(name:"bool");
         $param->parsedValue($request);
-
+        $request = new ValidateRequest($param);
         $rule = new IsBool();
-        $this->assertEquals(true, $rule->execute($param, $request));
+        $this->assertEquals(true, $rule->execute( $request));
 
         // 值为 0 等同于 false
         $request = new Request();
@@ -71,9 +72,9 @@ class IsBoolTest extends TestCase
 
         $param = new Param(name:"bool");
         $param->parsedValue($request);
-
+        $request = new ValidateRequest($param);
         $rule = new IsBool();
-        $this->assertEquals(true, $rule->execute($param, $request));
+        $this->assertEquals(true, $rule->execute( $request));
     }
 
     /*
@@ -89,10 +90,10 @@ class IsBoolTest extends TestCase
 
         $param = new Param(name:"bool");
         $param->parsedValue($request);
-
+        $request = new ValidateRequest($param);
         $rule = new IsBool();
-        $this->assertEquals(false, $rule->execute($param, $request));
-        $this->assertEquals("bool must be bool",$rule->errorMsg());
+        $this->assertEquals(false, $rule->execute( $request));
+        $this->assertEquals("bool must be bool",$rule->errorMsg($request));
     }
 
     /*
@@ -107,9 +108,9 @@ class IsBoolTest extends TestCase
 
         $param = new Param(name:"bool");
         $param->parsedValue($request);
-
+        $request = new ValidateRequest($param);
         $rule = new IsBool('状态只能是开启或关闭');
-        $this->assertEquals(false, $rule->execute($param, $request));
-        $this->assertEquals("状态只能是开启或关闭",$rule->errorMsg());
+        $this->assertEquals(false, $rule->execute( $request));
+        $this->assertEquals("状态只能是开启或关闭",$rule->errorMsg($request));
     }
 }

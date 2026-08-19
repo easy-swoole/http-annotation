@@ -4,26 +4,27 @@ namespace EasySwoole\HttpAnnotation\Validator;
 
 use EasySwoole\HttpAnnotation\Attributes\Param;
 use EasySwoole\HttpAnnotation\Validator\AbstractInterface\AbstractValidator;
+use EasySwoole\HttpAnnotation\Validator\Bean\ValidateRequest;
 use Psr\Http\Message\ServerRequestInterface;
 
 class Between extends AbstractValidator
 {
-    protected $min;
-    protected $max;
+    protected float|int $min;
+    protected float|int $max;
 
-    function __construct(float|int|string $min,float|int|string $max,string|null $errorMsg = null)
+    function __construct(float|int $min,float|int $max,string|null $errorMsg = null)
     {
         $this->min = $min;
         $this->max = $max;
         if(empty($errorMsg)){
             $errorMsg = "{#name} must between {#min} to {#max}";
         }
-        $this->errorMsg($errorMsg);
+        $this->errorMsgTpl($errorMsg);
     }
 
-    protected function validate(Param $param, ServerRequestInterface $request): bool
+    protected function validate(ValidateRequest $validateRequest): bool
     {
-        $data = $param->parsedValue();
+        $data = $validateRequest->validateParam->parsedValue();
         if (!is_numeric($data) && !is_string($data)) {
             return false;
         }

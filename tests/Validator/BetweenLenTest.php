@@ -4,6 +4,7 @@ namespace EasySwoole\HttpAnnotation\Tests\Validator;
 
 use EasySwoole\Http\Request;
 use EasySwoole\HttpAnnotation\Attributes\Param;
+use EasySwoole\HttpAnnotation\Validator\Bean\ValidateRequest;
 use EasySwoole\HttpAnnotation\Validator\BetweenLen;
 use EasySwoole\Validate\tests\UploadFile;
 use PHPUnit\Framework\TestCase;
@@ -25,7 +26,8 @@ class BetweenLenTest extends TestCase
         $param->parsedValue($request);
 
         $rule = new BetweenLen(minLen: 5, maxLen: 10);
-        $this->assertEquals(true, $rule->execute($param, $request));
+        $request = new ValidateRequest($param);
+        $this->assertEquals(true, $rule->execute( $request));
 
         // 数字 英文 符号
         $request = new Request();
@@ -37,7 +39,8 @@ class BetweenLenTest extends TestCase
         $param->parsedValue($request);
 
         $rule = new BetweenLen(minLen: 5, maxLen: 10);
-        $this->assertEquals(true, $rule->execute($param, $request));
+        $request = new ValidateRequest($param);
+        $this->assertEquals(true, $rule->execute( $request));
 
     }
 
@@ -55,8 +58,9 @@ class BetweenLenTest extends TestCase
         $param->parsedValue($request);
 
         $rule = new BetweenLen(minLen: 2, maxLen: 5);
-        $this->assertEquals(false, $rule->execute($param, $request));
-        $this->assertEquals("name length must between 2 to 5", $rule->errorMsg());
+        $request = new ValidateRequest($param);
+        $this->assertEquals(false, $rule->execute( $request));
+        $this->assertEquals("name length must between 2 to 5", $rule->errorMsg($request));
 
         // 一个汉字 3
         $request = new Request();
@@ -68,8 +72,9 @@ class BetweenLenTest extends TestCase
         $param->parsedValue($request);
 
         $rule = new BetweenLen(minLen: 5, maxLen: 10);
-        $this->assertEquals(false, $rule->execute($param, $request));
-        $this->assertEquals("str length must between 5 to 10", $rule->errorMsg());
+        $request = new ValidateRequest($param);
+        $this->assertEquals(false, $rule->execute( $request));
+        $this->assertEquals("str length must between 5 to 10", $rule->errorMsg($request));
 
         // testFuncCall
         $request = new Request();
@@ -95,11 +100,11 @@ class BetweenLenTest extends TestCase
             name:"str"
         );
         $param->parsedValue($request);
-
+        $request = new ValidateRequest($param);
         $rule = new BetweenLen(minLen: 5, maxLen: 10,errorMsg: "testCustomErrorMsgCase");
-        $rule->execute($param, $request);
+        $rule->execute( $request);
 
-        $this->assertEquals("testCustomErrorMsgCase", $rule->errorMsg());
+        $this->assertEquals("testCustomErrorMsgCase", $rule->errorMsg($request));
 
 
     }

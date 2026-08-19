@@ -4,6 +4,7 @@ namespace EasySwoole\HttpAnnotation\Tests\Validator;
 
 use EasySwoole\Http\Request;
 use EasySwoole\HttpAnnotation\Attributes\Param;
+use EasySwoole\HttpAnnotation\Validator\Bean\ValidateRequest;
 use EasySwoole\HttpAnnotation\Validator\EqualWithColumn;
 use PHPUnit\Framework\TestCase;
 
@@ -26,12 +27,14 @@ class EqualWithColumnTest extends TestCase
 
         $rule = new EqualWithColumn(compare: "account");
 
-        $rule->allRequestParams([
+        $request = new ValidateRequest($param);
+        $request->allDefineParams = [
             "str" => $param,
             "account" => $account
-        ]);
+        ];
 
-        $this->assertEquals(true, $rule->execute($param, $request));
+
+        $this->assertEquals(true, $rule->execute( $request));
 
 
         $request = new Request();
@@ -48,12 +51,14 @@ class EqualWithColumnTest extends TestCase
 
         $rule = new EqualWithColumn(compare: "account");
 
-        $rule->allRequestParams([
+        $request = new ValidateRequest($param);
+        $request->allDefineParams = [
             "str" => $param,
             "account" => $account
-        ]);
+        ];
 
-        $this->assertEquals(true, $rule->execute($param, $request));
+
+        $this->assertEquals(true, $rule->execute( $request));
 
         $request = new Request();
         $request->withQueryParams([
@@ -69,12 +74,14 @@ class EqualWithColumnTest extends TestCase
         // 严格模式 "0" != 0
         $rule = new EqualWithColumn(compare: "account", strict: true);
 
-        $rule->allRequestParams([
+        $request = new ValidateRequest($param);
+        $request->allDefineParams = [
             "str" => $param,
             "account" => $account
-        ]);
+        ];
 
-        $this->assertEquals(false, $rule->execute($param, $request));
+
+        $this->assertEquals(false, $rule->execute( $request));
 
 
         // errorMsg
@@ -91,15 +98,15 @@ class EqualWithColumnTest extends TestCase
         $account->parsedValue($request);
 
         $rule = new EqualWithColumn(compare: "account", strict: true, errorMsg: '测试提示');
-        $rule->allRequestParams([
+        $request = new ValidateRequest($param);
+        $request->allDefineParams = [
             "str" => $param,
             "account" => $account
-        ]);
-        $this->assertEquals(false,$rule->execute($param,$request));
+        ];
 
-        $rule->currentCheckParam($param);
+        $this->assertEquals(false,$rule->execute($request));
 
-        $this->assertEquals("测试提示",$rule->errorMsg());
+        $this->assertEquals("测试提示",$rule->errorMsg($request));
 
     }
 
@@ -123,12 +130,14 @@ class EqualWithColumnTest extends TestCase
 
         $rule = new EqualWithColumn(compare: "account");
 
-        $rule->allRequestParams([
+        $request = new ValidateRequest($param);
+        $request->allDefineParams = [
             "str" => $param,
             "account" => $account
-        ]);
+        ];
 
-        $this->assertEquals(true, $rule->execute($param, $request));
+
+        $this->assertEquals(true, $rule->execute( $request));
 
         // 值相等，但类型不一样
         $request = new Request();
@@ -145,12 +154,14 @@ class EqualWithColumnTest extends TestCase
 
         $rule = new EqualWithColumn(compare: "account");
 
-        $rule->allRequestParams([
+        $request = new ValidateRequest($param);
+        $request->allDefineParams = [
             "str" => $param,
             "account" => $account
-        ]);
+        ];
 
-        $this->assertEquals(true, $rule->execute($param, $request));
+
+        $this->assertEquals(true, $rule->execute( $request));
 
 
     }
@@ -175,13 +186,15 @@ class EqualWithColumnTest extends TestCase
 
         $rule = new EqualWithColumn(compare: "account",strict: true);
 
-        $rule->allRequestParams([
+        $request = new ValidateRequest($param);
+        $request->allDefineParams = [
             "str" => $param,
             "account" => $account
-        ]);
+        ];
 
-        $this->assertEquals(false, $rule->execute($param, $request));
-        $this->assertEquals("str must equal with account column",$rule->errorMsg());
+
+        $this->assertEquals(false, $rule->execute( $request));
+        $this->assertEquals("str must equal with account column",$rule->errorMsg($request));
 
         // 值不相等
         $request = new Request();
@@ -198,13 +211,15 @@ class EqualWithColumnTest extends TestCase
 
         $rule = new EqualWithColumn(compare: "account");
 
-        $rule->allRequestParams([
+        $request = new ValidateRequest($param);
+        $request->allDefineParams = [
             "str" => $param,
             "account" => $account
-        ]);
+        ];
 
-        $this->assertEquals(false, $rule->execute($param, $request));
-        $this->assertEquals("str must equal with account column",$rule->errorMsg());
+
+        $this->assertEquals(false, $rule->execute( $request));
+        $this->assertEquals("str must equal with account column",$rule->errorMsg($request));
 
         $request = new Request();
         $request->withQueryParams([
@@ -220,13 +235,15 @@ class EqualWithColumnTest extends TestCase
 
         $rule = new EqualWithColumn(compare: "account");
 
-        $rule->allRequestParams([
+        $request = new ValidateRequest($param);
+        $request->allDefineParams = [
             "str" => $param,
             "account" => $account
-        ]);
+        ];
 
-        $this->assertEquals(false, $rule->execute($param, $request));
-        $this->assertEquals("str must equal with account column",$rule->errorMsg());
+
+        $this->assertEquals(false, $rule->execute( $request));
+        $this->assertEquals("str must equal with account column",$rule->errorMsg($request));
     }
 
     /*
@@ -248,12 +265,13 @@ class EqualWithColumnTest extends TestCase
 
         $rule = new EqualWithColumn(compare: "account",errorMsg: '两个参数必须一样');
 
-        $rule->allRequestParams([
+        $request = new ValidateRequest($param);
+        $request->allDefineParams = [
             "str" => $param,
             "account" => $account
-        ]);
+        ];
 
-        $this->assertEquals(false, $rule->execute($param, $request));
-        $this->assertEquals("两个参数必须一样",$rule->errorMsg());
+        $this->assertEquals(false, $rule->execute( $request));
+        $this->assertEquals("两个参数必须一样",$rule->errorMsg($request));
     }
 }

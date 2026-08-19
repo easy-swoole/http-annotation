@@ -4,6 +4,7 @@ namespace EasySwoole\HttpAnnotation\Validator;
 
 use EasySwoole\HttpAnnotation\Attributes\Param;
 use EasySwoole\HttpAnnotation\Validator\AbstractInterface\AbstractValidator;
+use EasySwoole\HttpAnnotation\Validator\Bean\ValidateRequest;
 use Psr\Http\Message\ServerRequestInterface;
 
 class IsPhoneNumber extends AbstractValidator
@@ -14,11 +15,11 @@ class IsPhoneNumber extends AbstractValidator
         if(empty($errorMsg)){
             $errorMsg = "{#name} must be phone number";
         }
-        $this->errorMsg($errorMsg);
+        $this->errorMsgTpl($errorMsg);
     }
-    protected function validate(Param $param, ServerRequestInterface $request): bool
+    protected function validate(ValidateRequest $validateRequest): bool
     {
-        return (bool)preg_match( '/^1[3456789]\d{9}$/', (string)$param->parsedValue());
+        return (bool)preg_match( '/^1[3456789]\d{9}$/', (string)$validateRequest->validateParam->parsedValue());
     }
 
     function ruleName(): string

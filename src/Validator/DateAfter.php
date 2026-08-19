@@ -5,6 +5,7 @@ namespace EasySwoole\HttpAnnotation\Validator;
 use EasySwoole\HttpAnnotation\Attributes\Param;
 use EasySwoole\HttpAnnotation\Exception\Annotation;
 use EasySwoole\HttpAnnotation\Validator\AbstractInterface\AbstractValidator;
+use EasySwoole\HttpAnnotation\Validator\Bean\ValidateRequest;
 use Psr\Http\Message\ServerRequestInterface;
 
 class DateAfter extends AbstractValidator
@@ -17,12 +18,12 @@ class DateAfter extends AbstractValidator
         if(empty($errorMsg)){
             $errorMsg = "{#name} must be date after {#date}";
         }
-        $this->errorMsg($errorMsg);
+        $this->errorMsgTpl($errorMsg);
     }
 
-    protected function validate(Param $param, ServerRequestInterface $request): bool
+    protected function validate(ValidateRequest $validateRequest): bool
     {
-        $itemData = $param->parsedValue();
+        $itemData = $validateRequest->validateParam->parsedValue();
         if (!is_string($itemData)) {
             return false;
         }

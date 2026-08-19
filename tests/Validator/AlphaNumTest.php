@@ -5,6 +5,7 @@ namespace EasySwoole\HttpAnnotation\Tests\Validator;
 use EasySwoole\Http\Request;
 use EasySwoole\HttpAnnotation\Attributes\Param;
 use EasySwoole\HttpAnnotation\Validator\AlphaNum;
+use EasySwoole\HttpAnnotation\Validator\Bean\ValidateRequest;
 use PHPUnit\Framework\TestCase;
 
 class AlphaNumTest extends TestCase
@@ -24,7 +25,8 @@ class AlphaNumTest extends TestCase
         $param->parsedValue($request);
 
         $rule = new AlphaNum();
-        $this->assertEquals(true, $rule->execute($param, $request));
+        $request = new ValidateRequest($param);
+        $this->assertEquals(true, $rule->execute($request));
     }
 
     /*
@@ -41,8 +43,9 @@ class AlphaNumTest extends TestCase
         $param->parsedValue($request);
 
         $rule = new AlphaNum();
-        $this->assertEquals(false, $rule->execute($param, $request));
-        $this->assertEquals("no must be all AlphaNum", $rule->errorMsg());
+        $request = new ValidateRequest($param);
+        $this->assertEquals(false, $rule->execute( $request));
+        $this->assertEquals("no must be all AlphaNum", $rule->errorMsg($request));
     }
 
     /*
@@ -59,7 +62,8 @@ class AlphaNumTest extends TestCase
         $param->parsedValue($request);
 
         $rule = new AlphaNum(errorMsg: '只能由字母和数字构成');
-        $this->assertEquals(false, $rule->execute($param, $request));
-        $this->assertEquals("只能由字母和数字构成", $rule->errorMsg());
+        $request = new ValidateRequest($param);
+        $this->assertEquals(false, $rule->execute( $request));
+        $this->assertEquals("只能由字母和数字构成", $rule->errorMsg($request));
     }
 }

@@ -4,6 +4,7 @@ namespace EasySwoole\HttpAnnotation\Tests\Validator;
 
 use EasySwoole\Http\Request;
 use EasySwoole\HttpAnnotation\Attributes\Param;
+use EasySwoole\HttpAnnotation\Validator\Bean\ValidateRequest;
 use EasySwoole\HttpAnnotation\Validator\Decimal;
 use PHPUnit\Framework\TestCase;
 
@@ -22,9 +23,9 @@ class DecimalTest extends TestCase
 
         $param = new Param(name:"num");
         $param->parsedValue($request);
-
+        $request = new ValidateRequest($param);
         $rule = new Decimal(accuracy: null);
-        $this->assertEquals(true, $rule->execute($param, $request));
+        $this->assertEquals(true, $rule->execute( $request));
 
         // 0
         $request = new Request();
@@ -34,9 +35,9 @@ class DecimalTest extends TestCase
 
         $param = new Param(name:"num");
         $param->parsedValue($request);
-
+        $request = new ValidateRequest($param);
         $rule = new Decimal(accuracy: 0);
-        $this->assertEquals(true, $rule->execute($param, $request));
+        $this->assertEquals(true, $rule->execute( $request));
 
         $request = new Request();
         $request->withQueryParams([
@@ -45,9 +46,9 @@ class DecimalTest extends TestCase
 
         $param = new Param(name:"num");
         $param->parsedValue($request);
-
+        $request = new ValidateRequest($param);
         $rule = new Decimal(accuracy: 5);
-        $this->assertEquals(true, $rule->execute($param, $request));
+        $this->assertEquals(true, $rule->execute( $request));
     }
 
     /*
@@ -62,10 +63,10 @@ class DecimalTest extends TestCase
 
         $param = new Param(name:"num");
         $param->parsedValue($request);
-
+        $request = new ValidateRequest($param);
         $rule = new Decimal(accuracy: 2);
-        $this->assertEquals(false, $rule->execute($param, $request));
-        $this->assertEquals("num must be decimal with 2 accuracy", $rule->errorMsg());
+        $this->assertEquals(false, $rule->execute( $request));
+        $this->assertEquals("num must be decimal with 2 accuracy", $rule->errorMsg($request));
     }
 
     /*
@@ -80,9 +81,9 @@ class DecimalTest extends TestCase
 
         $param = new Param(name:"num");
         $param->parsedValue($request);
-
+        $request = new ValidateRequest($param);
         $rule = new Decimal(accuracy: 2, errorMsg: 'num只能是小数');
-        $this->assertEquals(false, $rule->execute($param, $request));
-        $this->assertEquals("num只能是小数", $rule->errorMsg());
+        $this->assertEquals(false, $rule->execute( $request));
+        $this->assertEquals("num只能是小数", $rule->errorMsg($request));
     }
 }

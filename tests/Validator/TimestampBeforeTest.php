@@ -4,6 +4,7 @@ namespace EasySwoole\HttpAnnotation\Tests\Validator;
 
 use EasySwoole\Http\Request;
 use EasySwoole\HttpAnnotation\Attributes\Param;
+use EasySwoole\HttpAnnotation\Validator\Bean\ValidateRequest;
 use EasySwoole\HttpAnnotation\Validator\TimestampBefore;
 use PHPUnit\Framework\TestCase;
 
@@ -21,9 +22,9 @@ class TimestampBeforeTest extends TestCase
 
         $param = new Param(name:"date");
         $param->parsedValue($request);
-
+        $request = new ValidateRequest($param);
         $rule = new TimestampBefore(compare: time());
-        $this->assertEquals(true, $rule->execute($param, $request));
+        $this->assertEquals(true, $rule->execute( $request));
 
         // func
         $request = new Request();
@@ -48,9 +49,9 @@ class TimestampBeforeTest extends TestCase
 
         $param = new Param(name:"date");
         $param->parsedValue($request);
-
+        $request = new ValidateRequest($param);
         $rule = new TimestampBefore(time());
-        $this->assertEquals(false, $rule->execute($param, $request));
+        $this->assertEquals(false, $rule->execute( $request));
 
         // func
         $request = new Request();
@@ -75,9 +76,9 @@ class TimestampBeforeTest extends TestCase
 
         $param = new Param(name:"date");
         $param->parsedValue($request);
-
+        $request = new ValidateRequest($param);
         $rule = new TimestampBefore(compare: time(), errorMsg: '无效时间戳');
-        $this->assertEquals(false, $rule->execute($param, $request));
-        $this->assertEquals("无效时间戳", $rule->errorMsg());
+        $this->assertEquals(false, $rule->execute( $request));
+        $this->assertEquals("无效时间戳", $rule->errorMsg($request));
     }
 }

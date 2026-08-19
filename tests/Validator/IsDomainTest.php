@@ -4,6 +4,7 @@ namespace EasySwoole\HttpAnnotation\Tests\Validator;
 
 use EasySwoole\Http\Request;
 use EasySwoole\HttpAnnotation\Attributes\Param;
+use EasySwoole\HttpAnnotation\Validator\Bean\ValidateRequest;
 use EasySwoole\HttpAnnotation\Validator\IsDomain;
 use PHPUnit\Framework\TestCase;
 
@@ -35,7 +36,8 @@ class IsDomainTest extends TestCase
             $param->parsedValue($request);
 
             $rule = new IsDomain();
-            $this->assertEquals(true, $rule->execute($param, $request));
+            $request = new ValidateRequest($param);
+            $this->assertEquals(true, $rule->execute( $request));
         }
     }
 
@@ -68,10 +70,10 @@ class IsDomainTest extends TestCase
 
             $param = new Param(name: "domain");
             $param->parsedValue($request);
-
+            $request = new ValidateRequest($param);
             $rule = new IsDomain();
-            $this->assertEquals(false, $rule->execute($param, $request));
-            $this->assertEquals("domain must be a valid domain name format", $rule->errorMsg());
+            $this->assertEquals(false, $rule->execute( $request));
+            $this->assertEquals("domain must be a valid domain name format", $rule->errorMsg($request));
         }
     }
 
@@ -87,9 +89,9 @@ class IsDomainTest extends TestCase
 
         $param = new Param(name: "domain");
         $param->parsedValue($request);
-
+        $request = new ValidateRequest($param);
         $rule = new IsDomain(errorMsg: '请输入合法的域名');
-        $this->assertEquals(false, $rule->execute($param, $request));
-        $this->assertEquals("请输入合法的域名", $rule->errorMsg());
+        $this->assertEquals(false, $rule->execute( $request));
+        $this->assertEquals("请输入合法的域名", $rule->errorMsg($request));
     }
 }

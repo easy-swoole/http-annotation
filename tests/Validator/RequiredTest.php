@@ -4,6 +4,7 @@ namespace EasySwoole\HttpAnnotation\Tests\Validator;
 
 use EasySwoole\Http\Request;
 use EasySwoole\HttpAnnotation\Attributes\Param;
+use EasySwoole\HttpAnnotation\Validator\Bean\ValidateRequest;
 use EasySwoole\HttpAnnotation\Validator\Required;
 use PHPUnit\Framework\TestCase;
 
@@ -23,8 +24,8 @@ class RequiredTest extends TestCase
         $param->parsedValue($request);
 
         $rule = new Required();
-
-        $this->assertEquals(true, $rule->execute($param, $request));
+        $request = new ValidateRequest($param);
+        $this->assertEquals(true, $rule->execute( $request));
     }
 
     /*
@@ -41,9 +42,9 @@ class RequiredTest extends TestCase
         $param->parsedValue($request);
 
         $rule = new Required();
-
-        $this->assertEquals(false, $rule->execute($param, $request));
-        $this->assertEquals("str is required",$rule->errorMsg());
+        $request = new ValidateRequest($param);
+        $this->assertEquals(false, $rule->execute( $request));
+        $this->assertEquals("str is required",$rule->errorMsg($request));
     }
 
     /*
@@ -60,8 +61,8 @@ class RequiredTest extends TestCase
         $param->parsedValue($request);
 
         $rule = new Required(errorMsg: '手机号码必填');
-
-        $this->assertEquals(false, $rule->execute($param, $request));
-        $this->assertEquals("手机号码必填",$rule->errorMsg());
+        $request = new ValidateRequest($param);
+        $this->assertEquals(false, $rule->execute( $request));
+        $this->assertEquals("手机号码必填",$rule->errorMsg($request));
     }
 }

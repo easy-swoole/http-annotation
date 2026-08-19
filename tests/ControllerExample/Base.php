@@ -8,7 +8,6 @@ use EasySwoole\HttpAnnotation\Attributes\Param;
 use EasySwoole\HttpAnnotation\Exception\Annotation;
 use EasySwoole\HttpAnnotation\Exception\ValidateFail;
 
-#[Param(name: 'ggg')]
 class Base extends AnnotationController
 {
     protected function onException(\Throwable $throwable): void
@@ -22,13 +21,5 @@ class Base extends AnnotationController
                 throw $throwable;
             }
         }
-    }
-
-    #[Api(
-        apiName: 'test'
-    )]
-    function test()
-    {
-
     }
 }

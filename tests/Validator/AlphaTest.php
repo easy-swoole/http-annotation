@@ -5,6 +5,7 @@ namespace EasySwoole\HttpAnnotation\Tests\Validator;
 use EasySwoole\Http\Request;
 use EasySwoole\HttpAnnotation\Attributes\Param;
 use EasySwoole\HttpAnnotation\Validator\Alpha;
+use EasySwoole\HttpAnnotation\Validator\Bean\ValidateRequest;
 use PHPUnit\Framework\TestCase;
 
 class AlphaTest extends TestCase
@@ -24,7 +25,8 @@ class AlphaTest extends TestCase
         $param->parsedValue($request);
 
         $rule = new Alpha();
-        $this->assertEquals(true, $rule->execute($param, $request));
+        $request = new ValidateRequest($param);
+        $this->assertEquals(true, $rule->execute( $request));
     }
 
     /*
@@ -41,8 +43,9 @@ class AlphaTest extends TestCase
         $param->parsedValue($request);
 
         $rule = new Alpha();
-        $this->assertEquals(false, $rule->execute($param, $request));
-        $this->assertEquals("str must be all alpha", $rule->errorMsg());
+        $request = new ValidateRequest($param);
+        $this->assertEquals(false, $rule->execute( $request));
+        $this->assertEquals("str must be all alpha", $rule->errorMsg($request));
 
         $request = new Request();
         $request->withQueryParams([
@@ -53,8 +56,9 @@ class AlphaTest extends TestCase
         $param->parsedValue($request);
 
         $rule = new Alpha();
-        $this->assertEquals(false, $rule->execute($param, $request));
-        $this->assertEquals("str must be all alpha", $rule->errorMsg());
+        $request = new ValidateRequest($param);
+        $this->assertEquals(false, $rule->execute( $request));
+        $this->assertEquals("str must be all alpha", $rule->errorMsg($request));
     }
 
     /*
@@ -71,7 +75,8 @@ class AlphaTest extends TestCase
         $param->parsedValue($request);
 
         $rule = new Alpha(errorMsg: '您输入的参数不合法');
-        $this->assertEquals(false, $rule->execute($param, $request));
-        $this->assertEquals("您输入的参数不合法", $rule->errorMsg());
+        $request = new ValidateRequest($param);
+        $this->assertEquals(false, $rule->execute( $request));
+        $this->assertEquals("您输入的参数不合法", $rule->errorMsg($request));
     }
 }
