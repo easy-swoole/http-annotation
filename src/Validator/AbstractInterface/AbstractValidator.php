@@ -167,4 +167,9 @@ abstract class AbstractValidator
 
         return false;
     }
+
+    function __destruct()
+    {
+        var_dump('D V');
+    }
 }

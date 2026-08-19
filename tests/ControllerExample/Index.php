@@ -38,7 +38,7 @@ class Index extends Base
             new Param(
                 name: 'account',
                 validate: [
-                    new MinLength(8)
+                    new MinLength(3)
                 ]
             )
         ],

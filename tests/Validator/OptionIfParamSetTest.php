@@ -4,7 +4,7 @@ namespace EasySwoole\HttpAnnotation\Tests\Validator;
 
 use EasySwoole\Http\Request;
 use EasySwoole\HttpAnnotation\Attributes\Param;
-use EasySwoole\HttpAnnotation\Exception\ValidateFail;
+use EasySwoole\HttpAnnotation\Exception\ParamValidateFail;
 use EasySwoole\HttpAnnotation\Validator\AbstractInterface\AbstractValidator;
 use EasySwoole\HttpAnnotation\Validator\Bean\ValidateRequest;
 use EasySwoole\HttpAnnotation\Validator\DifferentWithColumn;
