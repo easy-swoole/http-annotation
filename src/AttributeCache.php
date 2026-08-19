@@ -9,8 +9,8 @@ use EasySwoole\HttpAnnotation\Attributes\ApiGroup;
 use EasySwoole\HttpAnnotation\Attributes\ExtendParam;
 use EasySwoole\HttpAnnotation\Attributes\Param;
 use EasySwoole\HttpAnnotation\Attributes\PreCall;
-use EasySwoole\HttpAnnotation\Bean\ClassInfo;
-use EasySwoole\HttpAnnotation\Bean\ClassMethod;
+use EasySwoole\HttpAnnotation\Bean\ClassAttribute;
+use EasySwoole\HttpAnnotation\Bean\ClassOnRequest;
 use EasySwoole\HttpAnnotation\Enum\HttpMethod;
 use EasySwoole\HttpAnnotation\Exception\Annotation;
 use EasySwoole\HttpAnnotation\Exception\RequestMethodNotAllow;
@@ -30,15 +30,14 @@ class AttributeCache
         'onRequest'
     ];
 
-
     protected array $map = [];
 
-    function parseClass(string $className)
+    function parseClass(string $className):ClassAttribute
     {
         if(isset($this->map[$className])){
             return $this->map[$className];
         }
-        $classInfo = new ClassInfo();
+        $classInfo = new ClassAttribute();
         $this->map[$className] = $classInfo;
 
         $reflectionClass = new \ReflectionClass($className);
@@ -51,27 +50,6 @@ class AttributeCache
                throw new Annotation($throwable->getMessage());
             }
         }
-
-        $globalParams = $reflectionClass->getAttributes(Param::class);
-        foreach ($globalParams as $param) {
-            /** @var Param $param */
-            try {
-                $param = $param->newInstance();
-                $classInfo->globalParams[$param->name] = $param;
-            }catch (\Throwable $throwable){
-                throw new Annotation($throwable->getMessage());
-            }
-        }
-        //检查是否继承父类参数
-        $extendParam = $reflectionClass->getAttributes(ExtendParam::class);
-        if(!empty($extendParam)){
-            try{
-                $classInfo->extendParam = $extendParam[0]->newInstance();
-            }catch (\Throwable $throwable){
-                throw new Annotation($throwable->getMessage());
-            }
-        }
-
 
         $globalPreCall = $reflectionClass->getAttributes(PreCall::class);
         foreach ($globalPreCall as $preCall) {
@@ -99,6 +77,47 @@ class AttributeCache
                 }
             }
         }
+
+        $onRequest = $reflectionClass->getMethod('onRequest');
+        //检查是否继承父类参数
+        $extendParam = $onRequest->getAttributes(ExtendParam::class);
+        if(!empty($extendParam)){
+            try{
+                $classInfo->onRequest->extendParam = $extendParam[0]->newInstance();
+            }catch (\Throwable $throwable){
+                throw new Annotation($throwable->getMessage());
+            }
+        }
+        //检查参数定义
+        $params = $onRequest->getAttributes(Param::class);
+        foreach ($params as $param) {
+            try{
+                $param = $param->newInstance();
+                $classInfo->onRequest->onRequestParams[$param->name] = $param;
+            }catch (\Throwable $throwable){
+                $msg = "{$throwable->getMessage()} in {$className} method onRequest";
+                throw new Annotation(message: $msg);
+            }
+        }
+        if($classInfo->onRequest->extendParam){
+            $parentClass = $reflectionClass->getParentClass();
+            if($parentClass->isSubclassOf(AnnotationController::class)){
+                $parentAttribute = static::getInstance()->parseClass($parentClass->getName());
+                $temps = $parentAttribute->onRequest->onRequestParams;
+                if(!empty($classInfo->onRequest->extendParam->parentParamsName)){
+                    /** @var Param $temp */
+                    foreach ($temps as $temp){
+                        if(!in_array($temp->name,$classInfo->onRequest->extendParam->parentParamsName)){
+                            unset($temps[$temp->name]);
+                        }
+                    }
+                }
+                foreach ($temps as $temp){
+                    $classInfo->onRequest->onRequestParams[$temp->name] = $temp;
+                }
+            }
+        }
+
         return $classInfo;
 
     }
