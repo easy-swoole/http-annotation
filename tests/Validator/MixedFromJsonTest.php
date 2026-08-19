@@ -6,7 +6,9 @@ use EasySwoole\Http\Message\Stream;
 use EasySwoole\Http\Request;
 use EasySwoole\HttpAnnotation\Attributes\Param;
 use EasySwoole\HttpAnnotation\Enum\ParamFrom;
+use EasySwoole\HttpAnnotation\Utility;
 use EasySwoole\HttpAnnotation\Validator\Bean\ValidateRequest;
+use EasySwoole\HttpAnnotation\Validator\NotEmpty;
 use PHPUnit\Framework\TestCase;
 
 class MixedFromJsonTest extends TestCase
@@ -33,14 +35,25 @@ class MixedFromJsonTest extends TestCase
 
         $param = new Param(
             name:'userInfo',
+            from: ParamFrom::JSON,
             subObject: [
                 new Param(
-                    name: 'name'
+                    name: 'name',
+                    validate: [
+                        new NotEmpty()
+                    ]
+                ),
+                new Param(
+                    name: 'age',
+                    validate: [
+                        new NotEmpty()
+                    ]
                 )
             ]
         );
-        $ret = $param->parsedValue($request);
-        var_dump($ret);
+        $param->parsedValue($request);
+
+        Utility::validateParam($param,[],'phpunit',$request);
 
     }
 }

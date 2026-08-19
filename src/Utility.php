@@ -95,6 +95,7 @@ class Utility
                     $class = static::class;
                     $ex = new ParamValidateFail("{$msg} in {$class} method {$callMethod}");
                     $ex->setFailRule($rule);
+
                     if(!empty($parentParamName)){
                         $parentParamName .= '.';
                     }else{
