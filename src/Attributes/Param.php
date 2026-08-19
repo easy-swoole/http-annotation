@@ -271,21 +271,16 @@ class Param
 
    function __clone()
    {
-       $temp = [];
+
        /** @var AbstractValidator $item */
        foreach ($this->validate as $item){
-           $temp[$item->ruleName()] = clone $item;
+           $this->validate[$item->ruleName()] = clone $item;
        }
-       $this->validate = $temp;
 
-       $temp = [];
        /** @var Param $item */
        foreach ($this->subObject as $item){
-           $item->isParsed = false;
-           $item->value = null;
-           $temp[$item->name] = $item;
+           $this->subObject[$item->name] = clone $item;
        }
-       $this->subObject = $temp;
    }
 
    function __destruct()

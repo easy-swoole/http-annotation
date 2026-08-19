@@ -53,7 +53,12 @@ class MixedFromJsonTest extends TestCase
         );
         $param->parsedValue($request);
 
-        Utility::validateParam($param,[],'phpunit',$request);
+        $vReq = new ValidateRequest($param);
+        $vReq->request = $request;
+        $vReq->callClass = static::class;
+        $vReq->callMethod = __FUNCTION__;
+
+        Utility::validateParam($vReq);
 
     }
 }

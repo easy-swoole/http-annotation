@@ -7,6 +7,7 @@ use EasySwoole\HttpAnnotation\Attributes\Api;
 use EasySwoole\HttpAnnotation\Attributes\Param;
 use EasySwoole\HttpAnnotation\Exception\Annotation;
 use EasySwoole\HttpAnnotation\Exception\ParamValidateFail;
+use EasySwoole\HttpAnnotation\Validator\NotEmpty;
 
 class Base extends AnnotationController
 {
@@ -21,5 +22,16 @@ class Base extends AnnotationController
                 throw $throwable;
             }
         }
+    }
+
+//    #[Param(
+//        name: 'token',
+//        validate: [
+//
+//        ]
+//    )]
+    function onRequest(?string $action): ?bool
+    {
+        return true;
     }
 }

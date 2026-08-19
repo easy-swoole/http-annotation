@@ -36,11 +36,29 @@ class Index extends Base
         requestPath: "/test/index.html",
         requestParam: [
             new Param(
-                name: 'account',
-                validate: [
-                    new MinLength(3)
+                name:'userInfo',
+                from: ParamFrom::JSON,
+                subObject: [
+                    new Param(
+                        name: 'name',
+                        validate: [
+                            new NotEmpty()
+                        ]
+                    ),
+                    new Param(
+                        name: 'age',
+                        validate: [
+                        new NotEmpty()
+                        ]
+                    )
                 ]
-            )
+            ),
+//            new Param(
+//                name: 'aa',
+//                validate: [
+//                    new Optional()
+//                ]
+//            )
         ],
         description: new Description(__DIR__.'/../res/description.md',Description::MARKDOWN_FILE)
     )]

@@ -62,45 +62,34 @@ class Utility
     }
 
 
-    public static function validateParam(
-        Param $param,
-        array $allParams,
-        string $callMethod,
-        ServerRequestInterface $request,
-        string|null $parentParamName = null
-    ): void
+    public static function validateParam(ValidateRequest $validateRequest,string|null $parentParamName = null): void
     {
         //当有下级的时候，当级校验没有意义
-        if(!empty($param->subObject)){
+        if(!empty($validateRequest->validateParam->subObject)){
             if(empty($parentParamName)){
-                $parentParamName = $param->name;
+                $parentParamName = $validateRequest->validateParam->name;
             }else{
-                $parentParamName .= ".{$param->name}";
+                $parentParamName .= ".{$validateRequest->validateParam->name}";
             }
 
-            foreach ($param->subObject as $sub){
-                self::validateParam($sub,$allParams,$callMethod,$request,$parentParamName);
-            }
+//            foreach ($validateRequest->validateParam->subObject as $sub){
+//                $t = clone $validateRequest;
+//                $t->validateParam = $sub;
+//                self::validateParam($t,$parentParamName);
+//            }
         }else{
-            $req = new ValidateRequest(
-                validateParam: $param,
-                request: $request,
-                allDefineParams: $allParams
-            );
-            $rules = $param->validate;
+            $rules = $validateRequest->validateParam->validate;
             /** @var AbstractValidator $rule */
             foreach ($rules as $rule){
-                if(!$rule->execute($req)){
+                if(!$rule->execute($validateRequest)){
                     if(!empty($parentParamName)){
                         $parentParamName .= '.';
                     }else{
                         $parentParamName = '';
                     }
-                    $parentParamName = $parentParamName.$param->name;
-
+                    $parentParamName = $parentParamName.$validateRequest->validateParam->name;
                     $msg = $rule->errorMsg($parentParamName);
-                    $class = static::class;
-                    $ex = new ParamValidateFail("{$msg} in {$class} method {$callMethod}");
+                    $ex = new ParamValidateFail("{$msg} in {$validateRequest->callClass} method {$validateRequest->callMethod}");
                     $ex->setFailRule($rule);
                     $ex->setParamName($parentParamName);
 

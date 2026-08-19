@@ -61,15 +61,25 @@ abstract class AnnotationController extends Controller
                 $param->parsedValue($this->request());
             }
 
-
             foreach ($onRequestArgsInTag as $param){
-                Utility::validateParam($allParams[$param->name],$allParams,$this->getActionName(),$this->request());
+                $req = new ValidateRequest($allParams[$param->name]);
+                $req->callClass = static::class;
+                $req->callMethod = $this->getActionName();
+                $req->request = $this->request();
+                Utility::validateParam($req);
+                $onRequestArg[$param->name] = $allParams[$param->name]->parsedValue();
             }
 
             foreach ($actionArgsInTag as $param){
-                Utility::validateParam($allParams[$param->name],$allParams,$this->getActionName(),$this->request());
+                $req = new ValidateRequest($allParams[$param->name]);
+                $req->callClass = static::class;
+                $req->callMethod = $this->getActionName();
+                $req->request = $this->request();
+
+                Utility::validateParam($req);
             }
 
+            var_dump($onRequestArg);
         }
         parent::__hook($actionArg,$onRequestArg);
     }
