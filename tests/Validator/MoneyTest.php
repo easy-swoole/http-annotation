@@ -65,7 +65,7 @@ class MoneyTest extends TestCase
         $request = new ValidateRequest($param);
         $rule = new Money(precision: 2);
         $this->assertEquals(false, $rule->execute( $request));
-        $this->assertEquals("num must be legal amount with 2 precision",$rule->errorMsg($request));
+        $this->assertEquals("num must be legal amount with 2 precision",$rule->errorMsg($request->validateParam->name));
     }
 
     /*
@@ -83,6 +83,6 @@ class MoneyTest extends TestCase
         $request = new ValidateRequest($param);
         $rule = new Money(precision: 2,errorMsg: '金额必须两位小数');
         $this->assertEquals(false, $rule->execute( $request));
-        $this->assertEquals("金额必须两位小数",$rule->errorMsg($request));
+        $this->assertEquals("金额必须两位小数",$rule->errorMsg($request->validateParam->name));
     }
 }

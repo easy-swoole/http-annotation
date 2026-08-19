@@ -43,7 +43,7 @@ class RegexTest extends TestCase
         $regex = '/^1\d{10}$/';
         $rule = new Regex(rule: $regex);
         $this->assertEquals(false, $rule->execute( $request));
-        $this->assertEquals("phone must meet specified rule: {$regex}",$rule->errorMsg($request));
+        $this->assertEquals("phone must meet specified rule: {$regex}",$rule->errorMsg($request->validateParam->name));
     }
 
     /*
@@ -61,6 +61,6 @@ class RegexTest extends TestCase
         $request = new ValidateRequest($param);
         $rule = new Regex(rule: '/^1\d{10}$/',errorMsg: '手机号码格式不对');
         $this->assertEquals(false, $rule->execute( $request));
-        $this->assertEquals("手机号码格式不对",$rule->errorMsg($request));
+        $this->assertEquals("手机号码格式不对",$rule->errorMsg($request->validateParam->name));
     }
 }

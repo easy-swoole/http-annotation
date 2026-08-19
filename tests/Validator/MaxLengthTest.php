@@ -68,7 +68,7 @@ class MaxLengthTest extends TestCase
         $request = new ValidateRequest($param);
         $rule = new MaxLength(maxLen: 5);
         $this->assertEquals(false, $rule->execute( $request));
-        $this->assertEquals("str max length is 5",$rule->errorMsg($request));
+        $this->assertEquals("str max length is 5",$rule->errorMsg($request->validateParam->name));
 
         // 字符串整数
         $request = new Request();
@@ -81,7 +81,7 @@ class MaxLengthTest extends TestCase
         $request = new ValidateRequest($param);
         $rule = new MaxLength(maxLen: 5);
         $this->assertEquals(false, $rule->execute( $request));
-        $this->assertEquals("str max length is 5",$rule->errorMsg($request));
+        $this->assertEquals("str max length is 5",$rule->errorMsg($request->validateParam->name));
         // 数组
         $request = new Request();
         $request->withQueryParams([
@@ -93,7 +93,7 @@ class MaxLengthTest extends TestCase
         $request = new ValidateRequest($param);
         $rule = new MaxLength(maxLen: 2);
         $this->assertEquals(false, $rule->execute( $request));
-        $this->assertEquals("str max length is 2",$rule->errorMsg($request));
+        $this->assertEquals("str max length is 2",$rule->errorMsg($request->validateParam->name));
 
         // 对象
         $request = new Request();
@@ -106,7 +106,7 @@ class MaxLengthTest extends TestCase
         $request = new ValidateRequest($param);
         $rule = new MaxLength(maxLen: 5);
         $this->assertEquals(false, $rule->execute( $request));
-        $this->assertEquals("str max length is 5",$rule->errorMsg($request));
+        $this->assertEquals("str max length is 5",$rule->errorMsg($request->validateParam->name));
     }
 
     /*
@@ -124,6 +124,6 @@ class MaxLengthTest extends TestCase
         $request = new ValidateRequest($param);
         $rule = new MaxLength(maxLen: 4,errorMsg: '名字长度最多4位');
         $this->assertEquals(false, $rule->execute( $request));
-        $this->assertEquals("名字长度最多4位",$rule->errorMsg($request));
+        $this->assertEquals("名字长度最多4位",$rule->errorMsg($request->validateParam->name));
     }
 }

@@ -66,7 +66,7 @@ class DecimalTest extends TestCase
         $request = new ValidateRequest($param);
         $rule = new Decimal(accuracy: 2);
         $this->assertEquals(false, $rule->execute( $request));
-        $this->assertEquals("num must be decimal with 2 accuracy", $rule->errorMsg($request));
+        $this->assertEquals("num must be decimal with 2 accuracy", $rule->errorMsg($request->validateParam->name));
     }
 
     /*
@@ -84,6 +84,6 @@ class DecimalTest extends TestCase
         $request = new ValidateRequest($param);
         $rule = new Decimal(accuracy: 2, errorMsg: 'num只能是小数');
         $this->assertEquals(false, $rule->execute( $request));
-        $this->assertEquals("num只能是小数", $rule->errorMsg($request));
+        $this->assertEquals("num只能是小数", $rule->errorMsg($request->validateParam->name));
     }
 }

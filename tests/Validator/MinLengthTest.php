@@ -68,7 +68,7 @@ class MinLengthTest extends TestCase
         $request = new ValidateRequest($param);
         $rule = new MinLength(minLen: 5);
         $this->assertEquals(false, $rule->execute( $request));
-        $this->assertEquals("str min length is 5",$rule->errorMsg($request));
+        $this->assertEquals("str min length is 5",$rule->errorMsg($request->validateParam->name));
 
         // 字符串整数
         $request = new Request();
@@ -81,7 +81,7 @@ class MinLengthTest extends TestCase
         $request = new ValidateRequest($param);
         $rule = new MinLength(minLen: 5);
         $this->assertEquals(false, $rule->execute( $request));
-        $this->assertEquals("str min length is 5",$rule->errorMsg($request));
+        $this->assertEquals("str min length is 5",$rule->errorMsg($request->validateParam->name));
         // 数组
         $request = new Request();
         $request->withQueryParams([
@@ -93,7 +93,7 @@ class MinLengthTest extends TestCase
         $request = new ValidateRequest($param);
         $rule = new MinLength(minLen: 4);
         $this->assertEquals(false, $rule->execute( $request));
-        $this->assertEquals("str min length is 4",$rule->errorMsg($request));
+        $this->assertEquals("str min length is 4",$rule->errorMsg($request->validateParam->name));
 
         // 对象
         $request = new Request();
@@ -106,7 +106,7 @@ class MinLengthTest extends TestCase
         $request = new ValidateRequest($param);
         $rule = new MinLength(minLen: 5);
         $this->assertEquals(false, $rule->execute( $request));
-        $this->assertEquals("str min length is 5",$rule->errorMsg($request));
+        $this->assertEquals("str min length is 5",$rule->errorMsg($request->validateParam->name));
     }
 
     /*
@@ -124,6 +124,6 @@ class MinLengthTest extends TestCase
         $request = new ValidateRequest($param);
         $rule = new MinLength(minLen: 6,errorMsg: '名字长度最少6位');
         $this->assertEquals(false, $rule->execute( $request));
-        $this->assertEquals("名字长度最少6位",$rule->errorMsg($request));
+        $this->assertEquals("名字长度最少6位",$rule->errorMsg($request->validateParam->name));
     }
 }

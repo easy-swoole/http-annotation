@@ -44,7 +44,7 @@ class RequiredTest extends TestCase
         $rule = new Required();
         $request = new ValidateRequest($param);
         $this->assertEquals(false, $rule->execute( $request));
-        $this->assertEquals("str is required",$rule->errorMsg($request));
+        $this->assertEquals("str is required",$rule->errorMsg($request->validateParam->name));
     }
 
     /*
@@ -63,6 +63,6 @@ class RequiredTest extends TestCase
         $rule = new Required(errorMsg: '手机号码必填');
         $request = new ValidateRequest($param);
         $this->assertEquals(false, $rule->execute( $request));
-        $this->assertEquals("手机号码必填",$rule->errorMsg($request));
+        $this->assertEquals("手机号码必填",$rule->errorMsg($request->validateParam->name));
     }
 }

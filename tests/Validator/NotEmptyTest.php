@@ -73,7 +73,7 @@ class NotEmptyTest extends TestCase
         $rule = new NotEmpty();
         $request = new ValidateRequest($param);
         $this->assertEquals(false, $rule->execute( $request));
-        $this->assertEquals("str is notEmpty",$rule->errorMsg($request));
+        $this->assertEquals("str is notEmpty",$rule->errorMsg($request->validateParam->name));
 
         // null
         $request = new Request();
@@ -87,7 +87,7 @@ class NotEmptyTest extends TestCase
         $rule = new NotEmpty();
         $request = new ValidateRequest($param);
         $this->assertEquals(false, $rule->execute( $request));
-        $this->assertEquals("str is notEmpty",$rule->errorMsg($request));
+        $this->assertEquals("str is notEmpty",$rule->errorMsg($request->validateParam->name));
     }
 
     /*
@@ -106,6 +106,6 @@ class NotEmptyTest extends TestCase
         $rule = new NotEmpty(errorMsg: '名字必填');
         $request = new ValidateRequest($param);
         $this->assertEquals(false, $rule->execute( $request));
-        $this->assertEquals("名字必填",$rule->errorMsg($request));
+        $this->assertEquals("名字必填",$rule->errorMsg($request->validateParam->name));
     }
 }

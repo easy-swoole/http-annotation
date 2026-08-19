@@ -38,7 +38,7 @@ class TimestampTest extends TestCase
         $rule = new Timestamp(errorMsg: '测试提示');
         $this->assertEquals(false, $rule->execute( $request));
 
-        $this->assertEquals("测试提示",$rule->errorMsg($request));
+        $this->assertEquals("测试提示",$rule->errorMsg($request->validateParam->name));
     }
 
     /*
@@ -73,7 +73,7 @@ class TimestampTest extends TestCase
         $request = new ValidateRequest($param);
         $rule = new Timestamp();
         $this->assertEquals(false, $rule->execute( $request));
-        $this->assertEquals("date must be timestamp",$rule->errorMsg($request));
+        $this->assertEquals("date must be timestamp",$rule->errorMsg($request->validateParam->name));
     }
 
     /*
@@ -91,6 +91,6 @@ class TimestampTest extends TestCase
         $request = new ValidateRequest($param);
         $rule = new Timestamp(errorMsg: '无效时间戳');
         $this->assertEquals(false, $rule->execute( $request));
-        $this->assertEquals("无效时间戳",$rule->errorMsg($request));
+        $this->assertEquals("无效时间戳",$rule->errorMsg($request->validateParam->name));
     }
 }

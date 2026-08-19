@@ -73,7 +73,7 @@ class IsDomainTest extends TestCase
             $request = new ValidateRequest($param);
             $rule = new IsDomain();
             $this->assertEquals(false, $rule->execute( $request));
-            $this->assertEquals("domain must be a valid domain name format", $rule->errorMsg($request));
+            $this->assertEquals("domain must be a valid domain name format", $rule->errorMsg($request->validateParam->name));
         }
     }
 
@@ -92,6 +92,6 @@ class IsDomainTest extends TestCase
         $request = new ValidateRequest($param);
         $rule = new IsDomain(errorMsg: '请输入合法的域名');
         $this->assertEquals(false, $rule->execute( $request));
-        $this->assertEquals("请输入合法的域名", $rule->errorMsg($request));
+        $this->assertEquals("请输入合法的域名", $rule->errorMsg($request->validateParam->name));
     }
 }

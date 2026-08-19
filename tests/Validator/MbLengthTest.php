@@ -68,7 +68,7 @@ class MbLengthTest extends TestCase
         $request = new ValidateRequest($param);
         $rule = new MbLength(length: 5);
         $this->assertEquals(false, $rule->execute( $request));
-        $this->assertEquals("str mb length must be 5",$rule->errorMsg($request));
+        $this->assertEquals("str mb length must be 5",$rule->errorMsg($request->validateParam->name));
 
         // 字符串整数
         $request = new Request();
@@ -81,7 +81,7 @@ class MbLengthTest extends TestCase
         $request = new ValidateRequest($param);
         $rule = new MbLength(length: 5);
         $this->assertEquals(false, $rule->execute( $request));
-        $this->assertEquals("str mb length must be 5",$rule->errorMsg($request));
+        $this->assertEquals("str mb length must be 5",$rule->errorMsg($request->validateParam->name));
         // 数组
         $request = new Request();
         $request->withQueryParams([
@@ -93,7 +93,7 @@ class MbLengthTest extends TestCase
         $request = new ValidateRequest($param);
         $rule = new MbLength(length: 5);
         $this->assertEquals(false, $rule->execute( $request));
-        $this->assertEquals("str mb length must be 5",$rule->errorMsg($request));
+        $this->assertEquals("str mb length must be 5",$rule->errorMsg($request->validateParam->name));
 
         // 对象
         $request = new Request();
@@ -106,7 +106,7 @@ class MbLengthTest extends TestCase
         $request = new ValidateRequest($param);
         $rule = new MbLength(length: 5);
         $this->assertEquals(false, $rule->execute( $request));
-        $this->assertEquals("str mb length must be 5",$rule->errorMsg($request));
+        $this->assertEquals("str mb length must be 5",$rule->errorMsg($request->validateParam->name));
     }
 
     /*
@@ -124,6 +124,6 @@ class MbLengthTest extends TestCase
         $request = new ValidateRequest($param);
         $rule = new MbLength(length: 6,errorMsg: '名字长度必须是6位');
         $this->assertEquals(false, $rule->execute( $request));
-        $this->assertEquals("名字长度必须是6位",$rule->errorMsg($request));
+        $this->assertEquals("名字长度必须是6位",$rule->errorMsg($request->validateParam->name));
     }
 }

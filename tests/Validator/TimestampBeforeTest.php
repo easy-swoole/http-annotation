@@ -79,6 +79,6 @@ class TimestampBeforeTest extends TestCase
         $request = new ValidateRequest($param);
         $rule = new TimestampBefore(compare: time(), errorMsg: '无效时间戳');
         $this->assertEquals(false, $rule->execute( $request));
-        $this->assertEquals("无效时间戳", $rule->errorMsg($request));
+        $this->assertEquals("无效时间戳", $rule->errorMsg($request->validateParam->name));
     }
 }

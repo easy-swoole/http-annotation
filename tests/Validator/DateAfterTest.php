@@ -80,7 +80,7 @@ class DateAfterTest extends TestCase
         $rule = new DateAfter(date: "20220530");
         $request = new ValidateRequest($param);
         $this->assertEquals(false, $rule->execute( $request));
-        $this->assertEquals("date must be date after 20220530", $rule->errorMsg($request));
+        $this->assertEquals("date must be date after 20220530", $rule->errorMsg($request->validateParam->name));
 
         // 非法参数
         $request = new Request();
@@ -93,7 +93,7 @@ class DateAfterTest extends TestCase
         $request = new ValidateRequest($param);
         $rule = new DateAfter(date: "20220530");
         $this->assertEquals(false, $rule->execute( $request));
-        $this->assertEquals("date must be date after 20220530", $rule->errorMsg($request));
+        $this->assertEquals("date must be date after 20220530", $rule->errorMsg($request->validateParam->name));
 
         //字段必须是日期格式。因此传时间戳，失败
         $request = new Request();
@@ -106,7 +106,7 @@ class DateAfterTest extends TestCase
         $request = new ValidateRequest($param);
         $rule = new DateAfter(date: "20220530");
         $this->assertEquals(false, $rule->execute( $request));
-        $this->assertEquals("date must be date after 20220530", $rule->errorMsg($request));
+        $this->assertEquals("date must be date after 20220530", $rule->errorMsg($request->validateParam->name));
     }
 
     /*
@@ -124,6 +124,6 @@ class DateAfterTest extends TestCase
         $request = new ValidateRequest($param);
         $rule = new DateAfter(date: "20220530", errorMsg: '日期不合法');
         $this->assertEquals(false, $rule->execute( $request));
-        $this->assertEquals("日期不合法", $rule->errorMsg($request));
+        $this->assertEquals("日期不合法", $rule->errorMsg($request->validateParam->name));
     }
 }

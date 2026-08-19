@@ -88,7 +88,7 @@ class DifferentWithColumnTest extends TestCase
             "account" => $account
         ];
         $this->assertEquals(false, $rule->execute( $request));
-        $this->assertEquals("str must different with account column", $rule->errorMsg($request));
+        $this->assertEquals("str must different with account column", $rule->errorMsg($request->validateParam->name));
 
         $request = new Request();
         $request->withQueryParams([
@@ -111,7 +111,7 @@ class DifferentWithColumnTest extends TestCase
         ];
 
         $this->assertEquals(false, $rule->execute( $request));
-        $this->assertEquals("str must different with account column", $rule->errorMsg($request));
+        $this->assertEquals("str must different with account column", $rule->errorMsg($request->validateParam->name));
 
         // 值相等,但类型不一样
         $request = new Request();
@@ -135,7 +135,7 @@ class DifferentWithColumnTest extends TestCase
         ];
 
         $this->assertEquals(false, $rule->execute( $request));
-        $this->assertEquals("str must different with account column", $rule->errorMsg($request));
+        $this->assertEquals("str must different with account column", $rule->errorMsg($request->validateParam->name));
     }
 
     /*
@@ -164,6 +164,6 @@ class DifferentWithColumnTest extends TestCase
         ];
 
         $this->assertEquals(false, $rule->execute( $request));
-        $this->assertEquals("两个参数不能一样", $rule->errorMsg($request));
+        $this->assertEquals("两个参数不能一样", $rule->errorMsg($request->validateParam->name));
     }
 }

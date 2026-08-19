@@ -55,7 +55,7 @@ class InArrayTest extends TestCase
         $request = new ValidateRequest($param);
         $rule = new InArray(array: [1, 2, 3], strict: true);
         $this->assertEquals(false, $rule->execute( $request));
-        $this->assertEquals("num must in array of [1,2,3]",$rule->errorMsg($request));
+        $this->assertEquals("num must in array of [1,2,3]",$rule->errorMsg($request->validateParam->name));
     }
 
     /*
@@ -73,6 +73,6 @@ class InArrayTest extends TestCase
         $request = new ValidateRequest($param);
         $rule = new InArray(array: [1, 2, 3], strict: false, errorMsg: '测试提示');
         $this->assertEquals(false, $rule->execute( $request));
-        $this->assertEquals("测试提示",$rule->errorMsg($request));
+        $this->assertEquals("测试提示",$rule->errorMsg($request->validateParam->name));
     }
 }

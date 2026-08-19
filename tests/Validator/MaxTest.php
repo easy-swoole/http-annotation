@@ -121,7 +121,7 @@ class MaxTest extends TestCase
         $request = new ValidateRequest($param);
         $rule = new Max(max: 100);
         $this->assertEquals(false, $rule->execute( $request));
-        $this->assertEquals("num max value is 100",$rule->errorMsg($request));
+        $this->assertEquals("num max value is 100",$rule->errorMsg($request->validateParam->name));
         // float
         $request = new Request();
         $request->withQueryParams([
@@ -133,7 +133,7 @@ class MaxTest extends TestCase
         $request = new ValidateRequest($param);
         $rule = new Max(max: 100);
         $this->assertEquals(false, $rule->execute( $request));
-        $this->assertEquals("num max value is 100",$rule->errorMsg($request));
+        $this->assertEquals("num max value is 100",$rule->errorMsg($request->validateParam->name));
         // 字符串整数
         $request = new Request();
         $request->withQueryParams([
@@ -145,7 +145,7 @@ class MaxTest extends TestCase
         $request = new ValidateRequest($param);
         $rule = new Max(max: 100);
         $this->assertEquals(false, $rule->execute( $request));
-        $this->assertEquals("num max value is 100",$rule->errorMsg($request));
+        $this->assertEquals("num max value is 100",$rule->errorMsg($request->validateParam->name));
         // 字符串浮点数
         $request = new Request();
         $request->withQueryParams([
@@ -157,7 +157,7 @@ class MaxTest extends TestCase
         $request = new ValidateRequest($param);
         $rule = new Max(max: 100);
         $this->assertEquals(false, $rule->execute( $request));
-        $this->assertEquals("num max value is 100",$rule->errorMsg($request));
+        $this->assertEquals("num max value is 100",$rule->errorMsg($request->validateParam->name));
         // 非数字字符串
         $request = new Request();
         $request->withQueryParams([
@@ -169,7 +169,7 @@ class MaxTest extends TestCase
         $request = new ValidateRequest($param);
         $rule = new Max(max: 100);
         $this->assertEquals(false, $rule->execute( $request));
-        $this->assertEquals("num max value is 100",$rule->errorMsg($request));
+        $this->assertEquals("num max value is 100",$rule->errorMsg($request->validateParam->name));
     }
 
     /*
@@ -187,6 +187,6 @@ class MaxTest extends TestCase
         $request = new ValidateRequest($param);
         $rule = new Max(max: 100,errorMsg: '价钱不超过100');
         $this->assertEquals(false, $rule->execute( $request));
-        $this->assertEquals("价钱不超过100",$rule->errorMsg($request));
+        $this->assertEquals("价钱不超过100",$rule->errorMsg($request->validateParam->name));
     }
 }

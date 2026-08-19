@@ -56,7 +56,7 @@ class IntegerTest extends TestCase
         $request = new ValidateRequest($param);
         $rule = new Integer();
         $this->assertEquals(false, $rule->execute( $request));
-        $this->assertEquals("num must be integer",$rule->errorMsg($request));
+        $this->assertEquals("num must be integer",$rule->errorMsg($request->validateParam->name));
         // 不是一个整数
         $request = new Request();
         $request->withQueryParams([
@@ -68,7 +68,7 @@ class IntegerTest extends TestCase
         $request = new ValidateRequest($param);
         $rule = new Integer();
         $this->assertEquals(false, $rule->execute( $request));
-        $this->assertEquals("num must be integer",$rule->errorMsg($request));
+        $this->assertEquals("num must be integer",$rule->errorMsg($request->validateParam->name));
     }
 
     /*
@@ -86,6 +86,6 @@ class IntegerTest extends TestCase
         $request = new ValidateRequest($param);
         $rule = new Integer(errorMsg: '请输入正确的数量');
         $this->assertEquals(false, $rule->execute( $request));
-        $this->assertEquals("请输入正确的数量",$rule->errorMsg($request));
+        $this->assertEquals("请输入正确的数量",$rule->errorMsg($request->validateParam->name));
     }
 }

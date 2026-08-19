@@ -66,7 +66,7 @@ class BetweenMbLenTest extends TestCase
         $request = new ValidateRequest($param);
         $rule = new BetweenMbLen(minLen: 2, maxLen: 4);
         $this->assertEquals(false, $rule->execute( $request));
-        $this->assertEquals("name length must between 2 to 4", $rule->errorMsg($request));
+        $this->assertEquals("name length must between 2 to 4", $rule->errorMsg($request->validateParam->name));
     }
 
     /*
@@ -85,7 +85,7 @@ class BetweenMbLenTest extends TestCase
         $rule = new BetweenMbLen(minLen: 5, maxLen: 10,errorMsg: "testCustomErrorMsgCase");
         $rule->execute( $request);
 
-        $this->assertEquals("testCustomErrorMsgCase", $rule->errorMsg($request));
+        $this->assertEquals("testCustomErrorMsgCase", $rule->errorMsg($request->validateParam->name));
 
     }
 }

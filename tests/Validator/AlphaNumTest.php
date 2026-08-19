@@ -45,7 +45,7 @@ class AlphaNumTest extends TestCase
         $rule = new AlphaNum();
         $request = new ValidateRequest($param);
         $this->assertEquals(false, $rule->execute( $request));
-        $this->assertEquals("no must be all AlphaNum", $rule->errorMsg($request));
+        $this->assertEquals("no must be all AlphaNum", $rule->errorMsg($request->validateParam->name));
     }
 
     /*
@@ -64,6 +64,6 @@ class AlphaNumTest extends TestCase
         $rule = new AlphaNum(errorMsg: '只能由字母和数字构成');
         $request = new ValidateRequest($param);
         $this->assertEquals(false, $rule->execute( $request));
-        $this->assertEquals("只能由字母和数字构成", $rule->errorMsg($request));
+        $this->assertEquals("只能由字母和数字构成", $rule->errorMsg($request->validateParam->name));
     }
 }

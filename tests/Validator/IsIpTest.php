@@ -56,7 +56,7 @@ class IsIpTest extends TestCase
         $request = new ValidateRequest($param);
         $rule = new IsIp();
         $this->assertEquals(false, $rule->execute( $request));
-        $this->assertEquals("ip must be a ip format",$rule->errorMsg($request));
+        $this->assertEquals("ip must be a ip format",$rule->errorMsg($request->validateParam->name));
 
         // 范围不合法
         $request = new Request();
@@ -69,7 +69,7 @@ class IsIpTest extends TestCase
         $request = new ValidateRequest($param);
         $rule = new IsIp();
         $this->assertEquals(false, $rule->execute( $request));
-        $this->assertEquals("ip must be a ip format",$rule->errorMsg($request));
+        $this->assertEquals("ip must be a ip format",$rule->errorMsg($request->validateParam->name));
     }
 
     /*
@@ -87,6 +87,6 @@ class IsIpTest extends TestCase
         $request = new ValidateRequest($param);
         $rule = new IsIp(errorMsg: '请输入合法的IP地址');
         $this->assertEquals(false, $rule->execute( $request));
-        $this->assertEquals("请输入合法的IP地址",$rule->errorMsg($request));
+        $this->assertEquals("请输入合法的IP地址",$rule->errorMsg($request->validateParam->name));
     }
 }

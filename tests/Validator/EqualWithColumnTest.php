@@ -106,7 +106,7 @@ class EqualWithColumnTest extends TestCase
 
         $this->assertEquals(false,$rule->execute($request));
 
-        $this->assertEquals("测试提示",$rule->errorMsg($request));
+        $this->assertEquals("测试提示",$rule->errorMsg($request->validateParam->name));
 
     }
 
@@ -194,7 +194,7 @@ class EqualWithColumnTest extends TestCase
 
 
         $this->assertEquals(false, $rule->execute( $request));
-        $this->assertEquals("str must equal with account column",$rule->errorMsg($request));
+        $this->assertEquals("str must equal with account column",$rule->errorMsg($request->validateParam->name));
 
         // 值不相等
         $request = new Request();
@@ -219,7 +219,7 @@ class EqualWithColumnTest extends TestCase
 
 
         $this->assertEquals(false, $rule->execute( $request));
-        $this->assertEquals("str must equal with account column",$rule->errorMsg($request));
+        $this->assertEquals("str must equal with account column",$rule->errorMsg($request->validateParam->name));
 
         $request = new Request();
         $request->withQueryParams([
@@ -243,7 +243,7 @@ class EqualWithColumnTest extends TestCase
 
 
         $this->assertEquals(false, $rule->execute( $request));
-        $this->assertEquals("str must equal with account column",$rule->errorMsg($request));
+        $this->assertEquals("str must equal with account column",$rule->errorMsg($request->validateParam->name));
     }
 
     /*
@@ -272,6 +272,6 @@ class EqualWithColumnTest extends TestCase
         ];
 
         $this->assertEquals(false, $rule->execute( $request));
-        $this->assertEquals("两个参数必须一样",$rule->errorMsg($request));
+        $this->assertEquals("两个参数必须一样",$rule->errorMsg($request->validateParam->name));
     }
 }

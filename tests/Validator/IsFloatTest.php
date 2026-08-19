@@ -69,7 +69,7 @@ class IsFloatTest extends TestCase
         $request = new ValidateRequest($param);
         $rule = new IsFloat();
         $this->assertEquals(false, $rule->execute( $request));
-        $this->assertEquals("num must be float",$rule->errorMsg($request));
+        $this->assertEquals("num must be float",$rule->errorMsg($request->validateParam->name));
     }
 
     /*
@@ -87,6 +87,6 @@ class IsFloatTest extends TestCase
         $request = new ValidateRequest($param);
         $rule = new IsFloat(errorMsg: '请输入一个浮点数');
         $this->assertEquals(false, $rule->execute( $request));
-        $this->assertEquals("请输入一个浮点数",$rule->errorMsg($request));
+        $this->assertEquals("请输入一个浮点数",$rule->errorMsg($request->validateParam->name));
     }
 }

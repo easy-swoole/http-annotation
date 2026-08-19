@@ -121,7 +121,7 @@ class MinTest extends TestCase
         $request = new ValidateRequest($param);
         $rule = new Min(min: 100);
         $this->assertEquals(false, $rule->execute( $request));
-        $this->assertEquals("num min value is 100",$rule->errorMsg($request));
+        $this->assertEquals("num min value is 100",$rule->errorMsg($request->validateParam->name));
         // float
         $request = new Request();
         $request->withQueryParams([
@@ -133,7 +133,7 @@ class MinTest extends TestCase
         $request = new ValidateRequest($param);
         $rule = new Min(min: 100);
         $this->assertEquals(false, $rule->execute( $request));
-        $this->assertEquals("num min value is 100",$rule->errorMsg($request));
+        $this->assertEquals("num min value is 100",$rule->errorMsg($request->validateParam->name));
         // 字符串整数
         $request = new Request();
         $request->withQueryParams([
@@ -145,7 +145,7 @@ class MinTest extends TestCase
         $request = new ValidateRequest($param);
         $rule = new Min(min: 100);
         $this->assertEquals(false, $rule->execute( $request));
-        $this->assertEquals("num min value is 100",$rule->errorMsg($request));
+        $this->assertEquals("num min value is 100",$rule->errorMsg($request->validateParam->name));
         // 字符串浮点数
         $request = new Request();
         $request->withQueryParams([
@@ -157,7 +157,7 @@ class MinTest extends TestCase
         $request = new ValidateRequest($param);
         $rule = new Min(min: 100);
         $this->assertEquals(false, $rule->execute( $request));
-        $this->assertEquals("num min value is 100",$rule->errorMsg($request));
+        $this->assertEquals("num min value is 100",$rule->errorMsg($request->validateParam->name));
         // 非数字字符串
         $request = new Request();
         $request->withQueryParams([
@@ -169,7 +169,7 @@ class MinTest extends TestCase
         $request = new ValidateRequest($param);
         $rule = new Min(min: 100);
         $this->assertEquals(false, $rule->execute( $request));
-        $this->assertEquals("num min value is 100",$rule->errorMsg($request));
+        $this->assertEquals("num min value is 100",$rule->errorMsg($request->validateParam->name));
     }
 
     /*
@@ -187,6 +187,6 @@ class MinTest extends TestCase
         $request = new ValidateRequest($param);
         $rule = new Min(min: 100,errorMsg: '价钱最低100');
         $this->assertEquals(false, $rule->execute( $request));
-        $this->assertEquals("价钱最低100",$rule->errorMsg($request));
+        $this->assertEquals("价钱最低100",$rule->errorMsg($request->validateParam->name));
     }
 }

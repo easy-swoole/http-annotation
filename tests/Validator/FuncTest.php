@@ -50,7 +50,7 @@ class FuncTest extends TestCase
         });
 
         $this->assertEquals(false, $rule->execute( $request));
-        $this->assertEquals("fun validate fail in custom function",$rule->errorMsg($request));
+        $this->assertEquals("fun validate fail in custom function",$rule->errorMsg($request->validateParam->name));
     }
 
     /*
@@ -71,7 +71,7 @@ class FuncTest extends TestCase
         }, errorMsg: '测试提示');
 
         $this->assertEquals(false, $rule->execute( $request));
-        $this->assertEquals("测试提示",$rule->errorMsg($request));
+        $this->assertEquals("测试提示",$rule->errorMsg($request->validateParam->name));
     }
 
     function testEqual1()
@@ -86,7 +86,7 @@ class FuncTest extends TestCase
         $request = new ValidateRequest($param);
         $rule = new Func(new EqualFunc(1));
         $this->assertEquals(true, $rule->execute( $request));
-        $this->assertEquals("fun validate fail in Equal function",$rule->errorMsg($request));
+        $this->assertEquals("fun validate fail in Equal function",$rule->errorMsg($request->validateParam->name));
 
         $rule = new Func(new EqualFunc(2));
         $this->assertEquals(false, $rule->execute( $request));

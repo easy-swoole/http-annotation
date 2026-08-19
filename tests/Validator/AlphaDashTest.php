@@ -45,7 +45,7 @@ class AlphaDashTest extends TestCase
         $rule = new AlphaDash();
         $request = new ValidateRequest($param);
         $this->assertEquals(false, $rule->execute($request));
-        $this->assertEquals("str must be all AlphaDash", $rule->errorMsg($request));
+        $this->assertEquals("str must be all AlphaDash", $rule->errorMsg($request->validateParam->name));
     }
 
     /*
@@ -64,6 +64,6 @@ class AlphaDashTest extends TestCase
         $rule = new AlphaDash(errorMsg: '只能由字母数字下划线和破折号构成');
         $request = new ValidateRequest($param);
         $this->assertEquals(false, $rule->execute($request));
-        $this->assertEquals("只能由字母数字下划线和破折号构成", $rule->errorMsg($request));
+        $this->assertEquals("只能由字母数字下划线和破折号构成", $rule->errorMsg($request->validateParam->name));
     }
 }

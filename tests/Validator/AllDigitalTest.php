@@ -61,7 +61,7 @@ class AllDigitalTest extends TestCase
         $rule = new AllDigital();
         $request = new ValidateRequest($param);
         $this->assertEquals(false, $rule->execute($request));
-        $this->assertEquals("no must be all digital", $rule->errorMsg($request));
+        $this->assertEquals("no must be all digital", $rule->errorMsg($request->validateParam->name));
 
         // 含有小数点
         $request = new Request();
@@ -75,7 +75,7 @@ class AllDigitalTest extends TestCase
         $rule = new AllDigital();
         $request = new ValidateRequest($param);
         $this->assertEquals(false, $rule->execute($request));
-        $this->assertEquals("no must be all digital", $rule->errorMsg($request));
+        $this->assertEquals("no must be all digital", $rule->errorMsg($request->validateParam->name));
     }
 
     /*
@@ -94,6 +94,6 @@ class AllDigitalTest extends TestCase
         $rule = new AllDigital(errorMsg: '学号只能由数字构成');
         $request = new ValidateRequest($param);
         $this->assertEquals(false, $rule->execute($request));
-        $this->assertEquals("学号只能由数字构成", $rule->errorMsg($request));
+        $this->assertEquals("学号只能由数字构成", $rule->errorMsg($request->validateParam->name));
     }
 }

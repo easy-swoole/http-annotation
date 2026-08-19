@@ -77,7 +77,7 @@ class IsNumericTest extends TestCase
         $request = new ValidateRequest($param);
         $rule = new IsNumeric();
         $this->assertEquals(false, $rule->execute( $request));
-        $this->assertEquals("price must be numeric",$rule->errorMsg($request));
+        $this->assertEquals("price must be numeric",$rule->errorMsg($request->validateParam->name));
     }
 
     /*
@@ -95,6 +95,6 @@ class IsNumericTest extends TestCase
         $request = new ValidateRequest($param);
         $rule = new IsNumeric(errorMsg: '价格必须是数字');
         $this->assertEquals(false, $rule->execute( $request));
-        $this->assertEquals("价格必须是数字",$rule->errorMsg($request));
+        $this->assertEquals("价格必须是数字",$rule->errorMsg($request->validateParam->name));
     }
 }

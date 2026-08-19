@@ -93,7 +93,7 @@ class IsBoolTest extends TestCase
         $request = new ValidateRequest($param);
         $rule = new IsBool();
         $this->assertEquals(false, $rule->execute( $request));
-        $this->assertEquals("bool must be bool",$rule->errorMsg($request));
+        $this->assertEquals("bool must be bool",$rule->errorMsg($request->validateParam->name));
     }
 
     /*
@@ -111,6 +111,6 @@ class IsBoolTest extends TestCase
         $request = new ValidateRequest($param);
         $rule = new IsBool('状态只能是开启或关闭');
         $this->assertEquals(false, $rule->execute( $request));
-        $this->assertEquals("状态只能是开启或关闭",$rule->errorMsg($request));
+        $this->assertEquals("状态只能是开启或关闭",$rule->errorMsg($request->validateParam->name));
     }
 }

@@ -91,17 +91,19 @@ class Utility
             /** @var AbstractValidator $rule */
             foreach ($rules as $rule){
                 if(!$rule->execute($req)){
-                    $msg = $rule->errorMsg($req);
-                    $class = static::class;
-                    $ex = new ParamValidateFail("{$msg} in {$class} method {$callMethod}");
-                    $ex->setFailRule($rule);
-
                     if(!empty($parentParamName)){
                         $parentParamName .= '.';
                     }else{
                         $parentParamName = '';
                     }
-                    $ex->setParamName("{$parentParamName}{$param->name}");
+                    $parentParamName = $parentParamName.$param->name;
+
+                    $msg = $rule->errorMsg($parentParamName);
+                    $class = static::class;
+                    $ex = new ParamValidateFail("{$msg} in {$class} method {$callMethod}");
+                    $ex->setFailRule($rule);
+                    $ex->setParamName($parentParamName);
+
                     throw $ex;
                 }
             }

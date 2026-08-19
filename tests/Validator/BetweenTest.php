@@ -102,7 +102,7 @@ class BetweenTest extends TestCase
         $request = new ValidateRequest($param);
         $rule = new Between(min: 5, max: 10);
         $this->assertEquals(false, $rule->execute( $request));
-        $this->assertEquals("num must between 5 to 10", $rule->errorMsg($request));
+        $this->assertEquals("num must between 5 to 10", $rule->errorMsg($request->validateParam->name));
 
         // 不是合法值
         $request = new Request();
@@ -115,7 +115,7 @@ class BetweenTest extends TestCase
         $request = new ValidateRequest($param);
         $rule = new Between(min: 5, max: 10);
         $this->assertEquals(false, $rule->execute( $request));
-        $this->assertEquals("num must between 5 to 10", $rule->errorMsg($request));
+        $this->assertEquals("num must between 5 to 10", $rule->errorMsg($request->validateParam->name));
     }
 
     /*
@@ -133,6 +133,6 @@ class BetweenTest extends TestCase
         $request = new ValidateRequest($param);
         $rule = new Between(min: 5, max: 10,errorMsg: '您输入的年龄不符');
         $this->assertEquals(false, $rule->execute( $request));
-        $this->assertEquals("您输入的年龄不符", $rule->errorMsg($request));
+        $this->assertEquals("您输入的年龄不符", $rule->errorMsg($request->validateParam->name));
     }
 }

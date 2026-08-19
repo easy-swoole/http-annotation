@@ -60,7 +60,7 @@ class BetweenLenTest extends TestCase
         $rule = new BetweenLen(minLen: 2, maxLen: 5);
         $request = new ValidateRequest($param);
         $this->assertEquals(false, $rule->execute( $request));
-        $this->assertEquals("name length must between 2 to 5", $rule->errorMsg($request));
+        $this->assertEquals("name length must between 2 to 5", $rule->errorMsg($request->validateParam->name));
 
         // 一个汉字 3
         $request = new Request();
@@ -74,7 +74,7 @@ class BetweenLenTest extends TestCase
         $rule = new BetweenLen(minLen: 5, maxLen: 10);
         $request = new ValidateRequest($param);
         $this->assertEquals(false, $rule->execute( $request));
-        $this->assertEquals("str length must between 5 to 10", $rule->errorMsg($request));
+        $this->assertEquals("str length must between 5 to 10", $rule->errorMsg($request->validateParam->name));
 
         // testFuncCall
         $request = new Request();
@@ -104,7 +104,7 @@ class BetweenLenTest extends TestCase
         $rule = new BetweenLen(minLen: 5, maxLen: 10,errorMsg: "testCustomErrorMsgCase");
         $rule->execute( $request);
 
-        $this->assertEquals("testCustomErrorMsgCase", $rule->errorMsg($request));
+        $this->assertEquals("testCustomErrorMsgCase", $rule->errorMsg($request->validateParam->name));
 
 
     }

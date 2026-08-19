@@ -45,7 +45,7 @@ class AlphaTest extends TestCase
         $rule = new Alpha();
         $request = new ValidateRequest($param);
         $this->assertEquals(false, $rule->execute( $request));
-        $this->assertEquals("str must be all alpha", $rule->errorMsg($request));
+        $this->assertEquals("str must be all alpha", $rule->errorMsg($request->validateParam->name));
 
         $request = new Request();
         $request->withQueryParams([
@@ -58,7 +58,7 @@ class AlphaTest extends TestCase
         $rule = new Alpha();
         $request = new ValidateRequest($param);
         $this->assertEquals(false, $rule->execute( $request));
-        $this->assertEquals("str must be all alpha", $rule->errorMsg($request));
+        $this->assertEquals("str must be all alpha", $rule->errorMsg($request->validateParam->name));
     }
 
     /*
@@ -77,6 +77,6 @@ class AlphaTest extends TestCase
         $rule = new Alpha(errorMsg: '您输入的参数不合法');
         $request = new ValidateRequest($param);
         $this->assertEquals(false, $rule->execute( $request));
-        $this->assertEquals("您输入的参数不合法", $rule->errorMsg($request));
+        $this->assertEquals("您输入的参数不合法", $rule->errorMsg($request->validateParam->name));
     }
 }
