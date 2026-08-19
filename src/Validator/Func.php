@@ -30,9 +30,9 @@ class Func extends AbstractValidator
     protected function validate(ValidateRequest $validateRequest): bool
     {
         if($this->call instanceof ValidateFuncInterface){
-            return $this->call->execute($this);
+            return $this->call->execute($validateRequest);
         }
-        return (bool)call_user_func($this->call,$this);
+        return (bool)call_user_func($this->call,$validateRequest);
     }
 
     function ruleName(): string

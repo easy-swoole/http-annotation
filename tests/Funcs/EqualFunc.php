@@ -4,6 +4,7 @@ namespace EasySwoole\HttpAnnotation\Tests\Funcs;
 
 use EasySwoole\HttpAnnotation\Validator\AbstractInterface\AbstractValidator;
 use EasySwoole\HttpAnnotation\Validator\AbstractInterface\ValidateFuncInterface;
+use EasySwoole\HttpAnnotation\Validator\Bean\ValidateRequest;
 
 class EqualFunc implements ValidateFuncInterface
 {
@@ -11,9 +12,9 @@ class EqualFunc implements ValidateFuncInterface
         private readonly int $equal
     ){}
 
-    public function execute(AbstractValidator $validator)
+    public function execute(ValidateRequest $validateRequest)
     {
-        $value = $validator->currentCheckParam()->parsedValue();
+        $value = $validateRequest->validateParam->parsedValue();
         return $value == $this->equal;
     }
 
