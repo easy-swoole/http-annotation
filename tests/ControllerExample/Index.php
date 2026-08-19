@@ -48,17 +48,11 @@ class Index extends Base
                     new Param(
                         name: 'age',
                         validate: [
-                        new NotEmpty()
+                            new Optional()
                         ]
                     )
                 ]
             ),
-//            new Param(
-//                name: 'aa',
-//                validate: [
-//                    new Optional()
-//                ]
-//            )
         ],
         description: new Description(__DIR__.'/../res/description.md',Description::MARKDOWN_FILE)
     )]

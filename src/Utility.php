@@ -72,11 +72,11 @@ class Utility
                 $parentParamName .= ".{$validateRequest->validateParam->name}";
             }
 
-//            foreach ($validateRequest->validateParam->subObject as $sub){
-//                $t = clone $validateRequest;
-//                $t->validateParam = $sub;
-//                self::validateParam($t,$parentParamName);
-//            }
+            foreach ($validateRequest->validateParam->subObject as $sub){
+                $t = clone $validateRequest;
+                $t->validateParam = $sub;
+                self::validateParam($t,$parentParamName);
+            }
         }else{
             $rules = $validateRequest->validateParam->validate;
             /** @var AbstractValidator $rule */
