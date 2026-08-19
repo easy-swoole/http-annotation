@@ -103,17 +103,20 @@ class AttributeCache
             $parentClass = $reflectionClass->getParentClass();
             if($parentClass->isSubclassOf(AnnotationController::class)){
                 $parentAttribute = static::getInstance()->parseClass($parentClass->getName());
-                $temps = $parentAttribute->onRequest->onRequestParams;
+                $parentOnRequestParams = $parentAttribute->onRequest->onRequestParams;
                 if(!empty($classInfo->onRequest->extendParam->parentParamsName)){
                     /** @var Param $temp */
-                    foreach ($temps as $temp){
+                    foreach ($parentOnRequestParams as $temp){
                         if(!in_array($temp->name,$classInfo->onRequest->extendParam->parentParamsName)){
-                            unset($temps[$temp->name]);
+                            unset($parentOnRequestParams[$temp->name]);
                         }
                     }
                 }
-                foreach ($temps as $temp){
-                    $classInfo->onRequest->onRequestParams[$temp->name] = $temp;
+                foreach ($parentOnRequestParams as $temp){
+                    //子类定义优先
+                    if(!isset($classInfo->onRequest->onRequestParams[$temp->name])){
+                        $classInfo->onRequest->onRequestParams[$temp->name] = $temp;
+                    }
                 }
             }
         }
