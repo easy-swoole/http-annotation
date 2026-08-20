@@ -8,8 +8,8 @@ use EasySwoole\HttpAnnotation\Enum\HttpMethod;
 class PreCall
 {
     public $call;
-    function __construct(callable $call)
+    function __construct(callable $func)
     {
-        $this->call = $call;
+        $this->call = $func;
     }
 }

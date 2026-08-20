@@ -24,12 +24,12 @@ class Base extends AnnotationController
         }
     }
 
-//    #[Param(
-//        name: 'token',
-//        validate: [
-//
-//        ]
-//    )]
+    #[Param(
+        name: 'token',
+        validate: [
+            new NotEmpty(),
+        ]
+    )]
     function onRequest(?string $action): ?bool
     {
         return true;

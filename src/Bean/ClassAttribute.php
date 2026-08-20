@@ -17,6 +17,8 @@ class ClassAttribute
 
     public ClassOnRequest|null $onRequest;
 
+    public array $methodPreCall = [];
+
     function __construct()
     {
         $this->onRequest = new ClassOnRequest();

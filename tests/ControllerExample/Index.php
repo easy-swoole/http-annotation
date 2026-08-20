@@ -28,6 +28,7 @@ use EasySwoole\HttpAnnotation\Validator\SmallThanColumn;
 #[ApiGroup(
     groupName: 'index'
 )]
+#[PreCall([Utility::class,'preCall'])]
 class Index extends Base
 {
     #[Api(
@@ -56,8 +57,26 @@ class Index extends Base
         ],
         description: new Description(__DIR__.'/../res/description.md',Description::MARKDOWN_FILE)
     )]
-    function index(){
+    function index(array $userInfo){
         $account = 1;
         $this->writeJson(200,null,"account is {$account}");
+    }
+
+
+    #[Api(
+        apiName: 'test',
+        requestParam: [
+            new Param(
+                name:'age',
+            ),
+            new Param(
+                name: 'userName'
+            )
+        ]
+    )]
+    #[PreCall([Utility::class,'preCall'])]
+    function test(int|null $age,string|null $userName)
+    {
+        var_dump($age,$userName);
     }
 }

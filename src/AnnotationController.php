@@ -27,6 +27,16 @@ abstract class AnnotationController extends Controller
     public function __hook(array|null $actionArg = [],array|null $onRequestArg = null)
     {
         $attributeInfo = AttributeCache::getInstance()->parseClass(static::class);
+
+        $preCalls = $attributeInfo->globalPreCall;
+        /** @var PreCall $preCall */
+        foreach ($preCalls as $preCall) {
+            $ret = call_user_func($preCall->call,$this->getActionName(), $this->request(),$this->response());
+            if($ret === false){
+                return;
+            }
+        }
+
         $apiTag = $attributeInfo->apiTag($this->getActionName());
         if($apiTag){
 
@@ -111,6 +121,18 @@ abstract class AnnotationController extends Controller
                 }
             }
         }
+
+        if(isset($attributeInfo->methodPreCall[$this->getActionName()])){
+            $preCalls = $attributeInfo->methodPreCall[$this->getActionName()];
+            /** @var PreCall $preCall */
+            foreach ($preCalls as $preCall) {
+                $ret = call_user_func($preCall->call, $this->request(),$this->response());
+                if($ret === false){
+                    return;
+                }
+            }
+        }
+
         parent::__hook($actionArg,$onRequestArg);
     }
 }

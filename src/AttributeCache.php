@@ -63,16 +63,25 @@ class AttributeCache
         }
 
         $public = $reflectionClass->getMethods(\ReflectionMethod::IS_PUBLIC);
-        foreach ($public as $item) {
-            if((!in_array($item->getName(),self::forbidMethodList)) && (!$item->isStatic())){
-                $api = $item->getAttributes(Api::class);
+        foreach ($public as $methodItem) {
+            if((!in_array($methodItem->getName(),self::forbidMethodList)) && (!$methodItem->isStatic())){
+                $api = $methodItem->getAttributes(Api::class);
                 if(!empty($api)){
                     try {
                         $apiTag = $api[0]->newInstance();
-                        $classInfo->apis[$item->getName()] = $apiTag;
+                        $classInfo->apis[$methodItem->getName()] = $apiTag;
                     }catch (\Throwable $throwable){
-                        $msg = "{$throwable->getMessage()} in {$className} method {$item->getName()}";
+                        $msg = "{$throwable->getMessage()} in {$className} method {$methodItem->getName()}";
                         throw new Annotation(message: $msg);
+                    }
+                }
+                $preCalls = $methodItem->getAttributes(PreCall::class);
+                foreach ($preCalls as $preCall) {
+                    try{
+                        $preCall = $preCall->newInstance();
+                        $classInfo->methodPreCall[$methodItem->getName()][] = $preCall;
+                    }catch (\Throwable $throwable){
+                        throw new Annotation(message: $throwable->getMessage());
                     }
                 }
             }
