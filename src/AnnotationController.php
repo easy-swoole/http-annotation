@@ -79,7 +79,37 @@ abstract class AnnotationController extends Controller
                 Utility::validateParam($req);
             }
 
-            var_dump($onRequestArg);
+            $methodRef = ReflectionCache::getInstance()->allowMethodReflection(static::class,$this->getActionName());
+            $parameters = $methodRef->getParameters();
+            if(!empty($parameters)){
+                //如果用数组来接收全部参数
+                $type = $parameters[0]->getType();
+                if($type){
+                    $type = $type->getName();
+                }
+                if(count($parameters) == 1 && $type == "array"){
+                    $paramKey = $parameters[0]->name;
+                    $temp = [];
+                    foreach ($actionArgsInTag as $param){
+                        /** @var Param $param */
+                        $param = $allParams[$param->name];
+                        if($param->ignorePassArgWhenNotSet && !$param->hasSet()){
+                            continue;
+                        }
+                        $temp[$param->name] = $param->parsedValue();
+                    }
+                    $actionArg[$paramKey] = $temp;
+                }else{
+                    foreach ($parameters as $parameter){
+                        $key = $parameter->name;
+                        if(key_exists($key,$allParams)){
+                            $actionArg[$key] = $allParams[$key]->parsedValue();
+                        }else{
+                            throw new ParamError("method {$this->getActionName()}() require arg: {$key} , but not define in any controller annotation");
+                        }
+                    }
+                }
+            }
         }
         parent::__hook($actionArg,$onRequestArg);
     }
