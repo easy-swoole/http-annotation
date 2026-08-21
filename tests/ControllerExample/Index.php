@@ -8,6 +8,7 @@ use EasySwoole\HttpAnnotation\Attributes\ApiGroup;
 use EasySwoole\HttpAnnotation\Attributes\Description;
 use EasySwoole\HttpAnnotation\Attributes\Param;
 use EasySwoole\HttpAnnotation\Attributes\PreCall;
+use EasySwoole\HttpAnnotation\Attributes\Property\Di;
 use EasySwoole\HttpAnnotation\Document\Document;
 use EasySwoole\HttpAnnotation\Enum\HttpMethod;
 use EasySwoole\HttpAnnotation\Enum\ParamFrom;
@@ -31,6 +32,10 @@ use EasySwoole\HttpAnnotation\Validator\SmallThanColumn;
 #[PreCall([Utility::class,'preCall'])]
 class Index extends Base
 {
+
+    #[Di()]
+    protected $test;
+
     #[Api(
         apiName: "home",
         allowMethod:HttpMethod::GET,

@@ -9,8 +9,10 @@ use EasySwoole\HttpAnnotation\Attributes\ApiGroup;
 use EasySwoole\HttpAnnotation\Attributes\ExtendParam;
 use EasySwoole\HttpAnnotation\Attributes\Param;
 use EasySwoole\HttpAnnotation\Attributes\PreCall;
+use EasySwoole\HttpAnnotation\Attributes\Property\Di;
 use EasySwoole\HttpAnnotation\Bean\ClassAttribute;
 use EasySwoole\HttpAnnotation\Bean\ClassOnRequest;
+use EasySwoole\HttpAnnotation\Bean\PropertyAttribute;
 use EasySwoole\HttpAnnotation\Enum\HttpMethod;
 use EasySwoole\HttpAnnotation\Exception\Annotation;
 use EasySwoole\HttpAnnotation\Exception\RequestMethodNotAllow;
@@ -83,6 +85,21 @@ class AttributeCache
                     }catch (\Throwable $throwable){
                         throw new Annotation(message: $throwable->getMessage());
                     }
+                }
+            }
+        }
+
+        $properties = $reflectionClass->getProperties(\ReflectionMethod::IS_PUBLIC|\ReflectionMethod::IS_PROTECTED);
+        foreach ($properties as $propertyItem) {
+            $attr = new PropertyAttribute();
+            $di = $propertyItem->getAttributes(Di::class);
+            if(!empty($di)){
+                try {
+                    $di = $di[0]->newInstance();
+                    $attr->di = $di[0]->newInstance();
+
+                }catch (\Throwable $throwable){
+                    throw new Annotation(message: $throwable->getMessage());
                 }
             }
         }
