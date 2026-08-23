@@ -68,7 +68,6 @@ class AttributeCache
             }
             return  null;
         }
-        $class = ReflectionCache::getInstance()->getClassReflection($class);
         $ref = ReflectionCache::getInstance()->allowMethodReflections($class);
         if(!isset($ref[$action])){
             return null;
@@ -80,7 +79,6 @@ class AttributeCache
             try{
                 $apiTag = new Api(...$actionApiTags[0]->getArguments());
             }catch (\Throwable $exception){
-                $class = static::class;
                 $msg = "{$exception->getMessage()} in controller: {$class} method: {$action}";
                 throw new Annotation($msg);
             }
@@ -102,7 +100,6 @@ class AttributeCache
             }
             return  null;
         }
-        $class = ReflectionCache::getInstance()->getClassReflection($class);
         $ref = ReflectionCache::getInstance()->allowMethodReflections($class);
         if(!isset($ref[$action])){
             return null;
@@ -117,7 +114,6 @@ class AttributeCache
                     $callTag = new Api(...$callTag->getArguments());
                     $final[] = $callTag;
                 }catch (\Throwable $exception){
-                    $class = static::class;
                     $msg = "{$exception->getMessage()} in controller: {$class} method: {$action}";
                     throw new Annotation($msg);
                 }
