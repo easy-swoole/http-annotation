@@ -9,6 +9,7 @@ use EasySwoole\HttpAnnotation\Attributes\ApiGroup;
 use EasySwoole\HttpAnnotation\Attributes\ExtendParam;
 use EasySwoole\HttpAnnotation\Attributes\Param;
 use EasySwoole\HttpAnnotation\Attributes\PreCall;
+use EasySwoole\HttpAnnotation\Attributes\Property\Context;
 use EasySwoole\HttpAnnotation\Attributes\Property\Di;
 use EasySwoole\HttpAnnotation\Bean\ClassAttribute;
 use EasySwoole\HttpAnnotation\Bean\ClassOnRequest;
@@ -47,7 +48,9 @@ class AttributeCache
         if(!empty($apiGroup)){
             $apiGroup = $apiGroup[0];
             try {
-                $classInfo->apiGroup = $apiGroup->newInstance();
+                /** @var ApiGroup $t */
+                $t = $apiGroup->newInstance();
+                $classInfo->apiGroup = $t;
             }catch (\Throwable $throwable){
                throw new Annotation($throwable->getMessage());
             }
@@ -95,13 +98,25 @@ class AttributeCache
             $di = $propertyItem->getAttributes(Di::class);
             if(!empty($di)){
                 try {
+                    /** @var Di $di */
                     $di = $di[0]->newInstance();
-                    $attr->di = $di[0]->newInstance();
-
+                    $attr->di = $di;
                 }catch (\Throwable $throwable){
                     throw new Annotation(message: $throwable->getMessage());
                 }
             }
+            $context = $propertyItem->getAttributes(Context::class);
+            if(!empty($context)){
+                try {
+                    /** @var Context $context */
+                    $context = $context[0]->newInstance();
+                    $attr->context = $context;
+                }catch (\Throwable $throwable){
+                    throw new Annotation(message: $throwable->getMessage());
+                }
+            }
+
+            $classInfo->propertyAttribute[$propertyItem->getName()] = $attr;
         }
 
         $onRequest = $reflectionClass->getMethod('onRequest');
@@ -109,7 +124,9 @@ class AttributeCache
         $extendParam = $onRequest->getAttributes(ExtendParam::class);
         if(!empty($extendParam)){
             try{
-                $classInfo->onRequest->extendParam = $extendParam[0]->newInstance();
+                /** @var  ExtendParam $t */
+                $t = $extendParam[0]->newInstance();
+                $classInfo->onRequest->extendParam = $t;
             }catch (\Throwable $throwable){
                 throw new Annotation($throwable->getMessage());
             }
