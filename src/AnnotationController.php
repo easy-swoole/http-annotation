@@ -9,9 +9,6 @@ use EasySwoole\Http\ReflectionCache;
 use EasySwoole\Http\Request;
 use EasySwoole\HttpAnnotation\Attributes\Param;
 use EasySwoole\HttpAnnotation\Attributes\PreCall;
-use EasySwoole\HttpAnnotation\Attributes\Property\Context;
-use EasySwoole\HttpAnnotation\Attributes\Property\Di;
-use EasySwoole\HttpAnnotation\Attributes\Property\Inject;
 use EasySwoole\HttpAnnotation\Enum\HttpMethod;
 use EasySwoole\HttpAnnotation\Exception\Annotation;
 use EasySwoole\HttpAnnotation\Exception\ParamError;
@@ -132,6 +129,9 @@ abstract class AnnotationController extends Controller
                 }
             }
         }
+
+        //处理Di Context
+
 
         parent::__hook($actionArg,$onRequestArg);
     }

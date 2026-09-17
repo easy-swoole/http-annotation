@@ -52,7 +52,7 @@ class AttributeCache
                 $t = $apiGroup->newInstance();
                 $classInfo->apiGroup = $t;
             }catch (\Throwable $throwable){
-               throw new Annotation($throwable->getMessage());
+               throw new Annotation("{$throwable->getMessage()} in {$className} for ApiGroup attribute");
             }
         }
 
@@ -102,17 +102,20 @@ class AttributeCache
                     $di = $di[0]->newInstance();
                     $attr->di = $di;
                 }catch (\Throwable $throwable){
-                    throw new Annotation(message: $throwable->getMessage());
+                    throw new Annotation("{$throwable->getMessage()} in {$className} property {$propertyItem->getName()} for Di attribute");
                 }
             }
             $context = $propertyItem->getAttributes(Context::class);
             if(!empty($context)){
+                if($di){
+                    throw new Annotation("class {$className} property {$propertyItem->getName()} Di Attribute is already defined");
+                }
                 try {
                     /** @var Context $context */
                     $context = $context[0]->newInstance();
                     $attr->context = $context;
                 }catch (\Throwable $throwable){
-                    throw new Annotation(message: $throwable->getMessage());
+                    throw new Annotation("{$throwable->getMessage()} in {$className} property {$propertyItem->getName()} for Context attribute");
                 }
             }
 
@@ -128,7 +131,8 @@ class AttributeCache
                 $t = $extendParam[0]->newInstance();
                 $classInfo->onRequest->extendParam = $t;
             }catch (\Throwable $throwable){
-                throw new Annotation($throwable->getMessage());
+                $msg = "{$throwable->getMessage()} for ExtendParam attribute in {$className} method onRequest";
+                throw new Annotation(message: $msg);
             }
         }
         //检查参数定义
@@ -138,7 +142,7 @@ class AttributeCache
                 $param = $param->newInstance();
                 $classInfo->onRequest->onRequestParams[$param->name] = $param;
             }catch (\Throwable $throwable){
-                $msg = "{$throwable->getMessage()} in {$className} method onRequest";
+                $msg = "{$throwable->getMessage()} for Param attribute in {$className} method onRequest";
                 throw new Annotation(message: $msg);
             }
         }
