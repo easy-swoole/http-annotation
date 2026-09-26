@@ -7,7 +7,7 @@ use EasySwoole\HttpAnnotation\Attributes\Property\Di;
 
 class PropertyAttribute
 {
-    public Context $context;
+    public Context|null $context = null;
 
-    public Di $di;
+    public Di|null $di = null;
 }

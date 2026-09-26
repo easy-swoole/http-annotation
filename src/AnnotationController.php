@@ -3,19 +3,20 @@
 namespace EasySwoole\HttpAnnotation;
 
 use EasySwoole\Component\Context\ContextManager;
+use EasySwoole\Component\Di;
 use EasySwoole\Component\Di as IOC;
 use EasySwoole\Http\AbstractInterface\Controller;
 use EasySwoole\Http\ReflectionCache;
 use EasySwoole\Http\Request;
 use EasySwoole\HttpAnnotation\Attributes\Param;
 use EasySwoole\HttpAnnotation\Attributes\PreCall;
+use EasySwoole\HttpAnnotation\Bean\PropertyAttribute;
 use EasySwoole\HttpAnnotation\Enum\HttpMethod;
 use EasySwoole\HttpAnnotation\Exception\Annotation;
 use EasySwoole\HttpAnnotation\Exception\ParamError;
 use EasySwoole\HttpAnnotation\Exception\RequestMethodNotAllow;
 use EasySwoole\HttpAnnotation\Exception\ParamValidateFail;
 use EasySwoole\HttpAnnotation\Validator\AbstractInterface\AbstractValidator;
-use EasySwoole\Http\Context as HttpContext;
 use EasySwoole\HttpAnnotation\Validator\Bean\ValidateRequest;
 
 
@@ -131,6 +132,19 @@ abstract class AnnotationController extends Controller
         }
 
         //处理Di Context
+        $properties = $attributeInfo->propertyAttribute;
+        /**
+         * @var  $property
+         * @var PropertyAttribute $propertyAttribute
+         */
+        foreach ($properties as $property => $propertyAttribute) {
+            if($propertyAttribute->di){
+                $this->{$property} = Di::getInstance()->get($propertyAttribute->di->key);
+            }
+            if($propertyAttribute->context){
+                $this->{$property} = ContextManager::getInstance()->get($propertyAttribute->di->key);
+            }
+        }
 
 
         parent::__hook($actionArg,$onRequestArg);
