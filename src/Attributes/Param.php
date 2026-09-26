@@ -282,9 +282,4 @@ class Param
            $this->subObject[$item->name] = clone $item;
        }
    }
-
-   function __destruct()
-   {
-       var_dump('D P');
-   }
 }

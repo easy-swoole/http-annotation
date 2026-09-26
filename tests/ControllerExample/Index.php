@@ -8,6 +8,7 @@ use EasySwoole\HttpAnnotation\Attributes\ApiGroup;
 use EasySwoole\HttpAnnotation\Attributes\Description;
 use EasySwoole\HttpAnnotation\Attributes\Param;
 use EasySwoole\HttpAnnotation\Attributes\PreCall;
+use EasySwoole\HttpAnnotation\Attributes\Property\Context;
 use EasySwoole\HttpAnnotation\Attributes\Property\Di;
 use EasySwoole\HttpAnnotation\Document\Document;
 use EasySwoole\HttpAnnotation\Enum\HttpMethod;
@@ -29,11 +30,11 @@ use EasySwoole\HttpAnnotation\Validator\SmallThanColumn;
 #[ApiGroup(
     groupName: 'index'
 )]
-#[PreCall([Utility::class,'preCall'])]
+#[PreCall([Utility::class,'preCallGlobal'])]
 class Index extends Base
 {
 
-    #[Di()]
+    #[Di(key: 'di')]
     protected $test;
 
     #[Api(
@@ -42,27 +43,14 @@ class Index extends Base
         requestPath: "/test/index.html",
         requestParam: [
             new Param(
-                name:'userInfo',
-                from: ParamFrom::JSON,
-                subObject: [
-                    new Param(
-                        name: 'name',
-                        validate: [
-                            new NotEmpty()
-                        ]
-                    ),
-                    new Param(
-                        name: 'age',
-                        validate: [
-                            new Optional()
-                        ]
-                    )
-                ]
+                name:'account',
             ),
         ],
         description: new Description(__DIR__.'/../res/description.md',Description::MARKDOWN_FILE)
     )]
-    function index(array $userInfo){
+    #[PreCall([Utility::class,'preCall'])]
+    function index(string $account)
+    {
         $account = 1;
         $this->writeJson(200,null,"account is {$account}");
     }
