@@ -68,7 +68,7 @@ class Document
             /** @var Group $group */
             $group = $list[$g->groupName];
 
-            $methods = ReflectionCache::getInstance()->allowMethodReflections($ref);
+            $methods = ReflectionCache::getInstance()->allowMethodReflections($ref->getName());
 
             //用于构建控制器路径
             $trimClass = ltrim(str_replace($this->controllerNameSpace,"",$controllerClass),"\\");
