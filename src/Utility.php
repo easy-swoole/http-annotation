@@ -14,51 +14,83 @@ use EasySwoole\HttpAnnotation\Validator\AbstractInterface\AbstractValidator;
 use EasySwoole\HttpAnnotation\Validator\Bean\ValidateRequest;
 use EasySwoole\Utility\File;
 use FastRoute\RouteCollector;
+use PhpToken;
 use Psr\Http\Message\ServerRequestInterface;
 
 class Utility
 {
 
-    private static function getFileDeclaredClass(string $file): array
+    public static function getFileDeclaredClass(string $file): array
     {
 
-        $namespace = null;
-        $matchNamespace = false;
-        $matchClass = false;
+        $tokens = PhpToken::tokenize(file_get_contents($file));
         $classes = [];
-        foreach (token_get_all(file_get_contents($file)) as $line => $info){
-            if(($info[0] == T_NAMESPACE) && $namespace === null){
-                $matchNamespace = true;
+        $count = count($tokens);
+
+        $currentNamespace = ''; // 存储当前文件的命名空间
+
+        for ($i = 0; $i < $count; $i++) {
+            $token = $tokens[$i];
+
+            // 1. 捕获命名空间 (支持 PHP 8.0+ 的 T_NAME_QUALIFIED 复合 Token)
+            if ($token->id === T_NAMESPACE) {
+                $namespaceParts = [];
+                for ($j = $i + 1; $j < $count; $j++) {
+                    if ($tokens[$j]->isIgnorable()) {
+                        continue;
+                    }
+                    // PHP 8.0 之后，命名空间可能是 T_STRING、T_NAME_QUALIFIED (如 App\Services) 或 T_NAME_FULLY_QUALIFIED
+                    if (in_array($tokens[$j]->id, [T_STRING, T_NAME_QUALIFIED, T_NAME_FULLY_QUALIFIED])) {
+                        $namespaceParts[] = $tokens[$j]->text;
+                    }
+                    if ($tokens[$j]->text === ';' || $tokens[$j]->text === '{') {
+                        $i = $j; // 移动外层指针，加速遍历
+                        break;
+                    }
+                }
+                $currentNamespace = implode('', $namespaceParts);
                 continue;
             }
-            if(($info[0] == T_NAME_QUALIFIED) && $matchNamespace){
-                $namespace = $info[1];
-                $matchNamespace = false;
-                continue;
-            }
-            if($info[0] == T_CLASS){
-                $matchClass = true;
-                continue;
-            }
-            if($matchClass && $info[0] == T_STRING){
-                $classes[] = $info[1];
-                $matchClass = false;
+
+            // 2. 捕获真实的类定义 (排除匿名类)
+            if ($token->id === T_CLASS) {
+                // 往前检查，排除 new class 匿名类
+                $isAnonymous = false;
+                for ($j = $i - 1; $j >= 0; $j--) {
+                    if ($tokens[$j]->isIgnorable()) {
+                        continue;
+                    }
+                    if ($tokens[$j]->id === T_NEW) {
+                        $isAnonymous = true;
+                    }
+                    break;
+                }
+
+                if ($isAnonymous) {
+                    continue;
+                }
+
+                // 向后寻找类名
+                for ($j = $i + 1; $j < $count; $j++) {
+                    if ($tokens[$j]->isIgnorable()) {
+                        continue;
+                    }
+
+                    if ($tokens[$j]->id === T_STRING) {
+                        $className = $tokens[$j]->text;
+                        // 拼接完整的命名空间前缀
+                        $fullClassName = $currentNamespace ? $currentNamespace . '\\' . $className : $className;
+                        $classes[] = $fullClassName;
+
+                        $i = $j; // 移动指针
+                        break;
+                    }
+                    break;
+                }
             }
         }
 
-        $ret = [];
-
-        foreach ($classes as $class){
-            $class = ltrim($class,"\\");
-            if($namespace !== null){
-                $ret[] = $namespace."\\".$class;
-            }else{
-                $ret[] = $class;
-            }
-        }
-
-        return $ret;
-
+        return $classes;
     }
 
 
