@@ -22,7 +22,6 @@ class Index extends Base
     protected $test;
 
     #[Api(
-        apiName: "home",
         allowMethod:HttpMethod::GET,
         requestPath: "/test/index.html",
         requestParam: [
@@ -40,7 +39,6 @@ class Index extends Base
 
 
     #[Api(
-        apiName: 'test',
         requestParam: [
             new Param(
                 name:'age',

@@ -3,15 +3,16 @@
 namespace EasySwoole\HttpAnnotation\Attributes;
 
 use EasySwoole\HttpAnnotation\Enum\HttpMethod;
+use EasySwoole\HttpAnnotation\Exception\Annotation;
 
 #[\Attribute]
 class Api
 {
     public string $relateClass;
     public string $relateMethod;
+    public string $apiName;
 
     function __construct(
-        public string        $apiName,
         public HttpMethod|array        $allowMethod = [HttpMethod::GET,HttpMethod::POST],
         public string|null       $requestPath = null,
         public bool          $registerRouter = false,
@@ -25,6 +26,9 @@ class Api
         $temp = [];
         /** @var Param $item */
         foreach ($this->requestParam as $item){
+            if(isset($temp[$item->name])){
+                throw new Annotation("param {$item->name} define duplicate");
+            }
             $temp[$item->name] = $item;
         }
         $this->requestParam = $temp;

@@ -8,15 +8,12 @@ use EasySwoole\HttpAnnotation\Attributes\Api;
 class Message extends Base
 {
 
-    #[Api(
-        apiName: "list"
-    )]
+    #[Api]
     function list(){
         $this->writeJson(Status::CODE_OK,[1,2,3]);
     }
 
     #[Api(
-        apiName: "unRead"
     )]
     function unRead(){
 

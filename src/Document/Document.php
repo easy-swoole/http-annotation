@@ -65,10 +65,12 @@ class Document
                 $old = $documentMap[$apiGroup->groupName];
                 throw new Annotation("apiGroupName {$apiGroup->groupName} is already defined in {$old->relateClass},redefine in {$apiGroup->relateClass} again");
             }
+
             $documentMap[$apiGroup->groupName] = [
                 'apiGroup' => $apiGroup,
-                'methods'=>[]
+                'classAttribute'=>$classAttribute
             ];
+
         }
         return $documentMap;
     }

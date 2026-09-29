@@ -19,7 +19,7 @@ use EasySwoole\HttpAnnotation\Validator\Required;
 class Profile extends Base
 {
     #[Api(
-        apiName: "info"
+
     )]
     function info()
     {
@@ -27,7 +27,7 @@ class Profile extends Base
     }
 
     #[Api(
-        apiName: "update"
+
     )]
     function update()
     {

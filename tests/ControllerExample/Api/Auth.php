@@ -17,7 +17,6 @@ use EasySwoole\HttpAnnotation\Validator\Required;
 class Auth extends ApiBase
 {
     #[Api(
-        apiName: "login",
         allowMethod: HttpMethod::GET,
         requestPath: "/auth/login.html",
         requestParam: [
