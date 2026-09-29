@@ -24,7 +24,7 @@ class Param
         public string                  $name,
         public ParamFrom|array         $from = [ParamFrom::GET,ParamFrom::POST],
         public array|null              $validate = [],
-        public                         $value = null,
+        public mixed                   $value = null,
         public bool                    $deprecated = false,
         public string|null $description = null,
         public ?ParamType              $type = null,
@@ -207,6 +207,9 @@ class Param
                         $this->value = null;
                     }
                     break;
+                }
+                case ParamType::FILE:{
+                    throw new \Exception('To be implemented');
                 }
             }
         }
