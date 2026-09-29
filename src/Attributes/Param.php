@@ -16,7 +16,6 @@ class Param
 {
     private bool $isParsed = false;
     private bool $hasSet = false;
-    private array $parentStack = [];
 
     /**
      * @throws Annotation
@@ -24,12 +23,11 @@ class Param
     public function __construct(
         public string                  $name,
         public ParamFrom|array         $from = [ParamFrom::GET,ParamFrom::POST],
-        public array|null                  $validate = [],
+        public array|null              $validate = [],
         public                         $value = null,
         public bool                    $deprecated = false,
         public string|null $description = null,
         public ?ParamType              $type = null,
-        public array                   $subObject = [],
         public array                   $ignoreAction = [],
         public bool                    $ignorePassArgWhenNotSet = false,
     ){
@@ -40,188 +38,149 @@ class Param
             $temp[$item->ruleName()] = $item;
         }
         $this->validate = $temp;
-
-        if(!empty($this->subObject)){
-            //记录key层级，类似   ['result','userInfo','userName']
-            $temp = $this->parentStack;
-            $temp[] = $this->name;
-            $list = [];
-            /** @var Param $item */
-            foreach ($this->subObject as $item){
-                $item->parentStack($temp);
-                $list[$item->name] = $item;
-            }
-            $this->subObject = $list;
-        }
     }
 
-    function parentStack(array|null $stack = null):array
-    {
-        if($stack !== null){
-            $this->parentStack = $stack;
-        }
-        return $this->parentStack;
-    }
 
-    public function parsedValue(?ServerRequestInterface $request = null,array|null $parentData = null)
+    public function parsedValue(?ServerRequestInterface $request = null)
     {
         if($this->isParsed){
             return $this->value;
         }
-        if(($request === null) && ($parentData === null)){
+        if(($request === null)){
             return $this->value;
         }
 
-
-        if($parentData !== null){
-            if(isset($parentData[$this->name])){
-                $this->hasSet = true;
-                if(!empty($this->subObject)){
-                    $temps = [];
-                    /** @var Param $item */
-                    foreach ($this->subObject as $item){
-                        $temps[$item->name] = $item->parsedValue($request,$parentData[$this->name]);
-                    }
-                    $this->value = $temps;
-                }else{
-                    $this->value = $parentData[$this->name];
-                }
-            }
+        if(is_array($this->from)){
+            $fromList = $this->from;
         }else{
-            if(is_array($this->from)){
-                $fromList = $this->from;
-            }else{
-                $fromList = [$this->from];
-            }
-            foreach ($fromList as $from){
-                switch ($from){
-                    case ParamFrom::GET:{
-                        $data = $request->getQueryParams();
-                        if(isset($data[$this->name])){
-                            $this->hasSet = true;
-                            $this->value = $data[$this->name];
-                        }
-                        break;
-                    }
-                    case ParamFrom::POST:{
-                        $data = $request->getParsedBody();
-                        if(isset($data[$this->name])){
-                            $this->hasSet = true;
-                            $this->value = $data[$this->name];
-                        }
-                        break;
-                    }
-                    case ParamFrom::JSON:{
-                        $data = $request->getBody()->__toString();
-                        if(empty($data)){
-                            $data = [];
-                        }else{
-                            $data = json_decode($data,true) ?: [];
-                        }
-
-                        if(isset($data[$this->name])){
-                            $this->hasSet = true;
-                            if(!empty($this->subObject)){
-                                $temps = [];
-                                /** @var Param $item */
-                                foreach ($this->subObject as $item){
-                                    $temps[$item->name] = $item->parsedValue($request,$data[$this->name]);
-                                }
-                                $this->value = $temps;
-                            }else{
-                                $this->value = $data[$this->name];
-                            }
-                        }
-
-                        break;
-                    }
-                    case ParamFrom::XML:{
-                        $xml = $request->getBody()->__toString();
-                        // xml 转数组
-                        $data = json_decode(json_encode(simplexml_load_string($xml)), true);
-                        if(!is_array($data)){
-                            $data = [];
-                        }
-                        if(isset($data[$this->name])){
-                            $this->hasSet = true;
-                            if(!empty($this->subObject)){
-                                $temps = [];
-                                /** @var Param $item */
-                                foreach ($this->subObject as $item){
-                                    $temps[$item->name] = $item->parsedValue($request,$data[$this->name]);
-                                }
-                                $this->value = $temps;
-                            }else{
-                                $this->value = $data[$this->name];
-                            }
-                        }
-
-                        break;
-                    }
-                    case ParamFrom::RAW_POST:{
+            $fromList = [$this->from];
+        }
+        foreach ($fromList as $from){
+            switch ($from){
+                case ParamFrom::GET:{
+                    $data = $request->getQueryParams();
+                    if(isset($data[$this->name])){
                         $this->hasSet = true;
-                        $this->value = $request->getBody()->__toString();
-                        break;
+                        $this->value = $data[$this->name];
                     }
-                    case ParamFrom::FILE:{
-                        $data = $request->getUploadedFile($this->name);
-                        if(!empty($data)){
-                            $this->hasSet = true;
-                            $this->value = $data;
-                        }
-                        break;
-                    }
-                    case ParamFrom::DI:{
-                        $data = IOC::getInstance()->get($this->name);
-                        if(!empty($data)){
-                            $this->hasSet = true;
-                            $this->value = $data;
-                        }
-                        break;
-                    }
-                    case ParamFrom::CONTEXT:{
-                        $data = ContextManager::getInstance()->get($this->name);
-                        if(!empty($data)){
-                            $this->hasSet = true;
-                            $this->value = $data;
-                        }
-                        break;
-                    }
-                    case ParamFrom::COOKIE:{
-                        $data = $request->getCookieParams($this->name);
-                        if(!empty($data)){
-                            $this->hasSet = true;
-                            $this->value = $data;
-                        }
-                        break;
-                    }
-                    case ParamFrom::HEADER:{
-                        //swoole header的key，全部都是小写
-                        $data = $request->getHeader(strtolower($this->name));
-                        $this->hasSet = true;
-                        if(!empty($data)){
-                            $this->value = $data[0];
-                        }else{
-                            $this->value = null;
-                        }
-                        break;
-                    }
-                    case ParamFrom::ROUTER_PARAMS:{
-                        $data = ContextManager::getInstance()->get(AbstractRouter::PARSE_PARAMS_CONTEXT_KEY);
-                        if(isset($data[$this->name])){
-                            $this->hasSet = true;
-                            $this->value = $data;
-                        }
-                        break;
-                    }
+                    break;
                 }
-                if($this->hasSet){
+                case ParamFrom::POST:{
+                    $data = $request->getParsedBody();
+                    if(isset($data[$this->name])){
+                        $this->hasSet = true;
+                        $this->value = $data[$this->name];
+                    }
+                    break;
+                }
+                case ParamFrom::JSON:{
+                    $data = $request->getBody()->__toString();
+                    if(empty($data)){
+                        $data = [];
+                    }else{
+                        $data = json_decode($data,true) ?: [];
+                    }
+
+                    if(isset($data[$this->name])){
+                        $this->hasSet = true;
+                        if(!empty($this->subObject)){
+                            $temps = [];
+                            /** @var Param $item */
+                            foreach ($this->subObject as $item){
+                                $temps[$item->name] = $item->parsedValue($request,$data[$this->name]);
+                            }
+                            $this->value = $temps;
+                        }else{
+                            $this->value = $data[$this->name];
+                        }
+                    }
+
+                    break;
+                }
+                case ParamFrom::XML:{
+                    $xml = $request->getBody()->__toString();
+                    // xml 转数组
+                    $data = json_decode(json_encode(simplexml_load_string($xml)), true);
+                    if(!is_array($data)){
+                        $data = [];
+                    }
+                    if(isset($data[$this->name])){
+                        $this->hasSet = true;
+                        if(!empty($this->subObject)){
+                            $temps = [];
+                            /** @var Param $item */
+                            foreach ($this->subObject as $item){
+                                $temps[$item->name] = $item->parsedValue($request,$data[$this->name]);
+                            }
+                            $this->value = $temps;
+                        }else{
+                            $this->value = $data[$this->name];
+                        }
+                    }
+
+                    break;
+                }
+                case ParamFrom::RAW_POST:{
+                    $this->hasSet = true;
+                    $this->value = $request->getBody()->__toString();
+                    break;
+                }
+                case ParamFrom::FILE:{
+                    $data = $request->getUploadedFile($this->name);
+                    if(!empty($data)){
+                        $this->hasSet = true;
+                        $this->value = $data;
+                    }
+                    break;
+                }
+                case ParamFrom::DI:{
+                    $data = IOC::getInstance()->get($this->name);
+                    if(!empty($data)){
+                        $this->hasSet = true;
+                        $this->value = $data;
+                    }
+                    break;
+                }
+                case ParamFrom::CONTEXT:{
+                    $data = ContextManager::getInstance()->get($this->name);
+                    if(!empty($data)){
+                        $this->hasSet = true;
+                        $this->value = $data;
+                    }
+                    break;
+                }
+                case ParamFrom::COOKIE:{
+                    $data = $request->getCookieParams($this->name);
+                    if(!empty($data)){
+                        $this->hasSet = true;
+                        $this->value = $data;
+                    }
+                    break;
+                }
+                case ParamFrom::HEADER:{
+                    //swoole header的key，全部都是小写
+                    $data = $request->getHeader(strtolower($this->name));
+                    $this->hasSet = true;
+                    if(!empty($data)){
+                        $this->value = $data[0];
+                    }else{
+                        $this->value = null;
+                    }
+                    break;
+                }
+                case ParamFrom::ROUTER_PARAMS:{
+                    $data = ContextManager::getInstance()->get(AbstractRouter::PARSE_PARAMS_CONTEXT_KEY);
+                    if(isset($data[$this->name])){
+                        $this->hasSet = true;
+                        $this->value = $data;
+                    }
                     break;
                 }
             }
+            if($this->hasSet){
+                break;
+            }
         }
-
-
 
         if($this->type != null){
             switch ($this->type){
@@ -244,7 +203,7 @@ class Param
                     break;
                 }
                 case ParamType::NULL_WHILE_EMPTY:{
-                    if(empty($this->value) && $this->value != 0){
+                    if(empty($this->value) && (($this->value !== 0) && ($this->value !== '0'))){
                         $this->value = null;
                     }
                     break;
@@ -267,11 +226,6 @@ class Param
        /** @var AbstractValidator $item */
        foreach ($this->validate as $item){
            $this->validate[$item->ruleName()] = clone $item;
-       }
-
-       /** @var Param $item */
-       foreach ($this->subObject as $item){
-           $this->subObject[$item->name] = clone $item;
        }
    }
 }

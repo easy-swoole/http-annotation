@@ -27,16 +27,7 @@ class Auth extends ApiBase
             new Param(name: "password", from: ParamFrom::GET, validate: [
                 new Required(),
                 new MaxLength(maxLen: 15),
-            ], ),
-            new Param(name: "verify", from: ParamFrom::JSON,
-                type: ParamType::OBJECT,
-                subObject: [
-                    new Param(name: "code", from: ParamFrom::JSON, validate:[
-                        new Required(),
-                        new MaxLength(maxLen: 15),
-                    ],description: "防伪编号"),
-                    new Param(name: "phone", from: ParamFrom::JSON, description: "手机号")
-                ])
+            ], )
         ],
         responseParam: [
             new Param(
@@ -44,11 +35,7 @@ class Auth extends ApiBase
             ),
             new Param(
                 name: "Result",
-                type: ParamType::LIST,
-                subObject: [
-                    new Param("token"),
-                    new Param("expire")
-                ]
+                type: ParamType::STRING
             ),
             new Param("msg")
         ]

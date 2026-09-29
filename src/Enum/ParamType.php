@@ -10,8 +10,6 @@ enum ParamType
     case REAL;
     case FLOAT;
     case BOOLEAN;
-    case LIST;
-    case OBJECT;
     case FILE;
     case NULL_WHILE_EMPTY;
 }

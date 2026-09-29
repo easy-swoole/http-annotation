@@ -36,20 +36,6 @@ class MixedFromJsonTest extends TestCase
         $param = new Param(
             name:'userInfo',
             from: ParamFrom::JSON,
-            subObject: [
-                new Param(
-                    name: 'name',
-                    validate: [
-                        new NotEmpty()
-                    ]
-                ),
-                new Param(
-                    name: 'age',
-                    validate: [
-                        new NotEmpty()
-                    ]
-                )
-            ]
         );
         $param->parsedValue($request);
 
