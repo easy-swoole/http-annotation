@@ -4,6 +4,7 @@ namespace EasySwoole\HttpAnnotation\Tests\ControllerExample;
 
 use EasySwoole\HttpAnnotation\AnnotationController;
 use EasySwoole\HttpAnnotation\Attributes\Api;
+use EasySwoole\HttpAnnotation\Attributes\ApiGroup;
 use EasySwoole\HttpAnnotation\Attributes\Param;
 use EasySwoole\HttpAnnotation\Exception\Annotation;
 use EasySwoole\HttpAnnotation\Exception\ParamValidateFail;

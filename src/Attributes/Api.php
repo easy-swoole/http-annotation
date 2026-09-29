@@ -5,11 +5,11 @@ namespace EasySwoole\HttpAnnotation\Attributes;
 use EasySwoole\HttpAnnotation\Enum\HttpMethod;
 
 #[\Attribute]
-class Api implements \JsonSerializable
+class Api
 {
     public string $relateClass;
     public string $relateMethod;
-    
+
     function __construct(
         public string        $apiName,
         public HttpMethod|array        $allowMethod = [HttpMethod::GET,HttpMethod::POST],
@@ -28,37 +28,5 @@ class Api implements \JsonSerializable
             $temp[$item->name] = $item;
         }
         $this->requestParam = $temp;
-    }
-
-    public function jsonSerialize(): mixed
-    {
-        $allowMethods = $this->allowMethod;
-        if(!is_array($allowMethods)){
-            $allowMethods = [$allowMethods];
-        }
-        $temp = [];
-        foreach ($allowMethods as $method){
-            if($method instanceof HttpMethod){
-                $temp[] = $method->name;
-            }
-        }
-
-        $responseParam = [];
-        foreach ($this->responseParam as $item){
-            $responseParam[$item->name] = $item;
-        }
-
-        return [
-            'apiName'=>$this->apiName,
-            'allowMethod'=>$temp,
-            'requestPath'=>$this->requestPath,
-            'registerRouter'=>$this->registerRouter,
-            'requestParam'=>$this->requestParam,
-            'responseParam'=>$responseParam,
-            'description'=>$this->description,
-            'deprecated'=>$this->deprecated,
-            'requestExamples'=>$this->requestExamples,
-            'responseExamples'=>$this->responseExamples
-        ];
     }
 }

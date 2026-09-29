@@ -3,15 +3,9 @@
 namespace EasySwoole\HttpAnnotation\Attributes;
 
 #[\Attribute(\Attribute::TARGET_CLASS)]
-class ApiGroup implements \JsonSerializable
+class ApiGroup
 {
-    function __construct(public string $groupName, public string|null $description = null){}
+    public string $relateClass;
 
-    public function jsonSerialize(): mixed
-    {
-        return [
-            'groupName'=>$this->groupName,
-            'description'=>$this->description,
-        ];
-    }
+    function __construct(public string $groupName, public string|null $description = null){}
 }

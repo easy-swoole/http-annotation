@@ -50,6 +50,7 @@ class AttributeCache
             try {
                 /** @var ApiGroup $t */
                 $t = $apiGroup->newInstance();
+                $t->relateClass = $reflectionClass->getName();
                 $classInfo->apiGroup = $t;
             }catch (\Throwable $throwable){
                throw new Annotation("{$throwable->getMessage()} in {$className} for ApiGroup attribute");

@@ -18,7 +18,6 @@ use EasySwoole\HttpAnnotation\Enum\HttpMethod;
 #[PreCall([Utility::class,'preCallGlobal'])]
 class Index extends Base
 {
-
     #[Di(key: 'di')]
     protected $test;
 

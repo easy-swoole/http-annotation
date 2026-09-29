@@ -37,10 +37,12 @@ class Document
         return $this->config;
     }
 
-    function scan()
+    /**
+     * 仅当定义了ApiGroup的控制器才会被扫描进去
+     */
+    function scan():array
     {
-        $list = [];
-        $declareInfo = [];
+        $documentMap = [];
         $len = strlen($this->controllerNameSpace);
         $files = File::scanDirectory($this->controllerPath)['files'];
         foreach ($files as $file){
@@ -54,8 +56,21 @@ class Document
                 continue;
             }
             $classAttribute = AttributeCache::getInstance()->parseClass($class);
+            $apiGroup = $classAttribute->apiGroup;
+            if(empty($apiGroup)){
+                continue;
+            }
+            if(isset($documentMap[$apiGroup->groupName])){
+                /** @var ApiGroup $old */
+                $old = $documentMap[$apiGroup->groupName];
+                throw new Annotation("apiGroupName {$apiGroup->groupName} is already defined in {$old->relateClass},redefine in {$apiGroup->relateClass} again");
+            }
+            $documentMap[$apiGroup->groupName] = [
+                'apiGroup' => $apiGroup,
+                'methods'=>[]
+            ];
         }
-        return $len;
+        return $documentMap;
     }
 
     function scanToHtml()
