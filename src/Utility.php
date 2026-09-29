@@ -94,39 +94,17 @@ class Utility
     }
 
 
-    public static function validateParam(ValidateRequest $validateRequest,string|null $parentParamName = null): void
+    public static function validateParam(ValidateRequest $validateRequest): void
     {
-        //当有下级的时候，当级校验没有意义
-        if(!empty($validateRequest->validateParam->subObject)){
-            if(empty($parentParamName)){
-                $parentParamName = $validateRequest->validateParam->name;
-            }else{
-                $parentParamName .= ".{$validateRequest->validateParam->name}";
-            }
-
-            foreach ($validateRequest->validateParam->subObject as $sub){
-                $t = clone $validateRequest;
-                $t->validateParam = $sub;
-                self::validateParam($t,$parentParamName);
-            }
-        }else{
-            $rules = $validateRequest->validateParam->validate;
-            /** @var AbstractValidator $rule */
-            foreach ($rules as $rule){
-                if(!$rule->execute($validateRequest)){
-                    if(!empty($parentParamName)){
-                        $parentParamName .= '.';
-                    }else{
-                        $parentParamName = '';
-                    }
-                    $parentParamName = $parentParamName.$validateRequest->validateParam->name;
-                    $msg = $rule->errorMsg($parentParamName);
-                    $ex = new ParamValidateFail("{$msg} in {$validateRequest->callClass} method {$validateRequest->callMethod}");
-                    $ex->setFailRule($rule);
-                    $ex->setParamName($parentParamName);
-
-                    throw $ex;
-                }
+        $rules = $validateRequest->validateParam->validate;
+        /** @var AbstractValidator $rule */
+        foreach ($rules as $rule){
+            if(!$rule->execute($validateRequest)){
+                $msg = $rule->errorMsg($validateRequest->validateParam->name);
+                $ex = new ParamValidateFail("{$msg} in {$validateRequest->callClass} method {$validateRequest->callMethod}");
+                $ex->setFailRule($rule);
+                $ex->setParamName($validateRequest->validateParam->name);
+                throw $ex;
             }
         }
     }

@@ -35,9 +35,12 @@ abstract class AnnotationController extends Controller
             }
         }
 
+        $onRequestArg = [];
+        $actionArgsInTag = [];
+        $actionArg = [];
+        $onRequestArgsInTag = $attributeInfo->onRequest->onRequestParams;
         $apiTag = $attributeInfo->apiTag($this->getActionName());
         if($apiTag){
-
             if($apiTag->allowMethod instanceof HttpMethod){
                 $allowRequestMethod = [$apiTag->allowMethod];
             }else{
@@ -49,11 +52,7 @@ abstract class AnnotationController extends Controller
                 throw new RequestMethodNotAllow("{$currentRequestMethod} method is not allow for this request");
             }
 
-            $actionArg = [];
-            $onRequestArg = [];
-
             $actionArgsInTag = $apiTag->requestParam;
-            $onRequestArgsInTag = $attributeInfo->onRequest->onRequestParams;
             //如果有重复定义，则覆盖onRequest参数
             /** @var Param $param */
             foreach ($actionArgsInTag as $param){
@@ -61,32 +60,45 @@ abstract class AnnotationController extends Controller
                     $onRequestArgsInTag[$param->name] = $param;
                 }
             }
-            //必须使用allParams中的对象
-            $allParams = $actionArgsInTag + $onRequestArgsInTag;
-            foreach ($allParams as $paramName => $param){
+            $finalAllParams = $actionArgsInTag + $onRequestArgsInTag;
+        }else{
+            $finalAllParams = $onRequestArgsInTag;
+        }
+        //必须使用allParams中的对象
+        foreach ($finalAllParams as $paramName => $param){
+            if(!in_array($this->getActionName(),$param->ignoreAction)){
                 $param = clone $param;
-                $allParams[$paramName] = $param;
+                $finalAllParams[$paramName] = $param;
                 $param->parsedValue($this->request());
+            }else{
+                unset($finalAllParams[$paramName]);
             }
-
-            foreach ($onRequestArgsInTag as $param){
-                $req = new ValidateRequest($allParams[$param->name]);
-                $req->callClass = static::class;
-                $req->callMethod = $this->getActionName();
-                $req->request = $this->request();
-                Utility::validateParam($req);
-                $onRequestArg[$param->name] = $allParams[$param->name]->parsedValue();
+        }
+        /** @var Param $param */
+        foreach ($onRequestArgsInTag as $param){
+            if(!isset($finalAllParams[$param->name])){
+                continue;
             }
+            $validateRequest = new ValidateRequest($finalAllParams[$param->name]);
+            $validateRequest->callClass = static::class;
+            $validateRequest->callMethod = $this->getActionName();
+            $validateRequest->request = $this->request();
+            Utility::validateParam($validateRequest);
+            $onRequestArg[$param->name] = $finalAllParams[$param->name]->parsedValue();
+        }
 
-            foreach ($actionArgsInTag as $param){
-                $req = new ValidateRequest($allParams[$param->name]);
-                $req->callClass = static::class;
-                $req->callMethod = $this->getActionName();
-                $req->request = $this->request();
-
-                Utility::validateParam($req);
+        foreach ($actionArgsInTag as $param){
+            if(!isset($finalAllParams[$param->name])){
+                continue;
             }
-
+            $validateRequest = new ValidateRequest($finalAllParams[$param->name]);
+            $validateRequest->callClass = static::class;
+            $validateRequest->callMethod = $this->getActionName();
+            $validateRequest->request = $this->request();
+            Utility::validateParam($validateRequest);
+        }
+        
+        if($apiTag){
             $methodRef = ReflectionCache::getInstance()->allowMethodReflection(static::class,$this->getActionName());
             $parameters = $methodRef->getParameters();
             if(!empty($parameters)){
@@ -100,7 +112,7 @@ abstract class AnnotationController extends Controller
                     $temp = [];
                     foreach ($actionArgsInTag as $param){
                         /** @var Param $param */
-                        $param = $allParams[$param->name];
+                        $param = $finalAllParams[$param->name];
                         if($param->ignorePassArgWhenNotSet && !$param->hasSet()){
                             continue;
                         }
@@ -110,8 +122,8 @@ abstract class AnnotationController extends Controller
                 }else{
                     foreach ($parameters as $parameter){
                         $key = $parameter->name;
-                        if(key_exists($key,$allParams)){
-                            $actionArg[$key] = $allParams[$key]->parsedValue();
+                        if(key_exists($key,$finalAllParams)){
+                            $actionArg[$key] = $finalAllParams[$key]->parsedValue();
                         }else{
                             throw new ParamError("method {$this->getActionName()}() require arg: {$key} , but not define in any controller annotation");
                         }
