@@ -7,8 +7,6 @@ use EasySwoole\HttpAnnotation\AnnotationController;
 use EasySwoole\HttpAnnotation\AttributeCache;
 use EasySwoole\HttpAnnotation\Attributes\Api;
 use EasySwoole\HttpAnnotation\Attributes\ApiGroup;
-use EasySwoole\HttpAnnotation\Attributes\Description;
-use EasySwoole\HttpAnnotation\Attributes\Example;
 use EasySwoole\HttpAnnotation\Attributes\Param;
 use EasySwoole\HttpAnnotation\Enum\HttpMethod;
 use EasySwoole\HttpAnnotation\Enum\ParamFrom;

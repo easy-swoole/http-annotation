@@ -16,7 +16,7 @@ class Api implements \JsonSerializable
         public array         $responseParam = [],
         public array         $requestExamples = [],
         public array         $responseExamples = [],
-        public Description|string|null $description = null,
+        public string|null   $description = null,
         public bool          $deprecated = false,
     ){
         $temp = [];
@@ -40,11 +40,6 @@ class Api implements \JsonSerializable
             }
         }
 
-        $desc = $this->description;
-        if(is_string($desc)){
-            $desc = new Description($desc,Description::PLAIN_TEXT);
-        }
-
         $responseParam = [];
         foreach ($this->responseParam as $item){
             $responseParam[$item->name] = $item;
@@ -57,7 +52,7 @@ class Api implements \JsonSerializable
             'registerRouter'=>$this->registerRouter,
             'requestParam'=>$this->requestParam,
             'responseParam'=>$responseParam,
-            'description'=>$desc,
+            'description'=>$this->description,
             'deprecated'=>$this->deprecated,
             'requestExamples'=>$this->requestExamples,
             'responseExamples'=>$this->responseExamples

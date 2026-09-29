@@ -27,20 +27,12 @@ class Param
         public array|null                  $validate = [],
         public                         $value = null,
         public bool                    $deprecated = false,
-        public Description|string|null $description = null,
+        public string|null $description = null,
         public ?ParamType              $type = null,
         public array                   $subObject = [],
         public array                   $ignoreAction = [],
         public bool                    $ignorePassArgWhenNotSet = false,
     ){
-        if($this->description){
-            if(!$this->description instanceof Description){
-                $this->description = new Description(desc:$this->description);
-            }
-            if($this->description->type != Description::PLAIN_TEXT){
-                throw new Annotation("description only allow PLAIN_TEXT type in Param attribute");
-            }
-        }
         //处理validate as key => val
         $temp = [];
         /** @var AbstractValidator $item */
