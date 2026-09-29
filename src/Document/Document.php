@@ -42,6 +42,7 @@ class Document
     function scan()
     {
         $list = [];
+        $declareInfo = [];
         $len = strlen($this->controllerNameSpace);
         $files = File::scanDirectory($this->controllerPath)['files'];
         foreach ($files as $file){
@@ -55,7 +56,6 @@ class Document
                 continue;
             }
             $classAttribute = AttributeCache::getInstance()->parseClass($class);
-
         }
         return $len;
     }
