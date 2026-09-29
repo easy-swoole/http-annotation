@@ -7,6 +7,9 @@ use EasySwoole\HttpAnnotation\Enum\HttpMethod;
 #[\Attribute]
 class Api implements \JsonSerializable
 {
+    public string $relateClass;
+    public string $relateMethod;
+    
     function __construct(
         public string        $apiName,
         public HttpMethod|array        $allowMethod = [HttpMethod::GET,HttpMethod::POST],

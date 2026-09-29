@@ -73,7 +73,10 @@ class AttributeCache
                 $api = $methodItem->getAttributes(Api::class);
                 if(!empty($api)){
                     try {
+                        /** @var Api $apiTag */
                         $apiTag = $api[0]->newInstance();
+                        $apiTag->relateClass = $reflectionClass->getName();
+                        $apiTag->relateMethod = $methodItem->getName();
                         $classInfo->apis[$methodItem->getName()] = $apiTag;
                     }catch (\Throwable $throwable){
                         $msg = "{$throwable->getMessage()} in {$className} method {$methodItem->getName()}";
