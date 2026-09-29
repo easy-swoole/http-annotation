@@ -2,6 +2,8 @@
 
 namespace EasySwoole\HttpAnnotation\Attributes;
 
+use EasySwoole\HttpAnnotation\Bean\Description\DescriptionInterface;
+use EasySwoole\HttpAnnotation\Bean\Description\Text;
 use EasySwoole\HttpAnnotation\Enum\HttpMethod;
 use EasySwoole\HttpAnnotation\Exception\Annotation;
 
@@ -20,7 +22,7 @@ class Api
         public array         $responseParam = [],
         public array         $requestExamples = [],
         public array         $responseExamples = [],
-        public string|null   $description = null,
+        public string|null|DescriptionInterface   $description = null,
         public bool          $deprecated = false,
     ){
         $temp = [];
@@ -32,5 +34,8 @@ class Api
             $temp[$item->name] = $item;
         }
         $this->requestParam = $temp;
+        if(is_string($this->description)){
+            $this->description = new Text($this->description);
+        }
     }
 }

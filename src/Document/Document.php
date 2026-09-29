@@ -70,7 +70,6 @@ class Document
                 'apiGroup' => $apiGroup,
                 'classAttribute'=>$classAttribute
             ];
-
         }
         return $documentMap;
     }
