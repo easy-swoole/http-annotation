@@ -11,6 +11,8 @@ use EasySwoole\HttpAnnotation\Attributes\Property\Context;
 use EasySwoole\HttpAnnotation\Attributes\Property\Di;
 use EasySwoole\HttpAnnotation\Document\Document;
 use EasySwoole\HttpAnnotation\Enum\HttpMethod;
+use EasySwoole\HttpAnnotation\Validator\Integer;
+use EasySwoole\HttpAnnotation\Validator\NotEmpty;
 
 #[ApiGroup(
     groupName: 'index'
@@ -27,6 +29,9 @@ class Index extends Base
         requestParam: [
             new Param(
                 name:'account',
+                validate: [
+                    new Integer()
+                ]
             ),
         ]
     )]
