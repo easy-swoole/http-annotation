@@ -43,7 +43,6 @@ class Document
     function scan():array
     {
         $documentMap = [];
-        $len = strlen($this->controllerNameSpace);
         $files = File::scanDirectory($this->controllerPath)['files'];
         foreach ($files as $file){
             $class = Utility::getFileDeclaredClass($file);
@@ -76,9 +75,7 @@ class Document
 
     function scanToHtml()
     {
-        $json = json_encode($this->scan());
-        $temp = file_get_contents(__DIR__ . '/doc.tpl');
-        $temp = str_replace('{{$docData}}',$json,$temp);
-        return str_replace('{{$config}}',json_encode($this->config),$temp);
+        $html = $this->scan();
+
     }
 }
