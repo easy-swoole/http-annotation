@@ -31,7 +31,7 @@ class Base extends AnnotationController
             new NotEmpty(),
         ]
     )]
-    function onRequest(?string $action): ?bool
+    function onRequest(?string $action,?array $data = null): ?bool
     {
         return true;
     }

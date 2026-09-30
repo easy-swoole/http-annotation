@@ -12,6 +12,7 @@ use EasySwoole\HttpAnnotation\Attributes\Property\Di;
 use EasySwoole\HttpAnnotation\Document\Document;
 use EasySwoole\HttpAnnotation\Enum\HttpMethod;
 use EasySwoole\HttpAnnotation\Validator\Integer;
+use EasySwoole\HttpAnnotation\Validator\MinLength;
 use EasySwoole\HttpAnnotation\Validator\NotEmpty;
 
 #[ApiGroup(
@@ -30,7 +31,7 @@ class Index extends Base
             new Param(
                 name:'account',
                 validate: [
-                    new Integer()
+                    new MinLength(3)
                 ]
             ),
         ]
@@ -47,15 +48,39 @@ class Index extends Base
         requestParam: [
             new Param(
                 name:'age',
+
             ),
             new Param(
-                name: 'userName'
+                name: 'userName',
+                validate: [
+                    new NotEmpty()
+                ]
             )
         ]
     )]
     #[PreCall([Utility::class,'preCall'])]
     function test(int|null $age,string|null $userName)
     {
-        var_dump($age,$userName);
+        var_dump($userName,$age);
+    }
+
+    #[Api(
+        requestParam: [
+            new Param(
+                name:'age',
+
+            ),
+            new Param(
+                name: 'userName',
+                validate: [
+                    new NotEmpty()
+                ]
+            )
+        ]
+    )]
+    #[PreCall([Utility::class,'preCall'])]
+    function test2(array $data)
+    {
+        var_dump($data);
     }
 }

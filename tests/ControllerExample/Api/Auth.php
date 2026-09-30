@@ -11,9 +11,7 @@ use EasySwoole\HttpAnnotation\Enum\ParamType;
 use EasySwoole\HttpAnnotation\Validator\MaxLength;
 use EasySwoole\HttpAnnotation\Validator\Required;
 
-#[ApiGroup(
-    groupName: "Api.Auth"
-)]
+
 class Auth extends ApiBase
 {
     #[Api(
@@ -41,6 +39,11 @@ class Auth extends ApiBase
         ]
     )]
     function login()
+    {
+
+    }
+
+    function logout()
     {
 
     }
