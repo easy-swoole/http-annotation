@@ -4,5 +4,5 @@ namespace EasySwoole\HttpAnnotation\Bean\Example;
 
 interface ExampleInterface
 {
-    function toString();
+    function toString():string;
 }

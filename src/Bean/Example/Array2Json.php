@@ -2,7 +2,7 @@
 
 namespace EasySwoole\HttpAnnotation\Bean\Example;
 
-class ArrayForm implements ExampleInterface
+class Array2Json implements ExampleInterface
 {
     public array $formDaa;
     private string|null $content = null;
@@ -17,7 +17,7 @@ class ArrayForm implements ExampleInterface
         if($this->content !== null){
             return $this->content;
         }
-        $this->content = http_build_query($this->formDaa);
+        $this->content = json_encode($this->formDaa, JSON_UNESCAPED_UNICODE|JSON_UNESCAPED_SLASHES);
         return $this->content;
     }
 }
