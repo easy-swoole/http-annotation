@@ -14,13 +14,7 @@ class Text implements DescriptionInterface
     function __construct(string $desc,bool $isFile = false)
     {
         $this->isFile = $isFile;
-        if($isFile){
-            if (!file_exists($desc)) {
-                throw new \Exception("text description file {$desc} not exists");
-            }
-        }
         $this->text = $desc;
-
     }
 
     function toString():string
@@ -30,11 +24,14 @@ class Text implements DescriptionInterface
         }
 
         if($this->isFile){
-            $text = file_get_contents($this->text);
+            if (!file_exists($this->text)) {
+                throw new \Exception("text description file {$this->text} not exists");
+            }
+            $this->content  = file_get_contents($this->text);
         }else{
-            $text = $this->text;
+            $this->content  = $this->text;
         }
-        $this->content = $text;
-        return $text;
+
+        return $this->content ;
     }
 }

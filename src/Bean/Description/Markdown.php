@@ -10,11 +10,8 @@ class Markdown implements DescriptionInterface
 
     function __construct(string $markdownFile)
     {
-        if (!file_exists($markdownFile)) {
-            throw new \Exception("markdown description file {$markdownFile} not exists");
-        }
-        $this->markdownFile = $markdownFile;
 
+        $this->markdownFile = $markdownFile;
     }
 
     function toString():string
@@ -22,7 +19,9 @@ class Markdown implements DescriptionInterface
         if($this->content !== null){
             return $this->content;
         }
-
+        if (!file_exists($this->markdownFile)) {
+            throw new \Exception("markdown description file {$this->markdownFile} not exists");
+        }
         $this->content = file_get_contents($this->markdownFile);
         return $this->content;
     }

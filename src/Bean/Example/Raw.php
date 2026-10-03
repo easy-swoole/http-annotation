@@ -14,11 +14,7 @@ class Raw implements ExampleInterface
     function __construct(string $raw, bool $isFile = false)
     {
         $this->isFile = $isFile;
-        if($isFile){
-            if (!file_exists($raw)) {
-                throw new \Exception("raw example file {$raw} not exists");
-            }
-        }
+
         $this->raw = $raw;
 
     }
@@ -30,11 +26,13 @@ class Raw implements ExampleInterface
         }
 
         if($this->isFile){
-            $text = file_get_contents($this->raw);
+            if (!file_exists($this->raw)) {
+                throw new \Exception("raw example file {$this->raw} not exists");
+            }
+            $this->content = file_get_contents($this->raw);
         }else{
-            $text = $this->raw;
+            $this->content = $this->raw;
         }
-        $this->content = $text;
-        return $text;
+        return  $this->content;
     }
 }
