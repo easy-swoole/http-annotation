@@ -8,6 +8,8 @@ use EasySwoole\HttpAnnotation\Attributes\ApiGroup;
 use EasySwoole\HttpAnnotation\Attributes\Param;
 use EasySwoole\HttpAnnotation\Exception\Annotation;
 use EasySwoole\HttpAnnotation\Exception\ParamValidateFail;
+use EasySwoole\HttpAnnotation\Validator\Func;
+use EasySwoole\HttpAnnotation\Validator\MinLength;
 use EasySwoole\HttpAnnotation\Validator\NotEmpty;
 
 class Base extends AnnotationController
@@ -29,6 +31,7 @@ class Base extends AnnotationController
         name: 'token',
         validate: [
             new NotEmpty(),
+            new MinLength(32),
         ]
     )]
     function onRequest(?string $action,?array $data = null): ?bool

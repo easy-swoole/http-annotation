@@ -8,6 +8,7 @@ use EasySwoole\HttpAnnotation\AttributeCache;
 use EasySwoole\HttpAnnotation\Attributes\Api;
 use EasySwoole\HttpAnnotation\Attributes\ApiGroup;
 use EasySwoole\HttpAnnotation\Attributes\Param;
+use EasySwoole\HttpAnnotation\Bean\ClassAttribute;
 use EasySwoole\HttpAnnotation\Enum\HttpMethod;
 use EasySwoole\HttpAnnotation\Enum\ParamFrom;
 use EasySwoole\HttpAnnotation\Enum\ParamType;
@@ -77,29 +78,54 @@ class Document
     function scanToHtml():void
     {
         $map = $this->scan();
-        $titleMap = [];
+        $documentMap = [];
 
-        foreach ($map as $apiGroupName => $apiGroup){
+        foreach ($map as $apiGroupName => $apiGroupInfo){
             $apiGroupNamePaths = explode('.', $apiGroupName);
-            $temp = &$titleMap;
+            $temp = &$documentMap;
 
             foreach ($apiGroupNamePaths as $apiGroupNamePath){
                 if(!isset($temp[$apiGroupNamePath])){
                     $temp[$apiGroupNamePath] = [
                         'apis'=>[],
                         'children'=>[],
+                        'apiGroupName'=>$apiGroupName,
+                        'description'=>null,
+                        'onRequestParams'=>[]
                     ];
                 }
                 $currentGroup = &$temp[$apiGroupNamePath];
                 $temp = &$currentGroup['children'];
             }
 
+            /** @var ApiGroup $apiGroup */
+            $apiGroup = $apiGroupInfo['apiGroup'];
+            /** @var ClassAttribute $classAttribute */
+            $classAttribute = $apiGroupInfo['classAttribute'];
+            if($apiGroup->description){
+                $currentGroup['description'] = $apiGroup->description->toString();
+            }
+            $onRequestParams = $classAttribute->onRequest->onRequestParams;
+            /** @var Param $onRequestParam */
+            foreach ($onRequestParams as $onRequestParam){
+                $currentGroup['onRequestParams'][$onRequestParam->name] = [
+                    'rule'=>'',
+                    'type'=>$onRequestParam->type,
+                    'description'=>$onRequestParam->description ? $onRequestParam->description->toString() : null,
+                ];
+                $validateRules = [];
+                /** @var AbstractValidator $validateRule */
+                foreach ($onRequestParam->validate as $validateRule){
+                    $validateRules[$validateRule->ruleName()] = $validateRule->errorMsg($onRequestParam->name);
+                }
+                $currentGroup['onRequestParams'][$onRequestParam->name]['validateRules'] = $validateRules;
+            }
 //            $currentGroup['apis'][] = $apiGroup;
             // 每次外层循环结束，清理临时引用避免污染
             unset($currentGroup);
             unset($temp);
         }
 
-        var_dump($titleMap);
+        var_dump($documentMap);
     }
 }

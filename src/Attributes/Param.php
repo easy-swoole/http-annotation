@@ -5,6 +5,8 @@ namespace EasySwoole\HttpAnnotation\Attributes;
 use EasySwoole\Component\Context\ContextManager;
 use EasySwoole\Component\Di as IOC;
 use EasySwoole\Http\AbstractInterface\AbstractRouter;
+use EasySwoole\HttpAnnotation\Bean\Description\DescriptionInterface;
+use EasySwoole\HttpAnnotation\Bean\Description\Text;
 use EasySwoole\HttpAnnotation\Enum\ParamFrom;
 use EasySwoole\HttpAnnotation\Enum\ParamType;
 use EasySwoole\HttpAnnotation\Exception\Annotation;
@@ -26,7 +28,7 @@ class Param
         public array|null              $validate = [],
         public mixed                   $value = null,
         public bool                    $deprecated = false,
-        public string|null $description = null,
+        public string|null|DescriptionInterface $description = null,
         public ?ParamType              $type = null,
         public array                   $ignoreAction = [],
         public bool                    $ignorePassArgWhenNotSet = false,
@@ -38,6 +40,9 @@ class Param
             $temp[$item->ruleName()] = $item;
         }
         $this->validate = $temp;
+        if(is_string($this->description)){
+            $this->description = new Text($this->description);
+        }
     }
 
 

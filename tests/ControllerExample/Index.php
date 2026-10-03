@@ -16,7 +16,8 @@ use EasySwoole\HttpAnnotation\Validator\MinLength;
 use EasySwoole\HttpAnnotation\Validator\NotEmpty;
 
 #[ApiGroup(
-    groupName: 'index'
+    groupName: 'index',
+    description: 'index description',
 )]
 #[PreCall([Utility::class,'preCallGlobal'])]
 class Index extends Base
