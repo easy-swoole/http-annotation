@@ -4,18 +4,11 @@ namespace EasySwoole\HttpAnnotation\Tests\ControllerExample\Api\Common;
 
 use EasySwoole\Http\Message\Status;
 use EasySwoole\HttpAnnotation\Attributes\Api;
+use EasySwoole\HttpAnnotation\Attributes\ApiGroup;
 use EasySwoole\HttpAnnotation\Attributes\Param;
 use EasySwoole\HttpAnnotation\Validator\Required;
 
-#[Param(
-    name: "signature",
-    validate: [
-        new Required()
-    ]
-    ,ignoreAction: [
-        "info"
-    ]
-)]
+#[ApiGroup(groupName: 'Common.Profile')]
 class Profile extends Base
 {
     #[Api(

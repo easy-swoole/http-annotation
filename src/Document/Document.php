@@ -15,6 +15,7 @@ use EasySwoole\HttpAnnotation\Exception\Annotation;
 use EasySwoole\HttpAnnotation\Utility;
 use EasySwoole\HttpAnnotation\Validator\AbstractInterface\AbstractValidator;
 use EasySwoole\ParserDown\ParserDown;
+use EasySwoole\Spl\SplArray;
 use EasySwoole\Utility\File;
 use ReflectionClass;
 
@@ -73,9 +74,32 @@ class Document
         return $documentMap;
     }
 
-    function scanToHtml()
+    function scanToHtml():void
     {
-        $html = $this->scan();
+        $map = $this->scan();
+        $titleMap = [];
 
+        foreach ($map as $apiGroupName => $apiGroup){
+            $apiGroupNamePaths = explode('.', $apiGroupName);
+            $temp = &$titleMap;
+
+            foreach ($apiGroupNamePaths as $apiGroupNamePath){
+                if(!isset($temp[$apiGroupNamePath])){
+                    $temp[$apiGroupNamePath] = [
+                        'apis'=>[],
+                        'children'=>[],
+                    ];
+                }
+                $currentGroup = &$temp[$apiGroupNamePath];
+                $temp = &$currentGroup['children'];
+            }
+
+//            $currentGroup['apis'][] = $apiGroup;
+            // 每次外层循环结束，清理临时引用避免污染
+            unset($currentGroup);
+            unset($temp);
+        }
+
+        var_dump($titleMap);
     }
 }

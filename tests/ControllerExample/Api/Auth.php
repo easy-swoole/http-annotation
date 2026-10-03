@@ -12,6 +12,9 @@ use EasySwoole\HttpAnnotation\Validator\MaxLength;
 use EasySwoole\HttpAnnotation\Validator\Required;
 
 
+#[ApiGroup(
+    groupName: 'Admin.Auth'
+)]
 class Auth extends ApiBase
 {
     #[Api(
