@@ -16,7 +16,7 @@ class Base extends ApiBase
             "list"
         ]
     )]
-    function onRequest(?string $action): ?bool
+    function onRequest(?string $action, ?array $data = null): ?bool
     {
         return parent::onRequest($action);
     }
