@@ -31,6 +31,8 @@ class Document
         if(!(is_file($controllerPath) || is_dir($controllerPath))){
             throw new Annotation("{$controllerPath} not exist");
         }
+
+        $this->controllerNameSpace = trim($this->controllerNameSpace, '\\');
         $this->config = new Config();
     }
 
@@ -79,6 +81,7 @@ class Document
     {
         $map = $this->scan();
         $documentMap = [];
+        $controllerNameSpaceLen = strlen($this->controllerNameSpace);
 
         foreach ($map as $apiGroupName => $apiGroupInfo){
             $apiGroupNamePaths = explode('.', $apiGroupName);
@@ -120,12 +123,27 @@ class Document
                 }
                 $currentGroup['onRequestParams'][$onRequestParam->name]['validateRules'] = $validateRules;
             }
+
+            /**
+             * @var  $apiName
+             * @var Api $api
+             */
+            foreach ($classAttribute->apis as $apiName => $api){
+                if(empty($api->requestPath)){
+                    $path = substr($api->relateClass, $controllerNameSpaceLen);
+                    $path = str_replace('\\', '/', $path);
+                    $path = "{$path}/{$apiName}";
+                    $paths = explode('/', $path);
+                    $paths = array_map('lcfirst', $paths);
+                    $api->requestPath = implode('/', $paths);
+                }
+            }
 //            $currentGroup['apis'][] = $apiGroup;
             // 每次外层循环结束，清理临时引用避免污染
             unset($currentGroup);
             unset($temp);
         }
 
-        var_dump($documentMap);
+//        var_dump($this->controllerNameSpace);
     }
 }
