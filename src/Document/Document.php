@@ -47,7 +47,11 @@ class Document
     function scan():array
     {
         $documentMap = [];
-        $files = File::scanDirectory($this->controllerPath)['files'];
+        if(is_dir($this->controllerPath)){
+            $files = File::scanDirectory($this->controllerPath)['files'];
+        }else{
+            $files = [$this->controllerPath];
+        }
         foreach ($files as $file){
             $class = Utility::getFileDeclaredClass($file);
             if(empty($class)){
@@ -137,6 +141,10 @@ class Document
                     $paths = array_map('lcfirst', $paths);
                     $api->requestPath = implode('/', $paths);
                 }
+                $currentGroup['apis'][$apiName] = [
+                    'apiName'=>$apiName,
+                    'requestPath'=>$api->requestPath,
+                ];
             }
 //            $currentGroup['apis'][] = $apiGroup;
             // 每次外层循环结束，清理临时引用避免污染
@@ -144,6 +152,6 @@ class Document
             unset($temp);
         }
 
-//        var_dump($this->controllerNameSpace);
+        var_dump($documentMap);
     }
 }
