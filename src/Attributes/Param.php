@@ -214,7 +214,8 @@ class Param
                     break;
                 }
                 case ParamType::FILE:{
-                    throw new \Exception('To be implemented');
+                    //无需转化
+                    break;
                 }
             }
         }

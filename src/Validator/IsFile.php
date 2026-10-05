@@ -22,16 +22,12 @@ class IsFile extends AbstractValidator
         if(empty($errorMsg)){
             $this->maxSize = $maxSize;
             $this->allowExt = $allowExt;
-            $errorMsg = "{#validateParam} file validate fail";
+            $errorMsg = "{#validateParam} must be an file";
             if(!empty($this->maxSize)){
-                $errorMsg .= " case size must below {#maxSize}";
+                $errorMsg .= " and size must below {#maxSize}";
             }
             if(!empty($this->allowExt)){
-                if(!empty($this->maxSize)){
-                    $errorMsg .= " and file extension must in {#allowExt}";
-                }else{
-                    $errorMsg .= " case extension must in {#allowExt}";
-                }
+                $errorMsg .= " and file extension must in {#allowExt}";
             }
         }
         $this->errorMsgTpl($errorMsg);
