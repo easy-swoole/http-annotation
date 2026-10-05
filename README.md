@@ -18,10 +18,7 @@ use Swoole\Http\Server;
 $nameSpace = 'EasySwoole\HttpAnnotation\Tests\ControllerExample';
 $dispatcher = new Dispatcher();
 $dispatcher->setNamespacePrefix($nameSpace);
-$dispatcher->enableFakeRouter();
-$dispatcher->setOnRouterCreate(function (AbstractRouter $router)use($nameSpace){
-    Utility::mappingRouter($router->getRouteCollector(),"tests/ControllerExample",$nameSpace);
-});
+
 $http = new Server("127.0.0.1", 9501);
 $http->set([
     "worker_num"=>1

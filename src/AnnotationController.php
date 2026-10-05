@@ -157,7 +157,7 @@ abstract class AnnotationController extends Controller
                 $this->{$property} = Di::getInstance()->get($propertyAttribute->di->key);
             }
             if($propertyAttribute->context){
-                $this->{$property} = ContextManager::getInstance()->get($propertyAttribute->di->key);
+                $this->{$property} = ContextManager::getInstance()->get($propertyAttribute->context->key);
             }
         }
 
