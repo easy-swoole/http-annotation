@@ -94,7 +94,7 @@ class Document
             foreach ($apiGroupNamePaths as $apiGroupNamePath){
                 if(!isset($temp[$apiGroupNamePath])){
                     $temp[$apiGroupNamePath] = [
-                        'apis'=>[],
+                        'apiList'=>[],
                         'children'=>[],
                         'apiGroupName'=>$apiGroupName,
                         'description'=>null,
@@ -116,14 +116,16 @@ class Document
             /** @var Param $onRequestParam */
             foreach ($onRequestParams as $onRequestParam){
                 $currentGroup['onRequestParams'][$onRequestParam->name] = [
-                    'rule'=>'',
                     'type'=>$onRequestParam->type,
                     'description'=>$onRequestParam->description ? $onRequestParam->description->toString() : null,
                 ];
                 $validateRules = [];
                 /** @var AbstractValidator $validateRule */
                 foreach ($onRequestParam->validate as $validateRule){
-                    $validateRules[$validateRule->ruleName()] = $validateRule->errorMsg($onRequestParam->name);
+                    $validateRules[$validateRule->ruleName()] = [
+                        'msg'=>$validateRule->errorMsg($onRequestParam->name),
+                        'args'=>$validateRule->getRuleArgs()
+                    ];
                 }
                 $currentGroup['onRequestParams'][$onRequestParam->name]['validateRules'] = $validateRules;
             }
@@ -133,18 +135,32 @@ class Document
              * @var Api $api
              */
             foreach ($classAttribute->apis as $apiName => $api){
-                if(empty($api->requestPath)){
-                    $path = substr($api->relateClass, $controllerNameSpaceLen);
-                    $path = str_replace('\\', '/', $path);
-                    $path = "{$path}/{$apiName}";
-                    $paths = explode('/', $path);
-                    $paths = array_map('lcfirst', $paths);
-                    $api->requestPath = implode('/', $paths);
+                $path = substr($api->relateClass, $controllerNameSpaceLen);
+                $path = str_replace('\\', '/', $path);
+                $paths = explode('/', $path);
+                $tailController = $paths[count($paths) - 1];
+                if(strtolower($tailController) == 'index'){
+                    array_pop($paths);
                 }
-                $currentGroup['apis'][$apiName] = [
+                $paths = array_map('lcfirst', $paths);
+                $api->requestPath = implode('/', $paths);
+                if(strtolower($apiName) != 'index'){
+                    $api->requestPath = "{$api->requestPath}/{$apiName}";
+                }else{
+                    $api->requestPath = "{$api->requestPath}/";
+                }
+
+                $currentGroup['apiList'][$apiName] = [
                     'apiName'=>$apiName,
                     'requestPath'=>$api->requestPath,
+                    'requestParams'=>[],
+                    'description'=>$api->description ? $api->description->toString() : null,
                 ];
+                /** @var Param $requestParam */
+                foreach ($api->requestParam as $paramName => $requestParam){
+//                    var_dump($requestParam);
+                }
+
             }
 //            $currentGroup['apis'][] = $apiGroup;
             // 每次外层循环结束，清理临时引用避免污染

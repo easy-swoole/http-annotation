@@ -19,7 +19,6 @@ class Auth extends ApiBase
 {
     #[Api(
         allowMethod: HttpMethod::GET,
-        requestPath: "/auth/login.html",
         requestParam: [
             new Param(name: "account", from: ParamFrom::GET, validate: [
                 new Required(),

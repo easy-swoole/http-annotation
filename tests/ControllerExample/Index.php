@@ -27,7 +27,6 @@ class Index extends Base
 
     #[Api(
         allowMethod:HttpMethod::GET,
-        requestPath: "/test/index.html",
         requestParam: [
             new Param(
                 name:'account',
@@ -49,7 +48,6 @@ class Index extends Base
         requestParam: [
             new Param(
                 name:'age',
-
             ),
             new Param(
                 name: 'userName',
