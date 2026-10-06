@@ -114,8 +114,8 @@ class Document
             }
             $onRequestParams = $classAttribute->onRequest->onRequestParams;
             /** @var Param $onRequestParam */
-            foreach ($onRequestParams as $onRequestParam){
-                $currentGroup['onRequestParams'][$onRequestParam->name] = [
+            foreach ($onRequestParams as $paramName => $onRequestParam){
+                $currentGroup['onRequestParams'][$paramName] = [
                     'type'=>$onRequestParam->type,
                     'description'=>$onRequestParam->description ? $onRequestParam->description->toString() : null,
                 ];
@@ -123,11 +123,11 @@ class Document
                 /** @var AbstractValidator $validateRule */
                 foreach ($onRequestParam->validate as $validateRule){
                     $validateRules[$validateRule->ruleName()] = [
-                        'msg'=>$validateRule->errorMsg($onRequestParam->name),
+                        'msg'=>$validateRule->errorMsg($paramName),
                         'args'=>$validateRule->getRuleArgs()
                     ];
                 }
-                $currentGroup['onRequestParams'][$onRequestParam->name]['validateRules'] = $validateRules;
+                $currentGroup['onRequestParams'][$paramName]['validateRules'] = $validateRules;
             }
 
             /**
@@ -155,12 +155,27 @@ class Document
                     'requestPath'=>$api->requestPath,
                     'requestParams'=>[],
                     'requestExamples'=>[],
-                    'responseParams'=>[],
+                    'responseExamples'=>[
+                        'success'=>[],
+                        'fail'=>[]
+                    ],
                     'description'=>$api->description ? $api->description->toString() : null,
                 ];
                 /** @var Param $requestParam */
                 foreach ($api->requestParam as $paramName => $requestParam){
-//                    var_dump($requestParam);
+                    $currentGroup['apiList'][$apiName]['requestParams'][$paramName] = [
+                        'type'=>$requestParam->type,
+                        'description'=>$requestParam->description ? $requestParam->description->toString() : null,
+                    ];
+                    $validateRules = [];
+                    /** @var AbstractValidator $validateRule */
+                    foreach ($requestParam->validate as $validateRule){
+                        $validateRules[$validateRule->ruleName()] = [
+                            'msg'=>$validateRule->errorMsg($paramName),
+                            'args'=>$validateRule->getRuleArgs()
+                        ];
+                    }
+                    $currentGroup['apiList'][$apiName]['requestParams'][$paramName]['validateRules'] = $validateRules;
                 }
 
             }
