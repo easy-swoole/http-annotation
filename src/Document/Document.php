@@ -112,23 +112,30 @@ class Document
             if($apiGroup->description){
                 $currentGroup['description'] = $apiGroup->description->toString();
             }
-            $onRequestParams = $classAttribute->onRequest->onRequestParams;
-            /** @var Param $onRequestParam */
-            foreach ($onRequestParams as $paramName => $onRequestParam){
-                $currentGroup['onRequestParams'][$paramName] = [
-                    'type'=>$onRequestParam->type,
-                    'description'=>$onRequestParam->description ? $onRequestParam->description->toString() : null,
-                ];
-                $validateRules = [];
-                /** @var AbstractValidator $validateRule */
-                foreach ($onRequestParam->validate as $validateRule){
-                    $validateRules[$validateRule->ruleName()] = [
-                        'msg'=>$validateRule->errorMsg($paramName),
-                        'args'=>$validateRule->getRuleArgs()
+            $buildParamsInfo = function (array $params): array
+            {
+                $result = [];
+                /** @var Param $param */
+                foreach ($params as $paramName => $param){
+                    $result[$paramName] = [
+                        'type'=>$param->type,
+                        'description'=>$param->description ? $param->description->toString() : null,
+                        'defaultValue'=>$param->value
                     ];
+                    $validateRules = [];
+                    /** @var AbstractValidator $validateRule */
+                    foreach ($param->validate as $validateRule){
+                        $validateRules[$validateRule->ruleName()] = [
+                            'msg'=>$validateRule->errorMsg($paramName),
+                            'args'=>$validateRule->getRuleArgs()
+                        ];
+                    }
+                    $result[$paramName]['validateRules'] = $validateRules;
                 }
-                $currentGroup['onRequestParams'][$paramName]['validateRules'] = $validateRules;
-            }
+                return $result;
+            };
+            $onRequestParams = $classAttribute->onRequest->onRequestParams;
+            $currentGroup['onRequestParams'] = $buildParamsInfo($onRequestParams);
 
             /**
              * @var  $apiName
@@ -161,23 +168,7 @@ class Document
                     ],
                     'description'=>$api->description ? $api->description->toString() : null,
                 ];
-                /** @var Param $requestParam */
-                foreach ($api->requestParam as $paramName => $requestParam){
-                    $currentGroup['apiList'][$apiName]['requestParams'][$paramName] = [
-                        'type'=>$requestParam->type,
-                        'description'=>$requestParam->description ? $requestParam->description->toString() : null,
-                    ];
-                    $validateRules = [];
-                    /** @var AbstractValidator $validateRule */
-                    foreach ($requestParam->validate as $validateRule){
-                        $validateRules[$validateRule->ruleName()] = [
-                            'msg'=>$validateRule->errorMsg($paramName),
-                            'args'=>$validateRule->getRuleArgs()
-                        ];
-                    }
-                    $currentGroup['apiList'][$apiName]['requestParams'][$paramName]['validateRules'] = $validateRules;
-                }
-
+                $currentGroup['apiList'][$apiName]['requestParams'] = $buildParamsInfo($api->requestParam);
             }
 //            $currentGroup['apis'][] = $apiGroup;
             // 每次外层循环结束，清理临时引用避免污染
