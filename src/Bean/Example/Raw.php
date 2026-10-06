@@ -11,13 +11,20 @@ class Raw implements ExampleInterface
 
     private string|null $content = null;
 
-    function __construct(string $raw, bool $isFile = false)
+    private bool $isSuccessResponse;
+
+    function __construct(string $raw, bool $isFile = false,bool $isSuccessResponse = true)
     {
         $this->isFile = $isFile;
-
         $this->raw = $raw;
-
+        $this->isSuccessResponse = $isSuccessResponse;
     }
+
+    function isSuccessResponse(): bool
+    {
+        return $this->isSuccessResponse;
+    }
+
 
     function toString():string
     {

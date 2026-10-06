@@ -154,6 +154,8 @@ class Document
                     'apiName'=>$apiName,
                     'requestPath'=>$api->requestPath,
                     'requestParams'=>[],
+                    'requestExamples'=>[],
+                    'responseParams'=>[],
                     'description'=>$api->description ? $api->description->toString() : null,
                 ];
                 /** @var Param $requestParam */
