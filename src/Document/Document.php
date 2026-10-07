@@ -249,6 +249,7 @@ class Document
             '{{$config}}' => json_encode([
                 'projectName' => $this->config->getProjectName(),
                 'host' => $this->config->getHost(),
+                'hasDescription' => $this->config->getDescription() !== null,
             ], $jsonFlags),
         ]);
     }

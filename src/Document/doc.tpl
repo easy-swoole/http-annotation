@@ -54,6 +54,12 @@
             line-height: 1.35;
             color: #203247;
         }
+        button#projectName {
+            border: 0; padding: 0; background: none;
+            font-family: inherit; text-align: left; cursor: pointer;
+        }
+        button#projectName:disabled { cursor: default; }
+        button#projectName:focus-visible { outline: 2px solid #148c80; outline-offset: 3px; }
         .doc-subtitle {
             display: block;
             margin-top: .1rem;
@@ -585,7 +591,7 @@
                     </svg>
                 </span>
                 <div class="doc-brand-text">
-                    <span id="projectName"></span>
+                    <button type="button" id="projectName" aria-label="展示全局文档说明"></button>
                     <span class="doc-subtitle">API DOCUMENTATION</span>
                 </div>
             </div>
@@ -612,7 +618,17 @@
     const content = document.getElementById('content');
     const sideBar = document.getElementById('sideBar');
     document.title = config.projectName;
-    document.getElementById('projectName').textContent = config.projectName;
+    const projectTitle = document.getElementById('projectName');
+    const introductionHtml = content.innerHTML;
+    projectTitle.textContent = config.projectName;
+    projectTitle.disabled = !config.hasDescription;
+    projectTitle.addEventListener('click', () => {
+        if (!config.hasDescription) return;
+        content.innerHTML = introductionHtml;
+        sideBar.querySelectorAll('a.active').forEach(link => link.classList.remove('active'));
+        renderRightMenu();
+        window.scrollTo(0, 0);
+    });
 
     function escapeHtml(value) {
         return String(value).replace(/[&<>"']/g, character => ({
