@@ -639,6 +639,7 @@
 </head>
 <body>
 <div class="container">
+    <!-- 全局标题 -->
     <header class="navBar">
         <div class="navInner">
             <div class="doc-brand">
@@ -659,6 +660,7 @@
         </div>
     </header>
 
+    <!-- 服务端生成的分组菜单 -->
     <aside class="sideBar" id="sideBar">
         {{$sideBar}}
     </aside>
@@ -669,14 +671,24 @@
         <div class="right-menu" id="right-menu" style="display: none"></div>
     </section>
 </div>
+<!-- 接口试运行：表单和结果面板 -->
 <dialog id="try-dialog" aria-labelledby="try-title">
-    <div class="try-header"><div><span class="try-eyebrow">API EXPLORER</span><h2 id="try-title">立即尝试</h2></div><button type="button" class="try-close" id="try-close" aria-label="关闭">×</button></div>
+    <div class="try-header">
+        <div>
+            <span class="try-eyebrow">API EXPLORER</span>
+            <h2 id="try-title">立即尝试</h2>
+        </div>
+        <button type="button" class="try-close" id="try-close" aria-label="关闭">×</button>
+    </div>
     <form id="try-form">
         <div class="try-request-line">
             <label class="try-method-label">请求方法 <input id="try-method" readonly tabindex="-1"></label>
             <label class="try-address-label">请求地址 <input id="try-url" type="url" required></label>
         </div>
-        <div class="try-section-heading"><h3>请求参数</h3><span>勾选要发送的参数</span></div>
+        <div class="try-section-heading">
+            <h3>请求参数</h3>
+            <span>勾选要发送的参数</span>
+        </div>
         <div id="try-fields"></div>
         <p class="try-hint">Cookie 由浏览器管理；跨域请求需要接口允许当前文档来源。</p>
         <div class="try-actions">
@@ -685,29 +697,52 @@
         </div>
     </form>
     <section id="try-result" aria-live="polite" hidden>
-        <h3>运行结果</h3><p id="try-status"></p>
-        <details class="try-response-headers"><summary>响应头</summary><pre id="try-headers"></pre></details>
-        <h4>响应内容</h4><pre id="try-body"></pre>
+        <h3>运行结果</h3>
+        <p id="try-status"></p>
+        <details class="try-response-headers">
+            <summary>响应头</summary>
+            <pre id="try-headers"></pre>
+        </details>
+        <h4>响应内容</h4>
+        <pre id="try-body"></pre>
     </section>
 </dialog>
 <script>
+    // 模板数据与页面状态
     const jsonData = {{$docData}};
     const config = {{$config}};
     const content = document.getElementById('content');
     const sideBar = document.getElementById('sideBar');
+    let activeTryApi = null;
+    let activeTryParams = {};
+    let tryController = null;
+    let tryDialogTrigger = null;
+    const tryDialog = document.getElementById('try-dialog');
+    const tryForm = document.getElementById('try-form');
+    const tryMethod = document.getElementById('try-method');
+    const tryResult = document.getElementById('try-result');
+    const tryStatus = document.getElementById('try-status');
+    const tryHeaders = document.getElementById('try-headers');
+    const tryBody = document.getElementById('try-body');
+    const tryRun = document.getElementById('try-run');
+
     document.title = config.projectName;
     const projectTitle = document.getElementById('projectName');
     const introductionHtml = content.innerHTML;
     projectTitle.textContent = config.projectName;
     projectTitle.disabled = !config.hasDescription;
-    projectTitle.addEventListener('click', () => {
+
+
+    // 文档首页
+    function showIntroduction() {
         if (!config.hasDescription) return;
         content.innerHTML = introductionHtml;
         sideBar.querySelectorAll('a.active').forEach(link => link.classList.remove('active'));
         renderRightMenu();
         window.scrollTo(0, 0);
-    });
+    }
 
+    // 展示辅助函数
     function escapeHtml(value) {
         return String(value).replace(/[&<>"']/g, character => ({
             '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
@@ -733,6 +768,7 @@
         return group;
     }
 
+    // 接口地址与参数表格
     function requestAddress(api) {
         const address = config.host
             ? config.host.replace(/\/+$/, '') + '/' + api.requestPath.replace(/^\/+/, '')
@@ -780,6 +816,7 @@
         return items && items.length ? items.map((item, index) => '<h4>' + escapeHtml(title) + ' ' + (index + 1) + '</h4><pre><code>' + escapeHtml(item) + '</code></pre>').join('') : '<p>暂无示例</p>';
     }
 
+    // 章节导航
     function renderRightMenu() {
         const menu = document.getElementById('right-menu');
         menu.replaceChildren();
@@ -796,41 +833,86 @@
         });
     }
 
-    let activeTryApi = null;
-    let activeTryParams = {};
-    let tryController = null;
-    const tryDialog = document.getElementById('try-dialog');
-    const tryForm = document.getElementById('try-form');
-    const tryMethod = document.getElementById('try-method');
-    const tryResult = document.getElementById('try-result');
-    const tryStatus = document.getElementById('try-status');
-    const tryHeaders = document.getElementById('try-headers');
-    const tryBody = document.getElementById('try-body');
-    const tryRun = document.getElementById('try-run');
+
+    // 试运行表单
+    function buildBodyEditor(bodyType, method) {
+        const editor = document.createElement('div');
+        editor.className = 'try-body-editor';
+        const label = document.createElement('label');
+        label.htmlFor = 'try-raw-body';
+        label.textContent = bodyType + ' 请求体';
+        const input = document.createElement('textarea');
+        input.id = 'try-raw-body';
+        input.spellcheck = false;
+        input.placeholder = bodyType === 'JSON' ? '{"msgId": "123"}' : bodyType === 'XML' ? '<request><msgId>123</msgId></request>' : '填写原始请求体';
+        const hint = document.createElement('p');
+        hint.className = 'try-hint';
+        hint.textContent = ['GET', 'HEAD'].includes(method)
+            ? method + ' 无法在浏览器中发送请求体，请将 Api::allowMethod 定义为 POST、PUT 或 PATCH。'
+            : '将完整内容作为请求体原样发送。';
+        editor.append(label, input, hint);
+        return editor;
+    }
+
+    function buildParameterField(name, param, method, bodyType) {
+        const row = document.createElement('div');
+        row.className = 'try-field';
+        row.dataset.parameter = 'true';
+        row.dataset.name = name;
+        row.dataset.type = param.type || '';
+        let sources = param.type === 'FILE' ? ['FILE'] : (param.from || ['GET', 'POST']);
+        if (bodyType) {
+            sources = sources.filter(source => ['GET', 'HEADER', 'ROUTER_PARAMS'].includes(source));
+            if (!sources.length) return null;
+        }
+        const allowed = sources.filter(source =>
+            !['DI', 'CONTEXT', 'COOKIE'].includes(source) && (!['GET', 'HEAD'].includes(method) || !['POST', 'JSON', 'XML', 'RAW_POST', 'FILE'].includes(source)));
+        const required = Object.prototype.hasOwnProperty.call(param.validateRules || {}, 'Required');
+        const include = document.createElement('input');
+        include.type = 'checkbox';
+        include.className = 'try-include';
+        include.checked = allowed.length > 0 && (required || param.defaultValue != null);
+        include.disabled = !allowed.length;
+        const label = document.createElement('label');
+        label.append(include, document.createTextNode(' ' + name + (required ? '（必填）' : '') + (param.deprecated ? ' · 已废弃' : '')));
+        const source = document.createElement('select');
+        source.className = 'try-source';
+        for (const from of allowed) source.add(new Option(from, from));
+        if (method !== 'GET' && method !== 'HEAD' && allowed.includes('POST')) source.value = 'POST';
+        source.disabled = !allowed.length;
+        source.setAttribute('aria-label', name + ' 参数来源');
+        const value = document.createElement('input');
+        value.className = 'try-value';
+        value.setAttribute('aria-label', name + ' 参数值');
+        const updateType = () => {
+            value.type = param.type === 'FILE' || source.value === 'FILE' ? 'file' : 'text';
+            value.placeholder = source.value === 'HEADER' ? '填写请求头 ' + name + ' 的值' : '填写参数值';
+        };
+        updateType();
+        if (value.type !== 'file' && param.defaultValue != null) {
+            value.value = typeof param.defaultValue === 'object' ? JSON.stringify(param.defaultValue)
+                : typeof param.defaultValue === 'boolean' ? (param.defaultValue ? '1' : '0') : String(param.defaultValue);
+        }
+        value.disabled = !allowed.length;
+        const includeValue = () => { if (!include.disabled) include.checked = true; };
+        value.addEventListener('input', includeValue);
+        value.addEventListener('change', includeValue);
+        source.addEventListener('change', updateType);
+        const hint = document.createElement('div');
+        hint.className = 'try-hint';
+        hint.textContent = allowed.length ? [allowed.includes('HEADER') ? 'HEADER：填写后作为 HTTP 请求头发送' : '', param.type, param.description,
+            ...Object.values(param.validateRules || {}).map(rule => rule.msg)].filter(Boolean).join(' · ')
+            : '该参数由服务器或浏览器管理，或不适用于当前请求方法。';
+        row.append(label, source, value, hint);
+        return row;
+    }
 
     function buildTryFields() {
         const method = activeTryApi.allowMethod;
         const fields = document.getElementById('try-fields');
         fields.replaceChildren();
         const bodyType = ['JSON', 'XML', 'RAW'].includes(activeTryApi.acceptContentType) ? activeTryApi.acceptContentType : null;
-        if (bodyType) {
-            const editor = document.createElement('div');
-            editor.className = 'try-body-editor';
-            const label = document.createElement('label');
-            label.htmlFor = 'try-raw-body';
-            label.textContent = bodyType + ' 请求体';
-            const input = document.createElement('textarea');
-            input.id = 'try-raw-body';
-            input.spellcheck = false;
-            input.placeholder = bodyType === 'JSON' ? '{"msgId": "123"}' : bodyType === 'XML' ? '<request><msgId>123</msgId></request>' : '填写原始请求体';
-            const hint = document.createElement('p');
-            hint.className = 'try-hint';
-            hint.textContent = ['GET', 'HEAD'].includes(method)
-                ? method + ' 无法在浏览器中发送请求体，请将 Api::allowMethod 定义为 POST、PUT 或 PATCH。'
-                : '将完整内容作为请求体原样发送。';
-            editor.append(label, input, hint);
-            fields.append(editor);
-        }
+        if (bodyType) fields.append(buildBodyEditor(bodyType, method));
         if (!bodyType && !Object.keys(activeTryParams).length) {
             const empty = document.createElement('p');
             empty.className = 'try-empty';
@@ -838,61 +920,16 @@
             fields.append(empty);
         }
         for (const [name, param] of Object.entries(activeTryParams)) {
-            const row = document.createElement('div');
-            row.className = 'try-field';
-            row.dataset.parameter = 'true';
-            row.dataset.name = name;
-            row.dataset.type = param.type || '';
-            let sources = param.type === 'FILE' ? ['FILE'] : (param.from || ['GET', 'POST']);
-            if (bodyType) {
-                sources = sources.filter(source => ['GET', 'HEADER', 'ROUTER_PARAMS'].includes(source));
-                if (!sources.length) continue;
-            }
-            const allowed = sources.filter(source =>
-                !['DI', 'CONTEXT', 'COOKIE'].includes(source) && (!['GET', 'HEAD'].includes(method) || !['POST', 'JSON', 'XML', 'RAW_POST', 'FILE'].includes(source)));
-            const required = Object.prototype.hasOwnProperty.call(param.validateRules || {}, 'Required');
-            const include = document.createElement('input');
-            include.type = 'checkbox';
-            include.className = 'try-include';
-            include.checked = allowed.length > 0 && (required || param.defaultValue != null);
-            include.disabled = !allowed.length;
-            const label = document.createElement('label');
-            label.append(include, document.createTextNode(' ' + name + (required ? '（必填）' : '') + (param.deprecated ? ' · 已废弃' : '')));
-            const source = document.createElement('select');
-            source.className = 'try-source';
-            for (const from of allowed) source.add(new Option(from, from));
-            if (method !== 'GET' && method !== 'HEAD' && allowed.includes('POST')) source.value = 'POST';
-            source.disabled = !allowed.length;
-            source.setAttribute('aria-label', name + ' 参数来源');
-            const value = document.createElement('input');
-            value.className = 'try-value';
-            value.setAttribute('aria-label', name + ' 参数值');
-            const updateType = () => {
-                value.type = param.type === 'FILE' || source.value === 'FILE' ? 'file' : 'text';
-                value.placeholder = source.value === 'HEADER' ? '填写请求头 ' + name + ' 的值' : '填写参数值';
-            };
-            updateType();
-            if (value.type !== 'file' && param.defaultValue != null) {
-                value.value = typeof param.defaultValue === 'object' ? JSON.stringify(param.defaultValue)
-                    : typeof param.defaultValue === 'boolean' ? (param.defaultValue ? '1' : '0') : String(param.defaultValue);
-            }
-            value.disabled = !allowed.length;
-            const includeValue = () => { if (!include.disabled) include.checked = true; };
-            value.addEventListener('input', includeValue);
-            value.addEventListener('change', includeValue);
-            source.addEventListener('change', updateType);
-            const hint = document.createElement('div');
-            hint.className = 'try-hint';
-            hint.textContent = allowed.length ? [allowed.includes('HEADER') ? 'HEADER：填写后作为 HTTP 请求头发送' : '', param.type, param.description,
-                ...Object.values(param.validateRules || {}).map(rule => rule.msg)].filter(Boolean).join(' · ')
-                : '该参数由服务器或浏览器管理，或不适用于当前请求方法。';
-            row.append(label, source, value, hint);
-            fields.append(row);
+            const row = buildParameterField(name, param, method, bodyType);
+            if (row) fields.append(row);
         }
     }
 
-    content.addEventListener('click', event => {
-        if (!event.target.closest('#try-open') || !activeTryApi) return;
+
+    function openTryDialog(event) {
+        const trigger = event.target.closest('#try-open');
+        if (!trigger || !activeTryApi) return;
+        tryDialogTrigger = trigger;
         const requestPath = config.host
             ? config.host.replace(/\/+$/, '') + '/' + activeTryApi.requestPath.replace(/^\/+/, '')
             : activeTryApi.requestPath;
@@ -904,10 +941,10 @@
         buildTryFields();
         tryResult.hidden = true;
         tryDialog.showModal();
-    });
-    document.getElementById('try-close').addEventListener('click', () => tryDialog.close());
-    tryDialog.addEventListener('close', () => { if (tryController) tryController.abort(); });
+        document.getElementById('try-close').focus({preventScroll: true});
+    }
 
+    // 请求构建（不访问界面）
     function buildTryRequest(address, method, fields, bodyInput = null) {
         let path = address;
         const headers = new Headers();
@@ -929,8 +966,14 @@
                 path = path.replace(pattern, encodeURIComponent(scalar));
             } else if (source === 'GET') query.push([name, scalar]);
             else if (source === 'HEADER') headers.set(name, scalar);
-            else if (source === 'POST') { bodyKinds.add('form'); post.append(name, scalar); }
-            else if (source === 'FILE') { bodyKinds.add('form'); files.push([name, value]); }
+            else if (source === 'POST') {
+                bodyKinds.add('form');
+                post.append(name, scalar);
+            }
+            else if (source === 'FILE') {
+                bodyKinds.add('form');
+                files.push([name, value]);
+            }
             else if (source === 'JSON') {
                 bodyKinds.add('json');
                 let parsed = value;
@@ -970,8 +1013,14 @@
         for (const [name, value] of query) url.searchParams.set(name, value);
         const options = {method, headers, credentials: 'include'};
         if (bodyKinds.size && ['GET', 'HEAD'].includes(method)) throw new Error(method + ' 请求不能发送请求体');
-        if (bodyKinds.has('json')) { options.body = JSON.stringify(json); if (!headers.has('Content-Type')) headers.set('Content-Type', 'application/json'); }
-        if (bodyKinds.has('xml')) { options.body = '<request>' + xml.join('') + '</request>'; if (!headers.has('Content-Type')) headers.set('Content-Type', 'application/xml'); }
+        if (bodyKinds.has('json')) {
+            options.body = JSON.stringify(json);
+            if (!headers.has('Content-Type')) headers.set('Content-Type', 'application/json');
+        }
+        if (bodyKinds.has('xml')) {
+            options.body = '<request>' + xml.join('') + '</request>';
+            if (!headers.has('Content-Type')) headers.set('Content-Type', 'application/xml');
+        }
         if (bodyKinds.has('raw')) options.body = raw;
         if (bodyKinds.has('form')) {
             if (files.length) {
@@ -980,12 +1029,16 @@
                 for (const [name, value] of files) form.append(name, value);
                 options.body = form;
                 headers.delete('Content-Type');
-            } else { options.body = post; if (!headers.has('Content-Type')) headers.set('Content-Type', 'application/x-www-form-urlencoded;charset=UTF-8'); }
+            } else {
+                options.body = post;
+                if (!headers.has('Content-Type')) headers.set('Content-Type', 'application/x-www-form-urlencoded;charset=UTF-8');
+            }
         }
         if (bodyInput) options.body = bodyInput.value;
         return {url: url.href, options};
     }
 
+    // 请求执行与异常处理
     async function executeTryRequest(request, timeoutMs, onResponse) {
         const controller = new AbortController();
         tryController = controller;
@@ -1008,7 +1061,21 @@
         }
     }
 
-    tryForm.addEventListener('submit', async event => {
+    function collectTryFields() {
+        const fields = [];
+        for (const row of document.getElementById('try-fields').children) {
+            if (!row.dataset.parameter || !row.querySelector('.try-include').checked) continue;
+            const input = row.querySelector('.try-value');
+            const source = row.querySelector('.try-source').value;
+            if (source === 'FILE' && !input.files.length) throw new Error('请选择文件：' + row.dataset.name);
+            fields.push({name: row.dataset.name, type: row.dataset.type, source,
+                value: source === 'FILE' ? input.files[0] : input.value});
+        }
+        return fields;
+    }
+
+    // 试运行结果展示
+    async function runTryRequest(event) {
         event.preventDefault();
         if (tryController) return;
         tryResult.hidden = false;
@@ -1019,15 +1086,7 @@
         tryRun.textContent = '请求中…';
         let status = '';
         try {
-            const fields = [];
-            for (const row of document.getElementById('try-fields').children) {
-                if (!row.dataset.parameter || !row.querySelector('.try-include').checked) continue;
-                const input = row.querySelector('.try-value');
-                const source = row.querySelector('.try-source').value;
-                if (source === 'FILE' && !input.files.length) throw new Error('请选择文件：' + row.dataset.name);
-                fields.push({name: row.dataset.name, type: row.dataset.type, source,
-                    value: source === 'FILE' ? input.files[0] : input.value});
-            }
+            const fields = collectTryFields();
             const bodyEditor = document.getElementById('try-raw-body');
             const bodyInput = bodyEditor ? {type: activeTryApi.acceptContentType, value: bodyEditor.value} : null;
             const request = buildTryRequest(document.getElementById('try-url').value, activeTryApi.allowMethod, fields, bodyInput);
@@ -1040,11 +1099,44 @@
             tryStatus.textContent = (status || '未收到 HTTP 响应') + ' · ' + Math.round(performance.now() - started) + ' ms';
             if (result.error) tryStatus.textContent += '\n' + result.error;
             tryBody.textContent = result.body || (result.error ? '未能读取响应内容' : '（空响应）');
-        } catch (error) { tryStatus.textContent = '请求未发送：' + error.message; }
-        finally { tryRun.disabled = false; tryRun.textContent = '立即运行 →'; }
-    });
+        } catch (error) {
+            tryStatus.textContent = '请求未发送：' + error.message;
+        } finally {
+            tryRun.disabled = false;
+            tryRun.textContent = '立即运行 →';
+        }
+    }
 
-    sideBar.addEventListener('click', event => {
+    // 分组与接口页面渲染
+    function mergeRequestParams(group, api) {
+        // 接口参数覆盖同名公共参数，并排除当前接口忽略的参数。
+        const params = Object.assign({}, group.onRequestParams, api.requestParams);
+        for (const name of Object.keys(params)) {
+            if ((params[name].ignoreAction || []).includes(api.apiName)) delete params[name];
+        }
+        return params;
+    }
+
+    function renderGroup(group, path) {
+        content.innerHTML = '<h1>' + escapeHtml(path.join('.')) + '</h1>'
+            + (group.descriptionHtml || description(group.description))
+            + (Object.keys(group.onRequestParams || {}).length
+                ? '<h3>公共请求参数</h3>' + parameterTable(group.onRequestParams)
+                : '');
+    }
+
+    function renderApi(api, params) {
+        content.innerHTML = '<div class="api-heading"><h1 class="api-title">' + escapeHtml(api.apiName)
+            + (api.deprecated === true ? '<span class="api-deprecated-label">已废弃</span>' : '') + '</h1><button type="button" class="try-button" id="try-open">立即尝试</button></div>'
+            + '<h3>请求地址</h3>' + requestAddress(api)
+            + '<h3>接口说明</h3>' + (api.descriptionHtml || description(api.description))
+            + '<h3>请求参数</h3>' + parameterTable(params)
+            + '<h3>请求示例</h3>' + examples(api.requestExamples, '请求示例')
+            + '<h3>成功响应示例</h3>' + examples(api.responseExamples.success, '成功响应示例')
+            + '<h3>失败响应示例</h3>' + examples(api.responseExamples.fail, '失败响应示例');
+    }
+
+    function handleMenuClick(event) {
         const target = event.target.closest('button[data-path], a[data-api]');
         if (!target || !sideBar.contains(target)) return;
         event.preventDefault();
@@ -1056,34 +1148,54 @@
             list.hidden = !list.hidden;
             target.setAttribute('aria-expanded', String(!list.hidden));
             target.querySelector('.menu-arrow').textContent = list.hidden ? '▸' : '▾';
-            content.innerHTML = '<h1>' + escapeHtml(path.join('.')) + '</h1>'
-                + (group.descriptionHtml || description(group.description))
-                + (Object.keys(group.onRequestParams || {}).length
-                    ? '<h3>公共请求参数</h3>' + parameterTable(group.onRequestParams)
-                    : '');
+            renderGroup(group, path);
         } else {
             const api = group.apiList[target.dataset.api];
             if (!api) return;
             sideBar.querySelectorAll('a.active').forEach(link => link.classList.remove('active'));
             target.classList.add('active');
-            // 接口参数覆盖同名公共参数，并排除当前接口忽略的参数。
-            const params = Object.assign({}, group.onRequestParams, api.requestParams);
-            for (const name of Object.keys(params)) {
-                if ((params[name].ignoreAction || []).includes(api.apiName)) delete params[name];
-            }
+            const params = mergeRequestParams(group, api);
             activeTryApi = api;
             activeTryParams = params;
-            content.innerHTML = '<div class="api-heading"><h1 class="api-title">' + escapeHtml(api.apiName)
-                + (api.deprecated === true ? '<span class="api-deprecated-label">已废弃</span>' : '') + '</h1><button type="button" class="try-button" id="try-open">立即尝试</button></div>'
-                + '<h3>请求地址</h3>' + requestAddress(api)
-                + '<h3>接口说明</h3>' + (api.descriptionHtml || description(api.description))
-                + '<h3>请求参数</h3>' + parameterTable(params)
-                + '<h3>请求示例</h3>' + examples(api.requestExamples, '请求示例')
-                + '<h3>成功响应示例</h3>' + examples(api.responseExamples.success, '成功响应示例')
-                + '<h3>失败响应示例</h3>' + examples(api.responseExamples.fail, '失败响应示例');
+            renderApi(api, params);
         }
         renderRightMenu();
         window.scrollTo(0, 0);
+    }
+    function closeTryDialog() {
+        if (!tryDialog.open) return;
+        if (tryController) tryController.abort();
+        tryDialog.close();
+    }
+
+    function handleTryEscape(event) {
+        const isEscape = event.key === 'Escape' || event.key === 'Esc'
+            || event.code === 'Escape' || event.keyCode === 27;
+        if (!tryDialog.open || !isEscape) return;
+        event.preventDefault();
+        event.stopPropagation();
+        closeTryDialog();
+    }
+
+    // 初始化与事件绑定
+    projectTitle.addEventListener('click', showIntroduction);
+    content.addEventListener('click', openTryDialog);
+    tryForm.addEventListener('submit', runTryRequest);
+    sideBar.addEventListener('click', handleMenuClick);
+    document.getElementById('try-close').addEventListener('click', closeTryDialog);
+    // 从 window 捕获；keyup 兼容输入控件先消耗 keydown 的情况。
+    window.addEventListener('keydown', handleTryEscape, true);
+    window.addEventListener('keyup', handleTryEscape, true);
+    tryDialog.addEventListener('cancel', event => {
+        event.preventDefault();
+        closeTryDialog();
+    });
+    tryDialog.addEventListener('close', () => {
+        if (tryController) tryController.abort();
+        if (tryDialogTrigger && tryDialogTrigger.isConnected) {
+            tryDialogTrigger.focus({preventScroll: true});
+        }
+        tryDialogTrigger = null;
     });
     renderRightMenu();
 </script>

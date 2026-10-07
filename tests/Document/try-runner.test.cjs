@@ -1,0 +1,64 @@
+const fs = require('node:fs');
+const assert = require('node:assert/strict');
+const vm = require('node:vm');
+const template = fs.readFileSync(__dirname + '/../../src/Document/doc.tpl', 'utf8');
+const source = template.slice(template.indexOf('    function buildTryRequest('), template.indexOf("    async function runTryRequest("));
+const context = vm.createContext({Headers, URL, URLSearchParams, FormData, File, AbortController,
+    setTimeout, clearTimeout, location: {href: 'http://localhost/docs/'}, tryController: null});
+vm.runInContext(source, context);
+const build = (method, fields, url = 'http://localhost/users/{id}') => context.buildTryRequest(url, method, fields);
+const field = (name, source, value, type = 'STRING') => ({name, source, value, type});
+(async () => {
+    const query = build('GET', [field('id', 'ROUTER_PARAMS', 'a/b'), field('q', 'GET', 'a & b'), field('X-Token', 'HEADER', 'token')]);
+    assert.equal(query.url, 'http://localhost/users/a%2Fb?q=a+%26+b');
+    assert.equal(query.options.headers.get('X-Token'), 'token');
+    assert.equal(query.options.body, undefined);
+    const headerRequest = build('GET', [field('testHeader', 'HEADER', 'test-value')], 'http://localhost/api/common/message/unRead');
+    assert.equal(headerRequest.options.headers.get('testHeader'), 'test-value');
+    assert.equal(new URL(headerRequest.url).search, '');
+    assert.equal(headerRequest.options.body, undefined);
+    const form = build('POST', [field('page', 'POST', '0')], 'http://localhost/api');
+    assert.equal(form.options.body.toString(), 'page=0');
+    const json = build('POST', [field('count', 'JSON', '2', 'INT'), field('enabled', 'JSON', '0', 'BOOLEAN')], 'http://localhost/api');
+    assert.equal(json.options.body, '{"count":2,"enabled":false}');
+    const xml = build('POST', [field('name', 'XML', '<hi>')], 'http://localhost/api');
+    assert.equal(xml.options.body, '<request><name>&lt;hi&gt;</name></request>');
+    assert.throws(() => build('POST', [field('a', 'JSON', 'a'), field('b', 'POST', 'b')]), /不能混合/);
+    assert.throws(() => build('GET', [field('a', 'JSON', 'a')]), /不能发送请求体/);
+    const rawJson = '{ "msgId": "123" }';
+    const directJson = context.buildTryRequest('http://localhost/api', 'POST', [field('testHeader', 'HEADER', 'token')], {type: 'JSON', value: rawJson});
+    assert.equal(directJson.options.body, rawJson);
+    assert.equal(directJson.options.headers.get('Content-Type'), 'application/json');
+    assert.equal(directJson.options.headers.get('testHeader'), 'token');
+    const rawText = context.buildTryRequest('http://localhost/api', 'POST', [], {type: 'RAW', value: 'raw content'});
+    assert.equal(rawText.options.body, 'raw content');
+    assert.equal(rawText.options.headers.get('Content-Type'), 'text/plain');
+    assert.throws(() => context.buildTryRequest('http://localhost/api', 'POST', [], {type: 'JSON', value: '{'}), /JSON 格式错误/);
+    assert.throws(() => context.buildTryRequest('http://localhost/api', 'GET', [], {type: 'JSON', value: '{}'}), /无法发送请求体/);
+    const file = new File(['test'], 'test.txt');
+    const upload = build('POST', [field('file', 'FILE', file), field('name', 'POST', 'test')], 'http://localhost/api');
+    assert.equal(upload.options.body.get('file').name, 'test.txt');
+    assert.equal(upload.options.headers.has('Content-Type'), false);
+    for (const code of [200, 400, 404, 500]) {
+        let status;
+        context.fetch = async () => new Response('{"message":"response"}', {status: code});
+        const result = await context.executeTryRequest(form, 1000, response => status = response.status);
+        assert.equal(status, code);
+        assert.match(result.body, /response/);
+        assert.equal(result.error, null);
+    }
+    context.fetch = async () => new Response(null, {status: 204});
+    assert.equal((await context.executeTryRequest(form, 1000, () => {})).body, '（空响应）');
+    context.fetch = async () => { throw new TypeError('Failed to fetch'); };
+    assert.match((await context.executeTryRequest(form, 1000, () => {})).error, /网络异常/);
+    context.fetch = (_, options) => new Promise((resolve, reject) => {
+        options.signal.addEventListener('abort', () => reject(new Error('aborted')));
+    });
+    assert.match((await context.executeTryRequest(form, 10, () => {})).error, /请求超时/);
+    let received;
+    context.fetch = async () => ({status: 502, text: async () => { throw new Error('stream failed'); }});
+    const partial = await context.executeTryRequest(form, 1000, response => received = response.status);
+    assert.equal(received, 502);
+    assert.match(partial.error, /stream failed/);
+    console.log('请求构建、文件上传、HTTP 状态、空响应、网络异常和超时测试通过');
+})().catch(error => { console.error(error); process.exitCode = 1; });
