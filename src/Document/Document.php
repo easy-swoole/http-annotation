@@ -44,7 +44,7 @@ class Document
     /**
      * 仅当定义了ApiGroup的控制器才会被扫描进去
      */
-    function scan():array
+    function scanAllApiGroup():array
     {
         $documentMap = [];
         if(is_dir($this->controllerPath)){
@@ -81,9 +81,9 @@ class Document
         return $documentMap;
     }
 
-    function scanToHtml():void
+    function scan2ArrayMap():array
     {
-        $map = $this->scan();
+        $map = $this->scanAllApiGroup();
         $documentMap = [];
         $controllerNameSpaceLen = strlen($this->controllerNameSpace);
 
@@ -189,6 +189,6 @@ class Document
             unset($temp);
         }
 
-//        var_dump($documentMap);
+        return $documentMap;
     }
 }
