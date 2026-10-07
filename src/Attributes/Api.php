@@ -2,7 +2,7 @@
 
 namespace EasySwoole\HttpAnnotation\Attributes;
 
-use EasySwoole\HttpAnnotation\Bean\Description\DescriptionInterface;
+use EasySwoole\HttpAnnotation\Bean\Description\Markdown;
 use EasySwoole\HttpAnnotation\Bean\Description\Text;
 use EasySwoole\HttpAnnotation\Bean\Example\ExampleInterface;
 use EasySwoole\HttpAnnotation\Enum\HttpMethod;
@@ -29,7 +29,7 @@ class Api
          * @var array<ExampleInterface>
          */
         public array         $responseExamples = [],
-        public string|null|DescriptionInterface   $description = null,
+        public string|null|Markdown|Text   $description = null,
         public bool          $deprecated = false,
     ){
         $temp = [];

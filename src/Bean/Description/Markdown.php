@@ -2,7 +2,7 @@
 
 namespace EasySwoole\HttpAnnotation\Bean\Description;
 
-class Markdown implements DescriptionInterface
+class Markdown extends AbstractDescription
 {
 
     public string $markdownFile;
@@ -20,7 +20,17 @@ class Markdown implements DescriptionInterface
             return $this->content;
         }
         if (!file_exists($this->markdownFile)) {
-            throw new \Exception("markdown description file {$this->markdownFile} not exists");
+            if(empty($this->relateClass)){
+                throw new \Exception("markdown description file {$this->markdownFile} not exists");
+            }else{
+                if(empty($this->relateMethod)){
+                    throw new \Exception("markdown description file {$this->markdownFile} not exists define in class {$this->relateClass}");
+                }else{
+                    throw new \Exception("markdown description file {$this->markdownFile} not exists define in class {$this->relateClass} method {$this->relateMethod}");
+                }
+            }
+
+
         }
         $this->content = file_get_contents($this->markdownFile);
         return $this->content;

@@ -51,6 +51,9 @@ class AttributeCache
                 /** @var ApiGroup $t */
                 $t = $apiGroup->newInstance();
                 $t->relateClass = $reflectionClass->getName();
+                if($t->description){
+                    $t->description->relateClass = $reflectionClass->getName();
+                }
                 $classInfo->apiGroup = $t;
             }catch (\Throwable $throwable){
                throw new Annotation("{$throwable->getMessage()} in {$className} for ApiGroup attribute");
@@ -78,6 +81,10 @@ class AttributeCache
                         $apiTag = $api[0]->newInstance();
                         $apiTag->relateClass = $reflectionClass->getName();
                         $apiTag->relateMethod = $methodItem->getName();
+                        if($apiTag->description){
+                            $apiTag->description->relateClass = $reflectionClass->getName();
+                            $apiTag->description->relateMethod = $methodItem->getName();
+                        }
                         $apiTag->apiName = $methodItem->getName();
                         $classInfo->apis[$methodItem->getName()] = $apiTag;
                     }catch (\Throwable $throwable){

@@ -2,7 +2,7 @@
 
 namespace EasySwoole\HttpAnnotation\Bean\Description;
 
-class Text implements DescriptionInterface
+class Text extends AbstractDescription
 {
 
     public string $text;
