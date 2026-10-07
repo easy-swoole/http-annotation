@@ -149,7 +149,7 @@
             margin: 0;
             list-style-type: none;
             box-sizing: border-box;
-            font-size: 1.1em;
+            font-size: 1rem;
             font-weight: bold;
             text-transform: capitalize;
             border-left: 0.5rem solid transparent;
@@ -171,7 +171,7 @@
             padding: 0.3em 0.8em;
             list-style-type: none;
             box-sizing: border-box;
-            font-size: 0.8em;
+            font-size: 1em;
             font-weight: bold;
             color: #3f5163;
             display: none;
@@ -189,7 +189,7 @@
         .container .sideBar>ul li a {
             color: #2c3e50;
             width: 100%;
-            font-size: 1.1em;
+            font-size: .9rem;
             font-weight: 400;
             border-left: 0.25rem solid transparent;
             padding: 0.35rem 1rem 0.35rem 0.25rem;
@@ -720,6 +720,7 @@
     const searchIndex = buildSearchIndex(jsonData);
     const content = document.getElementById('content');
     const sideBar = document.getElementById('sideBar');
+    let activeDocument = {path: [], apiName: null};
     let activeTryApi = null;
     let activeTryParams = {};
     let tryController = null;
@@ -741,9 +742,12 @@
 
 
     // 文档首页
-    function showIntroduction() {
+    function showIntroduction(updateHash = true) {
         if (!config.hasDescription) return;
+        activeDocument = {path: [], apiName: null};
+        activeTryApi = null;
         content.innerHTML = introductionHtml;
+        if (updateHash) setDocumentHash();
         sideBar.querySelectorAll('a.active').forEach(link => link.classList.remove('active'));
         renderRightMenu();
         window.scrollTo(0, 0);
@@ -834,7 +838,12 @@
             heading.id = 'section-' + index;
             const item = document.createElement('li');
             const link = document.createElement('a');
-            link.href = '#' + heading.id;
+            link.href = documentHash(heading.textContent, index);
+            link.addEventListener('click', event => {
+                event.preventDefault();
+                setDocumentHash(heading.textContent, index);
+                heading.scrollIntoView({block: 'start'});
+            });
             link.textContent = heading.textContent;
             item.append(link);
             menu.append(item);
@@ -1158,6 +1167,7 @@
             target.setAttribute('aria-expanded', String(!list.hidden));
             target.querySelector('.menu-arrow').textContent = list.hidden ? '▸' : '▾';
             renderGroup(group, path);
+            activeTryApi = null;
         } else {
             const api = group.apiList[target.dataset.api];
             if (!api) return;
@@ -1168,6 +1178,8 @@
             activeTryParams = params;
             renderApi(api, params);
         }
+        activeDocument = {path, apiName: target.matches('button') ? null : target.dataset.api};
+        setDocumentHash();
         renderRightMenu();
         window.scrollTo(0, 0);
     }
@@ -1285,7 +1297,7 @@
         searchInput.setAttribute('aria-expanded', 'false');
     }
 
-    function openSearchResult(entry) {
+    function openSearchResult(entry, updateHash = true) {
         const group = findGroup(entry.path);
         if (!group) return;
         sideBar.querySelectorAll('a.active').forEach(link => link.classList.remove('active'));
@@ -1312,9 +1324,52 @@
                 }
             }
         }
+        activeDocument = {path: entry.path, apiName: entry.apiName};
+        if (entry.apiName === null) activeTryApi = null;
+        if (updateHash) setDocumentHash();
         closeSearchResults();
         renderRightMenu();
         window.scrollTo(0, 0);
+    }
+
+    // 哈希链接同时保存菜单与章节，刷新和历史导航可恢复页面。
+    function documentHash(section = '', index = null) {
+        const hash = new URLSearchParams();
+        if (activeDocument.path.length) hash.set('group', activeDocument.path.join('.'));
+        if (activeDocument.apiName !== null) hash.set('api', activeDocument.apiName);
+        if (section) hash.set('section', section);
+        if (index !== null) hash.set('heading', String(index));
+        return '#' + hash.toString();
+    }
+
+    function setDocumentHash(section = '', index = null) {
+        const hash = documentHash(section, index);
+        if (location.hash !== hash) history.pushState(null, '', hash);
+    }
+
+    function restoreDocumentHash() {
+        const raw = (location.hash || '').slice(1);
+        const hash = new URLSearchParams(raw);
+        const groupName = hash.get('group');
+        if (groupName) {
+            const path = groupName.split('.');
+            const group = findGroup(path);
+            const apiName = hash.has('api') ? hash.get('api') : null;
+            if (!group || (apiName !== null && !Object.prototype.hasOwnProperty.call(group.apiList, apiName))) return;
+            openSearchResult({path, apiName}, false);
+        } else if (!raw || hash.has('section')) {
+            showIntroduction(false);
+        } else {
+            // 兼容现有的 #section-0 章节链接。
+            if (!/^section-\d+$/.test(raw)) return;
+        }
+        const headings = Array.from(content.querySelectorAll('h2, h3'));
+        const section = hash.get('section');
+        const indexed = hash.has('heading') ? headings[Number(hash.get('heading'))] : null;
+        const heading = section
+            ? (indexed && indexed.textContent === section ? indexed : headings.find(item => item.textContent === section))
+            : headings.find(item => item.id === raw);
+        if (heading) heading.scrollIntoView({block: 'start'});
     }
 
     // 初始化与事件绑定
@@ -1335,7 +1390,13 @@
     document.addEventListener('click', event => {
         if (!event.target.closest('#doc-search')) closeSearchResults();
     }, true);
-    projectTitle.addEventListener('click', showIntroduction);
+    projectTitle.addEventListener('click', () => showIntroduction());
+    window.addEventListener('hashchange', restoreDocumentHash, true);
+    window.addEventListener('popstate', restoreDocumentHash, true);
+    for (const link of sideBar.querySelectorAll('a[data-api]')) {
+        const hash = new URLSearchParams({group: JSON.parse(link.dataset.path).join('.'), api: link.dataset.api});
+        link.href = '#' + hash.toString();
+    }
     content.addEventListener('click', openTryDialog);
     tryForm.addEventListener('submit', runTryRequest);
     sideBar.addEventListener('click', handleMenuClick);
@@ -1355,6 +1416,7 @@
         tryDialogTrigger = null;
     });
     renderRightMenu();
+    restoreDocumentHash();
 </script>
 </body>
 </html>

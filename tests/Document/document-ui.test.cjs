@@ -66,7 +66,7 @@ const document = {
     createTextNode: text => text,
 };
 const context = vm.createContext({document, window: {scrollTo() {}, addEventListener: document.addEventListener}, location: {href: 'http://localhost/docs'},
-    URL, Option: class {constructor(text, value) {this.value = value;}}});
+    URL, URLSearchParams, history: {pushState(_state, _title, hash) {context.location.hash = hash;}}, Option: class {constructor(text, value) {this.value = value;}}});
 vm.runInContext(script, context);
 
 function selectApi(name) {
@@ -165,3 +165,26 @@ assert.equal(context.buildParameterField('msgId', param('STRING', 'JSON'), 'POST
 assert.equal(context.buildParameterField('token', param('STRING', 'HEADER'), 'POST', 'JSON').querySelector('.try-source').value, 'HEADER');
 assert.equal(context.buildParameterField('id', {from: ['GET', 'POST']}, 'POST', null).querySelector('.try-source').value, 'POST');
 console.log('立即尝试的单个参数来源与旧数组格式检查通过');
+
+context.openSearchResult({path: ['Common'], apiName: 'upload'});
+assert.equal(new URLSearchParams(context.location.hash.slice(1)).get('api'), 'upload');
+context.location.hash = '#group=Common&api=detail&section=' + encodeURIComponent('请求参数');
+context.restoreDocumentHash();
+assert.match(elements.get('content').innerHTML, /detail/);
+context.location.hash = '#group=Common';
+documentListeners.hashchange();
+assert.match(elements.get('content').innerHTML, /分组说明/);
+context.location.hash = '#';
+documentListeners.popstate();
+assert.equal(elements.get('content').innerHTML, '<h1>首页</h1>');
+context.location.hash = '#group=Missing&api=detail';
+assert.doesNotThrow(() => context.restoreDocumentHash());
+const heading = {textContent: '请求参数', scrollIntoView() {this.scrolled = true;}};
+elements.get('content').querySelectorAll = () => [heading];
+context.location.hash = '#group=Common&api=detail&section=' + encodeURIComponent('请求参数');
+context.restoreDocumentHash();
+assert.equal(heading.scrolled, true);
+const chapterLink = elements.get('right-menu').children[0].children[0];
+assert.equal(new URLSearchParams(chapterLink.href.slice(1)).get('api'), 'detail');
+assert.equal(new URLSearchParams(chapterLink.href.slice(1)).get('section'), '请求参数');
+console.log('哈希菜单、章节定位、历史导航及无效链接检查通过');
