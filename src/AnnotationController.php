@@ -41,17 +41,11 @@ abstract class AnnotationController extends Controller
         $onRequestArgsInTag = $attributeInfo->onRequest->onRequestParams;
         $apiTag = $attributeInfo->apiTag($this->getActionName());
         if($apiTag){
-            if($apiTag->allowMethod instanceof HttpMethod){
-                $allowRequestMethod = [$apiTag->allowMethod];
-            }else{
-                $allowRequestMethod = $apiTag->allowMethod;
-            }
             $currentRequestMethod = $this->request()->getMethod();
             if(empty($currentRequestMethod)){
                 throw new RequestMethodNotAllow('request method is empty');
             }
-            $test = constant(HttpMethod::class."::".$currentRequestMethod);
-            if(!in_array($test,$allowRequestMethod)){
+            if($currentRequestMethod != $apiTag->allowMethod->name){
                 throw new RequestMethodNotAllow("{$currentRequestMethod} method is not allow for this request");
             }
 

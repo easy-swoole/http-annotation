@@ -17,7 +17,7 @@ class Api
     public string|null       $requestPath = null;
 
     function __construct(
-        public HttpMethod|array        $allowMethod = [HttpMethod::GET,HttpMethod::POST],
+        public HttpMethod    $allowMethod = HttpMethod::GET,
         public bool          $registerRouter = false,
         public array         $requestParam = [],
         public array         $responseParam = [],
