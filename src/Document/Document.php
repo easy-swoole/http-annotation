@@ -120,7 +120,9 @@ class Document
                     $result[$paramName] = [
                         'type'=>$param->type,
                         'description'=>$param->description ? $param->description->toString() : null,
-                        'defaultValue'=>$param->value
+                        'defaultValue'=>$param->value,
+                        'ignoreAction'=>$param->ignoreAction,
+                        'deprecated'=>$param->deprecated,
                     ];
                     $validateRules = [];
                     /** @var AbstractValidator $validateRule */
@@ -169,13 +171,24 @@ class Document
                     'description'=>$api->description ? $api->description->toString() : null,
                 ];
                 $currentGroup['apiList'][$apiName]['requestParams'] = $buildParamsInfo($api->requestParam);
+                foreach ($api->requestExamples as $example) {
+                    $currentGroup['apiList'][$apiName]['requestExamples'][] = $example->toString();
+                }
+                foreach ($api->responseExamples as $example) {
+                    if($example->isSuccessResponse()){
+                        $currentGroup['apiList'][$apiName]['responseExamples']['success'][] = $example->toString();
+                    }else{
+                        $currentGroup['apiList'][$apiName]['responseExamples']['fail'][] = $example->toString();
+                    }
+                }
             }
+
 //            $currentGroup['apis'][] = $apiGroup;
             // 每次外层循环结束，清理临时引用避免污染
             unset($currentGroup);
             unset($temp);
         }
 
-        var_dump($documentMap);
+//        var_dump($documentMap);
     }
 }

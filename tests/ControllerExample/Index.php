@@ -9,6 +9,7 @@ use EasySwoole\HttpAnnotation\Attributes\Param;
 use EasySwoole\HttpAnnotation\Attributes\PreCall;
 use EasySwoole\HttpAnnotation\Attributes\Property\Context;
 use EasySwoole\HttpAnnotation\Attributes\Property\Di;
+use EasySwoole\HttpAnnotation\Bean\Example\ArrayForm;
 use EasySwoole\HttpAnnotation\Document\Document;
 use EasySwoole\HttpAnnotation\Enum\HttpMethod;
 use EasySwoole\HttpAnnotation\Validator\Integer;
@@ -55,6 +56,12 @@ class Index extends Base
                     new NotEmpty()
                 ]
             )
+        ],
+        requestExamples: [
+            new ArrayForm([
+                'age'=>12,
+                'userName'=>'easyswoole'
+            ])
         ]
     )]
     #[PreCall([Utility::class,'preCall'])]
