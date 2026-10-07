@@ -103,8 +103,8 @@ class DocumentTest extends TestCase
         $this->assertSame('', $apis['empty']['descriptionHtml']);
         $this->assertSame('INT', $apis['plain']['requestParams']['id']['type']);
         $this->assertSame('GET', $apis['plain']['allowMethod']);
-        $this->assertSame('FORM_DATA', $apis['plain']['acceptContentType']);
-        $this->assertSame(['GET', 'POST'], $apis['plain']['requestParams']['id']['from']);
+        $this->assertNull($apis['plain']['acceptContentType']);
+        $this->assertSame(['GET'], $apis['plain']['requestParams']['id']['from']);
         $this->assertNull($apis['plain']['requestParams']['name']['type']);
         $this->assertStringContainsString('descriptionHtml', $document->scan2html());
     }
@@ -146,8 +146,8 @@ class DescriptionController extends \EasySwoole\HttpAnnotation\AnnotationControl
 
     #[\EasySwoole\HttpAnnotation\Attributes\Api(
         requestParam: [
-            new \EasySwoole\HttpAnnotation\Attributes\Param(name: 'id', type: ParamType::INT),
-            new \EasySwoole\HttpAnnotation\Attributes\Param(name: 'name', type: null),
+            new \EasySwoole\HttpAnnotation\Attributes\Param(name: 'id', from: \EasySwoole\HttpAnnotation\Enum\ParamFrom::GET, type: ParamType::INT),
+            new \EasySwoole\HttpAnnotation\Attributes\Param(name: 'name', from: \EasySwoole\HttpAnnotation\Enum\ParamFrom::GET, type: null),
         ],
         description: '# Plain <b>text</b>'
     )]

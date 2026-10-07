@@ -15,6 +15,7 @@ use EasySwoole\HttpAnnotation\Bean\Example\ArrayForm;
 use EasySwoole\HttpAnnotation\Bean\Example\Raw;
 use EasySwoole\HttpAnnotation\Document\Document;
 use EasySwoole\HttpAnnotation\Enum\HttpMethod;
+use EasySwoole\HttpAnnotation\Enum\ParamFrom;
 use EasySwoole\HttpAnnotation\Validator\Integer;
 use EasySwoole\HttpAnnotation\Validator\MinLength;
 use EasySwoole\HttpAnnotation\Validator\NotEmpty;
@@ -34,6 +35,7 @@ class Index extends Base
         requestParam: [
             new Param(
                 name:'account',
+                from: ParamFrom::GET,
                 validate: [
                     new MinLength(3)
                 ]
@@ -52,11 +54,13 @@ class Index extends Base
         requestParam: [
             new Param(
                 name: 'age',
+                from: ParamFrom::GET,
                 value: 12,
                 description: '该用户的年龄'
             ),
             new Param(
                 name: 'userName',
+                from: ParamFrom::GET,
                 validate: [
                     new NotEmpty()
                 ]

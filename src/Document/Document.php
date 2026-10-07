@@ -167,7 +167,7 @@ class Document
                     'apiName'=>$apiName,
                     'deprecated'=>$api->deprecated,
                     'allowMethod'=>$api->allowMethod->name,
-                    'acceptContentType'=>$api->acceptContentType->name,
+                    'acceptContentType'=>$api->acceptContentType?->name,
                     'requestPath'=>$api->requestPath,
                     'requestParams'=>[],
                     'requestExamples'=>[],
