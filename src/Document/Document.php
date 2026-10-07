@@ -182,13 +182,31 @@ class Document
                     }
                 }
             }
-
-//            $currentGroup['apis'][] = $apiGroup;
             // 每次外层循环结束，清理临时引用避免污染
             unset($currentGroup);
             unset($temp);
         }
 
         return $documentMap;
+    }
+
+    function scan2html()
+    {
+        $documentMap = $this->scan2ArrayMap();
+        $menu = [];
+        $buildMenu = function (array $infoMap)use(&$buildMenu): array
+        {
+            $menu = [];
+            foreach ($infoMap as $name => $info){
+                $temp = [
+                    'menuName'=>$name,
+                    'subMenu'=>array_keys($info['apiList']),
+                    'children'=>$buildMenu($info['children']),
+                ];
+                $menu[] = $temp;
+            }
+            return $menu;
+        };
+        $menu = $buildMenu($documentMap);
     }
 }
