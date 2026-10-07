@@ -74,22 +74,10 @@
             gap: .8rem;
             flex-shrink: 0;
         }
-        .doc-header-label { color: #81909e; font-size: .75rem; }
-        .doc-header-badge {
-            padding: .15rem .6rem;
-            border: 1px solid #d9eee6;
-            border-radius: 999px;
-            background: #f0faf5;
-            color: #238365;
-            font-size: .72rem;
-            line-height: 1.5;
-            font-weight: 600;
-        }
         @media (max-width: 600px) {
             .container .navBar { padding: 0 .8rem; }
             .navInner { gap: .6rem; }
-            .doc-header-label { display: none; }
-            .doc-brand { gap: .55rem; }
+                .doc-brand { gap: .55rem; }
         }
 
         .container .mainContent {
@@ -635,6 +623,19 @@
             .try-section-heading span { display: none; }
             .try-field { grid-template-columns: minmax(0, 1fr) 5.5rem; }
         }
+        /* 文档全局搜索 */
+        .doc-search { position: relative; width: 240px; }
+        #doc-search-input { width: 100%; box-sizing: border-box; padding: .5rem .75rem; border: 1px solid #dce5eb; border-radius: .5rem; background: #f7faf9; font: inherit; }
+        #doc-search-input:focus { outline: 2px solid #9dd8c9; outline-offset: 1px; background: white; }
+        .search-results { position: absolute; right: 0; top: calc(100% + .6rem); width: min(420px, calc(100vw - 2rem)); max-height: 60vh; overflow-y: auto; background: white; border: 1px solid #e4eaf0; border-radius: .6rem; box-shadow: 0 12px 35px rgba(20, 40, 60, .15); padding: .35rem; }
+        .search-result { display: block; width: 100%; text-align: left; border: 0; background: none; cursor: pointer; padding: .6rem .7rem; border-radius: .35rem; color: #26384b; font: inherit; overflow-wrap: anywhere; }
+        .search-result:hover, .search-result:focus-visible { background: #edf8f3; }
+        .search-result span, .search-result small { display: block; }
+        .search-result small { color: #7c8b9a; margin-top: .15rem; }
+        .search-result .search-context { color: #526779; line-height: 1.6; margin-top: .4rem; font-size: .75rem; }
+        .search-result mark { background: #fff0ad; color: #614d00; border-radius: .15rem; padding: 0 .1rem; }
+        .search-empty { padding: .6rem; color: #7c8b9a; }
+        @media (max-width: 600px) { .doc-search { width: min(180px, 45vw); } }
     </style>
 </head>
 <body>
@@ -654,8 +655,10 @@
                 </div>
             </div>
             <div class="doc-header-meta">
-                <span class="doc-header-label">接口参考文档</span>
-                <span class="doc-header-badge">HTTP API</span>
+                <div class="doc-search" id="doc-search">
+                    <input id="doc-search-input" type="search" placeholder="搜索分组、接口、路径" aria-label="搜索文档" aria-controls="doc-search-results" aria-expanded="false" autocomplete="off">
+                    <div id="doc-search-results" class="search-results" aria-label="搜索结果" hidden></div>
+                </div>
             </div>
         </div>
     </header>
@@ -711,6 +714,9 @@
     // 模板数据与页面状态
     const jsonData = {{$docData}};
     const config = {{$config}};
+    const searchInput = document.getElementById('doc-search-input');
+    const searchResults = document.getElementById('doc-search-results');
+    const searchIndex = buildSearchIndex(jsonData);
     const content = document.getElementById('content');
     const sideBar = document.getElementById('sideBar');
     let activeTryApi = null;
@@ -1177,7 +1183,155 @@
         closeTryDialog();
     }
 
+    // 全局搜索：索引递归分组，保留完整路径以区分同名接口。
+    function buildSearchIndex(map, path = []) {
+        const entries = [];
+        for (const [name, group] of Object.entries(map)) {
+            const groupPath = [...path, name];
+            const children = buildSearchIndex(group.children || {}, groupPath);
+            if (Object.keys(group.apiList || {}).length || children.length) {
+                entries.push({path: groupPath, apiName: null, title: groupPath.join('.'), requestPath: ''});
+            }
+            for (const [apiName, api] of Object.entries(group.apiList || {})) {
+                entries.push({path: groupPath, apiName, title: groupPath.join('.') + ' / ' + apiName,
+                    requestPath: api.requestPath || '', description: api.description || ''});
+            }
+            entries.push(...children);
+        }
+        return entries;
+    }
+
+    function searchDocuments(query, entries = searchIndex) {
+        const words = query.trim().toLowerCase().split(/\s+/).filter(Boolean);
+        if (!words.length) return [];
+        return entries.filter(entry => words.every(word =>
+            (entry.title + ' ' + entry.requestPath + ' ' + (entry.description || '')).toLowerCase().includes(word))).slice(0, 20);
+    }
+
+    function highlightSearchText(text, query) {
+        const words = query.trim().split(/\s+/).filter(Boolean);
+        if (!words.length) return escapeHtml(text);
+        const pattern = words.map(word => word.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')).join('|');
+        const expression = new RegExp(pattern, 'gi');
+        let html = '';
+        let offset = 0;
+        for (const match of text.matchAll(expression)) {
+            html += escapeHtml(text.slice(offset, match.index)) + '<mark>' + escapeHtml(match[0]) + '</mark>';
+            offset = match.index + match[0].length;
+        }
+        return html + escapeHtml(text.slice(offset));
+    }
+
+    function buildSearchContext(entry, query) {
+        const text = String(entry.description || '').replace(/\s+/g, ' ').trim();
+        if (!text) return '';
+        const lowerText = text.toLowerCase();
+        const positions = query.trim().toLowerCase().split(/\s+/).filter(Boolean)
+            .map(word => ({index: lowerText.indexOf(word), length: word.length}))
+            .filter(match => match.index >= 0).sort((left, right) => left.index - right.index);
+        // 展示命中处前后各 35 个字符，合并临近命中，最多三段。
+        const ranges = [];
+        for (const match of positions) {
+            const start = Math.max(0, match.index - 35);
+            const end = Math.min(text.length, match.index + match.length + 35);
+            const previous = ranges[ranges.length - 1];
+            if (previous && start <= previous.end) previous.end = Math.max(previous.end, end);
+            else ranges.push({start, end});
+        }
+        if (!ranges.length) ranges.push({start: 0, end: Math.min(text.length, 90)});
+        return ranges.slice(0, 3).map(range =>
+            (range.start ? '…' : '') + highlightSearchText(text.slice(range.start, range.end), query)
+            + (range.end < text.length ? '…' : '')).join(' · ');
+    }
+
+    function renderSearchResults() {
+        const matches = searchDocuments(searchInput.value);
+        searchResults.replaceChildren();
+        searchResults.hidden = !searchInput.value.trim();
+        searchInput.setAttribute('aria-expanded', String(!searchResults.hidden));
+        if (searchResults.hidden) return;
+        if (!matches.length) {
+            const empty = document.createElement('p');
+            empty.className = 'search-empty';
+            empty.textContent = '未找到匹配的分组或接口';
+            searchResults.append(empty);
+        }
+        for (const entry of matches) {
+            const button = document.createElement('button');
+            button.type = 'button';
+            button.className = 'search-result';
+            const title = document.createElement('span');
+            title.innerHTML = highlightSearchText(entry.title, searchInput.value);
+            const subtitle = document.createElement('small');
+            subtitle.innerHTML = highlightSearchText(entry.apiName === null ? '接口分组' : entry.requestPath, searchInput.value);
+            button.append(title, subtitle);
+            const snippet = buildSearchContext(entry, searchInput.value);
+            if (snippet) {
+                const context = document.createElement('small');
+                context.className = 'search-context';
+                context.innerHTML = snippet;
+                button.append(context);
+            }
+            button.addEventListener('click', () => openSearchResult(entry));
+            searchResults.append(button);
+        }
+    }
+
+    function closeSearchResults() {
+        searchResults.hidden = true;
+        searchInput.setAttribute('aria-expanded', 'false');
+    }
+
+    function openSearchResult(entry) {
+        const group = findGroup(entry.path);
+        if (!group) return;
+        sideBar.querySelectorAll('a.active').forEach(link => link.classList.remove('active'));
+        // 展开搜索结果所在的完整菜单层级。
+        for (const button of sideBar.querySelectorAll('button[data-path]')) {
+            const path = JSON.parse(button.dataset.path);
+            if (path.length <= entry.path.length && path.every((name, index) => name === entry.path[index])) {
+                button.nextElementSibling.hidden = false;
+                button.setAttribute('aria-expanded', 'true');
+                button.querySelector('.menu-arrow').textContent = '▾';
+            }
+        }
+        if (entry.apiName === null) {
+            renderGroup(group, entry.path);
+        } else {
+            const api = group.apiList[entry.apiName];
+            if (!api) return;
+            activeTryApi = api;
+            activeTryParams = mergeRequestParams(group, api);
+            renderApi(api, activeTryParams);
+            for (const link of sideBar.querySelectorAll('a[data-api]')) {
+                if (link.dataset.api === entry.apiName && link.dataset.path === JSON.stringify(entry.path)) {
+                    link.classList.add('active');
+                }
+            }
+        }
+        closeSearchResults();
+        renderRightMenu();
+        window.scrollTo(0, 0);
+    }
+
     // 初始化与事件绑定
+    searchInput.addEventListener('input', renderSearchResults);
+    searchInput.addEventListener('focus', renderSearchResults);
+    searchInput.addEventListener('keydown', event => {
+        if (event.key === 'Escape') closeSearchResults();
+        if (event.key === 'Enter') {
+            event.preventDefault();
+            const first = searchDocuments(searchInput.value)[0];
+            if (first) openSearchResult(first);
+        }
+        if (event.key === 'ArrowDown' && !searchResults.hidden) {
+            const first = searchResults.querySelector('button');
+            if (first) { event.preventDefault(); first.focus(); }
+        }
+    });
+    document.addEventListener('click', event => {
+        if (!event.target.closest('#doc-search')) closeSearchResults();
+    }, true);
     projectTitle.addEventListener('click', showIntroduction);
     content.addEventListener('click', openTryDialog);
     tryForm.addEventListener('submit', runTryRequest);

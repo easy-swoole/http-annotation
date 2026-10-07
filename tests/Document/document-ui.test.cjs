@@ -42,7 +42,7 @@ const group = {
         upload: {apiName: 'upload', allowMethod: 'POST', requestPath: '/upload',
             acceptContentType: 'FORM_DATA', requestParams: {file: param('FILE', 'FILE')},
             requestExamples: [], responseExamples: {success: [], fail: []}},
-        detail: {apiName: 'detail', allowMethod: 'POST', requestPath: '/detail',
+        detail: {apiName: 'detail', description: '## 消息详情\n查询消息记录 Searchable Description', allowMethod: 'POST', requestPath: '/detail',
             acceptContentType: 'JSON', requestParams: {msgId: param('STRING', 'JSON')},
             requestExamples: [], responseExamples: {success: [], fail: []}},
     },
@@ -120,3 +120,28 @@ assert.equal(elements.get('try-dialog').open, false);
 assert.equal(elements.get('try-close').focused, true);
 
 console.log('页面初始化、菜单切换、文件控件、JSON 编辑器和返回首页检查通过');
+
+assert.equal(context.searchDocuments('DETAIL')[0].apiName, 'detail');
+assert.equal(context.searchDocuments('/upload')[0].apiName, 'upload');
+assert.equal(context.searchDocuments('Common detail').length, 1);
+assert.equal(context.searchDocuments('missing').length, 0);
+assert.equal(context.searchDocuments('  ').length, 0);
+context.openSearchResult(context.searchDocuments('detail')[0]);
+assert.match(elements.get('content').innerHTML, /detail/);
+assert.equal(elements.get('doc-search-results').hidden, true);
+console.log('搜索分组、接口、路径与结果跳转检查通过');
+
+assert.equal(context.searchDocuments('查询消息记录')[0].apiName, 'detail');
+assert.equal(context.searchDocuments('消息详情')[0].apiName, 'detail');
+assert.equal(context.searchDocuments('searchable description')[0].apiName, 'detail');
+assert.equal(context.searchDocuments('Common 查询消息记录')[0].apiName, 'detail');
+console.log('接口 description 与 Markdown 说明搜索检查通过');
+
+const contextSnippet = context.buildSearchContext({description: '前文'.repeat(40) + '目标词' + '后文'.repeat(40)}, '目标词');
+assert.match(contextSnippet, /前文<mark>目标词<\/mark>后文/);
+assert(contextSnippet.startsWith('…') && contextSnippet.endsWith('…'));
+assert.equal(context.buildSearchContext({description: null}, '目标词'), '');
+assert.equal(context.highlightSearchText('<script>a.b</script>', 'a.b'), '&lt;script&gt;<mark>a.b</mark>&lt;/script&gt;');
+assert.equal(context.highlightSearchText('a[b] c++', 'a[b] c++'), '<mark>a[b]</mark> <mark>c++</mark>');
+assert.match(context.buildSearchContext({description: 'first ' + 'x'.repeat(100) + ' last'}, 'first last'), /<mark>first<\/mark>.*<mark>last<\/mark>/);
+console.log('搜索上下文、关键词高亮及 HTML 转义检查通过');
