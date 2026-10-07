@@ -100,8 +100,13 @@ class Index extends Base
                 validate: [
                     new NotEmpty()
                 ]
+            ),
+            new Param(
+                name: 'idCode',
+                deprecated: true
             )
-        ]
+        ],
+        deprecated: true
     )]
     #[PreCall([Utility::class,'preCall'])]
     function test2(array $data)

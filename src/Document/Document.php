@@ -160,6 +160,7 @@ class Document
 
                 $currentGroup['apiList'][$apiName] = [
                     'apiName'=>$apiName,
+                    'deprecated'=>$api->deprecated,
                     'requestPath'=>$api->requestPath,
                     'requestParams'=>[],
                     'requestExamples'=>[],

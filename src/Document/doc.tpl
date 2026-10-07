@@ -87,16 +87,20 @@
         }
 
         .container .mainContent {
-            padding-left: 15rem;
-            padding-bottom: 2rem;
-            display: block;
-            padding-top: 4rem;
+            margin-left: 15rem;
+            padding: 6rem 2rem 2rem;
+            display: grid;
+            grid-template-columns: minmax(0, 740px) 220px;
+            justify-content: center;
+            align-items: start;
+            gap: 2rem;
         }
         .container .mainContent .content {
-            max-width: 740px;
-            margin: 0 auto;
-            padding: 2rem 2.5rem;
+            min-width: 0;
+            padding: 0;
+            overflow-wrap: anywhere;
         }
+        .content pre { overflow-x: auto; }
 
         .container .sideBar {
             font-size: 16px;
@@ -470,23 +474,20 @@
             text-decoration: underline;
         }
 
-        .right-menu{
-            width: 230px;
-            position: fixed;
-            right: 15px;
-            top: 120px;
-            min-height: 1px;
-            z-index: 99;
-            border: 1px solid #EEEEEE;
-            border-radius: 0 3px 3px 3px;
-            background-color: #fff;
-            padding: 10px;
-            max-height: 70%;
+        .right-menu {
+            position: sticky;
+            top: 5rem;
+            width: 100%;
+            min-width: 0;
+            box-sizing: border-box;
+            border-left: 1px solid #e4eaf0;
+            padding: .25rem 0 .5rem 1rem;
+            max-height: calc(100vh - 6rem);
             overflow-y: auto;
+            overflow-wrap: anywhere;
+            font-size: .8rem;
         }
-        .right-menu::-webkit-scrollbar{
-            display:none;
-        }
+        .right-menu a { display: block; padding: .2rem 0; }
         .right-menu > .title {
             color: #aaaaaa;
             background-color: #fff;
@@ -549,7 +550,28 @@
         .parameter-table th:nth-child(2), .parameter-table td:nth-child(2),
         .parameter-table th:nth-child(5), .parameter-table td:nth-child(5),
         .parameter-table td.cell-empty { text-align: center; }
-        @media (max-width: 900px) { .right-menu { display: none !important; } }
+        .parameter-table .param-deprecated { position: relative; padding-top: 1.2rem; }
+        .param-deprecated-label, .api-deprecated-label {
+            position: absolute;
+            top: .1rem;
+            right: .3rem;
+            color: #b77937;
+            font-size: .6rem;
+            line-height: 1rem;
+            white-space: nowrap;
+            font-weight: normal;
+        }
+        .api-deprecated-label {
+            position: static;
+            display: inline-block;
+            margin-left: .4rem;
+            font-size: .7rem;
+            vertical-align: super;
+        }
+        @media (max-width: 1199px) {
+            .container .mainContent { grid-template-columns: minmax(0, 740px); padding: 5rem 1.5rem 2rem; }
+            .right-menu { display: none !important; }
+        }
     </style>
 </head>
 <body>
@@ -626,7 +648,8 @@
                 .filter(rule => rule.msg != null && String(rule.msg).trim() !== '')
                 .map(rule => escapeHtml(rule.msg)).join('<br>');
             const descriptionEmpty = param.description == null || String(param.description).trim() === '';
-            html += '<tr><td>' + escapeHtml(name) + (param.deprecated ? '（已弃用）' : '')
+            html += '<tr><td' + (param.deprecated === true ? ' class="param-deprecated"' : '') + '>'
+                + escapeHtml(name) + (param.deprecated === true ? '<span class="param-deprecated-label">已废弃</span>' : '')
                 + '</td><td>' + displayValue(param.type) + '</td><td' + (rules ? '' : ' class="cell-empty"') + '>' + (rules || '-')
                 + '</td><td' + (descriptionEmpty ? ' class="cell-empty"' : '') + '>'
                 + (descriptionEmpty ? '-' : displayValue(param.description)) + '</td><td>'
@@ -682,7 +705,8 @@
             for (const name of Object.keys(params)) {
                 if ((params[name].ignoreAction || []).includes(api.apiName)) delete params[name];
             }
-            content.innerHTML = '<h1>' + escapeHtml(api.apiName) + '</h1>'
+            content.innerHTML = '<h1 class="api-title">' + escapeHtml(api.apiName)
+                + (api.deprecated === true ? '<span class="api-deprecated-label">已废弃</span>' : '') + '</h1>'
                 + '<h3>请求地址</h3><pre>' + escapeHtml(config.host + api.requestPath) + '</pre>'
                 + '<h3>接口说明</h3>' + (api.descriptionHtml || description(api.description))
                 + '<h3>请求参数</h3>' + parameterTable(params)
