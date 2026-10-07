@@ -2,6 +2,7 @@
 
 namespace EasySwoole\HttpAnnotation\Document;
 
+use EasySwoole\HttpAnnotation\Bean\Description\DescriptionInterface;
 use EasySwoole\Spl\SplBean;
 
 class Config extends SplBean
@@ -9,7 +10,7 @@ class Config extends SplBean
     protected string $host = "";
     protected string $projectName = "EasySwoole";
 
-    protected string|null $description = null;
+    protected DescriptionInterface|null $description = null;
 
     /**
      * @return string
@@ -35,11 +36,15 @@ class Config extends SplBean
         $this->projectName = $projectName;
     }
 
-    public function getDescription(): string|null
+    public function getDescription(): DescriptionInterface|null
     {
         return $this->description;
     }
 
+    function setDescription(DescriptionInterface $description): void
+    {
+        $this->description = $description;
+    }
 
     /**
      * @param string $host

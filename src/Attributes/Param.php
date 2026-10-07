@@ -5,7 +5,6 @@ namespace EasySwoole\HttpAnnotation\Attributes;
 use EasySwoole\Component\Context\ContextManager;
 use EasySwoole\Component\Di as IOC;
 use EasySwoole\Http\AbstractInterface\AbstractRouter;
-use EasySwoole\HttpAnnotation\Bean\Description\DescriptionInterface;
 use EasySwoole\HttpAnnotation\Bean\Description\Text;
 use EasySwoole\HttpAnnotation\Enum\ParamFrom;
 use EasySwoole\HttpAnnotation\Enum\ParamType;
@@ -28,7 +27,7 @@ class Param
         public array|null              $validate = [],
         public mixed                   $value = null,
         public bool                    $deprecated = false,
-        public string|null|DescriptionInterface $description = null,
+        public string|null|Text $description = null,
         public ?ParamType              $type = null,
         public array                   $ignoreAction = [],
         public bool                    $ignorePassArgWhenNotSet = false,
