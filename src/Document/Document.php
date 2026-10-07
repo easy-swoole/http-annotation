@@ -122,7 +122,7 @@ class Document
                 foreach ($params as $paramName => $param){
                     $result[$paramName] = [
                         'type'=>$param->type?->name,
-                        'from'=>array_map(static fn(ParamFrom $from): string => $from->name, is_array($param->from) ? $param->from : [$param->from]),
+                        'from'=>$param->from?->name,
                         'description'=>$param->description ? $param->description->toString() : null,
                         'defaultValue'=>$param->value,
                         'ignoreAction'=>$param->ignoreAction,

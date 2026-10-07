@@ -145,3 +145,10 @@ assert.equal(context.highlightSearchText('<script>a.b</script>', 'a.b'), '&lt;sc
 assert.equal(context.highlightSearchText('a[b] c++', 'a[b] c++'), '<mark>a[b]</mark> <mark>c++</mark>');
 assert.match(context.buildSearchContext({description: 'first ' + 'x'.repeat(100) + ' last'}, 'first last'), /<mark>first<\/mark>.*<mark>last<\/mark>/);
 console.log('搜索上下文、关键词高亮及 HTML 转义检查通过');
+
+// 参数来源兼容当前枚举名称以及多个来源的文档数据。
+assert.match(context.parameterTable({token: {from: 'HEADER'}}), /<th>来源<\/th>/);
+assert.match(context.parameterTable({token: {from: 'HEADER'}}), /<td>HEADER<\/td>/);
+assert.match(context.parameterTable({id: {from: ['GET', 'POST']}}), /<td>GET, POST<\/td>/);
+assert.match(context.parameterTable({id: {from: '<source>'}}), /&lt;source&gt;/);
+console.log('请求参数来源展示检查通过');

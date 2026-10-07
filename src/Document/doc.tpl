@@ -543,6 +543,7 @@
         .parameter-table th:nth-child(1), .parameter-table td:nth-child(1),
         .parameter-table th:nth-child(2), .parameter-table td:nth-child(2),
         .parameter-table th:nth-child(5), .parameter-table td:nth-child(5),
+        .parameter-table th:nth-child(6), .parameter-table td:nth-child(6),
         .parameter-table td.cell-empty { text-align: center; }
         .parameter-table .param-deprecated { position: relative; padding-top: 1.2rem; }
         .param-deprecated-label, .api-deprecated-label {
@@ -802,7 +803,7 @@
     function parameterTable(params) {
         const entries = Object.entries(params || {});
         if (!entries.length) return '<p>暂无参数</p>';
-        let html = '<table class="parameter-table"><thead><tr><th>名称</th><th>类型</th><th>校验规则</th><th>说明</th><th>默认值</th></tr></thead><tbody>';
+        let html = '<table class="parameter-table"><thead><tr><th>名称</th><th>类型</th><th>校验规则</th><th>说明</th><th>默认值</th><th>来源</th></tr></thead><tbody>';
         for (const [name, param] of entries) {
             const rules = Object.values(param.validateRules || {})
                 .filter(rule => rule.msg != null && String(rule.msg).trim() !== '')
@@ -813,7 +814,8 @@
                 + '</td><td>' + displayValue(param.type) + '</td><td' + (rules ? '' : ' class="cell-empty"') + '>' + (rules || '-')
                 + '</td><td' + (descriptionEmpty ? ' class="cell-empty"' : '') + '>'
                 + (descriptionEmpty ? '-' : displayValue(param.description)) + '</td><td>'
-                + displayValue(param.defaultValue) + '</td></tr>';
+                + displayValue(param.defaultValue) + '</td><td>'
+                + displayValue(Array.isArray(param.from) ? param.from.join(', ') : param.from) + '</td></tr>';
         }
         return html + '</tbody></table>';
     }
