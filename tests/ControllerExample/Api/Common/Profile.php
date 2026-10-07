@@ -6,6 +6,7 @@ use EasySwoole\Http\Message\Status;
 use EasySwoole\HttpAnnotation\Attributes\Api;
 use EasySwoole\HttpAnnotation\Attributes\ApiGroup;
 use EasySwoole\HttpAnnotation\Attributes\Param;
+use EasySwoole\HttpAnnotation\Enum\HttpMethod;
 use EasySwoole\HttpAnnotation\Enum\ParamFrom;
 use EasySwoole\HttpAnnotation\Enum\ParamType;
 use EasySwoole\HttpAnnotation\Validator\IsFile;
@@ -23,6 +24,7 @@ class Profile extends Base
     }
 
     #[Api(
+        allowMethod: HttpMethod::POST,
         requestParam: [
             new Param(
                 name: 'userThumb',
@@ -31,7 +33,7 @@ class Profile extends Base
                     new IsFile()
                 ],
                 type: ParamType::FILE
-            )
+            ),
         ]
     )]
     function update()

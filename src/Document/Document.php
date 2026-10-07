@@ -18,6 +18,8 @@ use EasySwoole\ParserDown\ParserDown;
 use EasySwoole\Spl\SplArray;
 use EasySwoole\Utility\File;
 use ReflectionClass;
+use EasySwoole\HttpAnnotation\Enum\ParamFrom;
+use EasySwoole\HttpAnnotation\Enum\HttpMethod;
 
 class Document
 {
@@ -97,6 +99,7 @@ class Document
                         'children'=>[],
                         'apiGroupName'=>$apiGroupName,
                         'description'=>null,
+                        'descriptionHtml'=>'',
                         'onRequestParams'=>[]
                     ];
                 }
@@ -110,6 +113,7 @@ class Document
             $classAttribute = $apiGroupInfo['classAttribute'];
             if($apiGroup->description){
                 $currentGroup['description'] = $apiGroup->description->toString();
+                $currentGroup['descriptionHtml'] = $this->renderDescription($apiGroup->description);
             }
             $buildParamsInfo = function (array $params): array
             {
@@ -118,6 +122,7 @@ class Document
                 foreach ($params as $paramName => $param){
                     $result[$paramName] = [
                         'type'=>$param->type?->name,
+                        'from'=>array_map(static fn(ParamFrom $from): string => $from->name, is_array($param->from) ? $param->from : [$param->from]),
                         'description'=>$param->description ? $param->description->toString() : null,
                         'defaultValue'=>$param->value,
                         'ignoreAction'=>$param->ignoreAction,
@@ -161,6 +166,8 @@ class Document
                 $currentGroup['apiList'][$apiName] = [
                     'apiName'=>$apiName,
                     'deprecated'=>$api->deprecated,
+                    'allowMethod'=>$api->allowMethod->name,
+                    'acceptContentType'=>$api->acceptContentType->name,
                     'requestPath'=>$api->requestPath,
                     'requestParams'=>[],
                     'requestExamples'=>[],

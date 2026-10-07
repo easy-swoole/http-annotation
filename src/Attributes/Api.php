@@ -5,6 +5,7 @@ namespace EasySwoole\HttpAnnotation\Attributes;
 use EasySwoole\HttpAnnotation\Bean\Description\Markdown;
 use EasySwoole\HttpAnnotation\Bean\Description\Text;
 use EasySwoole\HttpAnnotation\Bean\Example\ExampleInterface;
+use EasySwoole\HttpAnnotation\Enum\ContentType;
 use EasySwoole\HttpAnnotation\Enum\HttpMethod;
 use EasySwoole\HttpAnnotation\Exception\Annotation;
 
@@ -31,6 +32,8 @@ class Api
         public array         $responseExamples = [],
         public string|null|Markdown|Text   $description = null,
         public bool          $deprecated = false,
+        //GET请求不需要ContentType
+        public ContentType   $acceptContentType = ContentType::FORM_DATA
     ){
         $temp = [];
         /** @var Param $item */

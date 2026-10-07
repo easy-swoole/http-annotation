@@ -578,6 +578,63 @@
             .container .mainContent { grid-template-columns: minmax(0, 740px); padding: 5rem 1.5rem 2rem; }
             .right-menu { display: none !important; }
         }
+        .api-heading { display: flex; align-items: center; gap: 1rem; justify-content: space-between; }
+        .api-heading h1 { min-width: 0; flex: 1; }
+        .try-button { border: 0; border-radius: .4rem; background: #148c80; color: white; padding: .55rem 1rem; cursor: pointer; white-space: nowrap; }
+        .try-button:disabled { opacity: .6; cursor: wait; }
+        #try-dialog { width: min(760px, calc(100vw - 2rem)); max-height: 85vh; box-sizing: border-box; border: 1px solid #e4eaf0; border-radius: .8rem; padding: 1.5rem; overflow: auto; }
+        #try-dialog::backdrop { background: rgba(20, 35, 50, .45); }
+        .try-header { display: flex; justify-content: space-between; align-items: center; }
+        .try-header h2 { margin: 0; font-size: 1.3rem; }
+        .try-close { background: none; border: 0; font-size: 1.5rem; cursor: pointer; }
+        #try-form label { display: block; margin: .6rem 0; }
+        #try-form input:not([type=checkbox]), #try-form textarea, #try-form select { box-sizing: border-box; max-width: 100%; padding: .4rem; border: 1px solid #ced7e0; border-radius: .3rem; }
+        #try-url { width: 100%; }
+        .try-field { padding: .6rem 0; border-bottom: 1px solid #eaecef; }
+        .try-field .try-value { width: 100%; margin: .3rem 0; }
+        .try-hint { color: #687889; font-size: .75rem; }
+        #try-result { margin-top: 1rem; }
+        #try-status { white-space: pre-wrap; }
+        #try-result pre { max-height: 24rem; overflow: auto; white-space: pre-wrap; overflow-wrap: anywhere; }
+        #try-dialog { width: min(880px, calc(100vw - 2rem)); padding: 0; border: 0; border-radius: 1rem; color: #26384b; box-shadow: 0 24px 80px rgba(15, 35, 55, .25); }
+        .try-header { padding: 1.2rem 1.5rem; border-bottom: 1px solid #e5ebef; background: #f8fbfa; position: sticky; top: 0; z-index: 1; }
+        .try-eyebrow { color: #148c80; font-size: .65rem; font-weight: 700; letter-spacing: .12em; }
+        .try-header h2 { line-height: 1.6; font-size: 1.15rem; overflow-wrap: anywhere; }
+        .try-close { color: #647889; border-radius: .4rem; width: 2rem; height: 2rem; }
+        .try-close:hover { background: #e7efed; }
+        #try-form { padding: 1rem 1.5rem 1.5rem; }
+        .try-request-line { display: flex; gap: .7rem; }
+        .try-method-label { width: 6rem; flex-shrink: 0; }
+        .try-address-label { flex: 1; min-width: 0; }
+        #try-form .try-request-line input { width: 100%; margin-top: .3rem; height: 2.6rem; }
+        #try-form #try-method { background: #eaf7f2; color: #168368; border-color: #cce8dd; font-weight: 700; text-align: center; }
+        #try-form input:focus, #try-form select:focus { outline: 2px solid #9dd8c9; outline-offset: 1px; }
+        .try-section-heading { display: flex; justify-content: space-between; align-items: center; margin-top: 1rem; }
+        .try-section-heading h3 { margin: .6rem 0; font-size: .9rem; }
+        .try-section-heading span { color: #8392a0; font-size: .72rem; }
+        #try-fields { border: 1px solid #e5ebef; border-radius: .5rem; padding: 0 .9rem; }
+        .try-field { display: grid; grid-template-columns: minmax(0, 1fr) 7rem; gap: .2rem .8rem; padding: .65rem 0; }
+        .try-field:last-child { border-bottom: 0; }
+        #try-form .try-field label { margin: 0; overflow-wrap: anywhere; }
+        .try-field .try-value, .try-field .try-hint { grid-column: 1 / -1; }
+        .try-field .try-source { width: 100%; }
+        .try-include { accent-color: #148c80; }
+        #try-raw-body { width: 100%; min-height: 13rem; resize: vertical; font-family: monospace; line-height: 1.6; margin: .5rem 0; }
+        .try-body-editor { padding: .7rem 0; }
+        .try-body-editor label { font-weight: 600; }
+        .try-empty { color: #8392a0; text-align: center; padding: 1rem; }
+        .try-actions { display: flex; justify-content: space-between; align-items: center; gap: 1rem; border-top: 1px solid #edf1f4; padding-top: .7rem; }
+        #try-timeout { width: 5rem; margin-left: .4rem; }
+        #try-result { margin: 0; padding: .5rem 1.5rem 1.5rem; border-top: 1px solid #e5ebef; background: #f7f9fb; }
+        #try-result h3 { font-size: 1rem; margin: .7rem 0; }
+        #try-status { padding: .6rem .8rem; background: #e9f1f7; border-radius: .4rem; font-family: monospace; }
+        #try-result pre { background: white; border-color: #e1e7ed; border-radius: .4rem; font-size: .78rem; line-height: 1.6; }
+        .try-response-headers summary { cursor: pointer; color: #687889; padding: .4rem 0; }
+        @media (max-width: 600px) {
+            #try-form, #try-result, .try-header { padding-left: 1rem; padding-right: 1rem; }
+            .try-section-heading span { display: none; }
+            .try-field { grid-template-columns: minmax(0, 1fr) 5.5rem; }
+        }
     </style>
 </head>
 <body>
@@ -612,6 +669,27 @@
         <div class="right-menu" id="right-menu" style="display: none"></div>
     </section>
 </div>
+<dialog id="try-dialog" aria-labelledby="try-title">
+    <div class="try-header"><div><span class="try-eyebrow">API EXPLORER</span><h2 id="try-title">立即尝试</h2></div><button type="button" class="try-close" id="try-close" aria-label="关闭">×</button></div>
+    <form id="try-form">
+        <div class="try-request-line">
+            <label class="try-method-label">请求方法 <input id="try-method" readonly tabindex="-1"></label>
+            <label class="try-address-label">请求地址 <input id="try-url" type="url" required></label>
+        </div>
+        <div class="try-section-heading"><h3>请求参数</h3><span>勾选要发送的参数</span></div>
+        <div id="try-fields"></div>
+        <p class="try-hint">Cookie 由浏览器管理；跨域请求需要接口允许当前文档来源。</p>
+        <div class="try-actions">
+            <label>超时（秒） <input id="try-timeout" type="number" min="1" max="300" value="30" required></label>
+            <button class="try-button" id="try-run" type="submit">立即运行 →</button>
+        </div>
+    </form>
+    <section id="try-result" aria-live="polite" hidden>
+        <h3>运行结果</h3><p id="try-status"></p>
+        <details class="try-response-headers"><summary>响应头</summary><pre id="try-headers"></pre></details>
+        <h4>响应内容</h4><pre id="try-body"></pre>
+    </section>
+</dialog>
 <script>
     const jsonData = {{$docData}};
     const config = {{$config}};
@@ -655,6 +733,30 @@
         return group;
     }
 
+    function requestAddress(api) {
+        const address = config.host
+            ? config.host.replace(/\/+$/, '') + '/' + api.requestPath.replace(/^\/+/, '')
+            : api.requestPath;
+        const methods = Array.isArray(api.allowMethod) ? api.allowMethod : [api.allowMethod || 'GET'];
+        let link = escapeHtml(address);
+        try {
+            const url = new URL(address, location.href);
+            if (['http:', 'https:'].includes(url.protocol)) {
+                link = '<a href="' + escapeHtml(url.href) + '" target="_blank" rel="noopener noreferrer">' + escapeHtml(address) + '</a>';
+            }
+        } catch (_) {}
+        const contentTypes = {
+            FORM_DATA: 'multipart/form-data',
+            FORM_URLENCODED: 'application/x-www-form-urlencoded',
+            JSON: 'application/json',
+            XML: 'application/xml',
+            RAW: 'RAW'
+        };
+        const accepted = api.acceptContentType;
+        const contentType = accepted && !methods.every(method => method === 'GET') ? '<br>Content-Type: ' + escapeHtml(contentTypes[accepted] || accepted) : '';
+        return '<pre>' + escapeHtml(methods.join(', ')) + ' ' + link + contentType + '</pre>';
+    }
+
     function parameterTable(params) {
         const entries = Object.entries(params || {});
         if (!entries.length) return '<p>暂无参数</p>';
@@ -694,6 +796,254 @@
         });
     }
 
+    let activeTryApi = null;
+    let activeTryParams = {};
+    let tryController = null;
+    const tryDialog = document.getElementById('try-dialog');
+    const tryForm = document.getElementById('try-form');
+    const tryMethod = document.getElementById('try-method');
+    const tryResult = document.getElementById('try-result');
+    const tryStatus = document.getElementById('try-status');
+    const tryHeaders = document.getElementById('try-headers');
+    const tryBody = document.getElementById('try-body');
+    const tryRun = document.getElementById('try-run');
+
+    function buildTryFields() {
+        const method = activeTryApi.allowMethod;
+        const fields = document.getElementById('try-fields');
+        fields.replaceChildren();
+        const bodyType = ['JSON', 'XML', 'RAW'].includes(activeTryApi.acceptContentType) ? activeTryApi.acceptContentType : null;
+        if (bodyType) {
+            const editor = document.createElement('div');
+            editor.className = 'try-body-editor';
+            const label = document.createElement('label');
+            label.htmlFor = 'try-raw-body';
+            label.textContent = bodyType + ' 请求体';
+            const input = document.createElement('textarea');
+            input.id = 'try-raw-body';
+            input.spellcheck = false;
+            input.placeholder = bodyType === 'JSON' ? '{"msgId": "123"}' : bodyType === 'XML' ? '<request><msgId>123</msgId></request>' : '填写原始请求体';
+            const hint = document.createElement('p');
+            hint.className = 'try-hint';
+            hint.textContent = ['GET', 'HEAD'].includes(method)
+                ? method + ' 无法在浏览器中发送请求体，请将 Api::allowMethod 定义为 POST、PUT 或 PATCH。'
+                : '将完整内容作为请求体原样发送。';
+            editor.append(label, input, hint);
+            fields.append(editor);
+        }
+        if (!bodyType && !Object.keys(activeTryParams).length) {
+            const empty = document.createElement('p');
+            empty.className = 'try-empty';
+            empty.textContent = '此接口无需填写请求参数，可直接运行。';
+            fields.append(empty);
+        }
+        for (const [name, param] of Object.entries(activeTryParams)) {
+            const row = document.createElement('div');
+            row.className = 'try-field';
+            row.dataset.parameter = 'true';
+            row.dataset.name = name;
+            row.dataset.type = param.type || '';
+            let sources = param.type === 'FILE' ? ['FILE'] : (param.from || ['GET', 'POST']);
+            if (bodyType) {
+                sources = sources.filter(source => ['GET', 'HEADER', 'ROUTER_PARAMS'].includes(source));
+                if (!sources.length) continue;
+            }
+            const allowed = sources.filter(source =>
+                !['DI', 'CONTEXT', 'COOKIE'].includes(source) && (!['GET', 'HEAD'].includes(method) || !['POST', 'JSON', 'XML', 'RAW_POST', 'FILE'].includes(source)));
+            const required = Object.prototype.hasOwnProperty.call(param.validateRules || {}, 'Required');
+            const include = document.createElement('input');
+            include.type = 'checkbox';
+            include.className = 'try-include';
+            include.checked = allowed.length > 0 && (required || param.defaultValue != null);
+            include.disabled = !allowed.length;
+            const label = document.createElement('label');
+            label.append(include, document.createTextNode(' ' + name + (required ? '（必填）' : '') + (param.deprecated ? ' · 已废弃' : '')));
+            const source = document.createElement('select');
+            source.className = 'try-source';
+            for (const from of allowed) source.add(new Option(from, from));
+            if (method !== 'GET' && method !== 'HEAD' && allowed.includes('POST')) source.value = 'POST';
+            source.disabled = !allowed.length;
+            source.setAttribute('aria-label', name + ' 参数来源');
+            const value = document.createElement('input');
+            value.className = 'try-value';
+            value.setAttribute('aria-label', name + ' 参数值');
+            const updateType = () => {
+                value.type = param.type === 'FILE' || source.value === 'FILE' ? 'file' : 'text';
+                value.placeholder = source.value === 'HEADER' ? '填写请求头 ' + name + ' 的值' : '填写参数值';
+            };
+            updateType();
+            if (value.type !== 'file' && param.defaultValue != null) {
+                value.value = typeof param.defaultValue === 'object' ? JSON.stringify(param.defaultValue)
+                    : typeof param.defaultValue === 'boolean' ? (param.defaultValue ? '1' : '0') : String(param.defaultValue);
+            }
+            value.disabled = !allowed.length;
+            const includeValue = () => { if (!include.disabled) include.checked = true; };
+            value.addEventListener('input', includeValue);
+            value.addEventListener('change', includeValue);
+            source.addEventListener('change', updateType);
+            const hint = document.createElement('div');
+            hint.className = 'try-hint';
+            hint.textContent = allowed.length ? [allowed.includes('HEADER') ? 'HEADER：填写后作为 HTTP 请求头发送' : '', param.type, param.description,
+                ...Object.values(param.validateRules || {}).map(rule => rule.msg)].filter(Boolean).join(' · ')
+                : '该参数由服务器或浏览器管理，或不适用于当前请求方法。';
+            row.append(label, source, value, hint);
+            fields.append(row);
+        }
+    }
+
+    content.addEventListener('click', event => {
+        if (!event.target.closest('#try-open') || !activeTryApi) return;
+        const requestPath = config.host
+            ? config.host.replace(/\/+$/, '') + '/' + activeTryApi.requestPath.replace(/^\/+/, '')
+            : activeTryApi.requestPath;
+        try {
+            document.getElementById('try-url').value = new URL(requestPath, location.href).href.replace(/%7B/gi, '{').replace(/%7D/gi, '}');
+        } catch (_) { document.getElementById('try-url').value = requestPath; }
+        tryMethod.value = activeTryApi.allowMethod;
+        document.getElementById('try-title').textContent = activeTryApi.apiName + ' · 立即尝试';
+        buildTryFields();
+        tryResult.hidden = true;
+        tryDialog.showModal();
+    });
+    document.getElementById('try-close').addEventListener('click', () => tryDialog.close());
+    tryDialog.addEventListener('close', () => { if (tryController) tryController.abort(); });
+
+    function buildTryRequest(address, method, fields, bodyInput = null) {
+        let path = address;
+        const headers = new Headers();
+        const post = new URLSearchParams();
+        const json = Object.create(null);
+        const xml = [];
+        const files = [];
+        const query = [];
+        let raw = null;
+        const bodyKinds = new Set();
+        const toXml = text => String(text).replace(/[&<>"']/g, char => ({'&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&apos;'})[char]);
+        for (const field of fields) {
+            const {name, source, value, type} = field;
+            const scalar = value instanceof File ? value : String(value);
+            if (source === 'ROUTER_PARAMS') {
+                const pattern = new RegExp('\\{' + name.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + '(?::[^}]+)?\\}', 'g');
+                if (!pattern.test(path)) throw new Error('地址中未找到路由参数：' + name);
+                pattern.lastIndex = 0;
+                path = path.replace(pattern, encodeURIComponent(scalar));
+            } else if (source === 'GET') query.push([name, scalar]);
+            else if (source === 'HEADER') headers.set(name, scalar);
+            else if (source === 'POST') { bodyKinds.add('form'); post.append(name, scalar); }
+            else if (source === 'FILE') { bodyKinds.add('form'); files.push([name, value]); }
+            else if (source === 'JSON') {
+                bodyKinds.add('json');
+                let parsed = value;
+                if (['INT', 'DOUBLE', 'REAL', 'FLOAT'].includes(type)) {
+                    if (String(value).trim() === '' || !Number.isFinite(Number(value))) throw new Error(name + ' 必须为数字');
+                    parsed = Number(value);
+                } else if (type === 'BOOLEAN') {
+                    if (!['true', 'false', '1', '0'].includes(String(value))) throw new Error(name + ' 请填写 true、false、1 或 0');
+                    parsed = value === 'true' || value === '1';
+                }
+                json[name] = parsed;
+            } else if (source === 'XML') {
+                if (!/^[A-Za-z_][A-Za-z0-9_.-]*$/.test(name)) throw new Error('无效的 XML 字段名：' + name);
+                bodyKinds.add('xml'); xml.push('<' + name + '>' + toXml(value) + '</' + name + '>');
+            } else if (source === 'RAW_POST') {
+                if (raw !== null) throw new Error('只能发送一个原始请求体');
+                bodyKinds.add('raw'); raw = value;
+            }
+        }
+        if (bodyInput) {
+            if (bodyKinds.size) throw new Error('完整请求体不能与表单字段混合发送');
+            if (['GET', 'HEAD'].includes(method)) throw new Error(method + ' 无法发送请求体，请调整 Api::allowMethod');
+            if (bodyInput.type === 'JSON') {
+                try { JSON.parse(bodyInput.value); } catch (_) { throw new Error('JSON 格式错误，请填写完整有效的 JSON 数据'); }
+            }
+            if (bodyInput.type === 'XML') {
+                const parsed = new DOMParser().parseFromString(bodyInput.value, 'application/xml');
+                if (parsed.querySelector('parsererror')) throw new Error('XML 格式错误，请填写完整有效的 XML 数据');
+            }
+            const mime = {JSON: 'application/json', XML: 'application/xml', RAW: 'text/plain'}[bodyInput.type];
+            if (!mime) throw new Error('不支持的请求体类型');
+            headers.set('Content-Type', mime);
+        }
+        if (bodyKinds.size > 1) throw new Error('JSON、XML、原始请求体和表单不能混合发送，请调整参数来源或取消勾选。');
+        const url = new URL(path, location.href);
+        if (!['http:', 'https:'].includes(url.protocol)) throw new Error('请填写 HTTP 或 HTTPS 请求地址');
+        for (const [name, value] of query) url.searchParams.set(name, value);
+        const options = {method, headers, credentials: 'include'};
+        if (bodyKinds.size && ['GET', 'HEAD'].includes(method)) throw new Error(method + ' 请求不能发送请求体');
+        if (bodyKinds.has('json')) { options.body = JSON.stringify(json); if (!headers.has('Content-Type')) headers.set('Content-Type', 'application/json'); }
+        if (bodyKinds.has('xml')) { options.body = '<request>' + xml.join('') + '</request>'; if (!headers.has('Content-Type')) headers.set('Content-Type', 'application/xml'); }
+        if (bodyKinds.has('raw')) options.body = raw;
+        if (bodyKinds.has('form')) {
+            if (files.length) {
+                const form = new FormData();
+                for (const [name, value] of post) form.append(name, value);
+                for (const [name, value] of files) form.append(name, value);
+                options.body = form;
+                headers.delete('Content-Type');
+            } else { options.body = post; if (!headers.has('Content-Type')) headers.set('Content-Type', 'application/x-www-form-urlencoded;charset=UTF-8'); }
+        }
+        if (bodyInput) options.body = bodyInput.value;
+        return {url: url.href, options};
+    }
+
+    async function executeTryRequest(request, timeoutMs, onResponse) {
+        const controller = new AbortController();
+        tryController = controller;
+        let timedOut = false;
+        const timer = setTimeout(() => { timedOut = true; controller.abort(); }, timeoutMs);
+        try {
+            const response = await fetch(request.url, {...request.options, signal: controller.signal});
+            onResponse(response);
+            const text = await response.text();
+            let body = text;
+            try { body = JSON.stringify(JSON.parse(text), null, 2); } catch (_) {}
+            return {body: body || '（空响应）', error: null};
+        } catch (error) {
+            return {body: '', error: timedOut ? '请求超时（' + timeoutMs / 1000 + ' 秒）'
+                : controller.signal.aborted ? '请求已取消'
+                : '网络异常：' + error.message + '。请检查网络、接口地址或跨域配置。'};
+        } finally {
+            clearTimeout(timer);
+            if (tryController === controller) tryController = null;
+        }
+    }
+
+    tryForm.addEventListener('submit', async event => {
+        event.preventDefault();
+        if (tryController) return;
+        tryResult.hidden = false;
+        tryStatus.textContent = '正在请求…';
+        tryHeaders.textContent = '';
+        tryBody.textContent = '';
+        tryRun.disabled = true;
+        tryRun.textContent = '请求中…';
+        let status = '';
+        try {
+            const fields = [];
+            for (const row of document.getElementById('try-fields').children) {
+                if (!row.dataset.parameter || !row.querySelector('.try-include').checked) continue;
+                const input = row.querySelector('.try-value');
+                const source = row.querySelector('.try-source').value;
+                if (source === 'FILE' && !input.files.length) throw new Error('请选择文件：' + row.dataset.name);
+                fields.push({name: row.dataset.name, type: row.dataset.type, source,
+                    value: source === 'FILE' ? input.files[0] : input.value});
+            }
+            const bodyEditor = document.getElementById('try-raw-body');
+            const bodyInput = bodyEditor ? {type: activeTryApi.acceptContentType, value: bodyEditor.value} : null;
+            const request = buildTryRequest(document.getElementById('try-url').value, activeTryApi.allowMethod, fields, bodyInput);
+            const started = performance.now();
+            const result = await executeTryRequest(request, Number(document.getElementById('try-timeout').value) * 1000, response => {
+                status = 'HTTP ' + response.status + ' ' + response.statusText;
+                tryStatus.textContent = status;
+                tryHeaders.textContent = Array.from(response.headers).map(([key, value]) => key + ': ' + value).join('\n') || '（无可读取的响应头）';
+            });
+            tryStatus.textContent = (status || '未收到 HTTP 响应') + ' · ' + Math.round(performance.now() - started) + ' ms';
+            if (result.error) tryStatus.textContent += '\n' + result.error;
+            tryBody.textContent = result.body || (result.error ? '未能读取响应内容' : '（空响应）');
+        } catch (error) { tryStatus.textContent = '请求未发送：' + error.message; }
+        finally { tryRun.disabled = false; tryRun.textContent = '立即运行 →'; }
+    });
+
     sideBar.addEventListener('click', event => {
         const target = event.target.closest('button[data-path], a[data-api]');
         if (!target || !sideBar.contains(target)) return;
@@ -707,7 +1057,7 @@
             target.setAttribute('aria-expanded', String(!list.hidden));
             target.querySelector('.menu-arrow').textContent = list.hidden ? '▸' : '▾';
             content.innerHTML = '<h1>' + escapeHtml(path.join('.')) + '</h1>'
-                + description(group.description)
+                + (group.descriptionHtml || description(group.description))
                 + (Object.keys(group.onRequestParams || {}).length
                     ? '<h3>公共请求参数</h3>' + parameterTable(group.onRequestParams)
                     : '');
@@ -721,9 +1071,11 @@
             for (const name of Object.keys(params)) {
                 if ((params[name].ignoreAction || []).includes(api.apiName)) delete params[name];
             }
-            content.innerHTML = '<h1 class="api-title">' + escapeHtml(api.apiName)
-                + (api.deprecated === true ? '<span class="api-deprecated-label">已废弃</span>' : '') + '</h1>'
-                + '<h3>请求地址</h3><pre>' + escapeHtml(config.host + api.requestPath) + '</pre>'
+            activeTryApi = api;
+            activeTryParams = params;
+            content.innerHTML = '<div class="api-heading"><h1 class="api-title">' + escapeHtml(api.apiName)
+                + (api.deprecated === true ? '<span class="api-deprecated-label">已废弃</span>' : '') + '</h1><button type="button" class="try-button" id="try-open">立即尝试</button></div>'
+                + '<h3>请求地址</h3>' + requestAddress(api)
                 + '<h3>接口说明</h3>' + (api.descriptionHtml || description(api.description))
                 + '<h3>请求参数</h3>' + parameterTable(params)
                 + '<h3>请求示例</h3>' + examples(api.requestExamples, '请求示例')

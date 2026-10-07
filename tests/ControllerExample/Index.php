@@ -21,7 +21,7 @@ use EasySwoole\HttpAnnotation\Validator\NotEmpty;
 
 #[ApiGroup(
     groupName: 'index',
-    description: new Markdown(__DIR__.'/../res/description.md'),
+    description: new Markdown(__DIR__.'/../res/descriptionForGroup.md'),
 )]
 #[PreCall([Utility::class,'preCallGlobal'])]
 class Index extends Base
@@ -81,7 +81,7 @@ class Index extends Base
                 'result'=>'xxxx'
             ],isSuccessResponse: false)
         ],
-        description: new Markdown(__DIR__.'/../res/description.md'),
+        description: new Markdown(__DIR__.'/../res/descriptionForApi.md'),
     )]
     #[PreCall([Utility::class,'preCall'])]
     function test(int|null $age,string|null $userName)
@@ -90,6 +90,7 @@ class Index extends Base
     }
 
     #[Api(
+        allowMethod: HttpMethod::POST,
         requestParam: [
             new Param(
                 name:'age',
@@ -106,7 +107,7 @@ class Index extends Base
                 deprecated: true
             )
         ],
-        deprecated: true
+        deprecated: true,
     )]
     #[PreCall([Utility::class,'preCall'])]
     function test2(array $data)

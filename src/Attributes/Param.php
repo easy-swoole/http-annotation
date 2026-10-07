@@ -42,6 +42,9 @@ class Param
         if(is_string($this->description)){
             $this->description = new Text($this->description);
         }
+        if(!is_array($this->from)){
+            $this->from = [$this->from];
+        }
     }
 
 
@@ -54,11 +57,7 @@ class Param
             return $this->value;
         }
 
-        if(is_array($this->from)){
-            $fromList = $this->from;
-        }else{
-            $fromList = [$this->from];
-        }
+        $fromList = $this->from;
         foreach ($fromList as $from){
             switch ($from){
                 case ParamFrom::GET:{

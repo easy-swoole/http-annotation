@@ -5,6 +5,9 @@ namespace EasySwoole\HttpAnnotation\Tests\ControllerExample\Api\Common;
 use EasySwoole\Http\Message\Status;
 use EasySwoole\HttpAnnotation\Attributes\Api;
 use EasySwoole\HttpAnnotation\Attributes\ApiGroup;
+use EasySwoole\HttpAnnotation\Attributes\Param;
+use EasySwoole\HttpAnnotation\Enum\ContentType;
+use EasySwoole\HttpAnnotation\Enum\ParamFrom;
 
 #[ApiGroup(groupName: 'Common.Message')]
 class Message extends Base
@@ -16,12 +19,29 @@ class Message extends Base
     }
 
     #[Api(
+        requestParam: [
+            new Param(
+                name: 'testHeader',
+                from: ParamFrom::HEADER
+            )
+        ]
     )]
-    function unRead(){
+    function unRead()
+    {
 
     }
 
-    function detail(){
+    #[Api(
+        requestParam: [
+            new Param(
+                name: 'msgId',
+                from: ParamFrom::JSON
+            )
+        ],
+        acceptContentType: COntentType::JSON
+    )]
+    function detail()
+    {
 
     }
 }

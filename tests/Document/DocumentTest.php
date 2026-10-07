@@ -102,8 +102,37 @@ class DocumentTest extends TestCase
         $this->assertSame('<pre># Plain &lt;b&gt;text&lt;/b&gt;</pre>', $apis['plain']['descriptionHtml']);
         $this->assertSame('', $apis['empty']['descriptionHtml']);
         $this->assertSame('INT', $apis['plain']['requestParams']['id']['type']);
+        $this->assertSame('GET', $apis['plain']['allowMethod']);
+        $this->assertSame('FORM_DATA', $apis['plain']['acceptContentType']);
+        $this->assertSame(['GET', 'POST'], $apis['plain']['requestParams']['id']['from']);
         $this->assertNull($apis['plain']['requestParams']['name']['type']);
         $this->assertStringContainsString('descriptionHtml', $document->scan2html());
+    }
+
+    public function testGroupDescriptionsRenderMarkdownAndText(): void
+    {
+        $document = new class(__FILE__) extends Document {
+            public function scanAllApiGroup(): array
+            {
+                $attributes = \EasySwoole\HttpAnnotation\AttributeCache::getInstance()->parseClass(DescriptionController::class);
+                $result = [];
+                foreach ([
+                    'Markdown' => new Markdown(__DIR__ . '/../res/description.md'),
+                    'Text' => new Text('# Plain <b>text</b>'),
+                ] as $name => $description) {
+                    $result[$name] = [
+                        'apiGroup' => new \EasySwoole\HttpAnnotation\Attributes\ApiGroup($name, $description),
+                        'classAttribute' => $attributes,
+                    ];
+                }
+                return $result;
+            }
+        };
+        $map = $document->scan2ArrayMap();
+        $this->assertStringContainsString('<h2>EasySwoole 介绍</h2>', $map['Markdown']['descriptionHtml']);
+        $this->assertSame('<pre># Plain &lt;b&gt;text&lt;/b&gt;</pre>', $map['Text']['descriptionHtml']);
+        $this->assertSame('# Plain <b>text</b>', $map['Text']['description']);
+        $this->assertStringContainsString('group.descriptionHtml', $document->scan2html());
     }
 
 }
@@ -116,11 +145,11 @@ class DescriptionController extends \EasySwoole\HttpAnnotation\AnnotationControl
     public function markdown() {}
 
     #[\EasySwoole\HttpAnnotation\Attributes\Api(
-        description: '# Plain <b>text</b>',
         requestParam: [
             new \EasySwoole\HttpAnnotation\Attributes\Param(name: 'id', type: ParamType::INT),
             new \EasySwoole\HttpAnnotation\Attributes\Param(name: 'name', type: null),
-        ]
+        ],
+        description: '# Plain <b>text</b>'
     )]
     public function plain() {}
 
