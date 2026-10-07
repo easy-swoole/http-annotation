@@ -868,7 +868,8 @@
         row.dataset.parameter = 'true';
         row.dataset.name = name;
         row.dataset.type = param.type || '';
-        let sources = param.type === 'FILE' ? ['FILE'] : (param.from || ['GET', 'POST']);
+        const definedSources = Array.isArray(param.from) ? param.from : (param.from ? [param.from] : ['GET']);
+        let sources = param.type === 'FILE' ? ['FILE'] : definedSources;
         if (bodyType) {
             sources = sources.filter(source => ['GET', 'HEADER', 'ROUTER_PARAMS'].includes(source));
             if (!sources.length) return null;

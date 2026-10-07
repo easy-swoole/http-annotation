@@ -35,7 +35,7 @@ class Element {
     close() { this.open = false; if (this.listeners.close) this.listeners.close(); }
 }
 
-const param = (type, from) => ({type, from: [from], validateRules: {}});
+const param = (type, from) => ({type, from, validateRules: {}});
 const group = {
     descriptionHtml: '<p>分组说明</p>', onRequestParams: {}, children: {},
     apiList: {
@@ -152,3 +152,16 @@ assert.match(context.parameterTable({token: {from: 'HEADER'}}), /<td>HEADER<\/td
 assert.match(context.parameterTable({id: {from: ['GET', 'POST']}}), /<td>GET, POST<\/td>/);
 assert.match(context.parameterTable({id: {from: '<source>'}}), /&lt;source&gt;/);
 console.log('请求参数来源展示检查通过');
+
+// 当前 Param->from 是单个来源；兼容旧数组格式。
+const headerField = context.buildParameterField('testHeader', param('STRING', 'HEADER'), 'GET', null);
+assert.equal(headerField.querySelector('.try-source').value, 'HEADER');
+assert.equal(headerField.querySelector('.try-value').disabled, false);
+const getField = context.buildParameterField('id', param('STRING', 'GET'), 'GET', null);
+assert.equal(getField.querySelector('.try-source').value, 'GET');
+const postField = context.buildParameterField('name', param('STRING', 'POST'), 'POST', null);
+assert.equal(postField.querySelector('.try-source').value, 'POST');
+assert.equal(context.buildParameterField('msgId', param('STRING', 'JSON'), 'POST', 'JSON'), null);
+assert.equal(context.buildParameterField('token', param('STRING', 'HEADER'), 'POST', 'JSON').querySelector('.try-source').value, 'HEADER');
+assert.equal(context.buildParameterField('id', {from: ['GET', 'POST']}, 'POST', null).querySelector('.try-source').value, 'POST');
+console.log('立即尝试的单个参数来源与旧数组格式检查通过');

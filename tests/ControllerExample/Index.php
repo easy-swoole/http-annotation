@@ -108,6 +108,7 @@ class Index extends Base
             ),
             new Param(
                 name: 'idCode',
+                from: ParamFrom::POST,
                 deprecated: true
             )
         ],
