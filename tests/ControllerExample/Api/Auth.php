@@ -13,7 +13,8 @@ use EasySwoole\HttpAnnotation\Validator\Required;
 
 
 #[ApiGroup(
-    groupName: 'Admin.Auth'
+    groupName: 'Admin.Auth',
+    description:'Admin Auth desc',
 )]
 class Auth extends ApiBase
 {

@@ -28,7 +28,7 @@ class Param
         public mixed                   $value = null,
         public bool                    $deprecated = false,
         public string|null|Text $description = null,
-        public ?ParamType              $type = null,
+        public ?ParamType              $type = ParamType::STRING,
         public array                   $ignoreAction = [],
         public bool                    $ignorePassArgWhenNotSet = false,
     ){

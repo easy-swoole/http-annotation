@@ -5,31 +5,86 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"/>
     <meta name="description" content="Description"/>
     <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0"/>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/marked/14.1.3/marked.min.js"></script>
     <style>
 
         .container .navBar {
             position: fixed;
             z-index: 20;
-            top: 0;
-            left: 0;
-            right: 0;
+            top: 0; left: 0; right: 0;
             height: 3.6rem;
-            background-color: #fff;
             box-sizing: border-box;
-            border-bottom: 1px solid #eaecef;
-            padding: 0.7rem 1.5rem;
-            line-height: 2.2rem;
+            padding: 0 1.5rem;
+            background: rgba(255, 255, 255, .96);
+            border-bottom: 1px solid #e4eaf0;
+            box-shadow: 0 2px 12px rgba(31, 52, 73, .04);
+            backdrop-filter: blur(12px);
+        }
+        .navInner {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 1.5rem;
+            height: 100%;
+        }
+        .doc-brand {
+            display: flex;
+            align-items: center;
+            gap: .75rem;
+            min-width: 0;
+        }
+        .doc-logo {
+            display: grid;
+            place-items: center;
+            flex-shrink: 0;
+            width: 2.15rem;
+            height: 2.15rem;
+            border-radius: .65rem;
+            background: linear-gradient(135deg, #22b889, #148c80);
+            color: white;
+            box-shadow: 0 3px 8px rgba(20, 140, 128, .18);
+        }
+        .doc-brand-text { min-width: 0; }
+        #projectName {
             display: block;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            font-size: .95rem;
+            font-weight: 650;
+            line-height: 1.35;
+            color: #203247;
         }
-        .container .navBar .navInner img {
-            height: 2.2rem;
-            min-width: 2.2rem;
-            margin-right: 0.8rem;
-            vertical-align: top;
+        .doc-subtitle {
+            display: block;
+            margin-top: .1rem;
+            font-size: .65rem;
+            line-height: 1.3;
+            letter-spacing: .08em;
+            color: #7c8b9a;
         }
-
+        .doc-header-meta {
+            display: flex;
+            align-items: center;
+            gap: .8rem;
+            flex-shrink: 0;
+        }
+        .doc-header-label { color: #81909e; font-size: .75rem; }
+        .doc-header-badge {
+            padding: .15rem .6rem;
+            border: 1px solid #d9eee6;
+            border-radius: 999px;
+            background: #f0faf5;
+            color: #238365;
+            font-size: .72rem;
+            line-height: 1.5;
+            font-weight: 600;
+        }
+        @media (max-width: 600px) {
+            .container .navBar { padding: 0 .8rem; }
+            .navInner { gap: .6rem; }
+            .doc-header-label { display: none; }
+            .doc-brand { gap: .55rem; }
+        }
 
         .container .mainContent {
             padding-left: 15rem;
@@ -480,296 +535,165 @@
             background: url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAABk0lEQVRYR+2Vy06DUBCGe1jUNix8HxfGGBeoiTHGhU/A5WXYctmwcUXSxC7UJnZhXPg4EBdG8QLONGAGSstwiqkLmpBCOP3/b/6ZcyoGW/6ILfsPeoA+gf+XgOd5u4ZhvPzF7qjTLiXg+/5ZlmXXQghN1/XnLiFAew+0Z3BdmaZ5V2j/Ariuq4HxFF4MYdGboihHXUGgeZqmc9Afg/4HfJ+C9hwhKMAEXlyQql8B5ARonzZJAgrbB12sWCU6E2jzZQkgDMNhFEVTjL9YuGkSlcoXsqD5gAkAwGcJAB+6hOCYLwGsg8B2WJb1yGmH4zgHGHve89rKl4aQCq9IIgEIrQkiN5+B+Q5pZSl26rXyIJKBaGte2wLZJGTMGwHWzESpHbLmLIAmiIWIEOyeV4eY/WeEMxHH8Q0IHBOR9/x+RAYOp/+82OdNu4YNQJK4B4PDOuHqIdNkzm4BFQqCYJQkyW0VQsZcCgB/VIWQNZcGoBBw/03Pdk7srIOII2Tb9lhV1S/uwNVpthpCDlTbNT1An0CfwA8NqzYw/4+BawAAAABJRU5ErkJggg==") no-repeat;
         }
 
+        .sideBar .group-toggle {
+            border: 0; background: none; color: #2c3e50; font: inherit;
+            text-align: left; cursor: pointer; padding: .35rem .3rem; width: 100%;
+        }
+        .container .sideBar ul li > ul { display: block; }
+        .container .sideBar ul li > ul[hidden] { display: none; }
+        .container .sideBar a.active { color: #0080ff; text-decoration: underline; }
+        .content h2, .content h3 { scroll-margin-top: 4rem; }
+        table { width: 100% !important; }
+        .parameter-table th, .parameter-table td { text-align: left; }
+        .parameter-table th:nth-child(1), .parameter-table td:nth-child(1),
+        .parameter-table th:nth-child(2), .parameter-table td:nth-child(2),
+        .parameter-table th:nth-child(5), .parameter-table td:nth-child(5),
+        .parameter-table td.cell-empty { text-align: center; }
+        @media (max-width: 900px) { .right-menu { display: none !important; } }
     </style>
 </head>
 <body>
 <div class="container">
     <header class="navBar">
         <div class="navInner">
-            <a href="">
-                <img src="http://www.easyswoole.com/Images/docNavLogo.png">
-            </a>
+            <div class="doc-brand">
+                <span class="doc-logo" aria-hidden="true">
+                    <svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="m8 7-5 5 5 5M16 7l5 5-5 5M14 4l-4 16"/>
+                    </svg>
+                </span>
+                <div class="doc-brand-text">
+                    <span id="projectName"></span>
+                    <span class="doc-subtitle">API DOCUMENTATION</span>
+                </div>
+            </div>
+            <div class="doc-header-meta">
+                <span class="doc-header-label">接口参考文档</span>
+                <span class="doc-header-badge">HTTP API</span>
+            </div>
         </div>
     </header>
 
     <aside class="sideBar" id="sideBar">
+        {{$sideBar}}
     </aside>
     <section class="mainContent">
         <div class="content" id="content">
+            {{$introduction}}
         </div>
         <div class="right-menu" id="right-menu" style="display: none"></div>
     </section>
 </div>
 <script>
-    var jsonData = {{$docData}}
+    const jsonData = {{$docData}};
+    const config = {{$config}};
+    const content = document.getElementById('content');
+    const sideBar = document.getElementById('sideBar');
+    document.title = config.projectName;
+    document.getElementById('projectName').textContent = config.projectName;
 
-    var config = {{$config}}
-
-    document.title = config.projectName
-
-    function parseDesc(desc,parseToHtml = true){
-        if(desc){
-            if(parseToHtml){
-                if(desc.type === "MARKDOWN" || desc.type === 'MARKDOWN_FILE'){
-                    return marked.parse(desc.desc);
-                }
-                return "<pre><xmp>"+desc.desc+"</xmp></pre>"
-            }
-            return desc.desc
-        }else{
-            return 'Not Any Description'
-        }
+    function escapeHtml(value) {
+        return String(value).replace(/[&<>"']/g, character => ({
+            '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
+        })[character]);
     }
 
-    function buildApiContent(api){
-        var html = "";
-        html += '<h1>'+api.apiName+'</h1>'
-        html += '<h3><strong>Request Path</strong> </h3>'
-        html += '<pre>'+api.allowMethod+": "+ config.host + api.requestPath+'</pre>'
-        html += '<h3><strong>Api Description</strong></h3>'
-        html += parseDesc(api.description)
-
-        html += '<h3><strong>Request Params</strong></h3>'
-
-        if(api.requestParam instanceof Array){
-            html += '<p>Empty Request Params</p>'
-        }else{
-          html += buildRequestParamTable(api.requestParam)
-        }
-
-        html += '<h3><strong>Request Example</strong></h3>'
-
-        if(api.requestExamples.length > 0){
-            for(var i in api.requestExamples){
-                var example = api.requestExamples[i]
-                html += "<h5>Request Example "+(parseInt(i)  + 1)+"</h5>"
-
-                if(example.exampleType === 'PARAM_ARRAY'){
-                    html += buildResponseParamTable(example.example)
-                }else{
-                    html += parseDesc(example.example)
-                }
-            }
-        }else{
-            html += '<p>Empty Request Example</p>'
-        }
-
-
-
-        html += '<h3><strong>Response Params</strong></h3>'
-
-        if(api.responseParam instanceof Array){
-            html += '<p>Empty Response Params</p>'
-        }else{
-            html += buildResponseParamTable(api.responseParam)
-        }
-
-
-
-        html += '<h3><strong>Response Example</strong></h3>'
-        if(api.responseExamples.length > 0){
-            for(var i in api.responseExamples){
-                var example = api.responseExamples[i]
-                html += "<h5>Response Example "+(parseInt(i)  + 1)+"</h5>"
-
-                if(example.exampleType === 'PARAM_ARRAY'){
-                    html += buildResponseParamTable(example.example)
-                }else{
-                    html += parseDesc(example.example)
-                }
-            }
-        }else{
-            html += '<p>Empty Response Example</p>'
-        }
-
-        $("#content").html(html)
+    function displayValue(value) {
+        return value == null ? '-' : escapeHtml(typeof value === 'object' ? JSON.stringify(value) : value);
     }
 
-    function buildGroupDesc(apiGroup){
-        var html = "";
-        html += '<h2 >'+apiGroup.groupName+'</h2>'
-        html += parseDesc(apiGroup.description)
-        $("#content").html(html)
+    function description(value) {
+        return value ? '<pre>' + escapeHtml(value) + '</pre>' : '<p>暂无说明</p>';
     }
 
-    function buildRequestParamTable(params){
-
-        var hanlder = function (param,subCount,paramFrom){
-            var name = "&nbsp;&nbsp;&nbsp;&nbsp;".repeat(subCount)+param.name
-
-            var fromStr = param.from.join(',')
-            var rules = ''
-            var ruleCount = 1
-            for(var ruleName in param.validate){
-                rules += "<p>"+ruleCount+"."+param.validate[ruleName]+"</p>"
-                ruleCount++
-            }
-
-            var desc = parseDesc(param.description,false)
-            var defaultVal = '-';
-            if(param.value != null){
-                defaultVal = param.value
-            }
-
-            var next = '';
-            subCount++;
-
-            for (var sub in param.subObject){
-                next += hanlder(param.subObject[sub],subCount,param.from)
-            }
-
-            return "<tr><td>"+name+"</td> <td>"+fromStr+"</td> <td>"+rules+"</td> <td>"+desc+"</td> <td>"+defaultVal+"</td></tr>"+next;
+    function findGroup(path) {
+        let map = jsonData;
+        let group;
+        for (const name of path) {
+            if (!Object.prototype.hasOwnProperty.call(map, name)) return null;
+            group = map[name];
+            map = group.children;
         }
-        var final = '';
-        for (var i in params){
-            final += hanlder(params[i],0)
-        }
-
-        return "<table> <tr> <td>Name</td> <td>From</td> <td>Validate</td> <td>Description</td> <td>Default Value</td> </tr>"+final+"</table>";
+        return group;
     }
 
-    function buildResponseParamTable(params){
-
-        var hanlder = function (param,subCount,paramFrom = null){
-            var name = "&nbsp;&nbsp;&nbsp;&nbsp;".repeat(subCount)+param.name
-            if(param.type === "LIST"){
-                name += "[0-N]"
-            }
-            var desc = parseDesc(param.description,false)
-            if(param.type){
-                var type = param.type
-            }else{
-                var type = '-'
-            }
-
-            var next = '';
-            subCount++;
-
-            var defaultVal = '-';
-            if(param.value != null){
-                defaultVal = param.value
-            }
-
-            for (var sub in param.subObject){
-                next += hanlder(param.subObject[sub],subCount,param.from)
-            }
-
-            return "<tr><td>"+name+"</td> <td>"+desc+"</td> <td>"+type+"</td><td>"+defaultVal+"</td></tr>"+next;
+    function parameterTable(params) {
+        const entries = Object.entries(params || {});
+        if (!entries.length) return '<p>暂无参数</p>';
+        let html = '<table class="parameter-table"><thead><tr><th>名称</th><th>类型</th><th>校验规则</th><th>说明</th><th>默认值</th></tr></thead><tbody>';
+        for (const [name, param] of entries) {
+            const rules = Object.values(param.validateRules || {})
+                .filter(rule => rule.msg != null && String(rule.msg).trim() !== '')
+                .map(rule => escapeHtml(rule.msg)).join('<br>');
+            const descriptionEmpty = param.description == null || String(param.description).trim() === '';
+            html += '<tr><td>' + escapeHtml(name) + (param.deprecated ? '（已弃用）' : '')
+                + '</td><td>' + displayValue(param.type) + '</td><td' + (rules ? '' : ' class="cell-empty"') + '>' + (rules || '-')
+                + '</td><td' + (descriptionEmpty ? ' class="cell-empty"' : '') + '>'
+                + (descriptionEmpty ? '-' : displayValue(param.description)) + '</td><td>'
+                + displayValue(param.defaultValue) + '</td></tr>';
         }
-        var final = '';
-        for (var i in params){
-            final += hanlder(params[i],0)
-        }
-
-        return "<table> <tr> <td>Name</td><td>Description</td> <td>Type</td><td>Default Value</td> </tr>"+final+"</table>";
+        return html + '</tbody></table>';
     }
 
-    function renderRightMenu()
-    {
-        var rightMenu = [];
-        $(".content").children().each(function(index, element) {
-            var tagName=$(this).get(0).tagName;
-            if(tagName.substr(0,1).toUpperCase()=="H"){
-                var contentH=$(this).text();//获取内容
-                var markid="mark-"+tagName+"-"+index.toString();
-                $(this).attr("id",contentH);//为当前h标签设置id
-                var level = tagName.substr(1,2);
-                rightMenu.push({
-                    level: level,
-                    content: contentH,
-                    markid: markid,
-                });
-            }
-        });
-        $('.right-menu').empty();
+    function examples(items, title) {
+        return items && items.length ? items.map((item, index) => '<h4>' + escapeHtml(title) + ' ' + (index + 1) + '</h4><pre><code>' + escapeHtml(item) + '</code></pre>').join('') : '<p>暂无示例</p>';
+    }
 
-        if(rightMenu.length === 0){
-            $('#right-menu').hide()
-            return
-        }else{
-            $('#right-menu').show()
-        }
-
-        $('.right-menu').append("<div class='title'><i class='fa fa-list'></i> 本章导航</div>");
-        $.each(rightMenu, function (index, item) {
-            var padding_left = (item.level - 1) * 12 +"px";
-            $('.right-menu').append("<li style='padding-left:"+padding_left+"'><a href='#"+item.content+"' class='right-menu-item'>"+item.content+"</a></li>");
-        });
-        // 防止点击的导航是最底部，拉取滑动的只会到倒数其他菜单
-        $('.right-menu').on('click','a',function(){
-            // 延迟执行 等滚动完
-            var that = $(this);
-            setTimeout(function (that) {
-                $(".right-menu-item.active").removeClass("active");
-                that.addClass("active");
-            }, 50, that);
-        });
-        // 切换导航显示
-        $('.right-menu .title').on('click', function(){
-            $(this).siblings().toggle();
+    function renderRightMenu() {
+        const menu = document.getElementById('right-menu');
+        menu.replaceChildren();
+        const headings = content.querySelectorAll('h2, h3');
+        menu.style.display = headings.length ? 'block' : 'none';
+        headings.forEach((heading, index) => {
+            heading.id = 'section-' + index;
+            const item = document.createElement('li');
+            const link = document.createElement('a');
+            link.href = '#' + heading.id;
+            link.textContent = heading.textContent;
+            item.append(link);
+            menu.append(item);
         });
     }
 
-    $(function (){
-        if(config.description){
-            $("#content").html(parseDesc(config.description))
-        }else{
-            $("#content").html("<h1>"+config.projectName+"</h1>")
-        }
-        var sideBarHtml = "";
-        for(var groupName in jsonData){
-            var groupApi = jsonData[groupName]
-            //说明不是空
-            if(!(groupApi.apiList instanceof Array)){
-                sideBarHtml = sideBarHtml + "<li groupName='"+groupName+"'><i></i>"+groupName+"<ul>";
-                for(var apiName in groupApi.apiList){
-                    sideBarHtml = sideBarHtml + "<li><a groupName='"+groupName+"' apiName='"+apiName+"'>"+apiName+"</a></li>"
-                }
-                sideBarHtml = sideBarHtml + "</ul></li>";
+    sideBar.addEventListener('click', event => {
+        const target = event.target.closest('button[data-path], a[data-api]');
+        if (!target || !sideBar.contains(target)) return;
+        event.preventDefault();
+        const path = JSON.parse(target.dataset.path);
+        const group = findGroup(path);
+        if (!group) return;
+        if (target.matches('button')) {
+            const list = target.nextElementSibling;
+            list.hidden = !list.hidden;
+            target.setAttribute('aria-expanded', String(!list.hidden));
+            target.querySelector('.menu-arrow').textContent = list.hidden ? '▸' : '▾';
+            content.innerHTML = '<h1>' + escapeHtml(path.join('.')) + '</h1>'
+                + description(group.description)
+                + (Object.keys(group.onRequestParams || {}).length
+                    ? '<h3>公共请求参数</h3>' + parameterTable(group.onRequestParams)
+                    : '');
+        } else {
+            const api = group.apiList[target.dataset.api];
+            if (!api) return;
+            sideBar.querySelectorAll('a.active').forEach(link => link.classList.remove('active'));
+            target.classList.add('active');
+            // 接口参数覆盖同名公共参数，并排除当前接口忽略的参数。
+            const params = Object.assign({}, group.onRequestParams, api.requestParams);
+            for (const name of Object.keys(params)) {
+                if ((params[name].ignoreAction || []).includes(api.apiName)) delete params[name];
             }
+            content.innerHTML = '<h1>' + escapeHtml(api.apiName) + '</h1>'
+                + '<h3>请求地址</h3><pre>' + escapeHtml(config.host + api.requestPath) + '</pre>'
+                + '<h3>接口说明</h3>' + (api.descriptionHtml || description(api.description))
+                + '<h3>请求参数</h3>' + parameterTable(params)
+                + '<h3>请求示例</h3>' + examples(api.requestExamples, '请求示例')
+                + '<h3>成功响应示例</h3>' + examples(api.responseExamples.success, '成功响应示例')
+                + '<h3>失败响应示例</h3>' + examples(api.responseExamples.fail, '失败响应示例');
         }
-        $("#sideBar").html("<ul>"+sideBarHtml+"</ul>")
-        $.each($('.sideBar li:has(li)'), function () {
-            $(this).attr('isOpen', 0)
-            $(this).find('i').addClass('arrow-right');
-        });
-
-        $('.sideBar li:has(ul)').click(function (event) {
-            if (this == event.target) {
-                $(this).children().toggle('fast');
-                if ($(this).attr('isOpen') == 1) {
-                    $(this).attr('isOpen', 0);
-                    $(this).find('i').removeClass('arrow-down');
-                    $(this).find('i').addClass('arrow-right');
-                } else {
-                    $(this).attr('isOpen', 1);
-                    $(this).find('i').removeClass('arrow-right');
-                    $(this).find('i').addClass('arrow-down');
-                }
-                $(this).find('i').css({
-                    "display":"inline"
-                })
-
-                var groupName = $(this).attr('groupName');
-                var groupApi = jsonData[groupName]
-                buildGroupDesc(groupApi)
-                //隐藏章节导航
-                $('.right-menu').hide()
-            }
-        });
-        $('.sideBar ul li a').on('click', function () {
-            $.each($('.sideBar ul li a'), function () {
-                $(this).filter("a").css("text-decoration", "none").css('color','#2c3e50');
-            });
-            $(this).filter("a").css("text-decoration", "underline").css('color','#0080ff');
-            var groupName = $(this).attr('groupName');
-            var apiName = $(this).attr('apiName');
-            var groupApi = jsonData[groupName]
-            buildApiContent(groupApi.apiList[apiName])
-            renderRightMenu()
-            $('.right-menu').show()
-        })
+        renderRightMenu();
+        window.scrollTo(0, 0);
     });
+    renderRightMenu();
 </script>
 </body>
 </html>
