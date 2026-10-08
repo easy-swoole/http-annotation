@@ -157,6 +157,7 @@ abstract class AnnotationController extends Controller
             }
         }catch (\Throwable $throwable){
             $this->onException($throwable);
+            return;
         }
 
         parent::__hook($actionArg,$onRequestArg);
