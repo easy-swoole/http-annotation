@@ -28,7 +28,7 @@
         "easyswoole/parsedown": "^1.0"
     },
     "require-dev": {
-        "easyswoole/phpunit": "^1.0",
+        "phpunit/phpunit": "^13.4",
         "easyswoole/swoole-ide-helper": "^1.0"
     },
     "autoload": {
