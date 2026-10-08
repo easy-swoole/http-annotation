@@ -694,7 +694,7 @@
             <span>勾选要发送的参数</span>
         </div>
         <div id="try-fields"></div>
-        <p class="try-hint">Cookie 由浏览器管理；跨域请求需要接口允许当前文档来源。</p>
+        <p class="try-hint">COOKIE 参数可在同源文档中填写并设置；已有 Cookie 随请求发送，跨域需允许凭证和当前文档来源。</p>
         <div class="try-actions">
             <label>超时（秒） <input id="try-timeout" type="number" min="1" max="300" value="30" required></label>
             <button class="try-button" id="try-run" type="submit">立即运行 →</button>
@@ -880,11 +880,11 @@
         const definedSources = Array.isArray(param.from) ? param.from : (param.from ? [param.from] : ['GET']);
         let sources = param.type === 'FILE' ? ['FILE'] : definedSources;
         if (bodyType) {
-            sources = sources.filter(source => ['GET', 'HEADER', 'ROUTER_PARAMS'].includes(source));
+            sources = sources.filter(source => ['GET', 'HEADER', 'COOKIE', 'ROUTER_PARAMS'].includes(source));
             if (!sources.length) return null;
         }
         const allowed = sources.filter(source =>
-            !['DI', 'CONTEXT', 'COOKIE'].includes(source) && (!['GET', 'HEAD'].includes(method) || !['POST', 'JSON', 'XML', 'RAW_POST', 'FILE'].includes(source)));
+            !['DI', 'CONTEXT'].includes(source) && (!['GET', 'HEAD'].includes(method) || !['POST', 'JSON', 'XML', 'RAW_POST', 'FILE'].includes(source)));
         const required = Object.prototype.hasOwnProperty.call(param.validateRules || {}, 'Required');
         const include = document.createElement('input');
         include.type = 'checkbox';
@@ -904,7 +904,7 @@
         value.setAttribute('aria-label', name + ' 参数值');
         const updateType = () => {
             value.type = param.type === 'FILE' || source.value === 'FILE' ? 'file' : 'text';
-            value.placeholder = source.value === 'HEADER' ? '填写请求头 ' + name + ' 的值' : '填写参数值';
+            value.placeholder = source.value === 'COOKIE' ? '填写 Cookie ' + name + ' 的值' : source.value === 'HEADER' ? '填写请求头 ' + name + ' 的值' : '填写参数值';
         };
         updateType();
         if (value.type !== 'file' && param.defaultValue != null) {
@@ -918,7 +918,7 @@
         source.addEventListener('change', updateType);
         const hint = document.createElement('div');
         hint.className = 'try-hint';
-        hint.textContent = allowed.length ? [allowed.includes('HEADER') ? 'HEADER：填写后作为 HTTP 请求头发送' : '', param.type, param.description,
+        hint.textContent = allowed.length ? [allowed.includes('COOKIE') ? 'COOKIE：运行时设置当前站点 Cookie；需通过 HTTP(S) 打开同源文档，跨域 Cookie 请先在接口站点登录。' : allowed.includes('HEADER') ? 'HEADER：填写后作为 HTTP 请求头发送' : '', param.type, param.description,
             ...Object.values(param.validateRules || {}).map(rule => rule.msg)].filter(Boolean).join(' · ')
             : '该参数由服务器或浏览器管理，或不适用于当前请求方法。';
         row.append(label, source, value, hint);
@@ -1056,6 +1056,24 @@
         return {url: url.href, options};
     }
 
+    function applyTryCookies(request, fields) {
+        const cookies = fields.filter(field => field.source === 'COOKIE');
+        if (!cookies.length) return;
+        const page = new URL(location.href);
+        const target = new URL(request.url);
+        if (!['http:', 'https:'].includes(page.protocol) || page.origin !== target.origin) {
+            throw new Error('无法设置目标站点 Cookie：请通过与接口同源的 HTTP(S) 地址打开文档，或取消勾选 COOKIE 参数并先在接口站点登录。');
+        }
+        for (const {name, value} of cookies) {
+            if (!/^[!#$%&'*+.^_`|~0-9A-Za-z-]+$/.test(name)) throw new Error('无效的 Cookie 名称：' + name);
+            const encoded = encodeURIComponent(String(value));
+            document.cookie = name + '=' + encoded + '; Path=/; SameSite=Lax' + (page.protocol === 'https:' ? '; Secure' : '');
+            if (!String(document.cookie || '').split(';').some(item => item.trim() === name + '=' + encoded)) {
+                throw new Error('Cookie ' + name + ' 设置失败，请检查浏览器 Cookie 策略或已有 HttpOnly Cookie。');
+            }
+        }
+    }
+
     // 请求执行与异常处理
     async function executeTryRequest(request, timeoutMs, onResponse) {
         const controller = new AbortController();
@@ -1108,6 +1126,10 @@
             const bodyEditor = document.getElementById('try-raw-body');
             const bodyInput = bodyEditor ? {type: activeTryApi.acceptContentType, value: bodyEditor.value} : null;
             const request = buildTryRequest(document.getElementById('try-url').value, activeTryApi.allowMethod, fields, bodyInput);
+            if (Object.values(activeTryParams).some(param => (Array.isArray(param.from) ? param.from : [param.from]).includes('COOKIE'))) {
+                request.options.credentials = 'include';
+            }
+            applyTryCookies(request, fields);
             const started = performance.now();
             const result = await executeTryRequest(request, Number(document.getElementById('try-timeout').value) * 1000, response => {
                 status = 'HTTP ' + response.status + ' ' + response.statusText;

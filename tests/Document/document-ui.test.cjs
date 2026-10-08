@@ -188,3 +188,13 @@ const chapterLink = elements.get('right-menu').children[0].children[0];
 assert.equal(new URLSearchParams(chapterLink.href.slice(1)).get('api'), 'detail');
 assert.equal(new URLSearchParams(chapterLink.href.slice(1)).get('section'), '请求参数');
 console.log('哈希菜单、章节定位、历史导航及无效链接检查通过');
+
+const cookieField = context.buildParameterField('ticket', param('STRING', 'COOKIE'), 'GET', null);
+assert.equal(cookieField.querySelector('.try-source').value, 'COOKIE');
+assert.equal(cookieField.querySelector('.try-value').disabled, false);
+assert(context.buildParameterField('ticket', param('STRING', 'COOKIE'), 'POST', 'JSON'));
+context.applyTryCookies({url: 'http://localhost/api/logout'}, [{source: 'COOKIE', name: 'ticket', value: 'a b'}]);
+assert.match(document.cookie, /ticket=a%20b/);
+assert.throws(() => context.applyTryCookies({url: 'http://other.test/logout'}, [{source: 'COOKIE', name: 'ticket', value: 'abc'}]), /同源/);
+assert.throws(() => context.applyTryCookies({url: 'http://localhost/logout'}, [{source: 'COOKIE', name: 'bad;name', value: 'abc'}]), /无效/);
+console.log('COOKIE 表单、设置及跨域提示检查通过');

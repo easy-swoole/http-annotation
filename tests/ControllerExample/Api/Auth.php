@@ -46,6 +46,19 @@ class Auth extends ApiBase
 
     }
 
+    #[Api(
+        requestParam: [
+            new Param(
+                name: "userId",
+                validate: []
+            ),
+            new Param(
+                name: "ticket",
+                from: ParamFrom::COOKIE,
+                validate: []
+            )
+        ]
+    )]
     function logout()
     {
 
