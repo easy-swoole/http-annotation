@@ -21,7 +21,7 @@ class DateBeforeTest extends TestCase
             "date" => "20220101"
         ]);
 
-        $param = new Param(name:"date");
+        $param = new Param(type: null, name:"date");
         $param->parsedValue($request);
         $request = new ValidateRequest($param);
         $rule = new DateBefore(date: "20220430");
@@ -32,7 +32,7 @@ class DateBeforeTest extends TestCase
             "date" => "2022-01-06"
         ]);
 
-        $param = new Param(name:"date");
+        $param = new Param(type: null, name:"date");
         $param->parsedValue($request);
         $request = new ValidateRequest($param);
         $rule = new DateBefore(date: "20220630");
@@ -43,7 +43,7 @@ class DateBeforeTest extends TestCase
             "date" => "2022-01-06 00:00:00"
         ]);
 
-        $param = new Param(name:"date");
+        $param = new Param(type: null, name:"date");
         $param->parsedValue($request);
         $request = new ValidateRequest($param);
         $rule = new DateBefore(date: "20220630");
@@ -55,7 +55,7 @@ class DateBeforeTest extends TestCase
             "date" => "20220130"
         ]);
 
-        $param = new Param(name:"date");
+        $param = new Param(type: null, name:"date");
         $param->parsedValue($request);
 
 
@@ -72,7 +72,7 @@ class DateBeforeTest extends TestCase
             "date" => "2022-06-08"
         ]);
 
-        $param = new Param(name:"date");
+        $param = new Param(type: null, name:"date");
         $param->parsedValue($request);
         $request = new ValidateRequest($param);
         $rule = new DateBefore(date: "20220530");
@@ -85,7 +85,7 @@ class DateBeforeTest extends TestCase
             "date" => "bajiu"
         ]);
 
-        $param = new Param(name:"date");
+        $param = new Param(type: null, name:"date");
         $param->parsedValue($request);
         $request = new ValidateRequest($param);
         $rule = new DateBefore(date: "20220530");
@@ -98,7 +98,7 @@ class DateBeforeTest extends TestCase
             "date" => "1654765394"
         ]);
 
-        $param = new Param(name:"date");
+        $param = new Param(type: null, name:"date");
         $param->parsedValue($request);
         $request = new ValidateRequest($param);
         $rule = new DateBefore(date: "20220530");
@@ -116,7 +116,7 @@ class DateBeforeTest extends TestCase
             "date" => "bajiu"
         ]);
 
-        $param = new Param(name:"date");
+        $param = new Param(type: null, name:"date");
         $param->parsedValue($request);
         $request = new ValidateRequest($param);
         $rule = new DateBefore(date: "20220530", errorMsg: '日期不合法');

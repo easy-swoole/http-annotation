@@ -20,7 +20,7 @@ class AllDigitalTest extends TestCase
             "no" => 5001
         ]);
 
-        $param = new Param(name:"no");
+        $param = new Param(type: null, name:"no");
         $param->parsedValue($request);
 
         $rule = new AllDigital();
@@ -35,7 +35,7 @@ class AllDigitalTest extends TestCase
             "no" => 005001
         ]);
 
-        $param = new Param(name:"no");
+        $param = new Param(type: null, name:"no");
         $param->parsedValue($request);
 
         $request = new ValidateRequest($param);
@@ -55,7 +55,7 @@ class AllDigitalTest extends TestCase
             "no" => "0bA111"
         ]);
 
-        $param = new Param(name:"no");
+        $param = new Param(type: null, name:"no");
         $param->parsedValue($request);
 
         $rule = new AllDigital();
@@ -69,7 +69,7 @@ class AllDigitalTest extends TestCase
             "no" => "111.11"
         ]);
 
-        $param = new Param(name:"no");
+        $param = new Param(type: null, name:"no");
         $param->parsedValue($request);
 
         $rule = new AllDigital();
@@ -88,7 +88,7 @@ class AllDigitalTest extends TestCase
             "no" => "111.11"
         ]);
 
-        $param = new Param(name:"no");
+        $param = new Param(type: null, name:"no");
         $param->parsedValue($request);
 
         $rule = new AllDigital(errorMsg: '学号只能由数字构成');

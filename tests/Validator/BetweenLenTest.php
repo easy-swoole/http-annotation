@@ -22,7 +22,7 @@ class BetweenLenTest extends TestCase
             "name" => 5.56789
         ]);
 
-        $param = new Param(name:"name");
+        $param = new Param(type: null, name:"name");
         $param->parsedValue($request);
 
         $rule = new BetweenLen(minLen: 5, maxLen: 10);
@@ -35,7 +35,7 @@ class BetweenLenTest extends TestCase
             "str" => 'asc-~+...9'
         ]);
 
-        $param = new Param(name:"str");
+        $param = new Param(type: null, name:"str");
         $param->parsedValue($request);
 
         $rule = new BetweenLen(minLen: 5, maxLen: 10);
@@ -54,7 +54,7 @@ class BetweenLenTest extends TestCase
             "name" => 4.9876
         ]);
 
-        $param = new Param(name:"name");
+        $param = new Param(type: null, name:"name");
         $param->parsedValue($request);
 
         $rule = new BetweenLen(minLen: 2, maxLen: 5);
@@ -68,7 +68,7 @@ class BetweenLenTest extends TestCase
             "str" => '测试测试'
         ]);
 
-        $param = new Param(name:"str");
+        $param = new Param(type: null, name:"str");
         $param->parsedValue($request);
 
         $rule = new BetweenLen(minLen: 5, maxLen: 10);
@@ -82,7 +82,7 @@ class BetweenLenTest extends TestCase
             "name" => 5.56
         ]);
 
-        $param = new Param(name:"name");
+        $param = new Param(type: null, name:"name");
         $param->parsedValue($request);
     }
 
@@ -97,7 +97,7 @@ class BetweenLenTest extends TestCase
         ]);
 
         $param = new Param(
-            name:"str"
+            type: null, name:"str"
         );
         $param->parsedValue($request);
         $request = new ValidateRequest($param);

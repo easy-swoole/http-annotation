@@ -19,10 +19,10 @@ class EqualWithColumnTest extends TestCase
             'account' => "easyAccount"
         ]);
 
-        $param = new Param(name:"str");
+        $param = new Param(type: null, name:"str");
         $param->parsedValue($request);
 
-        $account = new Param(name:"account");
+        $account = new Param(type: null, name:"account");
         $account->parsedValue($request);
 
         $rule = new EqualWithColumn(compare: "account");
@@ -43,10 +43,10 @@ class EqualWithColumnTest extends TestCase
             'account' => 0
         ]);
 
-        $param = new Param(name:"str");
+        $param = new Param(type: null, name:"str");
         $param->parsedValue($request);
 
-        $account = new Param(name:"account");
+        $account = new Param(type: null, name:"account");
         $account->parsedValue($request);
 
         $rule = new EqualWithColumn(compare: "account");
@@ -66,10 +66,10 @@ class EqualWithColumnTest extends TestCase
             'account' => 0
         ]);
 
-        $param = new Param(name:"str");
+        $param = new Param(type: null, name:"str");
         $param->parsedValue($request);
 
-        $account = new Param(name:"account");
+        $account = new Param(type: null, name:"account");
         $account->parsedValue($request);
         // 严格模式 "0" != 0
         $rule = new EqualWithColumn(compare: "account", strict: true);
@@ -91,10 +91,10 @@ class EqualWithColumnTest extends TestCase
             'account' => 0
         ]);
 
-        $param = new Param(name:"str");
+        $param = new Param(type: null, name:"str");
         $param->parsedValue($request);
 
-        $account = new Param(name:"account");
+        $account = new Param(type: null, name:"account");
         $account->parsedValue($request);
 
         $rule = new EqualWithColumn(compare: "account", strict: true, errorMsg: '测试提示');
@@ -122,10 +122,10 @@ class EqualWithColumnTest extends TestCase
             'account' => "easySwoole"
         ]);
 
-        $param = new Param(name:"str");
+        $param = new Param(type: null, name:"str");
         $param->parsedValue($request);
 
-        $account = new Param(name:"account");
+        $account = new Param(type: null, name:"account");
         $account->parsedValue($request);
 
         $rule = new EqualWithColumn(compare: "account");
@@ -146,10 +146,10 @@ class EqualWithColumnTest extends TestCase
             'account' => 89
         ]);
 
-        $param = new Param(name:"str");
+        $param = new Param(type: null, name:"str");
         $param->parsedValue($request);
 
-        $account = new Param(name:"account");
+        $account = new Param(type: null, name:"account");
         $account->parsedValue($request);
 
         $rule = new EqualWithColumn(compare: "account");
@@ -178,10 +178,10 @@ class EqualWithColumnTest extends TestCase
             'account' => 89
         ]);
 
-        $param = new Param(name:"str");
+        $param = new Param(type: null, name:"str");
         $param->parsedValue($request);
 
-        $account = new Param(name:"account");
+        $account = new Param(type: null, name:"account");
         $account->parsedValue($request);
 
         $rule = new EqualWithColumn(compare: "account",strict: true);
@@ -203,10 +203,10 @@ class EqualWithColumnTest extends TestCase
             'account' => 98
         ]);
 
-        $param = new Param(name:"str");
+        $param = new Param(type: null, name:"str");
         $param->parsedValue($request);
 
-        $account = new Param(name:"account");
+        $account = new Param(type: null, name:"account");
         $account->parsedValue($request);
 
         $rule = new EqualWithColumn(compare: "account");
@@ -227,10 +227,10 @@ class EqualWithColumnTest extends TestCase
             'account' => 98
         ]);
 
-        $param = new Param(name:"str");
+        $param = new Param(type: null, name:"str");
         $param->parsedValue($request);
 
-        $account = new Param(name:"account");
+        $account = new Param(type: null, name:"account");
         $account->parsedValue($request);
 
         $rule = new EqualWithColumn(compare: "account");
@@ -257,10 +257,10 @@ class EqualWithColumnTest extends TestCase
             'account' => 98
         ]);
 
-        $param = new Param(name:"str");
+        $param = new Param(type: null, name:"str");
         $param->parsedValue($request);
 
-        $account = new Param(name:"account");
+        $account = new Param(type: null, name:"account");
         $account->parsedValue($request);
 
         $rule = new EqualWithColumn(compare: "account",errorMsg: '两个参数必须一样');

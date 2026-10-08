@@ -24,7 +24,7 @@ class OptionIfParamSetTest extends TestCase
         ]);
 
         $num = new Param(
-            name:"num",
+            type: null, name:"num",
             validate: [
                 new OptionalIfParamSet('account'),
                 new Integer()
@@ -33,7 +33,7 @@ class OptionIfParamSetTest extends TestCase
         $num->parsedValue($request);
 
         $account = new Param(
-            name: "account"
+            type: null, name: "account"
         );
         $account->parsedValue($request);
 
@@ -66,7 +66,7 @@ class OptionIfParamSetTest extends TestCase
         ]);
 
         $num = new Param(
-            name:"num",
+            type: null, name:"num",
             validate: [
                 new OptionalIfParamSet('account'),
                 new Integer()
@@ -75,7 +75,7 @@ class OptionIfParamSetTest extends TestCase
         $num->parsedValue($request);
 
         $account = new Param(
-            name: "account"
+            type: null, name: "account"
         );
         $account->parsedValue($request);
 
@@ -108,7 +108,7 @@ class OptionIfParamSetTest extends TestCase
         ]);
 
         $num = new Param(
-            name:"num",
+            type: null, name:"num",
             validate: [
                 new OptionalIfParamSet('account'),
                 new Integer()
@@ -117,7 +117,7 @@ class OptionIfParamSetTest extends TestCase
         $num->parsedValue($request);
 
         $account = new Param(
-            name: "account"
+            type: null, name: "account"
         );
         $account->parsedValue($request);
 

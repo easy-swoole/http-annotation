@@ -22,7 +22,7 @@ class FuncTest extends TestCase
             "fun" => "123456789",
         ]);
 
-        $param = new Param(name:"fun");
+        $param = new Param(type: null, name:"fun");
         $param->parsedValue($request);
         $request = new ValidateRequest($param);
         $rule = new Func(func: function (ValidateRequest $validateRequest) {
@@ -42,7 +42,7 @@ class FuncTest extends TestCase
             "fun" => "111",
         ]);
 
-        $param = new Param(name:"fun");
+        $param = new Param(type: null, name:"fun");
         $param->parsedValue($request);
         $request = new ValidateRequest($param);
         $rule = new Func(func: function (ValidateRequest $validateRequest) {
@@ -63,7 +63,7 @@ class FuncTest extends TestCase
             "fun" => "111",
         ]);
 
-        $param = new Param(name:"fun");
+        $param = new Param(type: null, name:"fun");
         $param->parsedValue($request);
         $request = new ValidateRequest($param);
         $rule = new Func(func: function (ValidateRequest $validateRequest) {
@@ -81,7 +81,7 @@ class FuncTest extends TestCase
             "fun" => '1',
         ]);
 
-        $param = new Param(name:"fun");
+        $param = new Param(type: null, name:"fun");
         $param->parsedValue($request);
         $request = new ValidateRequest($param);
         $rule = new Func(new EqualFunc(1));

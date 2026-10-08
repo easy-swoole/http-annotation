@@ -26,7 +26,7 @@ class OptionIfParamInArrayTest extends TestCase
         ]);
 
         $num = new Param(
-            name:"num",
+            type: null, name:"num",
             validate: [
                 new OptionalIfParamValInArray("account",[
                     'admin'
@@ -37,7 +37,7 @@ class OptionIfParamInArrayTest extends TestCase
         $num->parsedValue($request);
 
         $account = new Param(
-            name: "account"
+            type: null, name: "account"
         );
         $account->parsedValue($request);
 
@@ -68,7 +68,7 @@ class OptionIfParamInArrayTest extends TestCase
         ]);
 
         $num = new Param(
-            name:"num",
+            type: null, name:"num",
             validate: [
                 new OptionalIfParamValInArray("account",[
                     'admin'
@@ -79,7 +79,7 @@ class OptionIfParamInArrayTest extends TestCase
         $num->parsedValue($request);
 
         $account = new Param(
-            name: "account"
+            type: null, name: "account"
         );
         $account->parsedValue($request);
 
@@ -110,7 +110,7 @@ class OptionIfParamInArrayTest extends TestCase
         ]);
 
         $num = new Param(
-            name:"num",
+            type: null, name:"num",
             validate: [
                 new OptionalIfParamValInArray("account",[
                     'admin'
@@ -121,7 +121,7 @@ class OptionIfParamInArrayTest extends TestCase
         $num->parsedValue($request);
 
         $account = new Param(
-            name: "account"
+            type: null, name: "account"
         );
         $account->parsedValue($request);
 
@@ -153,7 +153,7 @@ class OptionIfParamInArrayTest extends TestCase
         ]);
 
         $num = new Param(
-            name:"num",
+            type: null, name:"num",
             validate: [
                 new OptionalIfParamValInArray("account",[
                     'admin'
@@ -164,7 +164,7 @@ class OptionIfParamInArrayTest extends TestCase
         $num->parsedValue($request);
 
         $account = new Param(
-            name: "account"
+            type: null, name: "account"
         );
         $account->parsedValue($request);
 

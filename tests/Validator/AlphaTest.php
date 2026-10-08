@@ -21,7 +21,7 @@ class AlphaTest extends TestCase
             "str" => "abcheezsss"
         ]);
 
-        $param = new Param(name:"str");
+        $param = new Param(type: null, name:"str");
         $param->parsedValue($request);
 
         $rule = new Alpha();
@@ -39,7 +39,7 @@ class AlphaTest extends TestCase
             "str" => "0bA111"
         ]);
 
-        $param = new Param(name:"str");
+        $param = new Param(type: null, name:"str");
         $param->parsedValue($request);
 
         $rule = new Alpha();
@@ -52,7 +52,7 @@ class AlphaTest extends TestCase
             "str" => "111"
         ]);
 
-        $param = new Param(name:"str");
+        $param = new Param(type: null, name:"str");
         $param->parsedValue($request);
 
         $rule = new Alpha();
@@ -71,7 +71,7 @@ class AlphaTest extends TestCase
             "str" => "0bA111"
         ]);
 
-        $param = new Param(name:"str");
+        $param = new Param(type: null, name:"str");
         $param->parsedValue($request);
 
         $rule = new Alpha(errorMsg: '您输入的参数不合法');

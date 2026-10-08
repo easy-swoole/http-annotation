@@ -21,7 +21,7 @@ class BetweenTest extends TestCase
             "num" => 5
         ]);
 
-        $param = new Param(name:"num");
+        $param = new Param(type: null, name:"num");
         $param->parsedValue($request);
         $request = new ValidateRequest($param);
         $rule = new Between(min: 5, max: 10);
@@ -33,7 +33,7 @@ class BetweenTest extends TestCase
             "num" => 6.33
         ]);
 
-        $param = new Param(name:"num");
+        $param = new Param(type: null, name:"num");
         $param->parsedValue($request);
         $request = new ValidateRequest($param);
         $rule = new Between(min: 5, max: 10);
@@ -45,7 +45,7 @@ class BetweenTest extends TestCase
             "num" => '6.33'
         ]);
 
-        $param = new Param(name:"num");
+        $param = new Param(type: null, name:"num");
         $param->parsedValue($request);
         $request = new ValidateRequest($param);
         $rule = new Between(min: 5, max: 10);
@@ -57,7 +57,7 @@ class BetweenTest extends TestCase
             "num" => 5
         ]);
 
-        $param = new Param(name:"num");
+        $param = new Param(type: null, name:"num");
         $param->parsedValue($request);
         $request = new ValidateRequest($param);
         $rule = new Between(min: 5, max: 10);
@@ -69,7 +69,7 @@ class BetweenTest extends TestCase
             "num" => 10
         ]);
 
-        $param = new Param(name:"num");
+        $param = new Param(type: null, name:"num");
         $param->parsedValue($request);
         $request = new ValidateRequest($param);
         $rule = new Between(min: 5, max: 10);
@@ -81,7 +81,7 @@ class BetweenTest extends TestCase
             "num" => 5.5
         ]);
 
-        $param = new Param(name:"num");
+        $param = new Param(type: null, name:"num");
         $param->parsedValue($request);
 
     }
@@ -97,7 +97,7 @@ class BetweenTest extends TestCase
             "num" => 110
         ]);
 
-        $param = new Param(name:"num");
+        $param = new Param(type: null, name:"num");
         $param->parsedValue($request);
         $request = new ValidateRequest($param);
         $rule = new Between(min: 5, max: 10);
@@ -110,7 +110,7 @@ class BetweenTest extends TestCase
             "num" => 'bajiu'
         ]);
 
-        $param = new Param(name:"num");
+        $param = new Param(type: null, name:"num");
         $param->parsedValue($request);
         $request = new ValidateRequest($param);
         $rule = new Between(min: 5, max: 10);
@@ -128,7 +128,7 @@ class BetweenTest extends TestCase
             "num" => 'bajiu'
         ]);
 
-        $param = new Param(name:"num");
+        $param = new Param(type: null, name:"num");
         $param->parsedValue($request);
         $request = new ValidateRequest($param);
         $rule = new Between(min: 5, max: 10,errorMsg: '您输入的年龄不符');

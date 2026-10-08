@@ -18,7 +18,7 @@ class IsPhoneNumberTest extends TestCase
             "phone" => 12345
         ]);
 
-        $param = new Param(name:"phone");
+        $param = new Param(type: null, name:"phone");
         $param->parsedValue($request);
         $request = new ValidateRequest($param);
         $rule = new IsPhoneNumber();
@@ -30,7 +30,7 @@ class IsPhoneNumberTest extends TestCase
             "phone" => 15505920001
         ]);
 
-        $param = new Param(name:"phone");
+        $param = new Param(type: null, name:"phone");
         $param->parsedValue($request);
         $request = new ValidateRequest($param);
         $rule = new IsPhoneNumber();

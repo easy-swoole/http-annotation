@@ -21,7 +21,7 @@ class NotInArrayTest extends TestCase
             "fruit" => 'Apple'
         ]);
 
-        $param = new Param(name:"num");
+        $param = new Param(type: null, name:"num");
         $param->parsedValue($request);
         $request = new ValidateRequest($param);
         $rule = new NotInArray(array: ['apple', 'grape', 'orange'], strict: true);
@@ -33,7 +33,7 @@ class NotInArrayTest extends TestCase
             "fruit" => 'banana'
         ]);
 
-        $param = new Param(name:"fruit");
+        $param = new Param(type: null, name:"fruit");
         $param->parsedValue($request);
         $request = new ValidateRequest($param);
         $rule = new NotInArray(array: ['apple', 'grape', 'orange'], strict: false);
@@ -50,7 +50,7 @@ class NotInArrayTest extends TestCase
             "fruit" => 'apple'
         ]);
 
-        $param = new Param(name:"fruit");
+        $param = new Param(type: null, name:"fruit");
         $param->parsedValue($request);
         $request = new ValidateRequest($param);
         $rule = new NotInArray(array: ['apple', 'grape', 'orange'], strict: false);
@@ -68,7 +68,7 @@ class NotInArrayTest extends TestCase
             "fruit" => 'apple'
         ]);
 
-        $param = new Param(name:"fruit");
+        $param = new Param(type: null, name:"fruit");
         $param->parsedValue($request);
         $request = new ValidateRequest($param);
         $rule = new NotInArray(array: ['apple', 'grape', 'orange'], errorMsg: '水果不能是苹果、葡萄以及橘子');

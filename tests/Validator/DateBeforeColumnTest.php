@@ -23,10 +23,10 @@ class DateBeforeColumnTest extends TestCase
             "date1" => "20220430"
         ]);
 
-        $param = new Param(name: "date");
+        $param = new Param(type: null, name: "date");
         $param->parsedValue($request);
 
-        $date1 = new Param(name: "date1");
+        $date1 = new Param(type: null, name: "date1");
         $date1->parsedValue($request);
 
         $rule = new DateBeforeColumn(compare: "date1");
@@ -45,10 +45,10 @@ class DateBeforeColumnTest extends TestCase
             "date1" => "20220630",
         ]);
 
-        $param = new Param(name: "date");
+        $param = new Param(type: null, name: "date");
         $param->parsedValue($request);
 
-        $date1 = new Param(name: "date1");
+        $date1 = new Param(type: null, name: "date1");
         $date1->parsedValue($request);
 
         $rule = new DateBeforeColumn(compare: "date1");
@@ -67,10 +67,10 @@ class DateBeforeColumnTest extends TestCase
             "date1" => "20220630",
         ]);
 
-        $param = new Param(name: "date");
+        $param = new Param(type: null, name: "date");
         $param->parsedValue($request);
 
-        $date1 = new Param(name: "date1");
+        $date1 = new Param(type: null, name: "date1");
         $date1->parsedValue($request);
 
         $rule = new DateBeforeColumn(compare: "date1");
@@ -96,10 +96,10 @@ class DateBeforeColumnTest extends TestCase
             "date1" => "20220530",
         ]);
 
-        $param = new Param(name: "date");
+        $param = new Param(type: null, name: "date");
         $param->parsedValue($request);
 
-        $date1 = new Param(name: "date1");
+        $date1 = new Param(type: null, name: "date1");
         $date1->parsedValue($request);
 
         $rule = new DateBeforeColumn(compare: "date1");
@@ -120,10 +120,10 @@ class DateBeforeColumnTest extends TestCase
             "date1" => "20220530",
         ]);
 
-        $param = new Param(name: "date");
+        $param = new Param(type: null, name: "date");
         $param->parsedValue($request);
 
-        $date1 = new Param(name: "date1");
+        $date1 = new Param(type: null, name: "date1");
         $date1->parsedValue($request);
 
         $rule = new DateBeforeColumn(compare: "date1");
@@ -144,10 +144,10 @@ class DateBeforeColumnTest extends TestCase
             "date1" => "20220530",
         ]);
 
-        $param = new Param(name: "date");
+        $param = new Param(type: null, name: "date");
         $param->parsedValue($request);
 
-        $date1 = new Param(name: "date1");
+        $date1 = new Param(type: null, name: "date1");
         $date1->parsedValue($request);
 
         $rule = new DateBeforeColumn(compare: "date1");
@@ -172,10 +172,10 @@ class DateBeforeColumnTest extends TestCase
             "date1" => "20220530",
         ]);
 
-        $param = new Param(name: "date");
+        $param = new Param(type: null, name: "date");
         $param->parsedValue($request);
 
-        $date1 = new Param(name: "date1");
+        $date1 = new Param(type: null, name: "date1");
         $date1->parsedValue($request);
 
         $rule = new DateBeforeColumn(compare: "date1", errorMsg: "日期不合法");

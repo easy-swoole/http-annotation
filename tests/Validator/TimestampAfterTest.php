@@ -20,7 +20,7 @@ class TimestampAfterTest extends TestCase
             "date" => time() + 1
         ]);
 
-        $param = new Param(name:"date");
+        $param = new Param(type: null, name:"date");
         $param->parsedValue($request);
         $request = new ValidateRequest($param);
         $rule = new TimestampAfter(compare:time());
@@ -32,7 +32,7 @@ class TimestampAfterTest extends TestCase
             "date" => time() + 1
         ]);
 
-        $param = new Param(name:"date");
+        $param = new Param(type: null, name:"date");
         $param->parsedValue($request);
 
 
@@ -48,7 +48,7 @@ class TimestampAfterTest extends TestCase
             "date" => time()
         ]);
 
-        $param = new Param(name:"date");
+        $param = new Param(type: null, name:"date");
         $param->parsedValue($request);
         $request = new ValidateRequest($param);
         $time = time() + 1;
@@ -62,7 +62,7 @@ class TimestampAfterTest extends TestCase
             "date" => "2022-09-30"
         ]);
 
-        $param = new Param(name:"date");
+        $param = new Param(type: null, name:"date");
         $param->parsedValue($request);
 
     }
@@ -77,7 +77,7 @@ class TimestampAfterTest extends TestCase
             "date" => 'bajiu'
         ]);
 
-        $param = new Param(name:"date");
+        $param = new Param(type: null, name:"date");
         $param->parsedValue($request);
         $request = new ValidateRequest($param);
         $time = time() + 1;

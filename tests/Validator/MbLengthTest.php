@@ -21,7 +21,7 @@ class MbLengthTest extends TestCase
             "str" => '八九'
         ]);
 
-        $param = new Param(name:"str");
+        $param = new Param(type: null, name:"str");
         $param->parsedValue($request);
         $request = new ValidateRequest($param);
         $rule = new MbLength(length: 2);
@@ -33,7 +33,7 @@ class MbLengthTest extends TestCase
             "str" => '89'
         ]);
 
-        $param = new Param(name:"str");
+        $param = new Param(type: null, name:"str");
         $param->parsedValue($request);
         $request = new ValidateRequest($param);
         $rule = new MbLength(length: 2);
@@ -45,7 +45,7 @@ class MbLengthTest extends TestCase
             "str" => ['apple', 'grape', 'orange']
         ]);
 
-        $param = new Param(name:"str");
+        $param = new Param(type: null, name:"str");
         $param->parsedValue($request);
         $request = new ValidateRequest($param);
         $rule = new MbLength(length: 3);
@@ -63,7 +63,7 @@ class MbLengthTest extends TestCase
             "str" => '八九'
         ]);
 
-        $param = new Param(name:"str");
+        $param = new Param(type: null, name:"str");
         $param->parsedValue($request);
         $request = new ValidateRequest($param);
         $rule = new MbLength(length: 5);
@@ -76,7 +76,7 @@ class MbLengthTest extends TestCase
             "str" => '89'
         ]);
 
-        $param = new Param(name:"str");
+        $param = new Param(type: null, name:"str");
         $param->parsedValue($request);
         $request = new ValidateRequest($param);
         $rule = new MbLength(length: 5);
@@ -88,7 +88,7 @@ class MbLengthTest extends TestCase
             "str" => ['apple', 'grape', 'orange']
         ]);
 
-        $param = new Param(name:"str");
+        $param = new Param(type: null, name:"str");
         $param->parsedValue($request);
         $request = new ValidateRequest($param);
         $rule = new MbLength(length: 5);
@@ -101,7 +101,7 @@ class MbLengthTest extends TestCase
             "str" => (object)['apple', 'grape', 'orange', 'orange', 'orange']
         ]);
 
-        $param = new Param(name:"str");
+        $param = new Param(type: null, name:"str");
         $param->parsedValue($request);
         $request = new ValidateRequest($param);
         $rule = new MbLength(length: 5);
@@ -119,7 +119,7 @@ class MbLengthTest extends TestCase
             "name" => '城南花已开'
         ]);
 
-        $param = new Param(name:"name");
+        $param = new Param(type: null, name:"name");
         $param->parsedValue($request);
         $request = new ValidateRequest($param);
         $rule = new MbLength(length: 6,errorMsg: '名字长度必须是6位');

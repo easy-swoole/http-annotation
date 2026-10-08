@@ -25,7 +25,7 @@ class MixedFromJsonTest extends TestCase
         $request->withBody($body);
 
         $param = new Param(
-            name:'account',
+            type: null, name:'account',
             from: ParamFrom::JSON
         );
 
@@ -34,7 +34,7 @@ class MixedFromJsonTest extends TestCase
 
 
         $param = new Param(
-            name:'userInfo',
+            type: null, name:'userInfo',
             from: ParamFrom::JSON,
         );
         $param->parsedValue($request);

@@ -19,7 +19,7 @@ class DateTest extends TestCase
             "date" => date("Y-m-d")
         ]);
 
-        $param = new Param(name:"date");
+        $param = new Param(type: null, name:"date");
         $param->parsedValue($request);
 
         $rule = new Date('today');
@@ -29,7 +29,7 @@ class DateTest extends TestCase
         $this->assertEquals(true, $rule->execute( $v));
 
 
-        $param = new Param(name:"date");
+        $param = new Param(type: null, name:"date");
         $param->parsedValue($request);
 
         $rule = new Date('-1 day');

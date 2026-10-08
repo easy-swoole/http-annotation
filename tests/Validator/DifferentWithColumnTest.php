@@ -22,10 +22,10 @@ class DifferentWithColumnTest extends TestCase
             'account' => "easyAccount"
         ]);
 
-        $param = new Param(name:"str");
+        $param = new Param(type: null, name:"str");
         $param->parsedValue($request);
 
-        $account = new Param(name:"account");
+        $account = new Param(type: null, name:"account");
         $account->parsedValue($request);
 
         $rule = new DifferentWithColumn(compare: "account");
@@ -45,10 +45,10 @@ class DifferentWithColumnTest extends TestCase
             'account' => 12
         ]);
 
-        $param = new Param(name:"str");
+        $param = new Param(type: null, name:"str");
         $param->parsedValue($request);
 
-        $account = new Param(name:"account");
+        $account = new Param(type: null, name:"account");
         $account->parsedValue($request);
 
         $rule = new DifferentWithColumn(compare: "account",strict: true);
@@ -74,10 +74,10 @@ class DifferentWithColumnTest extends TestCase
             'account' => "bajiu"
         ]);
 
-        $param = new Param(name:"str");
+        $param = new Param(type: null, name:"str");
         $param->parsedValue($request);
 
-        $account = new Param(name:"account");
+        $account = new Param(type: null, name:"account");
         $account->parsedValue($request);
 
         $rule = new DifferentWithColumn(compare: "account",strict: true);
@@ -96,10 +96,10 @@ class DifferentWithColumnTest extends TestCase
             'account' => 89
         ]);
 
-        $param = new Param(name:"str");
+        $param = new Param(type: null, name:"str");
         $param->parsedValue($request);
 
-        $account = new Param(name:"account");
+        $account = new Param(type: null, name:"account");
         $account->parsedValue($request);
 
         $rule = new DifferentWithColumn(compare: "account");
@@ -120,10 +120,10 @@ class DifferentWithColumnTest extends TestCase
             'account' => 89
         ]);
 
-        $param = new Param(name:"str");
+        $param = new Param(type: null, name:"str");
         $param->parsedValue($request);
 
-        $account = new Param(name:"account");
+        $account = new Param(type: null, name:"account");
         $account->parsedValue($request);
 
         $rule = new DifferentWithColumn(compare: "account");
@@ -149,10 +149,10 @@ class DifferentWithColumnTest extends TestCase
             'account' => "bajiu"
         ]);
 
-        $param = new Param(name:"str");
+        $param = new Param(type: null, name:"str");
         $param->parsedValue($request);
 
-        $account = new Param(name:"account");
+        $account = new Param(type: null, name:"account");
         $account->parsedValue($request);
 
         $rule = new DifferentWithColumn(compare: "account",strict: true,errorMsg: '两个参数不能一样');

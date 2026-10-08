@@ -32,7 +32,7 @@ class IsDomainTest extends TestCase
                 "domain" => $domain
             ]);
 
-            $param = new Param(name: "domain");
+            $param = new Param(type: null, name: "domain");
             $param->parsedValue($request);
 
             $rule = new IsDomain();
@@ -68,7 +68,7 @@ class IsDomainTest extends TestCase
                 "domain" => $domain
             ]);
 
-            $param = new Param(name: "domain");
+            $param = new Param(type: null, name: "domain");
             $param->parsedValue($request);
             $request = new ValidateRequest($param);
             $rule = new IsDomain();
@@ -87,7 +87,7 @@ class IsDomainTest extends TestCase
             "domain" => 'this is str'
         ]);
 
-        $param = new Param(name: "domain");
+        $param = new Param(type: null, name: "domain");
         $param->parsedValue($request);
         $request = new ValidateRequest($param);
         $rule = new IsDomain(errorMsg: '请输入合法的域名');

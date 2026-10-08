@@ -21,7 +21,7 @@ class IsNumericTest extends TestCase
             "age" => 18
         ]);
 
-        $param = new Param(name:"age");
+        $param = new Param(type: null, name:"age");
         $param->parsedValue($request);
         $request = new ValidateRequest($param);
         $rule = new IsNumeric();
@@ -32,7 +32,7 @@ class IsNumericTest extends TestCase
             "price" => 18.1
         ]);
 
-        $param = new Param(name:"price");
+        $param = new Param(type: null, name:"price");
         $param->parsedValue($request);
         $request = new ValidateRequest($param);
         $rule = new IsNumeric();
@@ -43,7 +43,7 @@ class IsNumericTest extends TestCase
             "age" => '18'
         ]);
 
-        $param = new Param(name:"age");
+        $param = new Param(type: null, name:"age");
         $param->parsedValue($request);
         $request = new ValidateRequest($param);
         $rule = new IsNumeric();
@@ -54,7 +54,7 @@ class IsNumericTest extends TestCase
             "price" => '18.1'
         ]);
 
-        $param = new Param(name:"price");
+        $param = new Param(type: null, name:"price");
         $param->parsedValue($request);
         $request = new ValidateRequest($param);
         $rule = new IsNumeric();
@@ -72,7 +72,7 @@ class IsNumericTest extends TestCase
             "price" => 'bajiu'
         ]);
 
-        $param = new Param(name:"price");
+        $param = new Param(type: null, name:"price");
         $param->parsedValue($request);
         $request = new ValidateRequest($param);
         $rule = new IsNumeric();
@@ -90,7 +90,7 @@ class IsNumericTest extends TestCase
             "price" => 'bajiu'
         ]);
 
-        $param = new Param(name:"price");
+        $param = new Param(type: null, name:"price");
         $param->parsedValue($request);
         $request = new ValidateRequest($param);
         $rule = new IsNumeric(errorMsg: '价格必须是数字');

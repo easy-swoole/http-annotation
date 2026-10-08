@@ -22,7 +22,7 @@ class OptionalTest extends TestCase
         ]);
 
         $num = new Param(
-            name:"num",
+            type: null, name:"num",
             validate: [
                 new Optional(),
                 new Integer()
@@ -57,7 +57,7 @@ class OptionalTest extends TestCase
         ]);
 
         $num = new Param(
-            name:"num",
+            type: null, name:"num",
             validate: [
                 new Optional(),
                 new Integer()
@@ -91,7 +91,7 @@ class OptionalTest extends TestCase
         ]);
 
         $num = new Param(
-            name:"num",
+            type: null, name:"num",
             validate: [
                 new Optional(),
                 new Integer()
@@ -128,7 +128,7 @@ class OptionalTest extends TestCase
         ]);
 
         $num = new Param(
-            name:"num",
+            type: null, name:"num",
             validate: [
                 new Optional(),
                 new Integer()

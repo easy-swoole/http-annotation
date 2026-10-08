@@ -21,7 +21,7 @@ class DifferentTest extends TestCase
             "str" => "easyswoole",
         ]);
 
-        $param = new Param(name:"str");
+        $param = new Param(type: null, name:"str");
         $param->parsedValue($request);
 
         $rule = new Different(compare: "easySwoole");
@@ -34,7 +34,7 @@ class DifferentTest extends TestCase
             "age" => "12",
         ]);
 
-        $param = new Param(name:"age");
+        $param = new Param(type: null, name:"age");
         $param->parsedValue($request);
 
         $rule = new Different(compare: 12,strict: true);
@@ -53,7 +53,7 @@ class DifferentTest extends TestCase
             "str" => "easyswoole",
         ]);
 
-        $param = new Param(name:"str");
+        $param = new Param(type: null, name:"str");
         $param->parsedValue($request);
 
         $rule = new Different(compare: "easyswoole",strict: true);
@@ -67,7 +67,7 @@ class DifferentTest extends TestCase
             "str" => 12,
         ]);
 
-        $param = new Param(name:"str");
+        $param = new Param(type: null, name:"str");
         $param->parsedValue($request);
 
         $rule = new Different(compare: "12");
@@ -86,7 +86,7 @@ class DifferentTest extends TestCase
             "str" => 0,
         ]);
 
-        $param = new Param(name:"str");
+        $param = new Param(type: null, name:"str");
         $param->parsedValue($request);
 
         $rule = new Different(compare: "0",errorMsg: '参数必须不等于0');

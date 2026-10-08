@@ -290,13 +290,16 @@ $http->start();
 
 ## 验证
 
-安装开发依赖后，可分别运行接口定义、文档生成及前端交互测试：
+开发测试使用 PHPUnit 13.4，需要 PHP **8.4 或以上**；库本身的最低 PHP 版本仍为 8.1。安装开发依赖后，默认读取 `phpunit.xml.dist`，可运行完整测试或指定目录：
 
 ```bash
-php vendor/bin/phpunit --bootstrap vendor/autoload.php --do-not-cache-result tests/Attributes
-php vendor/bin/phpunit --bootstrap vendor/autoload.php --do-not-cache-result tests/Document
+php vendor/bin/phpunit
+php vendor/bin/phpunit tests/Attributes
+php vendor/bin/phpunit tests/Document
 node tests/Document/try-runner.test.cjs
 node tests/Document/document-ui.test.cjs
 ```
 
 Node 测试使用内置的 Fetch、File、FormData 等 API，需使用提供这些全局对象的现代 Node.js（建议 20+）。前端交互测试采用 DOM 替身；浏览器焦点、布局和跨域行为仍需在实际浏览器与服务环境中验证。
+
+验证器测试通过 `Param(type: null, ...)` 保留原始输入类型，专门验证规则行为；默认 `ParamType::STRING` 会先将输入转换为字符串。PHPUnit 数据提供器使用 `#[DataProvider(...)]`，提供器方法必须为 `public static`。

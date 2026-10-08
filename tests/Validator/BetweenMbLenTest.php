@@ -22,7 +22,7 @@ class BetweenMbLenTest extends TestCase
             "name" => '城南花已开'
         ]);
 
-        $param = new Param(name:"name");
+        $param = new Param(type: null, name:"name");
         $param->parsedValue($request);
         $request = new ValidateRequest($param);
         $rule = new BetweenMbLen(minLen: 5, maxLen: 10);
@@ -34,7 +34,7 @@ class BetweenMbLenTest extends TestCase
             "name" => 'bajiu'
         ]);
 
-        $param = new Param(name:"name");
+        $param = new Param(type: null, name:"name");
         $param->parsedValue($request);
         $request = new ValidateRequest($param);
         $rule = new BetweenMbLen(minLen: 5, maxLen: 10);
@@ -46,7 +46,7 @@ class BetweenMbLenTest extends TestCase
             "num" => 5.56
         ]);
 
-        $param = new Param(name:"num");
+        $param = new Param(type: null, name:"num");
         $param->parsedValue($request);
 
     }
@@ -61,7 +61,7 @@ class BetweenMbLenTest extends TestCase
             "name" => '城南花已开'
         ]);
 
-        $param = new Param(name:"name");
+        $param = new Param(type: null, name:"name");
         $param->parsedValue($request);
         $request = new ValidateRequest($param);
         $rule = new BetweenMbLen(minLen: 2, maxLen: 4);
@@ -79,7 +79,7 @@ class BetweenMbLenTest extends TestCase
             "name" => '八九'
         ]);
 
-        $param = new Param(name:"name");
+        $param = new Param(type: null, name:"name");
         $param->parsedValue($request);
         $request = new ValidateRequest($param);
         $rule = new BetweenMbLen(minLen: 5, maxLen: 10,errorMsg: "testCustomErrorMsgCase");

@@ -25,7 +25,7 @@ class OptionIfParamMissTest extends TestCase
         ]);
 
         $num = new Param(
-            name:"num",
+            type: null, name:"num",
             validate: [
                 new OptionalIfParamMiss('account'),
                 new Integer()
@@ -34,7 +34,7 @@ class OptionIfParamMissTest extends TestCase
         $num->parsedValue($request);
 
         $account = new Param(
-            name: "account"
+            type: null, name: "account"
         );
         $account->parsedValue($request);
 
@@ -65,7 +65,7 @@ class OptionIfParamMissTest extends TestCase
         ]);
 
         $num = new Param(
-            name:"num",
+            type: null, name:"num",
             validate: [
                 new OptionalIfParamMiss('account'),
                 new Integer()
@@ -74,7 +74,7 @@ class OptionIfParamMissTest extends TestCase
         $num->parsedValue($request);
 
         $account = new Param(
-            name: "account"
+            type: null, name: "account"
         );
         $account->parsedValue($request);
 
@@ -107,7 +107,7 @@ class OptionIfParamMissTest extends TestCase
         ]);
 
         $num = new Param(
-            name:"num",
+            type: null, name:"num",
             validate: [
                 new OptionalIfParamMiss('account'),
                 new Integer()
@@ -116,7 +116,7 @@ class OptionIfParamMissTest extends TestCase
         $num->parsedValue($request);
 
         $account = new Param(
-            name: "account"
+            type: null, name: "account"
         );
         $account->parsedValue($request);
 
@@ -149,7 +149,7 @@ class OptionIfParamMissTest extends TestCase
         ]);
 
         $num = new Param(
-            name:"num",
+            type: null, name:"num",
             validate: [
                 new OptionalIfParamMiss('account'),
                 new Integer()
@@ -158,7 +158,7 @@ class OptionIfParamMissTest extends TestCase
         $num->parsedValue($request);
 
         $account = new Param(
-            name: "account"
+            type: null, name: "account"
         );
         $account->parsedValue($request);
 
