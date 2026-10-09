@@ -104,7 +104,8 @@ class Index extends Base
                 name: 'userName',
                 validate: [
                     new NotEmpty()
-                ]
+                ],
+                ignoreAction: ['test2']
             ),
             new Param(
                 name: 'idCode',
