@@ -58,6 +58,9 @@ class Api
             if (!$item instanceof Param) {
                 throw new Annotation('requestParam must contain Param instances');
             }
+            if(!empty($item->ignoreAction)){
+                throw new Annotation('ignoreAction cannot set in controller action,only onRequest method allowed');
+            }
             $sources = is_array($item->from) ? $item->from : [$item->from];
             if (empty($sources)) {
                 throw new Annotation("param {$item->name} must define at least one FROM source");

@@ -32,7 +32,8 @@ class Base extends AnnotationController
         validate: [
             new NotEmpty(),
             new MinLength(32),
-        ]
+        ],
+        ignoreAction: ['test2']
     )]
     function onRequest(?string $action,?array $data = null): ?bool
     {
