@@ -17,6 +17,7 @@ class Element {
     append(...children) { this.children.push(...children); }
     replaceChildren() { this.children = []; }
     setAttribute() {}
+    dispatchEvent(event) { if (this.listeners[event.type]) this.listeners[event.type](event); }
     add(option) {
         this.children.push(option);
         if (!this.value) this.value = option.value;
@@ -66,7 +67,7 @@ const document = {
     createTextNode: text => text,
 };
 const context = vm.createContext({document, window: {scrollTo() {}, addEventListener: document.addEventListener}, location: {href: 'http://localhost/docs'},
-    URL, URLSearchParams, history: {pushState(_state, _title, hash) {context.location.hash = hash;}}, Option: class {constructor(text, value) {this.value = value;}}});
+    Event, URL, URLSearchParams, history: {pushState(_state, _title, hash) {context.location.hash = hash;}}, Option: class {constructor(text, value) {this.value = value;}}});
 vm.runInContext(script, context);
 
 function selectApi(name) {
@@ -226,3 +227,13 @@ for (const from of ['GET', 'POST', 'HEADER', 'COOKIE', 'FILE']) {
 }
 assert.equal(context.buildParameterField('input', {from: ['GET', 'POST']}, 'POST', null).querySelector('.try-source').disabled, false);
 console.log('单一来源固定、多来源可选检查通过');
+
+selectApi('upload');
+elements.get('try-dialog').close();
+selectApi('detail');
+elements.get('try-raw-body').value = '{"msgId":"remember"}';
+elements.get('try-form').listeners.input();
+elements.get('try-dialog').close();
+selectApi('detail');
+assert.equal(elements.get('try-raw-body').value, '{"msgId":"remember"}');
+console.log('立即尝试请求体记忆和恢复检查通过');

@@ -727,6 +727,8 @@
     let activeTryParams = {};
     let tryController = null;
     let tryDialogTrigger = null;
+    let tryDraftKey = null;
+    const tryDrafts = new Map();
     const tryDialog = document.getElementById('try-dialog');
     const tryForm = document.getElementById('try-form');
     const tryMethod = document.getElementById('try-method');
@@ -962,10 +964,57 @@
     }
 
 
+    function saveTryDraft() {
+        if (!tryDraftKey) return;
+        const parameters = Object.create(null);
+        for (const row of document.getElementById('try-fields').children) {
+            if (!row.dataset.parameter) continue;
+            const input = row.querySelector('.try-value');
+            parameters[row.dataset.name] = {
+                source: row.querySelector('.try-source').value,
+                included: input.type !== 'file' && row.querySelector('.try-include').checked,
+                value: input.type === 'file' ? '' : input.value
+            };
+        }
+        const editor = document.getElementById('try-raw-body');
+        const draft = {parameters, body: editor ? editor.value : '',
+            url: document.getElementById('try-url').value,
+            timeout: document.getElementById('try-timeout').value};
+        tryDrafts.set(tryDraftKey, draft);
+        try { sessionStorage.setItem(tryDraftKey, JSON.stringify(draft)); } catch (_) {}
+    }
+
+    function restoreTryDraft() {
+        let draft = tryDrafts.get(tryDraftKey);
+        if (!draft) {
+            try { draft = JSON.parse(sessionStorage.getItem(tryDraftKey)); } catch (_) {}
+        }
+        if (!draft || !draft.parameters) return;
+        for (const row of document.getElementById('try-fields').children) {
+            if (!row.dataset.parameter) continue;
+            const saved = draft.parameters[row.dataset.name];
+            if (!saved) continue;
+            const source = row.querySelector('.try-source');
+            if (Array.from(source.children).some(option => option.value === saved.source)) {
+                source.value = saved.source;
+                source.dispatchEvent(new Event('change'));
+            }
+            const input = row.querySelector('.try-value');
+            if (input.type !== 'file') input.value = saved.value;
+            const include = row.querySelector('.try-include');
+            include.checked = !include.disabled && input.type !== 'file' && saved.included;
+        }
+        const editor = document.getElementById('try-raw-body');
+        if (editor) editor.value = draft.body || '';
+        if (draft.url) document.getElementById('try-url').value = draft.url;
+        if (draft.timeout) document.getElementById('try-timeout').value = draft.timeout;
+    }
+
     function openTryDialog(event) {
         const trigger = event.target.closest('#try-open');
         if (!trigger || !activeTryApi) return;
         tryDialogTrigger = trigger;
+        tryDraftKey = 'http-annotation:try:' + JSON.stringify([location.href.split('#')[0], config.host, activeDocument.path, activeTryApi.apiName, activeTryApi.allowMethod, activeTryApi.requestPath]);
         const requestPath = config.host
             ? config.host.replace(/\/+$/, '') + '/' + activeTryApi.requestPath.replace(/^\/+/, '')
             : activeTryApi.requestPath;
@@ -975,6 +1024,7 @@
         tryMethod.value = activeTryApi.allowMethod;
         document.getElementById('try-title').textContent = activeTryApi.apiName + ' · 立即尝试';
         buildTryFields();
+        restoreTryDraft();
         tryResult.hidden = true;
         tryDialog.showModal();
         document.getElementById('try-close').focus({preventScroll: true});
@@ -1439,6 +1489,8 @@
     }
     content.addEventListener('click', openTryDialog);
     tryForm.addEventListener('submit', runTryRequest);
+    tryForm.addEventListener('input', saveTryDraft);
+    tryForm.addEventListener('change', saveTryDraft);
     sideBar.addEventListener('click', handleMenuClick);
     document.getElementById('try-close').addEventListener('click', closeTryDialog);
     // 从 window 捕获；keyup 兼容输入控件先消耗 keydown 的情况。
@@ -1449,6 +1501,7 @@
         closeTryDialog();
     });
     tryDialog.addEventListener('close', () => {
+        saveTryDraft();
         if (tryController) tryController.abort();
         if (tryDialogTrigger && tryDialogTrigger.isConnected) {
             tryDialogTrigger.focus({preventScroll: true});
