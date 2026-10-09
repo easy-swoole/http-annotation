@@ -173,7 +173,7 @@ public function update(array $params): void
 - BOOLEAN 使用 PHP 布尔转换；字符串 `"false"` 会被转成 `true`。表单布尔值建议使用 `1`、`0`。
 - JSON 参数按字段名从请求体解码结果取值；XML 参数从根节点的直接子节点取值；RAW_POST 返回整个请求体。
 
-内置校验器位于 `src/Validator`，包括必填、长度、数值、日期、邮箱、文件和字段比较等。当前控制器未向 `ValidateRequest::allDefineParams` 传入全部参数，因此跨字段校验器在控制器集成流程中仍有使用限制。
+内置校验器位于 `src/Validator`，包括必填、长度、数值、日期、邮箱、文件和字段比较等。控制器在公共参数和 action 参数校验阶段均传入已解析的 `allDefineParams`，支持跨字段比较及条件可选规则；action 同名参数优先，ignoreAction 排除的参数不会进入该集合。
 
 ## 公共参数与继承
 

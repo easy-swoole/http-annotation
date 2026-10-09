@@ -78,6 +78,7 @@ abstract class AnnotationController extends Controller
                     continue;
                 }
                 $validateRequest = new ValidateRequest($finalAllParams[$param->name]);
+                $validateRequest->allDefineParams = $finalAllParams;
                 $validateRequest->callClass = static::class;
                 $validateRequest->callMethod = $this->getActionName();
                 $validateRequest->request = $this->request();
@@ -90,6 +91,7 @@ abstract class AnnotationController extends Controller
                     continue;
                 }
                 $validateRequest = new ValidateRequest($finalAllParams[$param->name]);
+                $validateRequest->allDefineParams = $finalAllParams;
                 $validateRequest->callClass = static::class;
                 $validateRequest->callMethod = $this->getActionName();
                 $validateRequest->request = $this->request();
