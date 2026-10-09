@@ -122,7 +122,7 @@ class Document
                 foreach ($params as $paramName => $param){
                     $result[$paramName] = [
                         'type'=>$param->type?->name,
-                        'from'=>$param->from?->name,
+                        'from'=>array_map(static fn(\EasySwoole\HttpAnnotation\Enum\ParamFrom $source): string => $source->name, $param->from),
                         'description'=>$param->description ? $param->description->toString() : null,
                         'defaultValue'=>$param->value,
                         'ignoreAction'=>$param->ignoreAction,

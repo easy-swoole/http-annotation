@@ -104,7 +104,7 @@ class DocumentTest extends TestCase
         $this->assertSame('INT', $apis['plain']['requestParams']['id']['type']);
         $this->assertSame('GET', $apis['plain']['allowMethod']);
         $this->assertNull($apis['plain']['acceptContentType']);
-        $this->assertSame('GET', $apis['plain']['requestParams']['id']['from']);
+        $this->assertSame(['GET'], $apis['plain']['requestParams']['id']['from']);
         $this->assertNull($apis['plain']['requestParams']['name']['type']);
         $this->assertStringContainsString('descriptionHtml', $document->scan2html());
     }

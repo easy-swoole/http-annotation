@@ -15,6 +15,7 @@ use EasySwoole\HttpAnnotation\Bean\ClassAttribute;
 use EasySwoole\HttpAnnotation\Bean\ClassOnRequest;
 use EasySwoole\HttpAnnotation\Bean\PropertyAttribute;
 use EasySwoole\HttpAnnotation\Enum\HttpMethod;
+use EasySwoole\HttpAnnotation\Enum\ParamFrom;
 use EasySwoole\HttpAnnotation\Exception\Annotation;
 use EasySwoole\HttpAnnotation\Exception\RequestMethodNotAllow;
 use ReflectionClass;
@@ -41,7 +42,6 @@ class AttributeCache
             return $this->map[$className];
         }
         $classInfo = new ClassAttribute();
-        $this->map[$className] = $classInfo;
 
         $reflectionClass = new \ReflectionClass($className);
         $apiGroup = $reflectionClass->getAttributes(ApiGroup::class);
@@ -180,6 +180,28 @@ class AttributeCache
             }
         }
 
+        // 继承与覆盖完成后，检查实际作用于 GET action 的公共参数。
+        foreach ($classInfo->apis as $actionName => $api) {
+            if ($api->allowMethod !== HttpMethod::GET) {
+                continue;
+            }
+            foreach ($classInfo->onRequest->onRequestParams as $param) {
+                if (in_array($actionName, $param->ignoreAction, true)
+                    || isset($api->requestParam[$param->name])) {
+                    continue;
+                }
+                if (!in_array(ParamFrom::GET, $param->from, true)) {
+                    $sources = implode(', ', array_map(static fn(ParamFrom $source): string => $source->name, $param->from));
+                    throw new Annotation(
+                        "class {$className}, action {$actionName}: Api allowMethod GET conflicts with onRequest param {$param->name} FROM [{$sources}]; "
+                        . 'the applicable onRequest parameter must include ParamFrom::GET, be overridden by the action, or exclude this action via ignoreAction'
+                    );
+                }
+            }
+        }
+
+        // 只缓存完整且通过校验的扫描结果。
+        $this->map[$className] = $classInfo;
         return $classInfo;
 
     }

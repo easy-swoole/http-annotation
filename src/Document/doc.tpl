@@ -607,6 +607,8 @@
         #try-form .try-field label { margin: 0; overflow-wrap: anywhere; }
         .try-field .try-value, .try-field .try-hint { grid-column: 1 / -1; }
         .try-field .try-source { width: 100%; }
+        #try-form .try-source:enabled { background: #fff; color: #2c3e50; cursor: pointer; }
+        #try-form .try-source:disabled { background: #f0f2f5; color: #8392a0; border-color: #e1e7ed; opacity: 1; -webkit-text-fill-color: #8392a0; cursor: default; }
         .try-include { accent-color: #148c80; }
         #try-raw-body { width: 100%; min-height: 13rem; resize: vertical; font-family: monospace; line-height: 1.6; margin: .5rem 0; }
         .try-body-editor { padding: .7rem 0; }
@@ -878,7 +880,7 @@
         row.dataset.name = name;
         row.dataset.type = param.type || '';
         const definedSources = Array.isArray(param.from) ? param.from : (param.from ? [param.from] : ['GET']);
-        let sources = param.type === 'FILE' ? ['FILE'] : definedSources;
+        let sources = [...new Set(definedSources)];
         if (bodyType) {
             sources = sources.filter(source => ['GET', 'HEADER', 'COOKIE', 'ROUTER_PARAMS'].includes(source));
             if (!sources.length) return null;
@@ -897,8 +899,9 @@
         source.className = 'try-source';
         for (const from of allowed) source.add(new Option(from, from));
         if (method !== 'GET' && method !== 'HEAD' && allowed.includes('POST')) source.value = 'POST';
-        source.disabled = !allowed.length;
+        source.disabled = allowed.length <= 1;
         source.setAttribute('aria-label', name + ' 参数来源');
+        source.title = allowed.length > 1 ? '选择本次请求的参数来源' : '参数来源';
         const value = document.createElement('input');
         value.className = 'try-value';
         value.setAttribute('aria-label', name + ' 参数值');
@@ -915,12 +918,27 @@
         const includeValue = () => { if (!include.disabled) include.checked = true; };
         value.addEventListener('input', includeValue);
         value.addEventListener('change', includeValue);
-        source.addEventListener('change', updateType);
+        source.addEventListener('change', () => {
+            updateType();
+            updateHint();
+        });
         const hint = document.createElement('div');
         hint.className = 'try-hint';
-        hint.textContent = allowed.length ? [allowed.includes('COOKIE') ? 'COOKIE：运行时设置当前站点 Cookie；需通过 HTTP(S) 打开同源文档，跨域 Cookie 请先在接口站点登录。' : allowed.includes('HEADER') ? 'HEADER：填写后作为 HTTP 请求头发送' : '', param.type, param.description,
-            ...Object.values(param.validateRules || {}).map(rule => rule.msg)].filter(Boolean).join(' · ')
-            : '该参数由服务器或浏览器管理，或不适用于当前请求方法。';
+        const updateHint = () => {
+            const sourceHint = {
+                GET: 'GET：作为 URL 查询参数发送',
+                POST: 'POST：作为表单参数发送',
+                HEADER: 'HEADER：作为 HTTP 请求头发送',
+                COOKIE: 'COOKIE：运行时设置当前站点 Cookie；需通过 HTTP(S) 打开同源文档，跨域 Cookie 请先在接口站点登录。',
+                FILE: 'FILE：选择文件后上传',
+                ROUTER_PARAMS: 'ROUTER_PARAMS：替换请求地址中的路由参数'
+            }[source.value] || '';
+            hint.textContent = allowed.length
+                ? [sourceHint, param.type, param.description,
+                    ...Object.values(param.validateRules || {}).map(rule => rule.msg)].filter(Boolean).join(' · ')
+                : '该参数由服务器或浏览器管理，或不适用于当前请求方法。';
+        };
+        updateHint();
         row.append(label, source, value, hint);
         return row;
     }

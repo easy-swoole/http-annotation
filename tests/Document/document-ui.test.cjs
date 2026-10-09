@@ -198,3 +198,31 @@ assert.match(document.cookie, /ticket=a%20b/);
 assert.throws(() => context.applyTryCookies({url: 'http://other.test/logout'}, [{source: 'COOKIE', name: 'ticket', value: 'abc'}]), /同源/);
 assert.throws(() => context.applyTryCookies({url: 'http://localhost/logout'}, [{source: 'COOKIE', name: 'bad;name', value: 'abc'}]), /无效/);
 console.log('COOKIE 表单、设置及跨域提示检查通过');
+
+const multiSourceRow = context.buildParameterField('id', {from: ['GET', 'POST'], type: 'STRING'}, 'POST', null);
+const multiSourceSelect = multiSourceRow.querySelector('.try-source');
+assert.equal(multiSourceSelect.children.map(option => option.value).join(','), 'GET,POST');
+assert.equal(multiSourceSelect.disabled, false);
+multiSourceSelect.value = 'GET';
+multiSourceSelect.listeners.change();
+assert.match(multiSourceRow.querySelector('.try-hint').textContent, /URL 查询参数/);
+multiSourceSelect.value = 'POST';
+multiSourceSelect.listeners.change();
+assert.match(multiSourceRow.querySelector('.try-hint').textContent, /表单参数/);
+const fileSources = context.buildParameterField('upload', {from: ['POST', 'FILE'], type: 'STRING'}, 'POST', null);
+fileSources.querySelector('.try-source').value = 'FILE';
+fileSources.querySelector('.try-source').listeners.change();
+assert.equal(fileSources.querySelector('.try-value').type, 'file');
+fileSources.querySelector('.try-source').value = 'POST';
+fileSources.querySelector('.try-source').listeners.change();
+assert.equal(fileSources.querySelector('.try-value').type, 'text');
+console.log('多来源选项和输入控件切换检查通过');
+
+for (const from of ['GET', 'POST', 'HEADER', 'COOKIE', 'FILE']) {
+    const fixed = context.buildParameterField('input', {from: [from], type: from === 'FILE' ? 'FILE' : 'STRING'}, 'POST', null);
+    assert.equal(fixed.querySelector('.try-source').disabled, true);
+    assert.equal(fixed.querySelector('.try-source').value, from);
+    assert.equal(fixed.querySelector('.try-value').disabled, false);
+}
+assert.equal(context.buildParameterField('input', {from: ['GET', 'POST']}, 'POST', null).querySelector('.try-source').disabled, false);
+console.log('单一来源固定、多来源可选检查通过');

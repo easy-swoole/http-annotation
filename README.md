@@ -108,7 +108,7 @@ GET、HEAD 的 Content-Type 默认是 `null`；其他方法未指定时默认为
 
 特别注意：
 
-- `Param::from` 默认是 `[ParamFrom::GET, ParamFrom::POST]`。**GET、HEAD 接口必须显式指定合规来源**，例如 `from: ParamFrom::GET`；JSON、XML、RAW 接口也应显式指定匹配的来源。
+- `Param::from` 默认是 `[ParamFrom::GET]`。**GET、HEAD 接口必须显式指定合规来源**，例如 `from: ParamFrom::GET`；JSON、XML、RAW 接口也应显式指定匹配的来源。
 - `from` 可以是单个枚举或数组。数组不能为空，每一项都必须合规；不能把不合规来源当作“备用来源”。读取时按数组顺序选择第一个命中的来源。
 - `requestParam` 必须由 `Param` 对象组成，同一接口内不允许重复参数名称。
 - 这里校验的是 **Api 定义**。当前控制器运行时会检查 HTTP 方法，但没有单独核验实际请求的 `Content-Type` 是否与 `acceptContentType` 一致。需要严格限制实际请求头时，应在业务层增加检查。
@@ -303,3 +303,5 @@ node tests/Document/document-ui.test.cjs
 Node 测试使用内置的 Fetch、File、FormData 等 API，需使用提供这些全局对象的现代 Node.js（建议 20+）。前端交互测试采用 DOM 替身；浏览器焦点、布局和跨域行为仍需在实际浏览器与服务环境中验证。
 
 验证器测试通过 `Param(type: null, ...)` 保留原始输入类型，专门验证规则行为；默认 `ParamType::STRING` 会先将输入转换为字符串。PHPUnit 数据提供器使用 `#[DataProvider(...)]`，提供器方法必须为 `public static`。
+
+参数来源包含 `ParamFrom::FILE` 时，只允许单一来源 `from: [ParamFrom::FILE]`（兼容 `from: ParamFrom::FILE`）；与其他来源混用或重复定义 FILE 会抛出异常。
