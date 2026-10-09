@@ -119,7 +119,7 @@ GET、HEAD 的 Content-Type 默认是 `null`；其他方法未指定时默认为
 | 属性 | 用途与默认值 |
 | --- | --- |
 | `name` | 参数名，用于取值和方法形参匹配 |
-| `from` | 参数来源，默认 GET、POST |
+| `from` | 参数来源数组，默认 `[ParamFrom::GET]`，兼容单个枚举 |
 | `type` | 默认 `ParamType::STRING`；设置为 `null` 可保留原值 |
 | `value` | 未取到参数时的默认值，默认 `null` |
 | `validate` | 校验器对象数组，默认空数组 |
@@ -128,11 +128,47 @@ GET、HEAD 的 Content-Type 默认是 `null`；其他方法未指定时默认为
 | `ignoreAction` | 忽略该参数的 action 名称列表 |
 | `ignorePassArgWhenNotSet` | 单数组形参模式中，未传入时不加入参数数组 |
 
+完整的验证器参数、规则行为和使用示例见 [验证器使用指南](Validate.md)。
+
 支持 STRING、INT、DOUBLE、REAL、FLOAT、BOOLEAN、FILE、NULL_WHILE_EMPTY 类型。转换发生在校验前，转换本身不是合法性校验，必要时仍需配置校验器。
+
+### 未传参数与空值转换
+
+`ignorePassArgWhenNotSet: true` 只在 action 使用**单个 `array` 形参接收参数**时生效：没有取到参数（`hasSet() === false`）时，不将该参数加入传给 action 的数组。独立形参模式不应用此选项。它不跳过参数校验，因此配置 `Required` 等规则时，未传参数仍可能校验失败。
+
+GET、POST、JSON 字段通过 `isset` 判断是否存在，未传字段和显式传入 `null` 均视为未设置；空字符串 `''`、整数 `0`、字符串 `'0'`、`false` 则视为已设置，仍会传入。声明了默认 `value` 也不会改变 `hasSet()`，未设置时仍会省略该参数。
+
+`type: ParamType::NULL_WHILE_EMPTY` 使用 PHP 的 `empty()` 规则转换值，但特别保留整数 `0` 和字符串 `'0'`：
+
+| 原始值 | 转换后的值 |
+| --- | --- |
+| `null`、`''`、`false`、`[]`、浮点 `0.0` | `null` |
+| 整数 `0`、字符串 `'0'` | 保留原值和类型 |
+| 空格字符串 `' '`、其他非空值 | 保留原值和类型 |
+
+转换不会改变是否已设置参数。组合使用这两个选项时，**已传入的空字符串会转为 `null`，但不会从参数数组中省略**。
+
+```php
+#[Api(requestParam: [
+    new Param(
+        name: 'remark',
+        from: [ParamFrom::GET],
+        type: ParamType::NULL_WHILE_EMPTY,
+        ignorePassArgWhenNotSet: true
+    ),
+])]
+public function update(array $params): void
+{
+    // 未传 remark 或传入 null：$params 中没有 remark。
+    // 传入 remark=''：$params 为 ['remark' => null]。
+    // 传入 remark='0'：$params 为 ['remark' => '0']。
+}
+```
+
 
 - 上传文件同时配置 `from: ParamFrom::FILE` 和 `type: ParamType::FILE`，避免默认字符串转换影响文件对象。
 - `value` 在实际请求中也会参与类型转换；文档默认值列展示声明时的原值，保留 `0`、`false`、空字符串，`null` 显示为 `-`。
-- `Required` 检查是否设置参数，`NotEmpty` 检查值是否为空，两者含义不同。Header 参数还应根据需要使用 `NotEmpty`，当前 Header 解析分支即使请求头缺失也会标记为已设置。
+- `Required` 检查是否设置参数，`NotEmpty` 检查值是否为空，两者含义不同。Header 参数还应根据需要使用 `NotEmpty`，缺失请求头不会标记为已设置。
 - 想用 `Optional` 保留“未传入且为 null”的语义时，应显式设置 `type: null`，避免默认 STRING 将 `null` 转成空字符串。
 - BOOLEAN 使用 PHP 布尔转换；字符串 `"false"` 会被转成 `true`。表单布尔值建议使用 `1`、`0`。
 - JSON 参数按字段名从请求体解码结果取值；XML 参数从根节点的直接子节点取值；RAW_POST 返回整个请求体。
