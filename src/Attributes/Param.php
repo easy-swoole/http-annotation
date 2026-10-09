@@ -4,7 +4,6 @@ namespace EasySwoole\HttpAnnotation\Attributes;
 
 use EasySwoole\Component\Context\ContextManager;
 use EasySwoole\Component\Di as IOC;
-use EasySwoole\Http\AbstractInterface\AbstractRouter;
 use EasySwoole\HttpAnnotation\Bean\Description\Text;
 use EasySwoole\HttpAnnotation\Enum\ParamFrom;
 use EasySwoole\HttpAnnotation\Enum\ParamType;
@@ -176,14 +175,6 @@ class Param
                     if(!empty($data)){
                         $this->hasSet = true;
                         $this->value = $data[0];
-                    }
-                    break;
-                }
-                case ParamFrom::ROUTER_PARAMS:{
-                    $data = ContextManager::getInstance()->get(AbstractRouter::PARSE_PARAMS_CONTEXT_KEY);
-                    if(isset($data[$this->name])){
-                        $this->hasSet = true;
-                        $this->value = $data;
                     }
                     break;
                 }

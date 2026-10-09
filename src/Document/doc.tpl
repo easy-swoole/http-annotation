@@ -884,7 +884,7 @@
         const definedSources = Array.isArray(param.from) ? param.from : (param.from ? [param.from] : ['GET']);
         let sources = [...new Set(definedSources)];
         if (bodyType) {
-            sources = sources.filter(source => ['GET', 'HEADER', 'COOKIE', 'ROUTER_PARAMS'].includes(source));
+            sources = sources.filter(source => ['GET', 'HEADER', 'COOKIE'].includes(source));
             if (!sources.length) return null;
         }
         const allowed = sources.filter(source =>
@@ -932,8 +932,7 @@
                 POST: 'POST：作为表单参数发送',
                 HEADER: 'HEADER：作为 HTTP 请求头发送',
                 COOKIE: 'COOKIE：运行时设置当前站点 Cookie；需通过 HTTP(S) 打开同源文档，跨域 Cookie 请先在接口站点登录。',
-                FILE: 'FILE：选择文件后上传',
-                ROUTER_PARAMS: 'ROUTER_PARAMS：替换请求地址中的路由参数'
+                FILE: 'FILE：选择文件后上传'
             }[source.value] || '';
             hint.textContent = allowed.length
                 ? [sourceHint, param.type, param.description,
@@ -1045,12 +1044,7 @@
         for (const field of fields) {
             const {name, source, value, type} = field;
             const scalar = value instanceof File ? value : String(value);
-            if (source === 'ROUTER_PARAMS') {
-                const pattern = new RegExp('\\{' + name.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + '(?::[^}]+)?\\}', 'g');
-                if (!pattern.test(path)) throw new Error('地址中未找到路由参数：' + name);
-                pattern.lastIndex = 0;
-                path = path.replace(pattern, encodeURIComponent(scalar));
-            } else if (source === 'GET') query.push([name, scalar]);
+            if (source === 'GET') query.push([name, scalar]);
             else if (source === 'HEADER') headers.set(name, scalar);
             else if (source === 'POST') {
                 bodyKinds.add('form');

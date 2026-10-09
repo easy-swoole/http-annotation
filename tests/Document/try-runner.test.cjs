@@ -6,11 +6,11 @@ const source = template.slice(template.indexOf('    function buildTryRequest('),
 const context = vm.createContext({Headers, URL, URLSearchParams, FormData, File, AbortController,
     setTimeout, clearTimeout, location: {href: 'http://localhost/docs/'}, tryController: null});
 vm.runInContext(source, context);
-const build = (method, fields, url = 'http://localhost/users/{id}') => context.buildTryRequest(url, method, fields);
+const build = (method, fields, url = 'http://localhost/users') => context.buildTryRequest(url, method, fields);
 const field = (name, source, value, type = 'STRING') => ({name, source, value, type});
 (async () => {
-    const query = build('GET', [field('id', 'ROUTER_PARAMS', 'a/b'), field('q', 'GET', 'a & b'), field('X-Token', 'HEADER', 'token')]);
-    assert.equal(query.url, 'http://localhost/users/a%2Fb?q=a+%26+b');
+    const query = build('GET', [field('q', 'GET', 'a & b'), field('X-Token', 'HEADER', 'token')]);
+    assert.equal(query.url, 'http://localhost/users?q=a+%26+b');
     assert.equal(query.options.headers.get('X-Token'), 'token');
     assert.equal(query.options.body, undefined);
     const headerRequest = build('GET', [field('testHeader', 'HEADER', 'test-value')], 'http://localhost/api/common/message/unRead');

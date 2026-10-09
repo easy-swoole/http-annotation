@@ -104,7 +104,7 @@ class Message extends AnnotationController
 | XML | XML |
 | RAW | RAW_POST |
 
-GET、HEAD 的 Content-Type 默认是 `null`；其他方法未指定时默认为 `FORM_DATA`。GET、HEADER、COOKIE、ROUTER_PARAMS、DI、CONTEXT 不属于请求体来源，可与上表中的内容类型一起定义。
+GET、HEAD 的 Content-Type 默认是 `null`；其他方法未指定时默认为 `FORM_DATA`。GET、HEADER、COOKIE、DI、CONTEXT 不属于请求体来源，可与上表中的内容类型一起定义。
 
 特别注意：
 

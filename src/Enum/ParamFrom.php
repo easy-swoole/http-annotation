@@ -14,7 +14,6 @@ enum ParamFrom
     case CONTEXT;
     case COOKIE;
     case HEADER;//swoole header的key，全部都是小写
-    case ROUTER_PARAMS;
 
     public function toString():string
     {
