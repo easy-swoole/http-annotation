@@ -59,15 +59,15 @@ abstract class AbstractValidator
         return $this->errorMsgTpl;
     }
 
-    function errorMsg(string $validateParamName,ValidateMsgMapInterface|null $validateMsgMap = null):string
+    function errorMsg(string $validateParamName,string|null $validateMsgMapClass = null):string
     {
         if(empty($this->errorMsgTpl)){
-            if($validateMsgMap === null){
-                $validateMsgMap = DefaultMap::class;
+            if($validateMsgMapClass === null){
+                $validateMsgMapClass = DefaultMap::class;
             }
-            $tpl = $validateMsgMap::getMsgTpl(static::ruleName());
+            $tpl = $validateMsgMapClass::getMsgTpl(static::ruleName());
             if(empty($tpl)){
-                $tpl = $validateMsgMap::getDefaultMsgTpl(static::ruleName());
+                $tpl = $validateMsgMapClass::getDefaultMsgTpl(static::ruleName());
             }
         }else{
             $tpl = $this->errorMsgTpl;

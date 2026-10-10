@@ -18,6 +18,7 @@ use EasySwoole\HttpAnnotation\Exception\RequestMethodNotAllow;
 use EasySwoole\HttpAnnotation\Exception\ParamValidateFail;
 use EasySwoole\HttpAnnotation\Validator\AbstractInterface\AbstractValidator;
 use EasySwoole\HttpAnnotation\Validator\Bean\ValidateRequest;
+use EasySwoole\HttpAnnotation\Validator\MsgMap\DefaultMap;
 
 
 abstract class AnnotationController extends Controller
@@ -82,7 +83,7 @@ abstract class AnnotationController extends Controller
                 $validateRequest->callClass = static::class;
                 $validateRequest->callMethod = $this->getActionName();
                 $validateRequest->request = $this->request();
-                Utility::validateParam($validateRequest);
+                Utility::validateParam($validateRequest,$this->__getValidateRuleMapClass());
                 $onRequestArg[$param->name] = $finalAllParams[$param->name]->parsedValue();
             }
 
@@ -95,7 +96,7 @@ abstract class AnnotationController extends Controller
                 $validateRequest->callClass = static::class;
                 $validateRequest->callMethod = $this->getActionName();
                 $validateRequest->request = $this->request();
-                Utility::validateParam($validateRequest);
+                Utility::validateParam($validateRequest,$this->__getValidateRuleMapClass());
             }
 
             if($apiTag){
@@ -163,5 +164,10 @@ abstract class AnnotationController extends Controller
         }
 
         parent::__hook($actionArg,$onRequestArg);
+    }
+
+    protected function __getValidateRuleMapClass():string
+    {
+        return DefaultMap::class;
     }
 }

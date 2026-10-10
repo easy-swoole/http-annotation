@@ -122,7 +122,7 @@ class Document
                 foreach ($params as $paramName => $param){
                     $result[$paramName] = [
                         'type'=>$param->type?->name,
-                        'from'=>array_map(static fn(\EasySwoole\HttpAnnotation\Enum\ParamFrom $source): string => $source->name, $param->from),
+                        'from'=>array_map(static fn(ParamFrom $source): string => $source->name, $param->from),
                         'description'=>$param->description ? $param->description->toString() : null,
                         'defaultValue'=>$param->value,
                         'ignoreAction'=>$param->ignoreAction,
@@ -132,7 +132,7 @@ class Document
                     /** @var AbstractValidator $validateRule */
                     foreach ($param->validate as $validateRule){
                         $validateRules[$validateRule::ruleName()] = [
-                            'msg'=>$validateRule->errorMsg($paramName),
+                            'msg'=>$validateRule->errorMsg($paramName, $this->config->getValidateMsgMap()),
                             'args'=>$validateRule->getRuleArgs()
                         ];
                     }

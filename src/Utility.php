@@ -94,13 +94,13 @@ class Utility
     }
 
 
-    public static function validateParam(ValidateRequest $validateRequest): void
+    public static function validateParam(ValidateRequest $validateRequest,string $validateMsgMapClass = \EasySwoole\HttpAnnotation\Validator\MsgMap\DefaultMap::class): void
     {
         $rules = $validateRequest->validateParam->validate;
         /** @var AbstractValidator $rule */
         foreach ($rules as $rule){
             if(!$rule->execute($validateRequest)){
-                $msg = $rule->errorMsg($validateRequest->validateParam->name);
+                $msg = $rule->errorMsg($validateRequest->validateParam->name,$validateMsgMapClass);
                 $ex = new ParamValidateFail("{$msg} in {$validateRequest->callClass} method {$validateRequest->callMethod}");
                 $ex->setFailRule($rule);
                 $ex->setParamName($validateRequest->validateParam->name);
