@@ -7,6 +7,9 @@ use EasySwoole\HttpAnnotation\Validator\AbstractInterface\ValidateMsgMapInterfac
 class ChineseMap implements ValidateMsgMapInterface
 {
     const MAP = [
+        'MultipleOf' => '{#validateParam}必须为 {#multiple} 的整数倍',
+        'DistinctInString' => '{#validateParam}按分隔符 {#separator} 拆分后不能包含重复项（按字符串精确比较）',
+        'DistinctInArray' => '{#validateParam}必须为无重复值的数组（strict={#strict}；1：比较值与类型；空值：宽松比较）',
         'AllDigital' => '{#validateParam}必须全部为数字字符',
         'Alpha' => '{#validateParam}必须全部为英文字母',
         'AlphaDash' => '{#validateParam}只能包含英文字母、连字符和下划线',

@@ -7,6 +7,9 @@ use EasySwoole\HttpAnnotation\Validator\AbstractInterface\ValidateMsgMapInterfac
 class DefaultMap implements ValidateMsgMapInterface
 {
     const MAP = [
+        'MultipleOf' => '{#validateParam} must be an integer multiple of {#multiple}',
+        'DistinctInString' => '{#validateParam} must contain distinct items separated by {#separator} (exact string comparison)',
+        'DistinctInArray' => '{#validateParam} must be an array of distinct values (strict={#strict}; 1: compare value and type; empty: loose comparison)',
         'AllDigital' => '{#validateParam} must contain only digits',
         'Alpha' => '{#validateParam} must contain only English letters',
         'AlphaDash' => '{#validateParam} must contain only English letters, hyphens and underscores',

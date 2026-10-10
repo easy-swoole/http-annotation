@@ -30,6 +30,57 @@ public function login(array $data): void {}
 
 所有规则的最后一个构造参数均为 `?string $errorMsg = null`，以下列出完整签名和示例。错误模板支持 `{#validateParam}` 以及规则参数占位符，例如 `{#min}`、`{#maxLen}`。占位符取决于规则属性名；DateFormat 使用 `{#format}`。未设置自定义消息时，基类统一通过 `MsgMap\DefaultMap` 获取模板；未知规则使用默认兜底消息。各验证器构造函数只接收自定义消息，不再内置默认文案。Decimal、Money 默认消息包含精度及模式说明；IsFile 包含大小和扩展名限制；严格比较规则包含 strict 配置。Func 默认消息不追加回调名称，需要时可传入自定义模板。
 
+## 倍数校验
+
+### MultipleOf
+
+```php
+MultipleOf(int|float $multiple, string|null $errorMsg = null)
+new MultipleOf(5);
+new MultipleOf(0.25, '金额必须为 0.25 的整数倍');
+```
+
+要求数值或数值字符串为 `multiple` 的整数倍，支持负数、小数和科学计数法字符串。0 是任何合法基数的整数倍；基数必须为有限非零数，否则构造时抛出异常。非数值、布尔值、数组、null、INF、NAN 均不通过。
+
+整数输入和整数基数使用精确取模；小数计算使用浮点数，并容许有限舍入误差（商的误差不超过 1e-9），因此 `0.3` 可通过 `MultipleOf(0.1)`。小数及超出 PHP 整数范围的数值受浮点精度限制，不适用于要求任意精度的计算。使用 `type: null` 保留原值，避免 INT 类型转换截断小数。
+
+## 去重校验
+
+这两个规则只检查重复项，不修改或去重输入。
+
+### DistinctInString
+
+```php
+DistinctInString(string $separator = ',', string|null $errorMsg = null)
+new DistinctInString();
+new DistinctInString('|', 'ID 不能重复');
+```
+
+只接受字符串，按完整分隔符拆分并精确比较，区分大小写，不去除空白、不忽略空项。`1,1` 失败，`1,01` 和 `1, 1` 通过；`1,,` 因为空项重复而失败。空字符串作为单个空项通过，如需禁止空值请搭配 NotEmpty。分隔符不能为空，支持多字符分隔符。
+
+### DistinctInArray
+
+```php
+DistinctInArray(bool $strict = false, string|null $errorMsg = null)
+new DistinctInArray();
+new DistinctInArray(true, 'ID 不能重复');
+```
+
+只接受数组，比较数组值而不是键，不递归检查内部元素。默认宽松比较，`[1, '1']` 失败；`strict: true` 时按值和类型比较，该输入通过。空数组通过，重复的 null 或空字符串失败。
+
+JSON 或 POST 数组参数必须配置 `type: null`，保留数组原值：
+
+```php
+use EasySwoole\HttpAnnotation\Attributes\Param;
+use EasySwoole\HttpAnnotation\Enum\ParamFrom;
+use EasySwoole\HttpAnnotation\Validator\DistinctInArray;
+use EasySwoole\HttpAnnotation\Validator\DistinctInString;
+
+new Param('ids', from: ParamFrom::JSON, type: null, validate: [new DistinctInArray()]);
+new Param('ids', from: ParamFrom::POST, type: null, validate: [new DistinctInArray()]);
+new Param('ids', from: ParamFrom::GET, validate: [new DistinctInString(',')]);
+```
+
 ## 必填与可选
 
 ### Required
