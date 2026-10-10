@@ -25,7 +25,7 @@ class Param
     public function __construct(
         public string                  $name,
         public ParamFrom|array         $from = ParamFrom::GET,
-        public array|null              $validate = [],
+        public array                   $validate = [],
         public mixed                   $value = null,
         public bool                    $deprecated = false,
         public string|null|Text        $description = null,
