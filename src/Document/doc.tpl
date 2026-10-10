@@ -539,7 +539,23 @@
         .container .sideBar a.active { color: #0080ff; text-decoration: underline; }
         .content h2, .content h3 { scroll-margin-top: 4rem; }
         table { width: 100% !important; }
+        /* 表格单独滚动，避免窄屏压缩关键字段或撑开整页。 */
+        .parameter-table-scroll { max-width: 100%; overflow-x: auto; margin: 10px 0 15px; }
+        .parameter-table-scroll:focus-visible { outline: 2px solid #0080ff; outline-offset: 2px; }
+        /* 自动布局配合关键列不换行，由每列最长内容决定所需宽度。 */
+        .parameter-table { min-width: 100%; margin: 0; table-layout: auto; }
         .parameter-table th, .parameter-table td { text-align: left; }
+        .parameter-table th:nth-child(3), .parameter-table td:nth-child(3),
+        .parameter-table th:nth-child(4), .parameter-table td:nth-child(4) { text-align: center; }
+        .parameter-table th { white-space: nowrap; }
+        .parameter-table th:nth-child(3), .parameter-table td:nth-child(3) { min-width: 20rem; width: 28%; }
+        .parameter-table th:nth-child(1), .parameter-table td:nth-child(1),
+        .parameter-table th:nth-child(2), .parameter-table td:nth-child(2),
+        .parameter-table th:nth-child(4), .parameter-table td:nth-child(4),
+        .parameter-table th:nth-child(5), .parameter-table td:nth-child(5),
+        .parameter-table th:nth-child(6), .parameter-table td:nth-child(6) {
+            white-space: nowrap; overflow-wrap: normal; word-break: normal;
+        }
         .parameter-table th:nth-child(1), .parameter-table td:nth-child(1),
         .parameter-table th:nth-child(2), .parameter-table td:nth-child(2),
         .parameter-table th:nth-child(5), .parameter-table td:nth-child(5),
@@ -811,7 +827,7 @@
     function parameterTable(params) {
         const entries = Object.entries(params || {});
         if (!entries.length) return '<p>暂无参数</p>';
-        let html = '<table class="parameter-table"><thead><tr><th>名称</th><th>类型</th><th>校验规则</th><th>说明</th><th>默认值</th><th>来源</th></tr></thead><tbody>';
+        let html = '<div class="parameter-table-scroll" role="region" aria-label="参数表格，可左右滚动" tabindex="0"><table class="parameter-table"><thead><tr><th>名称</th><th>类型</th><th>校验规则</th><th>说明</th><th>默认值</th><th>来源</th></tr></thead><tbody>';
         for (const [name, param] of entries) {
             const rules = Object.values(param.validateRules || {})
                 .filter(rule => rule.msg != null && String(rule.msg).trim() !== '')
@@ -825,7 +841,7 @@
                 + displayValue(param.defaultValue) + '</td><td>'
                 + displayValue(Array.isArray(param.from) ? param.from.join(', ') : param.from) + '</td></tr>';
         }
-        return html + '</tbody></table>';
+        return html + '</tbody></table></div>';
     }
 
     function examples(items, title) {
