@@ -62,7 +62,7 @@ class MultipleOfTest extends TestCase
     {
         $rule = new MultipleOf(0.25);
         $this->assertSame('amount must be an integer multiple of 0.25', $rule->errorMsg('amount'));
-        $this->assertSame('amount必须为 0.25 的整数倍', $rule->errorMsg('amount', ChineseMap::class));
+        $this->assertSame('amount 必须为 0.25 的整数倍', $rule->errorMsg('amount', ChineseMap::class));
         $this->assertSame('custom', (new MultipleOf(3, 'custom'))->errorMsg('amount'));
     }
 }

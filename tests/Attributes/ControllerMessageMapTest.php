@@ -51,8 +51,8 @@ class ControllerMessageMapTest extends TestCase
     {
         return [
             [EnglishMessageController::class, 'ticket is required'],
-            [ChineseActionMessageController::class, 'ticket必须传入'],
-            [ChinesePublicMessageController::class, 'ticket必须传入'],
+            [ChineseActionMessageController::class, 'ticket 必须传入'],
+            [ChinesePublicMessageController::class, 'ticket 必须传入'],
             [CustomChineseMessageController::class, '自定义 ticket'],
             // 中文调用后默认英文仍保持独立。
             [EnglishMessageController::class, 'ticket is required'],

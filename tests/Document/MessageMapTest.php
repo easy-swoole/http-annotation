@@ -38,7 +38,7 @@ class MessageMapTest extends TestCase
                 return $this->groups = ['Example' => ['apiGroup' => $group, 'classAttribute' => $info]];
             }
         };
-        foreach ([[DefaultMap::class, 'ticket is required'], [ChineseMap::class, 'ticket必须传入'],
+        foreach ([[DefaultMap::class, 'ticket is required'], [ChineseMap::class, 'ticket 必须传入'],
             [CustomDocumentMap::class, 'ticket 自定义映射'], [DefaultMap::class, 'ticket is required']] as [$class, $expected]) {
             $document->getConfig()->setValidateMsgMap($class);
             $map = $document->scan2ArrayMap()['Example'];
