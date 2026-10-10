@@ -23,7 +23,7 @@ class Alpha extends AbstractValidator
         return (bool)preg_match( '/^[a-zA-Z]+$/', (string)$validateRequest->validateParam->parsedValue());
     }
 
-    function ruleName(): string
+    public static function ruleName(): string
     {
         return "Alpha";
     }

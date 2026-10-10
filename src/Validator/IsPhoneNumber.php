@@ -22,7 +22,7 @@ class IsPhoneNumber extends AbstractValidator
         return (bool)preg_match( '/^1[3456789]\d{9}$/', (string)$validateRequest->validateParam->parsedValue());
     }
 
-    function ruleName(): string
+    public static function ruleName(): string
     {
         return 'IsPhoneNumber';
     }

@@ -32,8 +32,8 @@ class Regex extends AbstractValidator
         return (bool)preg_match($this->rule, (string)$itemData);
     }
 
-    function ruleName(): string
+    public static function ruleName(): string
     {
-        return "Func";
+        return "Regex";
     }
 }

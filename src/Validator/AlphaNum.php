@@ -23,7 +23,7 @@ class AlphaNum extends AbstractValidator
         return (bool)preg_match(  '/^[a-zA-Z0-9]+$/', (string)$validateRequest->validateParam->parsedValue());
     }
 
-    function ruleName(): string
+    public static function ruleName(): string
     {
         return "AlphaNum";
     }

@@ -22,7 +22,7 @@ class IsBool extends AbstractValidator
         return in_array($validateRequest->validateParam->parsedValue(),["1",1,"0",0,true,false],true);
     }
 
-    function ruleName(): string
+    public static function ruleName(): string
     {
         return "IsBool";
     }

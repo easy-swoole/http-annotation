@@ -60,7 +60,7 @@ class DateBeforeColumn extends AbstractValidator
         return false;
     }
 
-    public function ruleName(): string
+    public static function ruleName(): string
     {
         return "DateBeforeColumn";
     }

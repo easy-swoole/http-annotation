@@ -48,7 +48,7 @@ class Decimal extends AbstractValidator
         return (bool)preg_match( "/^-?(([1-9]\d*)|0)\.\d{1,$this->accuracy}$/", (string)$itemData);
     }
 
-    function ruleName(): string
+    public static function ruleName(): string
     {
         return "Decimal";
     }

@@ -24,7 +24,7 @@ class AllDigital extends AbstractValidator
         return (bool)preg_match('/^\d+$/', (string)$validateRequest->validateParam->parsedValue());
     }
 
-    function ruleName(): string
+    public static function ruleName(): string
     {
         return "AllDigital";
     }

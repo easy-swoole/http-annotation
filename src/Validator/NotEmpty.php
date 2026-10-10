@@ -27,7 +27,7 @@ class NotEmpty extends AbstractValidator
         return !empty($itemData);
     }
 
-    function ruleName(): string
+    public static function ruleName(): string
     {
         return "NotEmpty";
     }

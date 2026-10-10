@@ -131,7 +131,7 @@ class Document
                     $validateRules = [];
                     /** @var AbstractValidator $validateRule */
                     foreach ($param->validate as $validateRule){
-                        $validateRules[$validateRule->ruleName()] = [
+                        $validateRules[$validateRule::ruleName()] = [
                             'msg'=>$validateRule->errorMsg($paramName),
                             'args'=>$validateRule->getRuleArgs()
                         ];

@@ -27,7 +27,7 @@ class IsNumeric extends AbstractValidator
         }
     }
 
-    function ruleName(): string
+    public static function ruleName(): string
     {
         return "IsNumeric";
     }

@@ -22,7 +22,7 @@ class IsFloat extends AbstractValidator
         return filter_var($validateRequest->validateParam->parsedValue(), FILTER_VALIDATE_FLOAT) !== false;
     }
 
-    function ruleName(): string
+    public static function ruleName(): string
     {
         return "IsFloat";
     }

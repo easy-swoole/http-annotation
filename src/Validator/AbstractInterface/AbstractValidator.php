@@ -30,7 +30,7 @@ abstract class AbstractValidator
     abstract protected function validate(ValidateRequest $validateRequest):bool;
 
 
-    abstract function ruleName():string;
+    abstract static function ruleName():string;
 
 
     /**

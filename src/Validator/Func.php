@@ -35,7 +35,7 @@ class Func extends AbstractValidator
         return (bool)call_user_func($this->call,$validateRequest);
     }
 
-    function ruleName(): string
+    public static function ruleName(): string
     {
         return "Func";
     }

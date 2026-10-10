@@ -22,7 +22,7 @@ class IsIp extends AbstractValidator
         return filter_var($validateRequest->validateParam->parsedValue(), FILTER_VALIDATE_IP) !== false;
     }
 
-    function ruleName(): string
+    public static function ruleName(): string
     {
         return "IsIp";
     }

@@ -33,8 +33,8 @@ class Min extends AbstractValidator
         return true;
     }
 
-    function ruleName(): string
+    public static function ruleName(): string
     {
-        return "min";
+        return "Min";
     }
 }

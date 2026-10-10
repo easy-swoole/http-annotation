@@ -39,7 +39,7 @@ class DifferentWithColumn extends AbstractValidator
         }
     }
 
-    function ruleName(): string
+    public static function ruleName(): string
     {
         return "DifferentWithColumn";
     }

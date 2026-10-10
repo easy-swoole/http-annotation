@@ -29,7 +29,7 @@ class InArray extends AbstractValidator
         return in_array($validateRequest->validateParam->parsedValue(), $this->array, $this->strict);
     }
 
-    function ruleName(): string
+    public static function ruleName(): string
     {
         return "InArray";
     }

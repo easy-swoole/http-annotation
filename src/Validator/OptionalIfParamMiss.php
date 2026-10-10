@@ -25,7 +25,7 @@ class OptionalIfParamMiss extends AbstractValidator
         return true;
     }
 
-    function ruleName(): string
+    public static function ruleName(): string
     {
         return 'OptionalIfParamMiss';
     }

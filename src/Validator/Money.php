@@ -37,7 +37,7 @@ class Money extends AbstractValidator
         return (bool)preg_match($regex, $itemData);
     }
 
-    function ruleName(): string
+    public static function ruleName(): string
     {
         return "Money";
     }

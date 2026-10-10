@@ -48,7 +48,7 @@ class Param
         $temp = [];
         /** @var AbstractValidator $item */
         foreach ($this->validate as $item){
-            $temp[$item->ruleName()] = $item;
+            $temp[$item::ruleName()] = $item;
         }
         $this->validate = $temp;
         if(is_string($this->description)){
@@ -233,7 +233,7 @@ class Param
 
        /** @var AbstractValidator $item */
        foreach ($this->validate as $item){
-           $this->validate[$item->ruleName()] = clone $item;
+           $this->validate[$item::ruleName()] = clone $item;
        }
    }
 }

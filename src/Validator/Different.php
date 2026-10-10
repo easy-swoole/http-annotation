@@ -28,7 +28,7 @@ class Different extends AbstractValidator
         return !($this->strict ? $itemData === $this->compare : $itemData == $this->compare);
     }
 
-    function ruleName(): string
+    public static function ruleName(): string
     {
         return "Different";
     }

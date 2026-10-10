@@ -23,7 +23,7 @@ class Integer extends AbstractValidator
         return filter_var($validateRequest->validateParam->parsedValue(), FILTER_VALIDATE_INT) !== false;
     }
 
-    function ruleName(): string
+    public static function ruleName(): string
     {
         return "Integer";
     }

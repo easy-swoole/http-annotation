@@ -33,7 +33,7 @@ class MaxMbLength extends AbstractValidator
         return  false;
     }
 
-    function ruleName(): string
+    public static function ruleName(): string
     {
         return "MaxMbLength";
     }

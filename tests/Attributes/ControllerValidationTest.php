@@ -95,7 +95,7 @@ class ControllerValidationTest extends TestCase
                 $this->fail('Expected column rule failure');
             } catch (ParamValidateFail $error) {
                 $this->assertSame('value', $error->getParamName());
-                $this->assertSame($rule, $error->getFailRule()->ruleName());
+                $this->assertSame($rule, $error->getFailRule()::ruleName());
                 $this->assertFalse($controller->called);
             }
         }
