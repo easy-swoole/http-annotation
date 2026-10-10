@@ -150,6 +150,47 @@ GET、POST、JSON 字段通过 `isset` 判断是否存在，未传字段和显�
 
 转换不会改变是否已设置参数。组合使用这两个选项时，**已传入的空字符串会转为 `null`，但不会从参数数组中省略**。
 
+例如，定义一个可选的请求限制周期参数，action 使用数组接收参数：
+
+```php
+use EasySwoole\HttpAnnotation\Attributes\Api;
+use EasySwoole\HttpAnnotation\Attributes\Param;
+use EasySwoole\HttpAnnotation\Enum\ParamFrom;
+use EasySwoole\HttpAnnotation\Enum\ParamType;
+use EasySwoole\HttpAnnotation\Validator\Optional;
+
+#[Api(requestParam: [
+    new Param(
+        name: 'queryLimitPeriod',
+        from: [ParamFrom::GET],
+        validate: [new Optional()],
+        description: '请求限制周期，单位秒',
+        type: ParamType::NULL_WHILE_EMPTY,
+        ignorePassArgWhenNotSet: true,
+    ),
+])]
+public function updateLimit(array $params): void
+{
+    // 未传参数：$params 为 []。
+    // 传入 queryLimitPeriod=''：$params 为 ['queryLimitPeriod' => null]。
+}
+```
+
+下面对比上述配置中 `ignorePassArgWhenNotSet` 开启和关闭时的结果。默认值为 `null`；GET、POST、JSON 字段的是否设置判断规则相同，表格假设参数校验通过：
+
+| 请求中的 `queryLimitPeriod` | `hasSet()` | 解析后的值 | `ignorePassArgWhenNotSet: true` 的 action 数组 | `ignorePassArgWhenNotSet: false` 的 action 数组 |
+| --- | --- | --- | --- | --- |
+| 未传入 | `false` | `null`（不做类型转换） | `[]`，不包含该字段 | `['queryLimitPeriod' => null]` |
+| 显式传入 `null` | `false` | `null`（不做类型转换） | `[]`，不包含该字段 | `['queryLimitPeriod' => null]` |
+| 空字符串 `''` | `true` | `null` | `['queryLimitPeriod' => null]` | `['queryLimitPeriod' => null]` |
+| `false`、空数组 `[]`、浮点数 `0.0` | `true` | `null` | `['queryLimitPeriod' => null]` | `['queryLimitPeriod' => null]` |
+| 整数 `0` | `true` | 整数 `0` | `['queryLimitPeriod' => 0]` | `['queryLimitPeriod' => 0]` |
+| 字符串 `'0'` | `true` | 字符串 `'0'` | `['queryLimitPeriod' => '0']` | `['queryLimitPeriod' => '0']` |
+| 空格字符串 `' '` | `true` | 字符串 `' '` | `['queryLimitPeriod' => ' ']` | `['queryLimitPeriod' => ' ']` |
+| 非空字符串 `'30'` | `true` | 字符串 `'30'` | `['queryLimitPeriod' => '30']` | `['queryLimitPeriod' => '30']` |
+
+`ignorePassArgWhenNotSet` 判断的是是否取到参数，不是解析结果是否为 `null`。`NULL_WHILE_EMPTY` 只转换空值，不将非空数字字符串转换为整数。
+
 ```php
 #[Api(requestParam: [
     new Param(
@@ -169,7 +210,7 @@ public function update(array $params): void
 
 
 - 上传文件同时配置 `from: ParamFrom::FILE` 和 `type: ParamType::FILE`，避免默认字符串转换影响文件对象。
-- `value` 在实际请求中也会参与类型转换；文档默认值列展示声明时的原值，保留 `0`、`false`、空字符串，`null` 显示为 `-`。
+- 未从声明来源取到参数时，不做类型转换，`value` 默认值原样保留；只有实际取到的值才按 `type` 转换。文档默认值列展示声明时的原值，保留 `0`、`false`、空字符串，`null` 显示为 `-`。
 - `Required` 检查是否设置参数，`NotEmpty` 检查值是否为空，两者含义不同。Header 参数还应根据需要使用 `NotEmpty`，缺失请求头不会标记为已设置。
 - `RequiredIf`、`RequiredWith`、`RequiredWithout` 支持条件必填；同一参数的 `Optional*`（包括 `IgnoreValidatorWhenEmpty`）与 `Required*`、`NotEmpty` 互斥，同时定义会直接抛出配置异常。
 - 想用 `Optional` 保留“未传入且为 null”的语义时，应显式设置 `type: null`，避免默认 STRING 将 `null` 转成空字符串。

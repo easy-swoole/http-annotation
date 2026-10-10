@@ -79,7 +79,7 @@ class Param
 
 
     /**
-     * 读取并缓存请求参数；未命中任何来源时保留默认值，再按 type 转换。
+     * 读取并缓存请求参数；仅实际取到值时按 type 转换，未命中来源时原样保留默认值。
      * 不传 request 时只读取当前值，不触发解析或改变已解析状态。
      */
     public function parsedValue(?ServerRequestInterface $request = null)
@@ -218,9 +218,10 @@ class Param
             }
         }
 
-        // 类型转换先于验证器执行，默认值也会转换；type 为 null 时保留原值（例如数组）。
+        // 实际取到的值在验证器执行前转换；type 为 null 时保留原值（例如数组）。
         // 转换不代表数据合法，且不会改变 hasSet，合法性仍需由验证器检查。
-        if($this->type != null){
+        // 只有实际取到参数才做类型转换，未传参数保留默认值，避免 null 被转为 0 等值。
+        if($this->hasSet && $this->type != null){
             switch ($this->type){
                 case ParamType::STRING:{
                     $this->value = (string)$this->value;

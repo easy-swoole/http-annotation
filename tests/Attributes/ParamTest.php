@@ -45,6 +45,28 @@ class ParamTest extends TestCase
         ];
     }
 
+    public function testUnsetValuesAreNotConverted(): void
+    {
+        foreach (ParamType::cases() as $type) {
+            foreach ([null, '12', '', 0, false, []] as $default) {
+                $param = new Param('value', type: $type, value: $default);
+                $this->assertSame($default, $param->parsedValue(new Request()));
+                $this->assertFalse($param->hasSet());
+                $this->assertSame($default, $param->parsedValue());
+            }
+        }
+        $request = new Request();
+        $request->withQueryParams(['value' => null]);
+        $param = new Param('value', type: ParamType::INT);
+        $this->assertNull($param->parsedValue($request));
+        $this->assertFalse($param->hasSet());
+        $request->withQueryParams([]);
+        $request->withParsedBody(['value' => '12']);
+        $param = new Param('value', from: [ParamFrom::GET, ParamFrom::POST], type: ParamType::INT);
+        $this->assertSame(12, $param->parsedValue($request));
+        $this->assertTrue($param->hasSet());
+    }
+
     public function testMissingNullWhileEmptyParameter(): void
     {
         $param = new Param('value', type: ParamType::NULL_WHILE_EMPTY);

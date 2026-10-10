@@ -24,7 +24,7 @@ use EasySwoole\HttpAnnotation\Validator\MaxLength;
 public function login(array $data): void {}
 ```
 
-类型转换先于规则执行。`Param` 默认 STRING，布尔值、数组和浮点值可能在校验前被转换；验证原始输入时使用 `type: null`。不要用 INT/BOOLEAN 转换代替合法性校验，尤其 BOOLEAN 会把字符串 `"false"` 转成 true。
+仅实际取到的参数在规则执行前做类型转换；未取到时默认值原样保留。因此未传入、默认值为 null 的 Optional 参数即使定义 INT，也会正常跳过校验。`Param` 默认 STRING，布尔值、数组和浮点值可能在校验前被转换；验证原始输入时使用 `type: null`。不要用 INT/BOOLEAN 转换代替合法性校验，尤其 BOOLEAN 会把字符串 `"false"` 转成 true。
 
 规则依次执行，首次失败抛出 `ParamValidateFail`，消息包含类和方法，可通过 `getFailRule()`、`getParamName()` 获取失败规则与参数。规则通过静态方法 `ValidatorClass::ruleName()` 获取名称并保存，同一参数重复定义同名规则时后者覆盖前者。自定义规则必须实现 `public static function ruleName(): string`，可直接通过类名调用，不需要创建实例。
 
