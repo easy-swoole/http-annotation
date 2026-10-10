@@ -7,6 +7,9 @@ use EasySwoole\HttpAnnotation\Validator\AbstractInterface\ValidateMsgMapInterfac
 class DefaultMap implements ValidateMsgMapInterface
 {
     const MAP = [
+        'RequiredIf' => '{#validateParam} must be set and non-empty when parameter {#paramName} is set and equals {#value} (strict={#strict}; 1: compare value and type; empty: loose comparison)',
+        'RequiredWith' => '{#validateParam} must be set and non-empty when any parameter in {#paramNames} is set and non-empty',
+        'RequiredWithout' => '{#validateParam} must be set and non-empty when any parameter in {#paramNames} is unset or empty',
         'MultipleOf' => '{#validateParam} must be an integer multiple of {#multiple}',
         'DistinctInString' => '{#validateParam} must contain distinct items separated by {#separator} (exact string comparison)',
         'DistinctInArray' => '{#validateParam} must be an array of distinct values (strict={#strict}; 1: compare value and type; empty: loose comparison)',

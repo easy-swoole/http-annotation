@@ -171,6 +171,7 @@ public function update(array $params): void
 - 上传文件同时配置 `from: ParamFrom::FILE` 和 `type: ParamType::FILE`，避免默认字符串转换影响文件对象。
 - `value` 在实际请求中也会参与类型转换；文档默认值列展示声明时的原值，保留 `0`、`false`、空字符串，`null` 显示为 `-`。
 - `Required` 检查是否设置参数，`NotEmpty` 检查值是否为空，两者含义不同。Header 参数还应根据需要使用 `NotEmpty`，缺失请求头不会标记为已设置。
+- `RequiredIf`、`RequiredWith`、`RequiredWithout` 支持条件必填；同一参数的 `Optional*`（包括 `IgnoreValidatorWhenEmpty`）与 `Required*`、`NotEmpty` 互斥，同时定义会直接抛出配置异常。
 - 想用 `Optional` 保留“未传入且为 null”的语义时，应显式设置 `type: null`，避免默认 STRING 将 `null` 转成空字符串。
 - BOOLEAN 使用 PHP 布尔转换；字符串 `"false"` 会被转成 `true`。表单布尔值建议使用 `1`、`0`。
 - JSON 参数按字段名从请求体解码结果取值；XML 参数从根节点的直接子节点取值；RAW_POST 返回整个请求体。

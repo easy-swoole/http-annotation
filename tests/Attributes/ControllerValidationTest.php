@@ -9,7 +9,7 @@ use EasySwoole\HttpAnnotation\Attributes\Param;
 use EasySwoole\HttpAnnotation\Exception\ParamValidateFail;
 use EasySwoole\HttpAnnotation\Validator\EqualWithColumn;
 use EasySwoole\HttpAnnotation\Validator\OptionalIfParamSet;
-use EasySwoole\HttpAnnotation\Validator\Required;
+use EasySwoole\HttpAnnotation\Validator\MinLength;
 use PHPUnit\Framework\Attributes\DataProvider;
 use EasySwoole\HttpAnnotation\Validator\BigThanColumn;
 use EasySwoole\HttpAnnotation\Validator\DateAfterColumn;
@@ -39,7 +39,7 @@ class ControllerValidationTest extends TestCase
                 $this->fail('Expected conditional validation failure');
             } catch (ParamValidateFail $error) {
                 $this->assertSame('value', $error->getParamName());
-                $this->assertInstanceOf(Required::class, $error->getFailRule());
+                $this->assertInstanceOf(MinLength::class, $error->getFailRule());
                 $this->assertFalse($controller->called);
             }
         }
@@ -209,10 +209,10 @@ class ControllerValidationTest extends TestCase
             } else {
                 try {
                     $controller->__hook();
-                    $this->fail('Required must execute when the target is missing');
+                    $this->fail('MinLength must execute when the target is missing');
                 } catch (ParamValidateFail $error) {
                     $this->assertSame('ticket', $error->getParamName());
-                    $this->assertInstanceOf(Required::class, $error->getFailRule());
+                    $this->assertInstanceOf(MinLength::class, $error->getFailRule());
                     $this->assertFalse($controller->called);
                 }
             }
@@ -249,7 +249,7 @@ class ConditionalOptionalController extends AnnotationController
     #[Param('account', type: null)]
     public function onRequest(?string $action): ?bool { return true; }
 
-    #[Api(requestParam: [new Param('ticket', type: null, validate: [new OptionalIfParamSet(paramName: 'account'), new Required()])])]
+    #[Api(requestParam: [new Param('ticket', type: null, validate: [new OptionalIfParamSet(paramName: 'account'), new MinLength(1)])])]
     public function collect(array $data): void { $this->called = true; }
 }
 
@@ -395,7 +395,7 @@ class ActionOptionalIfParamMissFixture extends AnnotationController
     #[Param('target', type: null)]
     public function onRequest(?string $action): ?bool { return true; }
 
-    #[Api(requestParam: [new Param('value', type: null, validate: [new OptionalIfParamMiss(paramName: 'target'), new Required()])])]
+    #[Api(requestParam: [new Param('value', type: null, validate: [new OptionalIfParamMiss(paramName: 'target'), new MinLength(1)])])]
     public function collect(array $data): void { $this->called = true; }
 }
 
@@ -403,7 +403,7 @@ class PublicOptionalIfParamMissFixture extends AnnotationController
 {
     public bool $called = false;
 
-    #[Param('value', type: null, validate: [new OptionalIfParamMiss(paramName: 'target'), new Required()])]
+    #[Param('value', type: null, validate: [new OptionalIfParamMiss(paramName: 'target'), new MinLength(1)])]
     public function onRequest(?string $action): ?bool { return true; }
 
     #[Api(requestParam: [new Param('target', type: null)])]
@@ -417,7 +417,7 @@ class ActionOptionalIfParamSetFixture extends AnnotationController
     #[Param('target', type: null)]
     public function onRequest(?string $action): ?bool { return true; }
 
-    #[Api(requestParam: [new Param('value', type: null, validate: [new OptionalIfParamSet(paramName: 'target'), new Required()])])]
+    #[Api(requestParam: [new Param('value', type: null, validate: [new OptionalIfParamSet(paramName: 'target'), new MinLength(1)])])]
     public function collect(array $data): void { $this->called = true; }
 }
 
@@ -425,7 +425,7 @@ class PublicOptionalIfParamSetFixture extends AnnotationController
 {
     public bool $called = false;
 
-    #[Param('value', type: null, validate: [new OptionalIfParamSet(paramName: 'target'), new Required()])]
+    #[Param('value', type: null, validate: [new OptionalIfParamSet(paramName: 'target'), new MinLength(1)])]
     public function onRequest(?string $action): ?bool { return true; }
 
     #[Api(requestParam: [new Param('target', type: null)])]
@@ -439,7 +439,7 @@ class ActionOptionalIfParamValInArrayFixture extends AnnotationController
     #[Param('target', type: null)]
     public function onRequest(?string $action): ?bool { return true; }
 
-    #[Api(requestParam: [new Param('value', type: null, validate: [new OptionalIfParamValInArray(paramName: 'target', inVal: ['guest']), new Required()])])]
+    #[Api(requestParam: [new Param('value', type: null, validate: [new OptionalIfParamValInArray(paramName: 'target', inVal: ['guest']), new MinLength(1)])])]
     public function collect(array $data): void { $this->called = true; }
 }
 
@@ -447,7 +447,7 @@ class PublicOptionalIfParamValInArrayFixture extends AnnotationController
 {
     public bool $called = false;
 
-    #[Param('value', type: null, validate: [new OptionalIfParamValInArray(paramName: 'target', inVal: ['guest']), new Required()])]
+    #[Param('value', type: null, validate: [new OptionalIfParamValInArray(paramName: 'target', inVal: ['guest']), new MinLength(1)])]
     public function onRequest(?string $action): ?bool { return true; }
 
     #[Api(requestParam: [new Param('target', type: null)])]
@@ -461,7 +461,7 @@ class ActionOptionalIfParamValNoInArrayFixture extends AnnotationController
     #[Param('target', type: null)]
     public function onRequest(?string $action): ?bool { return true; }
 
-    #[Api(requestParam: [new Param('value', type: null, validate: [new OptionalIfParamValNoInArray(paramName: 'target', inVal: ['guest']), new Required()])])]
+    #[Api(requestParam: [new Param('value', type: null, validate: [new OptionalIfParamValNoInArray(paramName: 'target', inVal: ['guest']), new MinLength(1)])])]
     public function collect(array $data): void { $this->called = true; }
 }
 
@@ -469,7 +469,7 @@ class PublicOptionalIfParamValNoInArrayFixture extends AnnotationController
 {
     public bool $called = false;
 
-    #[Param('value', type: null, validate: [new OptionalIfParamValNoInArray(paramName: 'target', inVal: ['guest']), new Required()])]
+    #[Param('value', type: null, validate: [new OptionalIfParamValNoInArray(paramName: 'target', inVal: ['guest']), new MinLength(1)])]
     public function onRequest(?string $action): ?bool { return true; }
 
     #[Api(requestParam: [new Param('target', type: null)])]

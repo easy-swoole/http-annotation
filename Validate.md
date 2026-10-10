@@ -83,6 +83,36 @@ new Param('ids', from: ParamFrom::GET, validate: [new DistinctInString(',')]);
 
 ## 必填与可选
 
+### RequiredIf / RequiredWith / RequiredWithout
+
+```php
+RequiredIf(string $paramName, mixed $value, bool $strict = false, string|null $errorMsg = null)
+RequiredWith(array $paramNames, string|null $errorMsg = null)
+RequiredWithout(array $paramNames, string|null $errorMsg = null)
+
+new RequiredIf('type', 'company', errorMsg: '企业用户必须填写公司名称');
+new RequiredWith(['password']);
+new RequiredWithout(['email']);
+```
+
+`RequiredIf` 在关联参数已设置且解析值匹配目标值时触发，默认宽松比较，`strict: true` 时比较值与类型。`RequiredWith` 在列表中任意参数已设置且非空时触发；`RequiredWithout` 在列表中任意参数未设置或为空时触发。
+
+触发后，当前参数必须实际传入且解析值非空，默认值不能代替实际传入。空值仅为 null、空字符串、空数组；0、`'0'`、false、空白字符串都属于有效值。条件不满足时仅本条规则通过，后续规则继续执行。Optional*（以及 IgnoreValidatorWhenEmpty）与 Required*、NotEmpty 互斥，同一 Param 定义中同时出现会直接抛出配置异常，错误信息包含参数名及冲突规则名。
+
+关联字段从 `allDefineParams` 读取解析后的值；未定义的字段会抛出包含规则、当前参数、关联参数和调用位置的配置异常。字段列表不能为空，各字段名必须为非空字符串。关联字段可以来自 onRequest 公共参数或当前 action 参数，以控制器合并后的最终定义为准。
+
+```php
+use EasySwoole\HttpAnnotation\Attributes\Param;
+use EasySwoole\HttpAnnotation\Enum\ParamFrom;
+use EasySwoole\HttpAnnotation\Validator\RequiredIf;
+use EasySwoole\HttpAnnotation\Validator\RequiredWith;
+use EasySwoole\HttpAnnotation\Validator\RequiredWithout;
+
+new Param('companyName', from: ParamFrom::JSON, validate: [new RequiredIf('type', 'company')]);
+new Param('passwordConfirm', from: ParamFrom::JSON, validate: [new RequiredWith(['password'])]);
+new Param('phone', from: ParamFrom::JSON, validate: [new RequiredWithout(['email'])]);
+```
+
 ### Required
 
 ```php
@@ -593,7 +623,7 @@ new Param(name: 'age', from: [ParamFrom::GET], type: null, validate: [
 ]);
 ```
 
-未传且值为 null 时跳过全部校验；传空字符串仍执行 Integer 并失败。Optional 与 Required 同时出现时，满足 Optional 跳过条件也会跳过 Required，不应用这种组合表达必填。
+未传且值为 null 时跳过全部校验；传空字符串仍执行 Integer 并失败。Optional* 与 Required*、NotEmpty 不能同时定义，构造 Param 时会直接抛出配置异常。
 
 `IgnoreValidatorWhenEmpty` 的空值规则与 `NotEmpty` 不同：字符串 `'0'` 也会触发跳过。条件 Optional 仅在当前参数未设置时生效；多个条件标记同时配置时，按实现顺序处理：Miss、Set、ValInArray、ValNoInArray，而不是逻辑合取。默认 STRING 会把未传入的 null 转为 `''`，使 Optional 的严格 null 条件失效。
 
