@@ -68,7 +68,7 @@ class LengthTest extends TestCase
         $request = new ValidateRequest($param);
         $rule = new Length(length: 5);
         $this->assertEquals(false, $rule->execute( $request));
-        $this->assertEquals("str length must be 5",$rule->errorMsg($request->validateParam->name));
+        $this->assertEquals('str must have byte length (or array element count) equal to 5',$rule->errorMsg($request->validateParam->name));
 
         // 字符串整数
         $request = new Request();
@@ -81,7 +81,7 @@ class LengthTest extends TestCase
         $request = new ValidateRequest($param);
         $rule = new Length(length: 5);
         $this->assertEquals(false, $rule->execute( $request));
-        $this->assertEquals("str length must be 5",$rule->errorMsg($request->validateParam->name));
+        $this->assertEquals('str must have byte length (or array element count) equal to 5',$rule->errorMsg($request->validateParam->name));
         // 数组
         $request = new Request();
         $request->withQueryParams([
@@ -93,7 +93,7 @@ class LengthTest extends TestCase
         $request = new ValidateRequest($param);
         $rule = new Length(length: 5);
         $this->assertEquals(false, $rule->execute( $request));
-        $this->assertEquals("str length must be 5",$rule->errorMsg($request->validateParam->name));
+        $this->assertEquals('str must have byte length (or array element count) equal to 5',$rule->errorMsg($request->validateParam->name));
 
         // 对象
         $request = new Request();
@@ -106,7 +106,7 @@ class LengthTest extends TestCase
         $request = new ValidateRequest($param);
         $rule = new Length(length: 5);
         $this->assertEquals(false, $rule->execute( $request));
-        $this->assertEquals("str length must be 5",$rule->errorMsg($request->validateParam->name));
+        $this->assertEquals('str must have byte length (or array element count) equal to 5',$rule->errorMsg($request->validateParam->name));
     }
 
     /*

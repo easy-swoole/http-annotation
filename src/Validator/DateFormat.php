@@ -3,6 +3,7 @@
 namespace EasySwoole\HttpAnnotation\Validator;
 
 use DateTime;
+use ValueError;
 use EasySwoole\HttpAnnotation\Attributes\Param;
 use EasySwoole\HttpAnnotation\Validator\AbstractInterface\AbstractValidator;
 use EasySwoole\HttpAnnotation\Validator\Bean\ValidateRequest;
@@ -10,7 +11,7 @@ use Psr\Http\Message\ServerRequestInterface;
 
 class DateFormat extends AbstractValidator
 {
-    private string $format;
+    protected string $format;
     function __construct(string $dateFormat,string|null $errorMsg = null)
     {
         $this->format = $dateFormat;
@@ -26,13 +27,18 @@ class DateFormat extends AbstractValidator
             return false;
         }
 
-        $test = DateTime::createFromFormat($this->format, $itemData);
-
-        if($test){
-            return true;
+        if (!is_string($itemData)) {
+            return false;
         }
+        try {
+            $test = DateTime::createFromFormat($this->format, $itemData);
+        } catch (ValueError) {
+            return false;
+        }
+        $errors = DateTime::getLastErrors();
+        return $test !== false
+            && ($errors === false || ($errors['warning_count'] === 0 && $errors['error_count'] === 0));
 
-        return false;
     }
 
     public static function ruleName(): string

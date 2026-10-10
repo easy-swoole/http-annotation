@@ -45,7 +45,7 @@ class AlphaNumTest extends TestCase
         $rule = new AlphaNum();
         $request = new ValidateRequest($param);
         $this->assertEquals(false, $rule->execute( $request));
-        $this->assertEquals("no must be all AlphaNum", $rule->errorMsg($request->validateParam->name));
+        $this->assertEquals('no must contain only English letters and digits', $rule->errorMsg($request->validateParam->name));
     }
 
     /*

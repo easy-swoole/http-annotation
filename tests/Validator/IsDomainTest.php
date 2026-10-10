@@ -73,7 +73,7 @@ class IsDomainTest extends TestCase
             $request = new ValidateRequest($param);
             $rule = new IsDomain();
             $this->assertEquals(false, $rule->execute( $request));
-            $this->assertEquals("domain must be a valid domain name format", $rule->errorMsg($request->validateParam->name));
+            $this->assertEquals('domain must be a syntactically valid domain name', $rule->errorMsg($request->validateParam->name));
         }
     }
 

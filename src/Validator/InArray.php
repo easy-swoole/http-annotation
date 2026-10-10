@@ -12,7 +12,7 @@ class InArray extends AbstractValidator
 
     public array $array;
 
-    private bool $strict;
+    protected bool $strict;
 
     function __construct(array $array,bool $strict = false,string|null $errorMsg = null)
     {

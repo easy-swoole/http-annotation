@@ -65,7 +65,7 @@ class EqualTest extends TestCase
         $request = new ValidateRequest($param);
 
         $this->assertEquals(false, $rule->execute( $request));
-        $this->assertEquals("str must equal with easySwoole",$rule->errorMsg($request->validateParam->name));
+        $this->assertEquals('str must be equal to easySwoole (strict=; 1: compare value and type; empty: loose comparison)',$rule->errorMsg($request->validateParam->name));
 
         // 值相等,类型不一样
         $request = new Request();
@@ -79,7 +79,7 @@ class EqualTest extends TestCase
         $rule = new Equal(compare: 89,strict: true);
         $request = new ValidateRequest($param);
         $this->assertEquals(false, $rule->execute( $request));
-        $this->assertEquals("str must equal with 89",$rule->errorMsg($request->validateParam->name));
+        $this->assertEquals('str must be equal to 89 (strict=1; 1: compare value and type; empty: loose comparison)',$rule->errorMsg($request->validateParam->name));
     }
 
     /*

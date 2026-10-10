@@ -45,7 +45,7 @@ class AlphaDashTest extends TestCase
         $rule = new AlphaDash();
         $request = new ValidateRequest($param);
         $this->assertEquals(false, $rule->execute($request));
-        $this->assertEquals("str must be all AlphaDash", $rule->errorMsg($request->validateParam->name));
+        $this->assertEquals('str must contain only English letters, hyphens and underscores', $rule->errorMsg($request->validateParam->name));
     }
 
     /*

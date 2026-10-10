@@ -73,7 +73,7 @@ class NotEmptyTest extends TestCase
         $rule = new NotEmpty();
         $request = new ValidateRequest($param);
         $this->assertEquals(false, $rule->execute( $request));
-        $this->assertEquals("str is no empty",$rule->errorMsg($request->validateParam->name));
+        $this->assertEquals('str must not be empty (integer 0 and string "0" are allowed)',$rule->errorMsg($request->validateParam->name));
 
         // null
         $request = new Request();
@@ -87,7 +87,7 @@ class NotEmptyTest extends TestCase
         $rule = new NotEmpty();
         $request = new ValidateRequest($param);
         $this->assertEquals(false, $rule->execute( $request));
-        $this->assertEquals("str is no empty",$rule->errorMsg($request->validateParam->name));
+        $this->assertEquals('str must not be empty (integer 0 and string "0" are allowed)',$rule->errorMsg($request->validateParam->name));
     }
 
     /*

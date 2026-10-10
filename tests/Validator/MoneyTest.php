@@ -65,7 +65,7 @@ class MoneyTest extends TestCase
         $request = new ValidateRequest($param);
         $rule = new Money(precision: 2);
         $this->assertEquals(false, $rule->execute( $request));
-        $this->assertEquals("num must be legal amount",$rule->errorMsg($request->validateParam->name));
+        $this->assertEquals('num must satisfy monetary precision 2 (null or 0: integer amount; positive: 1 to precision decimal places)',$rule->errorMsg($request->validateParam->name));
     }
 
     /*

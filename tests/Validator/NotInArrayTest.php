@@ -55,7 +55,7 @@ class NotInArrayTest extends TestCase
         $request = new ValidateRequest($param);
         $rule = new NotInArray(array: ['apple', 'grape', 'orange'], strict: false);
         $this->assertEquals(false, $rule->execute( $request));
-        $this->assertEquals('fruit must not in array of ["apple","grape","orange"]',$rule->errorMsg($request->validateParam->name));
+        $this->assertEquals('fruit must not be in ["apple","grape","orange"] (strict=; 1: compare value and type; empty: loose comparison)',$rule->errorMsg($request->validateParam->name));
     }
 
     /*

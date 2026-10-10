@@ -69,7 +69,7 @@ class IsFloatTest extends TestCase
         $request = new ValidateRequest($param);
         $rule = new IsFloat();
         $this->assertEquals(false, $rule->execute( $request));
-        $this->assertEquals("num must be float",$rule->errorMsg($request->validateParam->name));
+        $this->assertEquals('num must be a value parseable as a floating-point number',$rule->errorMsg($request->validateParam->name));
     }
 
     /*

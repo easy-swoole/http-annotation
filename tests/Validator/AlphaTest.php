@@ -45,7 +45,7 @@ class AlphaTest extends TestCase
         $rule = new Alpha();
         $request = new ValidateRequest($param);
         $this->assertEquals(false, $rule->execute( $request));
-        $this->assertEquals("str must be all alpha", $rule->errorMsg($request->validateParam->name));
+        $this->assertEquals('str must contain only English letters', $rule->errorMsg($request->validateParam->name));
 
         $request = new Request();
         $request->withQueryParams([
@@ -58,7 +58,7 @@ class AlphaTest extends TestCase
         $rule = new Alpha();
         $request = new ValidateRequest($param);
         $this->assertEquals(false, $rule->execute( $request));
-        $this->assertEquals("str must be all alpha", $rule->errorMsg($request->validateParam->name));
+        $this->assertEquals('str must contain only English letters', $rule->errorMsg($request->validateParam->name));
     }
 
     /*

@@ -68,7 +68,7 @@ class MaxMbLengthTest extends TestCase
         $request = new ValidateRequest($param);
         $rule = new MaxMbLength(maxLen: 5);
         $this->assertEquals(false, $rule->execute( $request));
-        $this->assertEquals("str max mb Length is 5",$rule->errorMsg($request->validateParam->name));
+        $this->assertEquals('str must have character length (or array element count) at most 5',$rule->errorMsg($request->validateParam->name));
 
         // 字符串
         $request = new Request();
@@ -81,7 +81,7 @@ class MaxMbLengthTest extends TestCase
         $request = new ValidateRequest($param);
         $rule = new MaxMbLength(maxLen: 4);
         $this->assertEquals(false, $rule->execute( $request));
-        $this->assertEquals("str max mb Length is 4",$rule->errorMsg($request->validateParam->name));
+        $this->assertEquals('str must have character length (or array element count) at most 4',$rule->errorMsg($request->validateParam->name));
         // 数组
         $request = new Request();
         $request->withQueryParams([
@@ -93,7 +93,7 @@ class MaxMbLengthTest extends TestCase
         $request = new ValidateRequest($param);
         $rule = new MaxMbLength(maxLen: 2);
         $this->assertEquals(false, $rule->execute( $request));
-        $this->assertEquals("str max mb Length is 2",$rule->errorMsg($request->validateParam->name));
+        $this->assertEquals('str must have character length (or array element count) at most 2',$rule->errorMsg($request->validateParam->name));
 
         // 对象
         $request = new Request();
@@ -106,7 +106,7 @@ class MaxMbLengthTest extends TestCase
         $request = new ValidateRequest($param);
         $rule = new MaxMbLength(maxLen: 5);
         $this->assertEquals(false, $rule->execute( $request));
-        $this->assertEquals("str max mb Length is 5",$rule->errorMsg($request->validateParam->name));
+        $this->assertEquals('str must have character length (or array element count) at most 5',$rule->errorMsg($request->validateParam->name));
     }
 
     /*

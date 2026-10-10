@@ -66,7 +66,7 @@ class DecimalTest extends TestCase
         $request = new ValidateRequest($param);
         $rule = new Decimal(accuracy: 2);
         $this->assertEquals(false, $rule->execute( $request));
-        $this->assertEquals("num must be decimal", $rule->errorMsg($request->validateParam->name));
+        $this->assertEquals('num must satisfy decimal accuracy 2 (null: float input; 0: integer-valued float; positive: 1 to accuracy decimal places)', $rule->errorMsg($request->validateParam->name));
     }
 
     /*

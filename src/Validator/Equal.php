@@ -10,7 +10,7 @@ use Psr\Http\Message\ServerRequestInterface;
 class Equal extends AbstractValidator
 {
 
-    private bool $strict;
+    protected bool $strict;
     public mixed $compare;
 
     function __construct(string|int|null|float $compare,bool $strict = false,string|null $errorMsg = null)

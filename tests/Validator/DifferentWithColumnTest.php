@@ -88,7 +88,7 @@ class DifferentWithColumnTest extends TestCase
             "account" => $account
         ];
         $this->assertEquals(false, $rule->execute( $request));
-        $this->assertEquals("str must different with account column", $rule->errorMsg($request->validateParam->name));
+        $this->assertEquals('str must be different from parameter account (strict=1; 1: compare value and type; empty: loose comparison)', $rule->errorMsg($request->validateParam->name));
 
         $request = new Request();
         $request->withQueryParams([
@@ -111,7 +111,7 @@ class DifferentWithColumnTest extends TestCase
         ];
 
         $this->assertEquals(false, $rule->execute( $request));
-        $this->assertEquals("str must different with account column", $rule->errorMsg($request->validateParam->name));
+        $this->assertEquals('str must be different from parameter account (strict=; 1: compare value and type; empty: loose comparison)', $rule->errorMsg($request->validateParam->name));
 
         // 值相等,但类型不一样
         $request = new Request();
@@ -135,7 +135,7 @@ class DifferentWithColumnTest extends TestCase
         ];
 
         $this->assertEquals(false, $rule->execute( $request));
-        $this->assertEquals("str must different with account column", $rule->errorMsg($request->validateParam->name));
+        $this->assertEquals('str must be different from parameter account (strict=; 1: compare value and type; empty: loose comparison)', $rule->errorMsg($request->validateParam->name));
     }
 
     /*

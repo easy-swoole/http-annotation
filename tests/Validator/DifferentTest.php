@@ -59,7 +59,7 @@ class DifferentTest extends TestCase
         $rule = new Different(compare: "easyswoole",strict: true);
         $request = new ValidateRequest($param);
         $this->assertEquals(false, $rule->execute( $request));
-        $this->assertEquals("str must different with easyswoole",$rule->errorMsg($request->validateParam->name));
+        $this->assertEquals('str must be different from easyswoole (strict=1; 1: compare value and type; empty: loose comparison)',$rule->errorMsg($request->validateParam->name));
 
         // 值相等,但类型不一样
         $request = new Request();
@@ -73,7 +73,7 @@ class DifferentTest extends TestCase
         $rule = new Different(compare: "12");
         $request = new ValidateRequest($param);
         $this->assertEquals(false, $rule->execute( $request));
-        $this->assertEquals("str must different with 12",$rule->errorMsg($request->validateParam->name));
+        $this->assertEquals('str must be different from 12 (strict=; 1: compare value and type; empty: loose comparison)',$rule->errorMsg($request->validateParam->name));
     }
 
     /*

@@ -194,7 +194,7 @@ class EqualWithColumnTest extends TestCase
 
 
         $this->assertEquals(false, $rule->execute( $request));
-        $this->assertEquals("str must equal with account column",$rule->errorMsg($request->validateParam->name));
+        $this->assertEquals('str must be equal to parameter account (strict=1; 1: compare value and type; empty: loose comparison)',$rule->errorMsg($request->validateParam->name));
 
         // 值不相等
         $request = new Request();
@@ -219,7 +219,7 @@ class EqualWithColumnTest extends TestCase
 
 
         $this->assertEquals(false, $rule->execute( $request));
-        $this->assertEquals("str must equal with account column",$rule->errorMsg($request->validateParam->name));
+        $this->assertEquals('str must be equal to parameter account (strict=; 1: compare value and type; empty: loose comparison)',$rule->errorMsg($request->validateParam->name));
 
         $request = new Request();
         $request->withQueryParams([
@@ -243,7 +243,7 @@ class EqualWithColumnTest extends TestCase
 
 
         $this->assertEquals(false, $rule->execute( $request));
-        $this->assertEquals("str must equal with account column",$rule->errorMsg($request->validateParam->name));
+        $this->assertEquals('str must be equal to parameter account (strict=; 1: compare value and type; empty: loose comparison)',$rule->errorMsg($request->validateParam->name));
     }
 
     /*

@@ -13,7 +13,7 @@ class EqualWithColumn extends AbstractValidator
 
     public $compare;
 
-    private bool $strict;
+    protected bool $strict;
 
     function __construct(string $compare,bool $strict = false,string|null $errorMsg = null)
     {

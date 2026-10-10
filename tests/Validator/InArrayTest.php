@@ -55,7 +55,7 @@ class InArrayTest extends TestCase
         $request = new ValidateRequest($param);
         $rule = new InArray(array: [1, 2, 3], strict: true);
         $this->assertEquals(false, $rule->execute( $request));
-        $this->assertEquals("num must in array of [1,2,3]",$rule->errorMsg($request->validateParam->name));
+        $this->assertEquals('num must be in [1,2,3] (strict=1; 1: compare value and type; empty: loose comparison)',$rule->errorMsg($request->validateParam->name));
     }
 
     /*

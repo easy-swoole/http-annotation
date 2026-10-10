@@ -111,7 +111,7 @@ class DateBeforeColumnTest extends TestCase
         ];
 
         $this->assertEquals(false, $rule->execute( $request));
-        $this->assertEquals("date must be date before date1 column", $rule->errorMsg($request->validateParam->name));
+        $this->assertEquals('date must be date before date1 column', $rule->errorMsg($request->validateParam->name));
 
         // 非法参数
         $request = new Request();
@@ -135,7 +135,7 @@ class DateBeforeColumnTest extends TestCase
         ];
 
         $this->assertEquals(false, $rule->execute( $request));
-        $this->assertEquals("date must be date before date1 column", $rule->errorMsg($request->validateParam->name));
+        $this->assertEquals('date must be date before date1 column', $rule->errorMsg($request->validateParam->name));
 
         //字段必须是日期格式。因此传时间戳，失败
         $request = new Request();
@@ -158,7 +158,7 @@ class DateBeforeColumnTest extends TestCase
             "date1" => $date1
         ];
         $this->assertEquals(false, $rule->execute( $request));
-        $this->assertEquals("date must be date before date1 column", $rule->errorMsg($request->validateParam->name));
+        $this->assertEquals('date must be date before date1 column', $rule->errorMsg($request->validateParam->name));
     }
 
     /*

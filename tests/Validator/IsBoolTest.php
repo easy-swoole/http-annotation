@@ -93,7 +93,7 @@ class IsBoolTest extends TestCase
         $request = new ValidateRequest($param);
         $rule = new IsBool();
         $this->assertEquals(false, $rule->execute( $request));
-        $this->assertEquals("bool must be bool",$rule->errorMsg($request->validateParam->name));
+        $this->assertEquals('bool must be true, false, 0, 1, "0" or "1"',$rule->errorMsg($request->validateParam->name));
     }
 
     /*

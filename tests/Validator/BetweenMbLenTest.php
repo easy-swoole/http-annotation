@@ -66,7 +66,7 @@ class BetweenMbLenTest extends TestCase
         $request = new ValidateRequest($param);
         $rule = new BetweenMbLen(minLen: 2, maxLen: 4);
         $this->assertEquals(false, $rule->execute( $request));
-        $this->assertEquals("name length must between 2 to 4", $rule->errorMsg($request->validateParam->name));
+        $this->assertEquals('name character length must be between 2 and 4, inclusive', $rule->errorMsg($request->validateParam->name));
     }
 
     /*
