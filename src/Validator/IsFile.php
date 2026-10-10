@@ -19,18 +19,11 @@ class IsFile extends AbstractValidator
 
     function __construct(int|null $maxSize = null,array|null $allowExt = null,string|null $errorMsg = null)
     {
-        if(empty($errorMsg)){
-            $this->maxSize = $maxSize;
-            $this->allowExt = $allowExt;
-            $errorMsg = "{#validateParam} must be an file";
-            if(!empty($this->maxSize)){
-                $errorMsg .= " and size must below {#maxSize}";
-            }
-            if(!empty($this->allowExt)){
-                $errorMsg .= " and file extension must in {#allowExt}";
-            }
+        $this->maxSize = $maxSize;
+        $this->allowExt = $allowExt;
+        if ($errorMsg !== null) {
+            $this->errorMsgTpl($errorMsg);
         }
-        $this->errorMsgTpl($errorMsg);
     }
 
     protected function validate(ValidateRequest $validateRequest): bool

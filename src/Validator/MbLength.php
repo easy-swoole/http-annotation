@@ -12,10 +12,9 @@ class MbLength extends AbstractValidator
     protected int $length;
     function __construct(int $length,string|null $errorMsg = null)
     {
-        if(empty($errorMsg)){
-            $errorMsg = "{#validateParam} mb length must be {#length}";
+        if ($errorMsg !== null) {
+            $this->errorMsgTpl($errorMsg);
         }
-        $this->errorMsgTpl($errorMsg);
         $this->length = $length;
     }
 

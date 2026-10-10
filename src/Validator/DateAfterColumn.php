@@ -14,11 +14,10 @@ class DateAfterColumn extends AbstractValidator
 
     public function __construct(string $compare, string|null $errorMsg = null)
     {
-        if (empty($errorMsg)) {
-            $errorMsg = "{#validateParam} must be date after {#compare} column";
-        }
         $this->compare = $compare;
-        $this->errorMsgTpl($errorMsg);
+        if ($errorMsg !== null) {
+            $this->errorMsgTpl($errorMsg);
+        }
     }
 
     protected function validate(ValidateRequest $validateRequest): bool

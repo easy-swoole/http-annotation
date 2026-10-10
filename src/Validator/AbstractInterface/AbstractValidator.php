@@ -4,6 +4,7 @@ namespace EasySwoole\HttpAnnotation\Validator\AbstractInterface;
 
 use EasySwoole\HttpAnnotation\Attributes\Param;
 use EasySwoole\HttpAnnotation\Validator\Bean\ValidateRequest;
+use EasySwoole\HttpAnnotation\Validator\MsgMap\DefaultMap;
 use EasySwoole\HttpAnnotation\Validator\OptionalIfParamSet;
 use EasySwoole\HttpAnnotation\Validator\OptionalIfParamValInArray;
 use EasySwoole\HttpAnnotation\Validator\OptionalIfParamValNoInArray;
@@ -13,7 +14,7 @@ abstract class AbstractValidator
     /**
      * @var string|null
      */
-    private string|null $errorMsgTpl;
+    private string|null $errorMsgTpl = null;
 
     private array|null $args = null;
 
@@ -50,17 +51,27 @@ abstract class AbstractValidator
         return $this->args;
     }
 
-    function errorMsgTpl(string|null $msg):string
+    function errorMsgTpl(string|null $msg = null):string|null
     {
         if(!empty($msg)){
             $this->errorMsgTpl = $msg;
         }
-        return  $this->errorMsgTpl;
+        return $this->errorMsgTpl;
     }
 
-    function errorMsg(string $validateParamName):string
+    function errorMsg(string $validateParamName,ValidateMsgMapInterface|null $validateMsgMap = null):string
     {
-        $tpl = $this->errorMsgTpl;
+        if(empty($this->errorMsgTpl)){
+            if($validateMsgMap === null){
+                $validateMsgMap = DefaultMap::class;
+            }
+            $tpl = $validateMsgMap::getMsgTpl(static::ruleName());
+            if(empty($tpl)){
+                $tpl = $validateMsgMap::getDefaultMsgTpl(static::ruleName());
+            }
+        }else{
+            $tpl = $this->errorMsgTpl;
+        }
         $tpl = str_replace('{#validateParam}',$validateParamName,$tpl);
         foreach ($this->getRuleArgs() as $key => $val){
             if(is_callable($val)){

@@ -15,10 +15,9 @@ class MinLength extends AbstractValidator
     function __construct(int $minLen,string|null $errorMsg = null)
     {
         $this->minLen = $minLen;
-        if(empty($errorMsg)){
-            $errorMsg = "{#validateParam} min length is {#minLen}";
+        if ($errorMsg !== null) {
+            $this->errorMsgTpl($errorMsg);
         }
-        $this->errorMsgTpl($errorMsg);
     }
 
     protected function validate(ValidateRequest $validateRequest): bool

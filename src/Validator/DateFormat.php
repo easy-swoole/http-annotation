@@ -14,10 +14,9 @@ class DateFormat extends AbstractValidator
     function __construct(string $dateFormat,string|null $errorMsg = null)
     {
         $this->format = $dateFormat;
-        if(empty($errorMsg)){
-            $errorMsg = "{#validateParam} must be date format {#format}";
+        if ($errorMsg !== null) {
+            $this->errorMsgTpl($errorMsg);
         }
-        $this->errorMsgTpl($errorMsg);
     }
 
     protected function validate(ValidateRequest $validateRequest): bool

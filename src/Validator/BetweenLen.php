@@ -16,10 +16,9 @@ class BetweenLen extends AbstractValidator
     {
         $this->minLen = $minLen;
         $this->maxLen = $maxLen;
-        if(empty($errorMsg)){
-            $errorMsg = "{#validateParam} length must between {#minLen} to {#maxLen}";
+        if ($errorMsg !== null) {
+            $this->errorMsgTpl($errorMsg);
         }
-        $this->errorMsgTpl($errorMsg);
     }
 
     protected function validate(ValidateRequest $validateRequest): bool

@@ -19,10 +19,9 @@ class EqualWithColumn extends AbstractValidator
     {
         $this->compare = $compare;
         $this->strict = $strict;
-        if(empty($errorMsg)){
-            $errorMsg = "{#validateParam} must equal with {#compare} column";
+        if ($errorMsg !== null) {
+            $this->errorMsgTpl($errorMsg);
         }
-        $this->errorMsgTpl($errorMsg);
     }
 
     protected function validate(ValidateRequest $validateRequest): bool

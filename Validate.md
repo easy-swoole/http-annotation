@@ -28,7 +28,7 @@ public function login(array $data): void {}
 
 规则依次执行，首次失败抛出 `ParamValidateFail`，消息包含类和方法，可通过 `getFailRule()`、`getParamName()` 获取失败规则与参数。规则通过静态方法 `ValidatorClass::ruleName()` 获取名称并保存，同一参数重复定义同名规则时后者覆盖前者。自定义规则必须实现 `public static function ruleName(): string`，可直接通过类名调用，不需要创建实例。
 
-所有规则的最后一个构造参数均为 `?string $errorMsg = null`，以下列出完整签名和示例。错误模板支持 `{#validateParam}` 以及规则参数占位符，例如 `{#min}`、`{#maxLen}`。占位符取决于规则属性名；DateFormat 使用 `{#format}`。未设置自定义消息时使用规则默认消息。
+所有规则的最后一个构造参数均为 `?string $errorMsg = null`，以下列出完整签名和示例。错误模板支持 `{#validateParam}` 以及规则参数占位符，例如 `{#min}`、`{#maxLen}`。占位符取决于规则属性名；DateFormat 使用 `{#format}`。未设置自定义消息时，基类统一通过 `MsgMap\DefaultMap` 获取模板；未知规则使用默认兜底消息。各验证器构造函数只接收自定义消息，不再内置默认文案。Decimal、Money 默认消息不再追加精度，Func 默认消息不再追加回调名称；需要这些细节时可传入自定义模板。
 
 ## 必填与可选
 

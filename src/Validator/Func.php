@@ -16,14 +16,9 @@ class Func extends AbstractValidator
 
     function __construct(ValidateFuncInterface|callable $func,string|null $errorMsg = null)
     {
-        if(empty($errorMsg)){
-            if($func instanceof ValidateFuncInterface){
-                $errorMsg = "{#validateParam} validate fail in {$func->functionName()} function";
-            }else{
-                $errorMsg = "{#validateParam} validate fail in custom function";
-            }
+        if ($errorMsg !== null) {
+            $this->errorMsgTpl($errorMsg);
         }
-        $this->errorMsgTpl($errorMsg);
         $this->call = $func;
     }
 

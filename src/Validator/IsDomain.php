@@ -230,10 +230,9 @@ class IsDomain extends AbstractValidator
 
     public function __construct(string|null $errorMsg = null)
     {
-        if (empty($errorMsg)) {
-            $errorMsg = "{#validateParam} must be a valid domain name format";
+        if ($errorMsg !== null) {
+            $this->errorMsgTpl($errorMsg);
         }
-        $this->errorMsgTpl($errorMsg);
     }
 
     private function checkTLD($input): bool

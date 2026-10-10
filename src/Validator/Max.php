@@ -14,10 +14,9 @@ class Max extends AbstractValidator
     function __construct(int|float $max,string|null $errorMsg = null)
     {
         $this->max = $max;
-        if(empty($errorMsg)){
-            $errorMsg = "{#validateParam} max value is {#max}";
+        if ($errorMsg !== null) {
+            $this->errorMsgTpl($errorMsg);
         }
-        $this->errorMsgTpl($errorMsg);
     }
 
     protected function validate(ValidateRequest $validateRequest): bool

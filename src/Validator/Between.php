@@ -16,10 +16,9 @@ class Between extends AbstractValidator
     {
         $this->min = $min;
         $this->max = $max;
-        if(empty($errorMsg)){
-            $errorMsg = "{#validateParam} must between {#min} to {#max}";
+        if ($errorMsg !== null) {
+            $this->errorMsgTpl($errorMsg);
         }
-        $this->errorMsgTpl($errorMsg);
     }
 
     protected function validate(ValidateRequest $validateRequest): bool

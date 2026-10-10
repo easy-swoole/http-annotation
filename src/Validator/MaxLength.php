@@ -14,10 +14,9 @@ class MaxLength extends AbstractValidator
 
     function __construct(int $maxLen,string|null $errorMsg = null)
     {
-        if(empty($errorMsg)){
-            $errorMsg = "{#validateParam} max length is {#maxLen}";
+        if ($errorMsg !== null) {
+            $this->errorMsgTpl($errorMsg);
         }
-        $this->errorMsgTpl($errorMsg);
         $this->maxLen = $maxLen;
     }
 

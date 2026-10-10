@@ -16,10 +16,9 @@ class OptionalIfParamValInArray extends AbstractValidator
     {
         $this->inVal = $inVal;
         $this->paramName = $paramName;
-        if(empty($errorMsg)){
-            $errorMsg = "{#validateParam} is optional when param {$paramName} value is in ".json_encode($inVal);
+        if ($errorMsg !== null) {
+            $this->errorMsgTpl($errorMsg);
         }
-        $this->errorMsgTpl($errorMsg);
     }
     protected function validate(ValidateRequest $validateRequest): bool
     {

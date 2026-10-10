@@ -14,10 +14,9 @@ class OptionalIfParamMiss extends AbstractValidator
     function __construct(string $paramName,string|null $errorMsg = null)
     {
         $this->paramName = $paramName;
-        if(empty($errorMsg)){
-            $errorMsg = "{#validateParam} is optional when param {$paramName} miss";
+        if ($errorMsg !== null) {
+            $this->errorMsgTpl($errorMsg);
         }
-        $this->errorMsgTpl($errorMsg);
     }
 
     protected function validate(ValidateRequest $validateRequest): bool

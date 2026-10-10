@@ -11,10 +11,9 @@ class NotEmpty extends AbstractValidator
 {
     function __construct(string|null $errorMsg = null)
     {
-        if(empty($errorMsg)){
-            $errorMsg = "{#validateParam} is no empty";
+        if ($errorMsg !== null) {
+            $this->errorMsgTpl($errorMsg);
         }
-        $this->errorMsgTpl($errorMsg);
     }
 
     protected function validate(ValidateRequest $validateRequest): bool

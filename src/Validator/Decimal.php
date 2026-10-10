@@ -17,13 +17,9 @@ class Decimal extends AbstractValidator
             $accuracy = 0;
         }
         $this->accuracy = $accuracy;
-        if(empty($errorMsg)){
-            $errorMsg = "{#validateParam} must be decimal";
-            if($accuracy > 0){
-                $errorMsg = $errorMsg ." with {$accuracy} accuracy";
-            }
+        if ($errorMsg !== null) {
+            $this->errorMsgTpl($errorMsg);
         }
-        $this->errorMsgTpl($errorMsg);
     }
 
     protected function validate(ValidateRequest $validateRequest): bool

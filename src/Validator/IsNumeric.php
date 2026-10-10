@@ -11,10 +11,9 @@ class IsNumeric extends AbstractValidator
 {
     function __construct(string|null $errorMsg = null)
     {
-        if(empty($errorMsg)){
-            $errorMsg = "{#validateParam} must be numeric";
+        if ($errorMsg !== null) {
+            $this->errorMsgTpl($errorMsg);
         }
-        $this->errorMsgTpl($errorMsg);
     }
 
 

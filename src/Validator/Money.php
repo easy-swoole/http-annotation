@@ -13,13 +13,9 @@ class Money extends AbstractValidator
 
     function __construct(int|null $precision = null, string|null $errorMsg = null)
     {
-        if (empty($errorMsg)) {
-            $errorMsg = "{#validateParam} must be legal amount";
-            if ($precision > 0) {
-                $errorMsg = $errorMsg . " with {$precision} precision";
-            }
+        if ($errorMsg !== null) {
+            $this->errorMsgTpl($errorMsg);
         }
-        $this->errorMsgTpl($errorMsg);
         $this->precision = $precision;
     }
 

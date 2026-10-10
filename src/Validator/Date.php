@@ -14,10 +14,9 @@ class Date extends AbstractValidator
     function __construct(string $date,string|null $errorMsg = null)
     {
         $this->date = $date;
-        if(empty($errorMsg)){
-            $errorMsg = "{#validateParam} must be date {#date}";
+        if ($errorMsg !== null) {
+            $this->errorMsgTpl($errorMsg);
         }
-        $this->errorMsgTpl($errorMsg);
     }
 
     protected function validate(ValidateRequest $validateRequest): bool

@@ -14,10 +14,9 @@ class Min extends AbstractValidator
     function __construct(int|float $min,string|null $errorMsg = null)
     {
         $this->min = $min;
-        if(empty($errorMsg)){
-            $errorMsg = "{#validateParam} min value is {#min}";
+        if ($errorMsg !== null) {
+            $this->errorMsgTpl($errorMsg);
         }
-        $this->errorMsgTpl($errorMsg);
     }
 
     protected function validate(ValidateRequest $validateRequest): bool

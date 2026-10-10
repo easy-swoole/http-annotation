@@ -18,10 +18,9 @@ class InArray extends AbstractValidator
     {
         $this->array = $array;
         $this->strict = $strict;
-        if(empty($errorMsg)){
-            $errorMsg = "{#validateParam} must in array of {#array}";
+        if ($errorMsg !== null) {
+            $this->errorMsgTpl($errorMsg);
         }
-        $this->errorMsgTpl($errorMsg);
     }
 
     protected function validate(ValidateRequest $validateRequest): bool

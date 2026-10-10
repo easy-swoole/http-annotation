@@ -13,10 +13,9 @@ class BigThanColumn extends AbstractValidator
 
     function __construct(public string $paramName,string|null $errorMsg = null)
     {
-        if(empty($errorMsg)){
-            $errorMsg = "{#validateParam} value must big than {$paramName} value";
+        if ($errorMsg !== null) {
+            $this->errorMsgTpl($errorMsg);
         }
-        $this->errorMsgTpl($errorMsg);
     }
 
     protected function validate(ValidateRequest $validateRequest): bool

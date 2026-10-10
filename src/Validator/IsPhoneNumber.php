@@ -12,10 +12,9 @@ class IsPhoneNumber extends AbstractValidator
 
     function __construct(string|null $errorMsg = null)
     {
-        if(empty($errorMsg)){
-            $errorMsg = "{#validateParam} must be phone number";
+        if ($errorMsg !== null) {
+            $this->errorMsgTpl($errorMsg);
         }
-        $this->errorMsgTpl($errorMsg);
     }
     protected function validate(ValidateRequest $validateRequest): bool
     {
