@@ -246,20 +246,24 @@ new IsEmail();
 ### IsUrl
 
 ```php
-IsUrl(string|null $errorMsg = null)
+IsUrl(array|null $allowProtocols = null, string|null $errorMsg = null)
 new IsUrl();
+new IsUrl(['http', 'https']);
+new IsUrl(['https'], '仅允许 HTTPS 地址');
 ```
 
-要求字符串并使用 FILTER_VALIDATE_URL。
+要求字符串并使用 FILTER_VALIDATE_URL。`allowProtocols` 为允许的协议名称数组，不包含 `://`，匹配时忽略大小写。默认 `null` 不额外限制协议；空数组 `[]` 禁止所有协议。非法协议配置会抛出异常。
 
 ### IsIp
 
 ```php
-IsIp(string|null $errorMsg = null)
+IsIp(string $mode = 'ANY', string|null $errorMsg = null)
 new IsIp();
+new IsIp('IPV4');
+new IsIp('IPV6', '请输入 IPv6 地址');
 ```
 
-使用 FILTER_VALIDATE_IP，支持有效 IPv4/IPv6。
+使用 FILTER_VALIDATE_IP。`mode` 支持 `ANY`（默认，允许 IPv4/IPv6）、`IPV4`、`IPV6`，忽略大小写；后两种分别使用 FILTER_FLAG_IPV4、FILTER_FLAG_IPV6。非法模式会抛出异常。
 
 ### IsDomain
 

@@ -130,6 +130,8 @@ GET、HEAD 的 Content-Type 默认是 `null`；其他方法未指定时默认为
 
 完整的验证器参数、规则行为和使用示例见 [验证器使用指南](Validate.md)。
 
+`IsUrl(allowProtocols: ['http', 'https'])` 可限制 URL 协议；`IsIp(mode: 'IPV4')` 或 `IsIp(mode: 'IPV6')` 可限制 IP 版本。这两个规则的校验配置参数位于首位，`errorMsg` 位于最后；默认分别不额外限制协议、允许 IPv4/IPv6。
+
 支持 STRING、INT、DOUBLE、REAL、FLOAT、BOOLEAN、FILE、NULL_WHILE_EMPTY 类型。转换发生在校验前，转换本身不是合法性校验，必要时仍需配置校验器。
 
 ### 未传参数与空值转换
