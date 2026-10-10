@@ -66,7 +66,9 @@ new DistinctInArray();
 new DistinctInArray(true, 'ID 不能重复');
 ```
 
-只接受数组，比较数组值而不是键，不递归检查内部元素。默认宽松比较，`[1, '1']` 失败；`strict: true` 时按值和类型比较，该输入通过。空数组通过，重复的 null 或空字符串失败。
+只接受由 int、string 元素组成的数组，比较数组值而不是键；其他元素类型直接校验失败。默认宽松比较，`[1, '1']` 失败；`strict: true` 时按值和类型比较，该输入通过。空数组通过，重复的空字符串失败。
+
+严格模式及普通整数 ID、整数字符串使用 O(n) 哈希检查。宽松模式遇到小数、科学计数法、前导零或超大整数等特殊数值字符串时，回退到 PHP 宽松比较，保持原有行为，该路径仍为 O(n²)。
 
 JSON 或 POST 数组参数必须配置 `type: null`，保留数组原值：
 
@@ -455,6 +457,32 @@ new Different(compare: "blocked", strict: true);
 ```
 
 与 compare 不相等；strict=false 使用 !=，true 使用 !==。
+
+### Enum
+
+```php
+Enum(string $enumClass, bool $strict = false, string|null $errorMsg = null)
+```
+
+校验 PHP 原生枚举。BackedEnum 按成员的 value 比较，默认宽松比较，兼容整数枚举的表单字符串值；`strict: true` 时同时比较类型。无值枚举按成员名称精确比较，区分大小写。也可接受目标枚举的实例，其他枚举的实例不通过；布尔值、浮点数、数组和 null 不通过。类名不是枚举时在构造阶段抛出配置异常。
+
+```php
+use EasySwoole\HttpAnnotation\Attributes\Param;
+use EasySwoole\HttpAnnotation\Enum\ParamFrom;
+use EasySwoole\HttpAnnotation\Validator\Enum;
+
+enum Status: int
+{
+    case Inactive = 0;
+    case Active = 1;
+}
+
+new Enum(Status::class);
+new Enum(Status::class, true, '状态值不合法');
+new Param('status', from: ParamFrom::JSON, type: null, validate: [new Enum(Status::class, true)]);
+```
+
+类型转换先于校验，若希望严格检查请求值的原始类型，必须设置 `type: null`。默认 STRING 会将 JSON 整数转换为字符串；枚举实例同样需要 `type: null` 保留。
 
 ### InArray
 
