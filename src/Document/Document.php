@@ -70,7 +70,7 @@ class Document
             }
             if(isset($documentMap[$apiGroup->groupName])){
                 /** @var ApiGroup $old */
-                $old = $documentMap[$apiGroup->groupName];
+                $old = $documentMap[$apiGroup->groupName]['apiGroup'];
                 throw new Annotation("apiGroupName {$apiGroup->groupName} is already defined in {$old->relateClass},redefine in {$apiGroup->relateClass} again");
             }
 
