@@ -89,6 +89,137 @@ class Message extends AnnotationController
 
 普通方法的形参名称需要与属性中定义的参数名称一致。方法只有一个 `array` 形参时，组件将接口的 `requestParam` 打包成数组传入。此数组模式只收集接口参数；公共参数可在 `onRequest` 中接收。
 
+## 在控制器命名空间下注册路由
+
+路由使用 `easyswoole/http` 的 `AbstractRouter`。将 `Router.php` 放在控制器根目录，例如 `App/HttpController/Router.php`，命名空间必须与 Dispatcher 的控制器命名空间一致：
+
+```php
+<?php
+
+namespace App\HttpController;
+
+use EasySwoole\Http\AbstractInterface\AbstractRouter;
+use FastRoute\RouteCollector;
+
+class Router extends AbstractRouter
+{
+    public function initialize(RouteCollector $routeCollector)
+    {
+        // 按原始 URL 路径匹配，使路由定义中的前导斜杠和路径保持一致。
+        $this->setPathInfoMode(false);
+
+        $routeCollector->addRoute('GET', '/api/messages', '/Common/Message/list');
+        $routeCollector->addRoute('POST', '/api/messages/detail', '/Common/Message/detail');
+        $routeCollector->addRoute('POST', '/api/profile/upload', '/Common/Message/update');
+    }
+}
+```
+
+服务启动时配置控制器命名空间：
+
+```php
+use EasySwoole\Http\Dispatcher;
+
+$dispatcher = new Dispatcher();
+$dispatcher->setNamespacePrefix('App\\HttpController');
+```
+
+Dispatcher 在首次分发请求时自动查找 `App\HttpController\Router` 并调用 `initialize()`，不需要手动实例化 Router。业务项目须配置 `App\` 的 Composer 自动加载。
+
+`addRoute()` 的第三个参数是相对于控制器根命名空间的“控制器路径/action”，例如 `/Common/Message/list` 会调用 `App\HttpController\Common\Message::list()`。它不是完整 PHP 类名。请求方法须与对应 `Api::allowMethod` 一致，路由映射不会绕过参数校验或改变参数来源。
+
+默认未命中自定义路由时仍会尝试按控制器路径分发。若只允许已注册的路由，可在 `initialize()` 中调用 `$this->setGlobalMode(true)`；未命中的请求将不再回退到控制器路径分发。
+
+当前 `Api::registerRouter` 尚未实现自动注册；需要如上显式注册。文档生成器也不会读取自定义 Router 的映射，生产文档中的请求地址需与实际路由保持一致。
+
+### pathInfo 模式与原始路径
+
+`setPathInfoMode(true)` 为默认值，匹配前会通过 `UrlParser::pathInfo()` 处理路径：去掉文件扩展名，并将末尾名称为 `index` 的文件折叠到父路径。`setPathInfoMode(false)` 则使用 URI 的原始路径匹配，保留扩展名。两种模式都不包含查询字符串。
+
+| 请求 URL | 开启 pathInfo 时用于匹配的路径 | 关闭 pathInfo 时用于匹配的路径 |
+| --- | --- | --- |
+| `/res/example.txt` | `/res/example` | `/res/example.txt` |
+| `/res/example.html?version=1` | `/res/example` | `/res/example.html` |
+| `/res/index.html` | `/res` | `/res/index.html` |
+| `/Common/Message/list` | `/Common/Message/list` | `/Common/Message/list` |
+
+因此，要区分 `.txt` 和 `.html`，需要关闭 pathInfo。此开关只决定路由匹配使用的路径；后续控制器路径分发仍会进行 pathInfo 处理。
+
+### 正则匹配文件路径并在回调中响应
+
+FastRoute 使用 `{参数名:正则}` 定义路径参数，不需要加 `^`、`$` 或正则分隔符。正则内部需要分组时使用非捕获组 `(?:...)`。下面的路由匹配 `/res/example.txt`、`/res/example.html`，文件名允许字母、数字、下划线和连字符：
+
+```php
+namespace App\HttpController;
+
+use EasySwoole\Http\AbstractInterface\AbstractRouter;
+use EasySwoole\Http\Request;
+use EasySwoole\Http\Response;
+use FastRoute\RouteCollector;
+
+class Router extends AbstractRouter
+{
+    public function initialize(RouteCollector $routeCollector)
+    {
+        $this->setPathInfoMode(false);
+        // 将匹配的 name、ext 注入 GET 参数；同名路由参数优先于原查询参数。
+        $this->parseParams(self::PARSE_PARAMS_IN_GET);
+
+        $routeCollector->addRoute(
+            'GET',
+            '/res/{name:[a-zA-Z0-9_-]+}.{ext:txt|html}',
+            function (Request $request, Response $response) {
+                $params = $request->getQueryParams();
+                $name = $params['name'];
+                $ext = $params['ext'];
+
+                $response->withStatus(200);
+                if ($ext === 'html') {
+                    $response->withHeader('Content-Type', 'text/html; charset=utf-8');
+                    $response->write('<p>' . htmlspecialchars($name, ENT_QUOTES, 'UTF-8') . '</p>');
+                } else {
+                    $response->withHeader('Content-Type', 'text/plain; charset=utf-8');
+                    $response->write('资源名称：' . $name);
+                }
+
+                // 已处理请求，终止 Dispatcher 的后续控制器分发。
+                return false;
+            }
+        );
+    }
+}
+```
+
+回调仅接收 `Request`、`Response`，没有第三个路径参数数组。默认路径参数保存在协程上下文；上述示例通过 `parseParams()` 改为注入 GET，控制器也可使用 `ParamFrom::GET` 读取。`write()`、`withStatus()`、`withHeader()` 设置响应，服务入口在 `dispatch()` 返回后仍按启动示例调用 `$responsePsr->__response()` 输出响应。
+
+### 回调如何拦截或继续分发
+
+`addRoute()` 的第三个参数可以是闭包、可调用对象或其他合法 callable。Dispatcher 根据回调返回值决定下一步：
+
+| 回调返回值 | 后续行为 |
+| --- | --- |
+| `false` | 立即结束分发，适合已响应或鉴权失败的请求 |
+| 控制器路径字符串，例如 `'/Common/Message/list'` | 转交指定控制器 action，即使开启全局模式也会继续 |
+| `true`、`null` 或其他非字符串、非 false 值 | 非全局模式下继续按原请求路径分发；全局模式下结束分发 |
+
+例如，在 `initialize()` 中注册一个鉴权回调，失败时响应并拦截，通过时转交控制器：
+
+```php
+$routeCollector->addRoute('GET', '/api/messages', function (Request $request, Response $response) {
+    // 示例条件；实际项目应替换为自己的鉴权逻辑。
+    if ($request->getHeaderLine('Authorization') === '') {
+        $response->withStatus(401);
+        $response->withHeader('Content-Type', 'application/json; charset=utf-8');
+        $response->write(json_encode(['message' => '请先登录'], JSON_UNESCAPED_UNICODE));
+        return false;
+    }
+
+    return '/Common/Message/list';
+});
+```
+
+如果回调只做日志记录，并希望继续按原控制器路径分发，可注册原路径 `/Common/Message/list`，处理完返回 `true`，同时保持 `setGlobalMode(false)`。继续分发表示进入控制器处理，不会继续执行其他路由；FastRoute 每次请求只选择一个匹配结果。回调抛出异常时，Dispatcher 调用异常处理并终止后续分发。
+
 ## 请求方法、Content-Type 与参数来源
 
 `Api::allowMethod` 为单个 `HttpMethod` 枚举，默认 `GET`，不接受方法数组。
