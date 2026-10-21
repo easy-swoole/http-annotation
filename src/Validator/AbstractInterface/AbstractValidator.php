@@ -64,6 +64,8 @@ abstract class AbstractValidator
         if(empty($this->errorMsgTpl)){
             if($validateMsgMapClass === null){
                 $validateMsgMapClass = DefaultMap::class;
+            }else if(!is_subclass_of($validateMsgMapClass,ValidateMsgMapInterface::class)){
+                throw new \TypeError("class {$validateMsgMapClass} must implement ValidateMsgMapInterface");
             }
             $tpl = $validateMsgMapClass::getMsgTpl(static::ruleName());
             if(empty($tpl)){
