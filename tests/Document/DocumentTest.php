@@ -10,6 +10,26 @@ use PHPUnit\Framework\TestCase;
 
 class DocumentTest extends TestCase
 {
+    public function testTemplateAssetsAreInlinedInStandaloneHtml(): void
+    {
+        $document = new Document(
+            dirname(__DIR__) . '/ControllerExample',
+            'EasySwoole\\HttpAnnotation\\Tests\\ControllerExample'
+        );
+        $html = $document->scan2html();
+        $this->assertStringNotContainsString('{{$', $html);
+        $this->assertStringNotContainsString('<script src=', $html);
+        $this->assertStringNotContainsString('rel="stylesheet"', $html);
+        $this->assertSame(1, substr_count($html, '<style>'));
+        $this->assertSame(1, substr_count($html, '<script>'));
+        // 除包含模板变量的 state.js 外，其余资源必须完整内联，不能遗漏功能片段。
+        foreach (glob(dirname(__DIR__, 2) . '/src/Document/assets/*') as $file) {
+            if (basename($file) !== 'state.js') {
+                $this->assertStringContainsString(file_get_contents($file), $html, basename($file));
+            }
+        }
+    }
+
     public function testNestedMenusKeepTheirFullPaths(): void
     {
         $document = new Document(

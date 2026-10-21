@@ -1,4 +1,3 @@
-const fs = require('node:fs');
 const vm = require('node:vm');
 const assert = require('node:assert/strict');
 
@@ -48,7 +47,7 @@ const group = {
             requestExamples: [], responseExamples: {success: [], fail: []}},
     },
 };
-const template = fs.readFileSync(__dirname + '/../../src/Document/doc.tpl', 'utf8');
+const template = require('./load-template.cjs')();
 const script = template.split('<script>')[1].split('</script>')[0]
     .replace('{{$docData}}', JSON.stringify({Common: group}))
     .replace('{{$config}}', JSON.stringify({projectName: '文档', host: 'http://localhost', hasDescription: true}));

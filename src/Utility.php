@@ -12,6 +12,7 @@ use EasySwoole\HttpAnnotation\Exception\Annotation;
 use EasySwoole\HttpAnnotation\Exception\ParamValidateFail;
 use EasySwoole\HttpAnnotation\Validator\AbstractInterface\AbstractValidator;
 use EasySwoole\HttpAnnotation\Validator\Bean\ValidateRequest;
+use EasySwoole\HttpAnnotation\Validator\MsgMap\DefaultMap;
 use EasySwoole\Utility\File;
 use FastRoute\RouteCollector;
 use PhpToken;
@@ -94,7 +95,7 @@ class Utility
     }
 
 
-    public static function validateParam(ValidateRequest $validateRequest,string $validateMsgMapClass = \EasySwoole\HttpAnnotation\Validator\MsgMap\DefaultMap::class): void
+    public static function validateParam(ValidateRequest $validateRequest,string $validateMsgMapClass = DefaultMap::class): void
     {
         $rules = $validateRequest->validateParam->validate;
         /** @var AbstractValidator $rule */

@@ -389,6 +389,22 @@ public function update(array $params): void
 
 在 `onRequest` 上使用可重复的 `#[Param]` 定义公共参数。接口定义的同名参数优先覆盖公共定义。
 
+### 参数覆盖、校验与传递规则
+
+控制器先合并定义，再统一解析最终参数。action 同名参数会**完整覆盖**公共参数的来源、类型、默认值和验证规则，不合并两份验证规则。每个最终参数在单次请求中只执行一次校验，避免 `Func` 等自定义规则重复执行。
+
+| 参数定义情况 | 最终使用的定义 | 校验次数 | 参数传递位置 |
+| --- | --- | --- | --- |
+| 仅公共参数 | 公共定义 | 1 次 | `onRequest` |
+| 仅 action 参数 | action 定义 | 1 次 | action |
+| 公共和 action 同名 | action 完整覆盖 | 1 次 | `onRequest` 和 action |
+| 公共参数通过 `ignoreAction` 排除，action 无同名参数 | 不参与当前请求 | 0 次 | 都不传 |
+| 公共参数通过 `ignoreAction` 排除，action 有同名参数 | action 定义，覆盖公共参数的排除配置 | 1 次 | `onRequest` 和 action |
+
+校验顺序为：先按公共参数的声明及继承合并顺序校验，其中同名项使用 action 覆盖后的定义；再按 action 声明顺序校验 action 独有参数。全部参数已提前解析，跨字段规则读取同一份最终参数集合。任一规则失败即停止，不调用 `onRequest` 和 action。
+
+表中的“传递位置”表示参数所属的接收位置；action 使用单个 `array` 接收时，未设置且开启 `ignorePassArgWhenNotSet` 的字段仍会从 action 数组中省略。公共参数单独传给 `onRequest`，不会因为存在于最终参数集合中就自动加入 action 数组。
+
 ```php
 use EasySwoole\HttpAnnotation\AnnotationController;
 use EasySwoole\HttpAnnotation\Attributes\Param;
@@ -523,6 +539,7 @@ file_put_contents(__DIR__ . '/api.html', $document->scan2html());
 ```
 
 - `scanAllApiGroup()` 收集控制器属性；`scan2ArrayMap()` 返回文档树；`scan2html()` 返回完整 HTML 字符串，不自动保存文件。
+- 文档源码按职责维护：`src/Document/doc.tpl` 是页面骨架，`src/Document/assets/` 保存 CSS 及渲染、搜索、导航、在线调试等 JavaScript 片段。生成时按模板中的资源占位符顺序内联，输出仍是独立 HTML，无需额外部署 assets 或运行前端构建工具。
 - 扫描的控制器需能被 Composer 自动加载、继承 `AnnotationController` 且定义 `ApiGroup`。仅带 `Api` 的公开非静态方法进入文档；每个文件目前只使用扫描到的第一个类。
 - 分组名称不可重复。`Common.Message`、`Common.Profile` 生成 Common → Message / Profile → action 的侧边栏。没有接口且没有有效后代的节点不展示。
 - 控制器命名空间参数必须与实际目录对应。文档路径由控制器类名和方法名生成，各路径层级首字母转小写，尾部 Index 控制器与 index action 有简写处理。

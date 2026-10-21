@@ -1,7 +1,6 @@
-const fs = require('node:fs');
 const assert = require('node:assert/strict');
 const vm = require('node:vm');
-const template = fs.readFileSync(__dirname + '/../../src/Document/doc.tpl', 'utf8');
+const template = require('./load-template.cjs')();
 const source = template.slice(template.indexOf('    function buildTryRequest('), template.indexOf("    async function runTryRequest("));
 const context = vm.createContext({Headers, URL, URLSearchParams, FormData, File, AbortController,
     setTimeout, clearTimeout, location: {href: 'http://localhost/docs/'}, tryController: null});

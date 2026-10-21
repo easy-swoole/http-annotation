@@ -25,6 +25,12 @@ final class ParamParseState
         $this->hasSet = false;
         $this->parsedValue = $param->value;
 
+        $this->readSources($param, $request);
+        $this->convertType($param);
+    }
+
+    private function readSources(Param $param, ServerRequestInterface $request): void
+    {
         // GET、POST、JSON、XML 使用 isset 判断：null 视为未设置，空字符串和 0 仍算已设置。
         foreach ($param->from as $source) {
             switch ($source){
@@ -151,7 +157,10 @@ final class ParamParseState
                 break;
             }
         }
+    }
 
+    private function convertType(Param $param): void
+    {
         // 实际取到的值在验证器执行前转换；type 为 null 时保留原值（例如数组）。
         // 仅转换可接受的输入；失败时保留原值，由类型验证器拒绝，不改变 hasSet。
         // 只有实际取到参数才做类型转换，未传参数保留默认值，避免 null 被转为 0 等值。
@@ -207,6 +216,5 @@ final class ParamParseState
                 }
             }
         }
-
     }
 }
