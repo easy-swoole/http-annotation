@@ -25,7 +25,9 @@ abstract class AnnotationController extends Controller
     {
         try {
             $attributeInfo = AttributeCache::getInstance()->parseClass(static::class);
-            if (!$this->runPreCalls($attributeInfo->globalPreCall, true)) {
+            if (!$this->runPreCalls($attributeInfo->globalPreCall, [
+                $this->getActionName(), $this->request(), $this->response(),
+            ])) {
                 return;
             }
 
@@ -35,17 +37,15 @@ abstract class AnnotationController extends Controller
             }
 
             $actionParams = $apiTag ? $apiTag->requestParam : [];
-            [$publicParams, $definitions] = $this->mergeParamDefinitions(
-                $attributeInfo->onRequest->onRequestParams,
-                $actionParams
-            );
-            $finalParams = $this->parseParameters($definitions);
+            $publicParams = $attributeInfo->onRequest->onRequestParams;
+            // action 同名定义优先；公共定义只用于确定校验顺序和传递位置。
+            $finalParams = $this->parseParameters($actionParams + $publicParams);
             $this->validateParameters($publicParams, $actionParams, $finalParams);
             $onRequestArg = $this->buildPublicArguments($publicParams, $finalParams);
             $actionArg = $apiTag ? $this->buildActionArguments($actionParams, $finalParams) : [];
 
             $preCalls = $attributeInfo->methodPreCall[$this->getActionName()] ?? [];
-            if (!$this->runPreCalls($preCalls)) {
+            if (!$this->runPreCalls($preCalls, [$this->request(), $this->response()])) {
                 return;
             }
             $this->injectProperties($attributeInfo->propertyAttribute);
@@ -58,14 +58,10 @@ abstract class AnnotationController extends Controller
     }
 
     // 类级回调在参数处理前执行，方法级回调在校验和传参组装后执行。
-    private function runPreCalls(array $preCalls, bool $global = false): bool
+    private function runPreCalls(array $preCalls, array $args): bool
     {
         /** @var PreCall $preCall */
         foreach ($preCalls as $preCall) {
-            $args = [$this->request(), $this->response()];
-            if ($global) {
-                array_unshift($args, $this->getActionName());
-            }
             if (call_user_func_array($preCall->call, $args) === false) {
                 return false;
             }
@@ -82,17 +78,6 @@ abstract class AnnotationController extends Controller
         if ($method != $api->allowMethod->name) {
             throw new RequestMethodNotAllow("{$method} method is not allow for this request");
         }
-    }
-
-    // 同名项完整使用 action 定义，同时保留公共参数的传递位置与顺序。
-    private function mergeParamDefinitions(array $publicParams, array $actionParams): array
-    {
-        foreach ($actionParams as $param) {
-            if (isset($publicParams[$param->name])) {
-                $publicParams[$param->name] = $param;
-            }
-        }
-        return [$publicParams, $actionParams + $publicParams];
     }
 
     private function parseParameters(array $finalAllParams): array
