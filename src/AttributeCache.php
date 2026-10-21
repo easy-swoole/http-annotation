@@ -152,6 +152,9 @@ class AttributeCache
         foreach ($params as $param) {
             try{
                 $param = $param->newInstance();
+                if (isset($classInfo->onRequest->onRequestParams[$param->name])) {
+                    throw new Annotation("onRequest param {$param->name} define duplicate");
+                }
                 $classInfo->onRequest->onRequestParams[$param->name] = $param;
             }catch (\Throwable $throwable){
                 $msg = "{$throwable->getMessage()} for Param attribute in {$className} method onRequest";

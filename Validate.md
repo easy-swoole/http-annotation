@@ -641,6 +641,10 @@ new Func(func: [TicketValidator::class, "check"]);
 
 接受 callable 或 ValidateFuncInterface，接收 ValidateRequest，返回真表示通过。
 
+`Func` 属于特殊规则：实现 `ValidateFuncInterface` 的回调对象会随参数克隆；普通 callable 对象、对象方法回调和闭包不会深拷贝，可能共享状态。有状态回调建议实现 `ValidateFuncInterface`，并自行处理内部对象引用的隔离，避免长期保存请求或 `ValidateRequest`。
+
+`getRuleArgs()` 是用于消息和文档的缓存元数据，不应作为执行回调或读取请求状态的入口。如果原规则已经调用过 `getRuleArgs()`，克隆后的元数据可能仍引用原回调对象，而实际执行使用克隆后的回调。本次校验数据应通过传入的 `ValidateRequest` 获取。
+
 ## 可选参数的组合
 
 ```php

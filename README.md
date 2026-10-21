@@ -429,6 +429,8 @@ abstract class BaseController extends AnnotationController
 
 `ignoreAction` 可用于公共参数豁免，例如开放接口不要求 token。不要在单数组传参模式中对接口自身的参数使用 `ignoreAction`：当前数组收集分支仍会访问这些被移除的参数。
 
+同一个 `onRequest` 内不能重复声明同名 `#[Param]`，否则定义检查会抛出异常，指出参数名、控制器和方法。使用 `ExtendParam` 时子类覆盖父类同名参数，以及 action 覆盖公共同名参数，仍然允许。
+
 ## 前置回调与属性注入
 
 `#[PreCall([Hooks::class, 'before'])]` 可用于控制器类或接口方法，回调返回 `false` 时中止后续执行。
@@ -454,7 +456,7 @@ $textFile = new Text(__DIR__ . '/docs/message.txt', isFile: true);
 
 `Markdown` 的构造参数是 **Markdown 文件路径**，不是 Markdown 内容字符串。生成文档时使用 `easyswoole/parsedown` 转成 HTML；Text 按纯文本转义展示。说明文件必须存在，建议用 `__DIR__` 拼接绝对路径。Markdown 渲染可能保留内嵌 HTML，说明文件应来自可信内容。
 
-`Api::requestExamples`、`responseExamples` 接收示例对象数组：
+`Api::requestExamples`、`responseExamples` 接收实现 `ExampleInterface` 的示例对象数组。错误类型会在定义检查时抛出异常，指出属性、元素索引和实际类型：
 
 ```php
 use EasySwoole\HttpAnnotation\Bean\Example\Array2Json;

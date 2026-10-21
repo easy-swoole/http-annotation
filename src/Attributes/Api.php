@@ -98,6 +98,14 @@ class Api
             }
             $responseNames[$param->name] = true;
         }
+        foreach (['requestExamples', 'responseExamples'] as $property) {
+            foreach ($this->{$property} as $index => $example) {
+                if (!$example instanceof ExampleInterface) {
+                    $type = get_debug_type($example);
+                    throw new Annotation("{$property}[{$index}] must be an ExampleInterface instance, {$type} given");
+                }
+            }
+        }
         if(is_string($this->description)){
             $this->description = new Text($this->description);
         }
