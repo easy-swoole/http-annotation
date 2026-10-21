@@ -5,6 +5,9 @@ namespace EasySwoole\HttpAnnotation\Tests\ControllerExample\Api;
 use EasySwoole\HttpAnnotation\Attributes\Api;
 use EasySwoole\HttpAnnotation\Attributes\ApiGroup;
 use EasySwoole\HttpAnnotation\Attributes\Param;
+use EasySwoole\HttpAnnotation\Bean\Example\Array2Json;
+use EasySwoole\HttpAnnotation\Bean\Example\ResParam;
+use EasySwoole\HttpAnnotation\Bean\Example\ResParamType;
 use EasySwoole\HttpAnnotation\Enum\HttpMethod;
 use EasySwoole\HttpAnnotation\Enum\ParamFrom;
 use EasySwoole\HttpAnnotation\Enum\ParamType;
@@ -31,14 +34,29 @@ class Auth extends ApiBase
             ], )
         ],
         responseParam: [
-            new Param(
-                name: "code",type: ParamType::STRING
-            ),
-            new Param(
-                name: "Result",
-                type: ParamType::STRING
-            ),
-            new Param("msg")
+            new ResParam('code', 200, ResParamType::int, '响应码，200 表示成功'),
+            new ResParam('result', null, ResParamType::object, '返回数据'),
+            new ResParam('result.access_token', 'token-example', ResParamType::string, '授权 Token'),
+            new ResParam('result.user_info', null, ResParamType::object, '用户信息'),
+            new ResParam('result.user_info.id', 19, ResParamType::int, '用户 ID'),
+            new ResParam('msg', 'Success', ResParamType::string, '响应消息'),
+        ],
+        responseExamples: [
+            new Array2Json([
+                'code' => 200,
+                'result' => [
+                    'access_token' => 'token-example',
+                    'user_info' => [
+                        'id' => 19,
+                    ],
+                ],
+                'msg' => 'Success',
+            ]),
+            new Array2Json([
+                'code' => 401,
+                'result' => null,
+                'msg' => '账号或密码错误',
+            ], isSuccessResponse: false),
         ]
     )]
     function login()

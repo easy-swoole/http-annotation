@@ -237,3 +237,24 @@ elements.get('try-dialog').close();
 selectApi('detail');
 assert.equal(elements.get('try-raw-body').value, '{"msgId":"remember"}');
 console.log('立即尝试请求体记忆和恢复检查通过');
+
+const responseFields = [
+    {name: 'code', exampleValue: 0, type: 'int', description: '响应码'},
+    {name: 'result.enabled', exampleValue: false, type: 'bool', description: null},
+    {name: 'msg', exampleValue: '<script>alert(1)</script>', type: 'string', description: '<img src=x>'},
+];
+const responseTable = context.responseParameterTable(responseFields);
+assert.ok(responseTable.includes('<th>参数名</th><th>参数值</th><th>参数类型</th><th>描述说明</th>'));
+assert.ok(responseTable.includes('<td>0</td>'));
+assert.ok(responseTable.includes('<td>false</td>'));
+assert.ok(responseTable.includes('result.enabled'));
+assert.ok(responseTable.includes('&lt;script&gt;'));
+assert.ok(!responseTable.includes('<script>'));
+assert.ok(!responseTable.includes('<img'));
+assert.ok(context.responseParameterTable([]).includes('暂无示例'));
+assert.ok(context.responseParameterTable(undefined).includes('暂无示例'));
+context.renderApi({...group.apiList.detail, responseParams: responseFields}, {});
+const responsePage = elements.get('content').innerHTML;
+assert.ok(responsePage.indexOf('<h3>响应参数</h3>') > responsePage.indexOf('<h3>请求参数</h3>'));
+assert.ok(responsePage.indexOf('<h3>响应参数</h3>') < responsePage.indexOf('<h3>请求示例</h3>'));
+console.log('响应参数表、章节顺序、空值和 HTML 转义检查通过');

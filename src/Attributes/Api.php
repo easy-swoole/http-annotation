@@ -5,6 +5,7 @@ namespace EasySwoole\HttpAnnotation\Attributes;
 use EasySwoole\HttpAnnotation\Bean\Description\Markdown;
 use EasySwoole\HttpAnnotation\Bean\Description\Text;
 use EasySwoole\HttpAnnotation\Bean\Example\ExampleInterface;
+use EasySwoole\HttpAnnotation\Bean\Example\ResParam;
 use EasySwoole\HttpAnnotation\Enum\ContentType;
 use EasySwoole\HttpAnnotation\Enum\HttpMethod;
 use EasySwoole\HttpAnnotation\Enum\ParamFrom;
@@ -22,6 +23,9 @@ class Api
         public HttpMethod    $allowMethod = HttpMethod::GET,
         public bool          $registerRouter = false,
         public array         $requestParam = [],
+        /**
+         * @var array<ResParam>
+         */
         public array         $responseParam = [],
         /**
          * @var array<ExampleInterface>

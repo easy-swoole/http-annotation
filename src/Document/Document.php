@@ -11,6 +11,7 @@ use EasySwoole\HttpAnnotation\Attributes\Param;
 use EasySwoole\HttpAnnotation\Bean\ClassAttribute;
 use EasySwoole\HttpAnnotation\Bean\Description\AbstractDescription;
 use EasySwoole\HttpAnnotation\Bean\Description\Markdown;
+use EasySwoole\HttpAnnotation\Bean\Example\ResParam;
 use EasySwoole\HttpAnnotation\Exception\Annotation;
 use EasySwoole\HttpAnnotation\Utility;
 use EasySwoole\HttpAnnotation\Validator\AbstractInterface\AbstractValidator;
@@ -170,6 +171,7 @@ class Document
                     'acceptContentType'=>$api->acceptContentType?->name,
                     'requestPath'=>$api->requestPath,
                     'requestParams'=>[],
+                    'responseParams'=>[],
                     'requestExamples'=>[],
                     'responseExamples'=>[
                         'success'=>[],
@@ -179,6 +181,27 @@ class Document
                     'descriptionHtml'=>$this->renderDescription($api->description),
                 ];
                 $currentGroup['apiList'][$apiName]['requestParams'] = $buildParamsInfo($api->requestParam);
+                foreach ($api->responseParam as $param) {
+                    if ($param instanceof ResParam) {
+                        $currentGroup['apiList'][$apiName]['responseParams'][] = [
+                            'name' => $param->name,
+                            'exampleValue' => $param->exampleValue,
+                            'type' => $param->paramType->value,
+                            'description' => is_string($param->description)
+                                ? $param->description : $param->description?->toString(),
+                        ];
+                    } elseif ($param instanceof Param) {
+                        // 兼容早期使用 Param 定义响应字段的写法。
+                        $currentGroup['apiList'][$apiName]['responseParams'][] = [
+                            'name' => $param->name,
+                            'exampleValue' => $param->value,
+                            'type' => $param->type?->name,
+                            'description' => $param->description?->toString(),
+                        ];
+                    } else {
+                        throw new Annotation("responseParam must contain ResParam instances in {$api->relateClass}::{$apiName}");
+                    }
+                }
                 foreach ($api->requestExamples as $example) {
                     $currentGroup['apiList'][$apiName]['requestExamples'][] = $example->toString();
                 }

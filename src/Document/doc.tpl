@@ -561,6 +561,10 @@
         .parameter-table th:nth-child(5), .parameter-table td:nth-child(5),
         .parameter-table th:nth-child(6), .parameter-table td:nth-child(6),
         .parameter-table td.cell-empty { text-align: center; }
+        .response-table { min-width: 100%; margin: 0; table-layout: auto; }
+        .response-table th { text-align: center; white-space: nowrap; }
+        .response-table td { white-space: nowrap; overflow-wrap: normal; word-break: normal; }
+        .response-table td:nth-child(3) { text-align: center; }
         .parameter-table .param-deprecated { position: relative; padding-top: 1.2rem; }
         .param-deprecated-label, .api-deprecated-label {
             position: absolute;
@@ -840,6 +844,16 @@
                 + (descriptionEmpty ? '-' : displayValue(param.description)) + '</td><td>'
                 + displayValue(param.defaultValue) + '</td><td>'
                 + displayValue(Array.isArray(param.from) ? param.from.join(', ') : param.from) + '</td></tr>';
+        }
+        return html + '</tbody></table></div>';
+    }
+
+    function responseParameterTable(params) {
+        if (!Array.isArray(params) || !params.length) return '<p>暂无示例</p>';
+        let html = '<div class="parameter-table-scroll" role="region" aria-label="响应参数表格，可左右滚动" tabindex="0"><table class="response-table"><thead><tr><th>参数名</th><th>参数值</th><th>参数类型</th><th>描述说明</th></tr></thead><tbody>';
+        for (const param of params) {
+            html += '<tr><td>' + displayValue(param.name) + '</td><td>' + displayValue(param.exampleValue)
+                + '</td><td>' + displayValue(param.type) + '</td><td>' + displayValue(param.description) + '</td></tr>';
         }
         return html + '</tbody></table></div>';
     }
@@ -1249,6 +1263,7 @@
             + '<h3>请求地址</h3>' + requestAddress(api)
             + '<h3>接口说明</h3>' + (api.descriptionHtml || description(api.description))
             + '<h3>请求参数</h3>' + parameterTable(params)
+            + '<h3>响应参数</h3>' + responseParameterTable(api.responseParams)
             + '<h3>请求示例</h3>' + examples(api.requestExamples, '请求示例')
             + '<h3>成功响应示例</h3>' + examples(api.responseExamples.success, '成功响应示例')
             + '<h3>失败响应示例</h3>' + examples(api.responseExamples.fail, '失败响应示例');

@@ -192,6 +192,26 @@ class Router extends AbstractRouter
 
 回调仅接收 `Request`、`Response`，没有第三个路径参数数组。默认路径参数保存在协程上下文；上述示例通过 `parseParams()` 改为注入 GET，控制器也可使用 `ParamFrom::GET` 读取。`write()`、`withStatus()`、`withHeader()` 设置响应，服务入口在 `dispatch()` 返回后仍按启动示例调用 `$responsePsr->__response()` 输出响应。
 
+### 默认从 Context 读取路由参数
+
+未调用 `parseParams()` 修改注入方式时，默认使用 `AbstractRouter::PARSE_PARAMS_IN_CONTEXT`。匹配成功后，所有路径参数以一个数组存入当前协程 Context，键为 `AbstractRouter::PARSE_PARAMS_CONTEXT_KEY`，不会自动加入 GET 或 POST 参数。
+
+例如沿用 `/res/{name:[a-zA-Z0-9_-]+}.{ext:txt|html}`，去掉上例的 `$this->parseParams(self::PARSE_PARAMS_IN_GET)`，在路由回调或后续控制器 action 中读取：
+
+```php
+use EasySwoole\Component\Context\ContextManager;
+use EasySwoole\Http\AbstractInterface\AbstractRouter;
+
+$routeParams = ContextManager::getInstance()->get(AbstractRouter::PARSE_PARAMS_CONTEXT_KEY) ?? [];
+$name = $routeParams['name'] ?? null;
+$ext = $routeParams['ext'] ?? null;
+
+// 请求 /res/example.html 时：
+// $routeParams 为 ['name' => 'example', 'ext' => 'html']。
+```
+
+读取应在当前请求处理的协程内完成。未匹配路由或没有该 Context 数据时，上述写法返回空数组。`ParamFrom::CONTEXT` 按参数名称读取 Context 的顶层键，不会自动从 `PARSE_PARAMS_CONTEXT_KEY` 数组中取同名字段；需要通过上述方式读取，或改用 `parseParams(AbstractRouter::PARSE_PARAMS_IN_GET)` 将路径参数注入 GET。
+
 ### 回调如何拦截或继续分发
 
 `addRoute()` 的第三个参数可以是闭包、可调用对象或其他合法 callable。Dispatcher 根据回调返回值决定下一步：
@@ -420,6 +440,51 @@ $responseExamples = [
 
 Raw 也支持 `isFile: true`。响应示例通过 `isSuccessResponse` 分到成功、失败区域，各类示例分别从 1 编号。`Api::deprecated` 只控制废弃标识，不禁止接口执行。
 
+### 响应参数与完整响应示例
+
+`responseParam` 描述各字段，`responseExamples` 展示完整响应，两者分别配置。例如登录方法：
+
+```php
+use EasySwoole\HttpAnnotation\Attributes\Api;
+use EasySwoole\HttpAnnotation\Bean\Example\Array2Json;
+use EasySwoole\HttpAnnotation\Bean\Example\ResParam;
+use EasySwoole\HttpAnnotation\Bean\Example\ResParamType;
+
+#[Api(
+    responseParam: [
+        new ResParam('code', 200, ResParamType::int, '响应码，200 表示成功'),
+        new ResParam('result', null, ResParamType::object, '返回数据'),
+        new ResParam('result.access_token', 'token-example', ResParamType::string, '授权 Token'),
+        new ResParam('result.user_info', null, ResParamType::object, '用户信息'),
+        new ResParam('result.user_info.id', 19, ResParamType::int, '用户 ID'),
+        new ResParam('msg', 'Success', ResParamType::string, '响应消息'),
+    ],
+    responseExamples: [
+        new Array2Json([
+            'code' => 200,
+            'result' => [
+                'access_token' => 'token-example',
+                'user_info' => ['id' => 19],
+            ],
+            'msg' => 'Success',
+        ]),
+        new Array2Json([
+            'code' => 401,
+            'result' => null,
+            'msg' => '账号或密码错误',
+        ], isSuccessResponse: false),
+    ]
+)]
+public function login(): void
+{
+    // 实际登录逻辑与响应由业务实现。
+}
+```
+
+`ResParam` 依次接收 `name`、`exampleValue`、`paramType`、`description`，类型支持 `ResParamType::object`、`string`、`int`、`bool`、`float`；说明支持字符串或 `Text`。嵌套字段使用点分名称，按声明顺序逐行展示，不会据此自动构造响应 JSON。
+
+生成的文档在“请求参数”后显示四列响应参数表，再展示请求示例、成功响应示例及失败响应示例。响应参数为空时显示“暂无示例”。这些定义仅用于文档展示，不会校验实际响应，也不会自动设置 HTTP 状态码；示例中的 `code` 是响应体字段。
+
 ## 生成接口文档
 
 ```php
@@ -447,7 +512,7 @@ file_put_contents(__DIR__ . '/api.html', $document->scan2html());
 - 分组名称不可重复。`Common.Message`、`Common.Profile` 生成 Common → Message / Profile → action 的侧边栏。没有接口且没有有效后代的节点不展示。
 - 控制器命名空间参数必须与实际目录对应。文档路径由控制器类名和方法名生成，各路径层级首字母转小写，尾部 Index 控制器与 index action 有简写处理。
 - `Api` 构造函数当前没有 `requestPath` 参数，不要使用 `requestPath: ...`；`registerRouter` 也尚未实现自动注册路由。文档路径应与业务路由配置一致。
-- `responseParam` 虽可定义，当前 HTML 模板尚未展示响应参数表，可通过响应示例说明返回结构。
+- `responseParam` 使用 `ResParam` 定义响应字段，文档在请求参数后展示“响应参数”表（参数名、参数值、参数类型、描述说明）。嵌套字段可用 `result.user.id` 这样的点分名称逐行定义，按声明顺序展示。
 - 修改定义后应重新生成 HTML、刷新浏览器；常驻服务中的属性缓存还需要通过重启相关工作进程刷新。
 
 ## “立即尝试”使用与限制
