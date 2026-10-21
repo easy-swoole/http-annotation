@@ -240,6 +240,7 @@ console.log('立即尝试请求体记忆和恢复检查通过');
 const responseFields = [
     {name: 'code', exampleValue: 0, type: 'int', description: '响应码'},
     {name: 'result.enabled', exampleValue: false, type: 'bool', description: null},
+    {name: 'result.items', exampleValue: [{id: 1}], type: 'array', description: '数据列表'},
     {name: 'msg', exampleValue: '<script>alert(1)</script>', type: 'string', description: '<img src=x>'},
 ];
 const responseTable = context.responseParameterTable(responseFields);
@@ -247,6 +248,8 @@ assert.ok(responseTable.includes('<th>参数名</th><th>参数值</th><th>参数
 assert.ok(responseTable.includes('<td>0</td>'));
 assert.ok(responseTable.includes('<td>false</td>'));
 assert.ok(responseTable.includes('result.enabled'));
+assert.ok(responseTable.includes('<td>array</td>'));
+assert.ok(responseTable.includes('[{&quot;id&quot;:1}]'));
 assert.ok(responseTable.includes('&lt;script&gt;'));
 assert.ok(!responseTable.includes('<script>'));
 assert.ok(!responseTable.includes('<img'));

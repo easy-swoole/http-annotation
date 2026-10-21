@@ -6,6 +6,8 @@ enum ResParamType: string
 {
     case object = 'object';
 
+    case array = 'array';
+
     case string = 'string';
 
     case int = 'int';

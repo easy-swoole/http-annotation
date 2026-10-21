@@ -221,7 +221,7 @@ class Document
             'descriptionHtml'=>$this->renderDescription($api->description),
         ];
         $info['requestParams'] = $this->buildRequestParams($api->requestParam);
-        $info['responseParams'] = $this->buildResponseParams($api, $apiName);
+        $info['responseParams'] = $this->buildResponseParams($api->responseParam);
         foreach ($api->requestExamples as $example) {
             $info['requestExamples'][] = $example->toString();
         }
@@ -235,29 +235,18 @@ class Document
         return $info;
     }
 
-    private function buildResponseParams(Api $api, string $apiName): array
+    private function buildResponseParams(array $params): array
     {
         $result = [];
-        foreach ($api->responseParam as $param) {
-            if ($param instanceof ResParam) {
-                $result[] = [
-                    'name' => $param->name,
-                    'exampleValue' => $param->exampleValue,
-                    'type' => $param->paramType->value,
-                    'description' => is_string($param->description)
-                        ? $param->description : $param->description?->toString(),
-                ];
-            } elseif ($param instanceof Param) {
-                // 兼容早期使用 Param 定义响应字段的写法。
-                $result[] = [
-                    'name' => $param->name,
-                    'exampleValue' => $param->value,
-                    'type' => $param->type?->name,
-                    'description' => $param->description?->toString(),
-                ];
-            } else {
-                throw new Annotation("responseParam must contain ResParam instances in {$api->relateClass}::{$apiName}");
-            }
+        /** @var ResParam $param */
+        foreach ($params as $param) {
+            $result[] = [
+                'name' => $param->name,
+                'exampleValue' => $param->exampleValue,
+                'type' => $param->paramType->value,
+                'description' => is_string($param->description)
+                    ? $param->description : $param->description?->toString(),
+            ];
         }
         return $result;
     }

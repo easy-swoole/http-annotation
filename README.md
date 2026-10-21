@@ -515,7 +515,14 @@ public function login(): void
 }
 ```
 
-`ResParam` 依次接收 `name`、`exampleValue`、`paramType`、`description`，类型支持 `ResParamType::object`、`string`、`int`、`bool`、`float`；说明支持字符串或 `Text`。嵌套字段使用点分名称，按声明顺序逐行展示，不会据此自动构造响应 JSON。
+`ResParam` 依次接收 `name`、`exampleValue`、`paramType`、`description`，类型支持 `ResParamType::object`、`array`、`string`、`int`、`bool`、`float`；说明支持字符串或 `Text`。`responseParam` 只接受 `ResParam`，不再接受请求参数对象 `Param`；空名称、纯空白名称和重复字段名会在构造 Api 时抛出配置异常，扫描控制器时还会附加类名及方法名。
+
+嵌套字段使用点分名称，按声明顺序逐行展示，不会据此自动构造响应 JSON。数组字段可以这样描述，`[]` 仅为文档中的名称约定：
+
+```php
+new ResParam('result.items', [['id' => 1]], ResParamType::array, '数据列表');
+new ResParam('result.items[].id', 1, ResParamType::int, '列表元素 ID');
+```
 
 生成的文档在“请求参数”后显示四列响应参数表，再展示请求示例、成功响应示例及失败响应示例。响应参数为空时显示“暂无示例”。这些定义仅用于文档展示，不会校验实际响应，也不会自动设置 HTTP 状态码；示例中的 `code` 是响应体字段。
 

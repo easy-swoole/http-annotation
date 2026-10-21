@@ -83,6 +83,21 @@ class Api
             $temp[$item->name] = $item;
         }
         $this->requestParam = $temp;
+        // 响应字段只接受 ResParam，配置错误在定义阶段发现，保留声明顺序。
+        $responseNames = [];
+        foreach ($this->responseParam as $index => $param) {
+            if (!$param instanceof ResParam) {
+                $type = get_debug_type($param);
+                throw new Annotation("responseParam[{$index}] must be a ResParam instance, {$type} given");
+            }
+            if (trim($param->name) === '') {
+                throw new Annotation("responseParam[{$index}] name must not be empty");
+            }
+            if (isset($responseNames[$param->name])) {
+                throw new Annotation("responseParam {$param->name} define duplicate");
+            }
+            $responseNames[$param->name] = true;
+        }
         if(is_string($this->description)){
             $this->description = new Text($this->description);
         }
