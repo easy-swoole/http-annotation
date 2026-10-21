@@ -2,11 +2,9 @@
 
 namespace EasySwoole\HttpAnnotation\Validator;
 
-use EasySwoole\HttpAnnotation\Attributes\Param;
 use EasySwoole\HttpAnnotation\Exception\Annotation;
 use EasySwoole\HttpAnnotation\Validator\AbstractInterface\AbstractValidator;
 use EasySwoole\HttpAnnotation\Validator\Bean\ValidateRequest;
-use Psr\Http\Message\ServerRequestInterface;
 
 class DateAfterColumn extends AbstractValidator
 {
@@ -30,14 +28,20 @@ class DateAfterColumn extends AbstractValidator
 
         $compareValue = $list[$this->compare]->parsedValue();
 
-        if (is_numeric($compareValue) && (strlen($compareValue) == 10)) {
+        // 定义存在但值无效属于请求校验失败，不作为配置异常抛出。
+        if ((!is_string($compareValue) && !is_int($compareValue))
+            || (is_string($compareValue) && trim($compareValue) === '')) {
+            return false;
+        }
+
+        if (is_numeric($compareValue) && (strlen((string)$compareValue) == 10)) {
             $afterUnixTime = $compareValue;
         } else {
-            $afterUnixTime = strtotime($compareValue);
+            $afterUnixTime = strtotime((string)$compareValue);
         }
 
         if (is_bool($afterUnixTime)) {
-            throw new Annotation("error arg: error compare param: {$this->compare} for DateAfterColumn validate rule");
+            return false;
         }
 
         $itemData = $validateRequest->validateParam->parsedValue();
