@@ -19,7 +19,12 @@ class AlphaNum extends AbstractValidator
 
     protected function validate(ValidateRequest $validateRequest): bool
     {
-        return (bool)preg_match(  '/^[a-zA-Z0-9]+$/', (string)$validateRequest->validateParam->parsedValue());
+        $value = $validateRequest->validateParam->parsedValue();
+        if ((!is_string($value) && !is_int($value) && !is_float($value))
+            || (is_float($value) && !is_finite($value))) {
+            return false;
+        }
+        return (bool)preg_match('/^[a-zA-Z0-9]+$/', (string)$value);
     }
 
     public static function ruleName(): string

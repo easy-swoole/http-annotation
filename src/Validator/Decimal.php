@@ -25,6 +25,10 @@ class Decimal extends AbstractValidator
     protected function validate(ValidateRequest $validateRequest): bool
     {
         $itemData = $validateRequest->validateParam->parsedValue();
+        if ((!is_string($itemData) && !is_int($itemData) && !is_float($itemData))
+            || (is_float($itemData) && !is_finite($itemData))) {
+            return false;
+        }
         //没有传参则降级验证为浮点数即可
         if ($this->accuracy === null) {
             if (is_float($itemData)) {

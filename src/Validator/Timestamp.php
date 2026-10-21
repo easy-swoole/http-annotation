@@ -20,11 +20,15 @@ class Timestamp extends AbstractValidator
     protected function validate(ValidateRequest $validateRequest): bool
     {
         $itemData = $validateRequest->validateParam->parsedValue();
-        if (!is_numeric($itemData)) {
+        if (!is_int($itemData) && !is_string($itemData)) {
             return false;
         }
-
-        if (strtotime(date('d-m-Y H:i:s', $itemData)) === (int)$itemData) {
+        // 先验证整数范围，避免日期函数隐式截断小数或接收溢出的数值字符串。
+        $timestamp = filter_var($itemData, FILTER_VALIDATE_INT);
+        if ($timestamp === false) {
+            return false;
+        }
+        if (strtotime(date('d-m-Y H:i:s', $timestamp)) === $timestamp) {
             return true;
         }
 
