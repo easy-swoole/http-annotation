@@ -2,6 +2,7 @@
 
 namespace EasySwoole\HttpAnnotation\Attributes;
 
+use Attribute;
 use EasySwoole\HttpAnnotation\Bean\Description\Text;
 use EasySwoole\HttpAnnotation\Bean\ParamParseState;
 use EasySwoole\HttpAnnotation\Enum\ParamFrom;
@@ -10,7 +11,7 @@ use EasySwoole\HttpAnnotation\Exception\Annotation;
 use EasySwoole\HttpAnnotation\Validator\AbstractInterface\AbstractValidator;
 use Psr\Http\Message\ServerRequestInterface;
 
-#[\Attribute(\Attribute::TARGET_METHOD|\Attribute::IS_REPEATABLE)]
+#[Attribute(Attribute::TARGET_METHOD | Attribute::IS_REPEATABLE)]
 class Param
 {
     // null 表示尚未解析；解析成功后保存本次结果，与公开的默认值 value 分离。
@@ -29,7 +30,20 @@ class Param
         public ?ParamType              $type = ParamType::STRING,
         public array                   $ignoreAction = [],
         public bool                    $ignorePassArgWhenNotSet = false,
-    ){
+    ) {
+        $this->normalizeSources();
+        $this->normalizeValidators();
+        $this->checkRuleConflicts();
+
+        // 普通字符串说明统一包装为 Text，方便文档生成使用同一说明对象接口。
+        if (is_string($this->description)) {
+            $this->description = new Text($this->description);
+        }
+    }
+
+
+    private function normalizeSources(): void
+    {
         // 单个来源统一转成数组，保留声明顺序，供解析时逐个尝试。
         $this->from = is_array($this->from) ? array_values($this->from) : [$this->from];
         if (!$this->from) {
@@ -45,18 +59,30 @@ class Param
             $sources = implode(', ', array_map(static fn(ParamFrom $source): string => $source->name, $this->from));
             throw new Annotation("param {$this->name} FROM [{$sources}]: FILE must be the only source");
         }
+    }
+
+    private function normalizeValidators(): void
+    {
         // 按静态规则名建立索引，便于查找可选规则；同名规则以后定义的为准。
         $temp = [];
         /** @var AbstractValidator $item */
-        foreach ($this->validate as $item){
+        foreach ($this->validate as $index => $item) {
+            if (!$item instanceof AbstractValidator) {
+                $type = get_debug_type($item);
+                throw new Annotation("param {$this->name} validate[{$index}] must be an AbstractValidator instance, {$type} given");
+            }
             $temp[$item::ruleName()] = $item;
         }
         $this->validate = $temp;
+    }
+
+    private function checkRuleConflicts(): void
+    {
         // 在参数定义阶段拒绝“可选”和“必填/非空”的冲突，避免运行时跳过校验产生歧义。
         // IgnoreValidatorWhenEmpty 同属跳过校验规则，NotEmpty 同属要求非空规则。
         $optionalRules = [];
         $requiredRules = [];
-        foreach (array_keys($temp) as $ruleName) {
+        foreach (array_keys($this->validate) as $ruleName) {
             if (str_starts_with($ruleName, 'Optional') || $ruleName === 'IgnoreValidatorWhenEmpty') {
                 $optionalRules[] = $ruleName;
             }
@@ -68,12 +94,7 @@ class Param
             throw new Annotation("param {$this->name}: optional rules [" . implode(', ', $optionalRules)
                 . '] and required rules [' . implode(', ', $requiredRules) . '] are mutually exclusive');
         }
-        // 普通字符串说明统一包装为 Text，方便文档生成使用同一说明对象接口。
-        if(is_string($this->description)){
-            $this->description = new Text($this->description);
-        }
     }
-
 
     /**
      * 读取并缓存请求参数；仅实际取到值时按 type 转换，未命中来源时原样保留默认值。
@@ -81,10 +102,10 @@ class Param
      */
     public function parsedValue(?ServerRequestInterface $request = null)
     {
-        if($this->parseState !== null){
+        if ($this->parseState !== null) {
             return $this->parseState->parsedValue;
         }
-        if(($request === null)){
+        if ($request === null) {
             return $this->value;
         }
 
@@ -98,21 +119,21 @@ class Param
         return $state->parsedValue;
     }
 
-   // 用于必填判断及 ignorePassArgWhenNotSet，不等同于值是否为空。
-   public function hasSet():bool
-   {
-       return $this->parseState?->hasSet ?? false;
-   }
+    // 用于必填判断及 ignorePassArgWhenNotSet，不等同于值是否为空。
+    public function hasSet(): bool
+    {
+        return $this->parseState?->hasSet ?? false;
+    }
 
-   function __clone()
-   {
-       // 控制器从缓存定义克隆参数时，同时克隆验证器，隔离请求间的规则实例状态。
-       // 副本从默认值开始重新解析，避免已解析实例的请求状态进入下一次请求。
-       // 对象类型的默认值仍为浅拷贝，此处不自动深拷贝任意业务对象。
-       $this->parseState = null;
-       /** @var AbstractValidator $item */
-       foreach ($this->validate as $item){
-           $this->validate[$item::ruleName()] = clone $item;
-       }
-   }
+    public function __clone()
+    {
+        // 控制器从缓存定义克隆参数时，同时克隆验证器，隔离请求间的规则实例状态。
+        // 副本从默认值开始重新解析，避免已解析实例的请求状态进入下一次请求。
+        // 对象类型的默认值仍为浅拷贝，此处不自动深拷贝任意业务对象。
+        $this->parseState = null;
+        /** @var AbstractValidator $item */
+        foreach ($this->validate as $item) {
+            $this->validate[$item::ruleName()] = clone $item;
+        }
+    }
 }

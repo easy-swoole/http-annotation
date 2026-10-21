@@ -17,7 +17,6 @@ class Api
     public string $relateClass;
     public string $relateMethod;
     public string $apiName;
-    public string|null       $requestPath = null;
 
     function __construct(
         public HttpMethod    $allowMethod = HttpMethod::GET,

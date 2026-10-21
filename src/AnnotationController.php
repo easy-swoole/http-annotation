@@ -15,6 +15,7 @@ use EasySwoole\HttpAnnotation\Exception\RequestMethodNotAllow;
 use EasySwoole\HttpAnnotation\Validator\Bean\ValidateRequest;
 use EasySwoole\HttpAnnotation\Validator\MsgMap\DefaultMap;
 use ReflectionNamedType;
+use ReflectionParameter;
 use Throwable;
 
 
@@ -138,40 +139,48 @@ abstract class AnnotationController extends Controller
 
     private function buildActionArguments(array $actionArgsInTag, array $finalAllParams): array
     {
-        $actionArg = [];
         $methodRef = ReflectionCache::getInstance()->allowMethodReflection(static::class, $this->getActionName());
         $parameters = $methodRef->getParameters();
         if (empty($parameters)) {
-            return $actionArg;
+            return [];
         }
 
         $type = $parameters[0]->getType();
         $paramKey = $parameters[0]->name;
-        // 优先按名称绑定；只有没有同名最终定义的单数组形参才收集 action 参数。
-        // 联合类型和交叉类型不提供 getName()，按普通同名形参绑定。
+        // 同名字段优先绑定；联合或交叉类型按名称绑定，不作为收集模式。
         if (count($parameters) == 1 && $type instanceof ReflectionNamedType
             && $type->getName() === 'array' && !array_key_exists($paramKey, $finalAllParams)) {
-            $temp = [];
-            foreach ($actionArgsInTag as $param) {
-                /** @var Param $param */
-                $param = $finalAllParams[$param->name];
-                if ($param->ignorePassArgWhenNotSet && !$param->hasSet()) {
-                    continue;
-                }
-                $temp[$param->name] = $param->parsedValue();
-            }
-            $actionArg[$paramKey] = $temp;
-        } else {
-            foreach ($parameters as $parameter) {
-                $key = $parameter->name;
-                if (key_exists($key, $finalAllParams)) {
-                    $actionArg[$key] = $finalAllParams[$key]->parsedValue();
-                } else {
-                    throw new ParamError("method {$this->getActionName()}() require arg: {$key} , but not define in any controller annotation");
-                }
-            }
+            return [$paramKey => $this->collectActionArguments($actionArgsInTag, $finalAllParams)];
         }
-        return $actionArg;
+        return $this->bindNamedArguments($parameters, $finalAllParams);
+    }
+
+    // 收集模式仅包含 action 参数，并按配置省略没有实际传入的字段。
+    private function collectActionArguments(array $definitions, array $finalParams): array
+    {
+        $args = [];
+        foreach ($definitions as $definition) {
+            $param = $finalParams[$definition->name];
+            if ($param->ignorePassArgWhenNotSet && !$param->hasSet()) {
+                continue;
+            }
+            $args[$param->name] = $param->parsedValue();
+        }
+        return $args;
+    }
+
+    /** @param list<ReflectionParameter> $parameters */
+    private function bindNamedArguments(array $parameters, array $finalParams): array
+    {
+        $args = [];
+        foreach ($parameters as $parameter) {
+            $name = $parameter->name;
+            if (!array_key_exists($name, $finalParams)) {
+                throw new ParamError("method {$this->getActionName()}() require arg: {$name} , but not define in any controller annotation");
+            }
+            $args[$name] = $finalParams[$name]->parsedValue();
+        }
+        return $args;
     }
 
     private function injectProperties(array $properties): void
@@ -187,7 +196,7 @@ abstract class AnnotationController extends Controller
         }
     }
 
-    protected function __getValidateRuleMapClass():string
+    protected function __getValidateRuleMapClass(): string
     {
         return DefaultMap::class;
     }

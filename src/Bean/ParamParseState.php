@@ -31,103 +31,67 @@ final class ParamParseState
 
     private function readSources(Param $param, ServerRequestInterface $request): void
     {
-        // GET、POST、JSON、XML 使用 isset 判断：null 视为未设置，空字符串和 0 仍算已设置。
         foreach ($param->from as $source) {
-            switch ($source){
-                case ParamFrom::GET:{
-                    $data = $request->getQueryParams();
-                    if(isset($data[$param->name])){
-                        $this->hasSet = true;
-                        $this->parsedValue = $data[$param->name];
-                    }
+            switch ($source) {
+                // 普通字段使用 isset：null 不算设置，空字符串、false、0 和空数组算设置。
+                case ParamFrom::GET:
+                case ParamFrom::POST:
+                case ParamFrom::JSON:
+                case ParamFrom::XML:
+                case ParamFrom::COOKIE:
+                    $data = match ($source) {
+                        ParamFrom::GET => $request->getQueryParams(),
+                        ParamFrom::POST => $request->getParsedBody(),
+                        ParamFrom::JSON => ArgContext::getInstance()->getJson($request),
+                        ParamFrom::XML => ArgContext::getInstance()->getXml($request),
+                        ParamFrom::COOKIE => $request->getCookieParams(),
+                    };
+                    $this->readField($data, $param->name);
                     break;
-                }
-                case ParamFrom::POST:{
-                    $data = $request->getParsedBody();
-                    if(isset($data[$param->name])){
-                        $this->hasSet = true;
-                        $this->parsedValue = $data[$param->name];
-                    }
-                    break;
-                }
-                case ParamFrom::JSON:{
-                    // 协程内共享 JSON 解码结果，再按参数名取值。
-                    $data = ArgContext::getInstance()->getJson($request);
 
-                    if(isset($data[$param->name])){
-                        $this->hasSet = true;
-                        $this->parsedValue = $data[$param->name];
-                    }
-
-                    break;
-                }
-                case ParamFrom::XML:{
-                    $data = ArgContext::getInstance()->getXml($request);
-                    if(isset($data[$param->name])){
-                        $this->hasSet = true;
-                        $this->parsedValue = $data[$param->name];
-                    }
-
-                    break;
-                }
-                case ParamFrom::RAW_POST:{
-                    // RAW_POST 使用整个请求体；即使内容为空，也标记为已设置。
+                case ParamFrom::RAW_POST:
+                    // 原始请求体始终算已设置，包括空字符串。
                     $this->hasSet = true;
                     $this->parsedValue = $request->getBody()->__toString();
                     break;
-                }
-                case ParamFrom::FILE:{
-                    // 保留上传文件对象，交由文件规则校验，不读取文件内容。
-                    $data = $request->getUploadedFile($param->name);
-                    if(!empty($data)){
+
+                case ParamFrom::FILE:
+                case ParamFrom::DI:
+                case ParamFrom::CONTEXT:
+                    $value = match ($source) {
+                        ParamFrom::FILE => $request->getUploadedFile($param->name),
+                        ParamFrom::DI => IOC::getInstance()->get($param->name),
+                        ParamFrom::CONTEXT => ContextManager::getInstance()->get($param->name),
+                    };
+                    // 保留文件、DI 和 Context 原有的非 empty 命中规则。
+                    if (!empty($value)) {
                         $this->hasSet = true;
-                        $this->parsedValue = $data;
+                        $this->parsedValue = $value;
                     }
                     break;
-                }
-                case ParamFrom::DI:{
-                    // 从依赖注入容器读取；当前以非 empty 值作为命中条件。
-                    $data = IOC::getInstance()->get($param->name);
-                    if(!empty($data)){
+
+                case ParamFrom::HEADER:
+                    // 多值请求头只取第一项，第一项为空字符串时仍算已设置。
+                    $headers = $request->getHeader(strtolower($param->name));
+                    if (!empty($headers)) {
                         $this->hasSet = true;
-                        $this->parsedValue = $data;
+                        $this->parsedValue = $headers[0];
                     }
                     break;
-                }
-                case ParamFrom::CONTEXT:{
-                    // 从当前协程上下文读取；当前以非 empty 值作为命中条件。
-                    $data = ContextManager::getInstance()->get($param->name);
-                    if(!empty($data)){
-                        $this->hasSet = true;
-                        $this->parsedValue = $data;
-                    }
-                    break;
-                }
-                case ParamFrom::COOKIE:{
-                    // 仅 null 视为未命中，允许 Cookie 值为空字符串或 0。
-                    $cookies = $request->getCookieParams();
-                    $data = $cookies[$param->name] ?? null;
-                    if($data !== null){
-                        $this->hasSet = true;
-                        $this->parsedValue = $data;
-                    }
-                    break;
-                }
-                case ParamFrom::HEADER:{
-                    // Swoole 请求头名称统一为小写；多值请求头只取第一项。
-                    $data = $request->getHeader(strtolower($param->name));
-                    if(!empty($data)){
-                        $this->hasSet = true;
-                        $this->parsedValue = $data[0];
-                    }
-                    break;
-                }
             }
 
-            // 按声明顺序读取，命中后不再检查后续来源。
+            // 只读取第一个命中的来源，不提前读取后续请求体或依赖对象。
             if ($this->hasSet) {
                 break;
             }
+        }
+    }
+
+    private function readField(mixed $data, string $name): void
+    {
+        if (isset($data[$name])) {
+            $this->hasSet = true;
+            $this->parsedValue = $data[$name];
         }
     }
 
@@ -136,16 +100,16 @@ final class ParamParseState
         // 实际取到的值在验证器执行前转换；type 为 null 时保留原值（例如数组）。
         // 仅转换可接受的输入；失败时保留原值，由类型验证器拒绝，不改变 hasSet。
         // 只有实际取到参数才做类型转换，未传参数保留默认值，避免 null 被转为 0 等值。
-        if($this->hasSet && $param->type != null){
-            switch ($param->type){
-                case ParamType::STRING:{
+        if ($this->hasSet && $param->type !== null) {
+            switch ($param->type) {
+                case ParamType::STRING: {
                     if (is_scalar($this->parsedValue)
                         && (!is_float($this->parsedValue) || is_finite($this->parsedValue))) {
                         $this->parsedValue = (string)$this->parsedValue;
                     }
                     break;
                 }
-                case ParamType::INT:{
+                case ParamType::INT: {
                     if (is_int($this->parsedValue) || is_string($this->parsedValue)) {
                         $integer = filter_var($this->parsedValue, FILTER_VALIDATE_INT);
                         if ($integer !== false) {
@@ -156,7 +120,7 @@ final class ParamParseState
                 }
                 case ParamType::FLOAT:
                 case ParamType::REAL:
-                case ParamType::DOUBLE:{
+                case ParamType::DOUBLE: {
                     if (is_numeric($this->parsedValue)) {
                         $float = filter_var($this->parsedValue, FILTER_VALIDATE_FLOAT);
                         if ($float !== false && is_finite($float)) {
@@ -165,7 +129,7 @@ final class ParamParseState
                     }
                     break;
                 }
-                case ParamType::BOOLEAN:{
+                case ParamType::BOOLEAN: {
                     // 仅接受明确的布尔表示，避免 'false' 或任意文本被强制转换为 true。
                     $boolean = is_string($this->parsedValue) ? strtolower($this->parsedValue) : $this->parsedValue;
                     if (in_array($boolean, [true, 1, '1', 'true'], true)) {
@@ -175,15 +139,15 @@ final class ParamParseState
                     }
                     break;
                 }
-                case ParamType::NULL_WHILE_EMPTY:{
+                case ParamType::NULL_WHILE_EMPTY: {
                     // PHP empty 值转为 null，但特意保留整数 0 和字符串 '0'。
-                    if(empty($this->parsedValue) && (($this->parsedValue !== 0) && ($this->parsedValue !== '0'))){
+                    if (empty($this->parsedValue) && $this->parsedValue !== 0 && $this->parsedValue !== '0') {
                         $this->parsedValue = null;
                     }
                     break;
                 }
-                case ParamType::FILE:{
-                    //无需转化
+                case ParamType::FILE: {
+                    // 文件对象保持原样。
                     break;
                 }
             }

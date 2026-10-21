@@ -182,29 +182,34 @@ class Document
         return $result;
     }
 
-    private function buildApiInfo(Api $api, string $apiName): array
+    // 文档路径只参与输出，不回写 AttributeCache 中的 Api 定义。
+    private function buildRequestPath(string $className, string $apiName): string
     {
-        $path = substr($api->relateClass, strlen($this->controllerNameSpace));
+        $path = substr($className, strlen($this->controllerNameSpace));
         $path = str_replace('\\', '/', $path);
         $paths = explode('/', $path);
         $tailController = $paths[count($paths) - 1];
-        if(strtolower($tailController) == 'index'){
+        if (strtolower($tailController) == 'index') {
             array_pop($paths);
         }
         $paths = array_map('lcfirst', $paths);
-        $api->requestPath = implode('/', $paths);
-        if(strtolower($apiName) != 'index'){
-            $api->requestPath = "{$api->requestPath}/{$apiName}";
-        }else{
-            $api->requestPath = "{$api->requestPath}/";
+        $requestPath = implode('/', $paths);
+        if (strtolower($apiName) != 'index') {
+            $requestPath = "{$requestPath}/{$apiName}";
+        } else {
+            $requestPath = "{$requestPath}/";
         }
+        return $requestPath;
+    }
 
+    private function buildApiInfo(Api $api, string $apiName): array
+    {
         $info = [
             'apiName'=>$apiName,
             'deprecated'=>$api->deprecated,
             'allowMethod'=>$api->allowMethod->name,
             'acceptContentType'=>$api->acceptContentType?->name,
-            'requestPath'=>$api->requestPath,
+            'requestPath'=>$this->buildRequestPath($api->relateClass, $apiName),
             'requestParams'=>[],
             'responseParams'=>[],
             'requestExamples'=>[],

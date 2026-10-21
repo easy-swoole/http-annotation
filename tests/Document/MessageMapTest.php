@@ -33,7 +33,6 @@ class MessageMapTest extends TestCase
                 $api->relateClass = self::class;
                 $api->relateMethod = 'detail';
                 $api->apiName = 'detail';
-                $api->requestPath = '/detail';
                 $info->apis['detail'] = $api;
                 return $this->groups = ['Example' => ['apiGroup' => $group, 'classAttribute' => $info]];
             }
