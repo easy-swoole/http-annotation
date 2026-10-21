@@ -153,27 +153,45 @@ final class ParamParseState
         }
 
         // 实际取到的值在验证器执行前转换；type 为 null 时保留原值（例如数组）。
-        // 转换不代表数据合法，且不会改变 hasSet，合法性仍需由验证器检查。
+        // 仅转换可接受的输入；失败时保留原值，由类型验证器拒绝，不改变 hasSet。
         // 只有实际取到参数才做类型转换，未传参数保留默认值，避免 null 被转为 0 等值。
         if($this->hasSet && $param->type != null){
             switch ($param->type){
                 case ParamType::STRING:{
-                    $this->parsedValue = (string)$this->parsedValue;
+                    if (is_scalar($this->parsedValue)
+                        && (!is_float($this->parsedValue) || is_finite($this->parsedValue))) {
+                        $this->parsedValue = (string)$this->parsedValue;
+                    }
                     break;
                 }
                 case ParamType::INT:{
-                    $this->parsedValue = (int)$this->parsedValue;
+                    if (is_int($this->parsedValue) || is_string($this->parsedValue)) {
+                        $integer = filter_var($this->parsedValue, FILTER_VALIDATE_INT);
+                        if ($integer !== false) {
+                            $this->parsedValue = $integer;
+                        }
+                    }
                     break;
                 }
                 case ParamType::FLOAT:
                 case ParamType::REAL:
                 case ParamType::DOUBLE:{
-                    $this->parsedValue = (float)$this->parsedValue;
+                    if (is_numeric($this->parsedValue)) {
+                        $float = filter_var($this->parsedValue, FILTER_VALIDATE_FLOAT);
+                        if ($float !== false && is_finite($float)) {
+                            $this->parsedValue = $float;
+                        }
+                    }
                     break;
                 }
                 case ParamType::BOOLEAN:{
-                    // 使用 PHP 布尔转换规则，字符串 "false" 会转换为 true。
-                    $this->parsedValue = (bool)$this->parsedValue;
+                    // 仅接受明确的布尔表示，避免 'false' 或任意文本被强制转换为 true。
+                    $boolean = is_string($this->parsedValue) ? strtolower($this->parsedValue) : $this->parsedValue;
+                    if (in_array($boolean, [true, 1, '1', 'true'], true)) {
+                        $this->parsedValue = true;
+                    } elseif (in_array($boolean, [false, 0, '0', 'false'], true)) {
+                        $this->parsedValue = false;
+                    }
                     break;
                 }
                 case ParamType::NULL_WHILE_EMPTY:{

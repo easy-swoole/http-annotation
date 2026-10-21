@@ -285,6 +285,19 @@ GET、HEAD 的 Content-Type 默认是 `null`；其他方法未指定时默认为
 
 支持 STRING、INT、DOUBLE、REAL、FLOAT、BOOLEAN、FILE、NULL_WHILE_EMPTY 类型。转换发生在校验前，转换本身不是合法性校验，必要时仍需配置校验器。
 
+类型转换采用“合法则转换，不合法保留原值”的方式，不因不符合转换规则而抛出异常，也不会改变 `hasSet()`。例如 INT 的 `'abc'` 保持原样，再由 `Integer()` 校验失败；不能仅靠声明 `type` 保证最终值类型，否则独立的强类型 action 形参仍可能触发类型错误。
+
+| 类型 | 可转换输入 | 其他输入 |
+| --- | --- | --- |
+| INT | 整数或通过 `FILTER_VALIDATE_INT` 的字符串（含范围检查） | 保留原值，不截断小数；前导零字符串如 `'01'` 也保留原值 |
+| FLOAT、REAL、DOUBLE | 通过 `FILTER_VALIDATE_FLOAT` 的有限数值或数值字符串 | 保留原值，不将非法文本转为 0，不截取数字前缀 |
+| BOOLEAN | `true`、`false`、整数 0/1、字符串 `'0'`/`'1'`/`'true'`/`'false'`（英文忽略大小写） | 保留原值，空字符串、`'yes'`、浮点数等不转换 |
+| STRING | 字符串、整数、有限浮点数、布尔值 | 数组、对象和非有限浮点数保留原值 |
+| NULL_WHILE_EMPTY | 按下文约定转换空值 | 非空值保留原值 |
+| FILE | 不转换 | 保留原值 |
+
+INT、BOOLEAN、FLOAT 可分别配合 `Integer()`、`IsBool()`、`IsFloat()` 判断合法性；验证器仍按各自既有规则检查转换后的值。此调整不会让自定义规则或跨字段规则改为读取原始值。
+
 ### 未传参数与空值转换
 
 `Param::value` 始终保存声明的默认值，请求取值及类型转换不会覆盖它。解析结果通过 `parsedValue()` 获取，是否实际取到参数通过 `hasSet()` 判断；解析结果在当前实例中缓存，克隆 `Param` 会清除解析状态并保留默认值，供新请求重新解析。
@@ -367,7 +380,7 @@ public function update(array $params): void
 - `Required` 检查是否设置参数，`NotEmpty` 检查值是否为空，两者含义不同。Header 参数还应根据需要使用 `NotEmpty`，缺失请求头不会标记为已设置。
 - `RequiredIf`、`RequiredWith`、`RequiredWithout` 支持条件必填；同一参数的 `Optional*`（包括 `IgnoreValidatorWhenEmpty`）与 `Required*`、`NotEmpty` 互斥，同时定义会直接抛出配置异常。
 - 想用 `Optional` 保留“未传入且为 null”的语义时，应显式设置 `type: null`，避免默认 STRING 将 `null` 转成空字符串。
-- BOOLEAN 使用 PHP 布尔转换；字符串 `"false"` 会被转成 `true`。表单布尔值建议使用 `1`、`0`。
+- BOOLEAN 仅转换明确的布尔表示：字符串 `'false'` 转为 `false`，`'true'` 转为 `true`；不识别的输入保留原值，建议搭配 `IsBool()`。
 - JSON 参数按字段名从请求体解码结果取值；XML 参数从根节点的直接子节点取值；RAW_POST 返回整个请求体。
 
 内置校验器位于 `src/Validator`，包括必填、长度、数值、日期、邮箱、文件和字段比较等。控制器在公共参数和 action 参数校验阶段均传入已解析的 `allDefineParams`，支持跨字段比较及条件可选规则；action 同名参数优先，ignoreAction 排除的参数不会进入该集合。

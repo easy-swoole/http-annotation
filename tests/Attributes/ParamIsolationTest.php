@@ -13,7 +13,6 @@ use EasySwoole\HttpAnnotation\Validator\Bean\ValidateRequest;
 use EasySwoole\HttpAnnotation\Validator\Func;
 use EasySwoole\HttpAnnotation\Validator\Required;
 use PHPUnit\Framework\TestCase;
-use Error;
 use stdClass;
 
 class ParamIsolationTest extends TestCase
@@ -114,22 +113,19 @@ class ParamIsolationTest extends TestCase
         $this->assertFalse($missing->hasSet());
     }
 
-    public function testFailedConversionDoesNotPublishPartialState(): void
+    public function testUnsupportedStringInputIsPreservedWithoutChangingDefault(): void
     {
         $param = new Param('id', type: ParamType::STRING, value: 'default');
         $request = new Request();
-        $request->withQueryParams(['id' => new stdClass()]);
-        try {
-            $param->parsedValue($request);
-            $this->fail('Expected object-to-string conversion to fail');
-        } catch (Error $error) {
-            $this->assertStringContainsString('string', $error->getMessage());
-        }
+        $input = new stdClass();
+        $request->withQueryParams(['id' => $input]);
+        $this->assertSame($input, $param->parsedValue($request));
         $this->assertSame('default', $param->value);
-        $this->assertSame('default', $param->parsedValue());
-        $this->assertFalse($param->hasSet());
+        $this->assertSame($input, $param->parsedValue());
+        $this->assertTrue($param->hasSet());
         $request->withQueryParams(['id' => 'valid']);
-        $this->assertSame('valid', $param->parsedValue($request));
+        $copy = clone $param;
+        $this->assertSame('valid', $copy->parsedValue($request));
         $this->assertTrue($param->hasSet());
     }
 

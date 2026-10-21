@@ -36,7 +36,7 @@ class IgnorePassArgTest extends TestCase
                 $controller->__hook();
                 $this->fail('Expected Min validation failure');
             } catch (ParamValidateFail $error) {
-                $this->assertInstanceOf(Min::class, $error->getFailRule());
+                $this->assertInstanceOf($value === '' ? Integer::class : Min::class, $error->getFailRule());
                 $this->assertFalse($controller->called);
             }
         }
