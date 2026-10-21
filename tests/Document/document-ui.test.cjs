@@ -260,3 +260,28 @@ const responsePage = elements.get('content').innerHTML;
 assert.ok(responsePage.indexOf('<h3>响应参数</h3>') > responsePage.indexOf('<h3>请求参数</h3>'));
 assert.ok(responsePage.indexOf('<h3>响应参数</h3>') < responsePage.indexOf('<h3>请求示例</h3>'));
 console.log('响应参数表、章节顺序、空值和 HTML 转义检查通过');
+
+const nestedParams = {
+    boxes: {...param('array', ['JSON']), items: {
+        ...param('object', ['JSON']), children: {
+            id: {...param('INT', ['JSON']), defaultValue: 0, deprecated: true},
+            detail: {...param('object', ['JSON']), children: {
+                name: {...param('STRING', ['JSON']), description: '<script>unsafe</script>'},
+            }},
+        },
+    }},
+    codes: {...param('array', ['JSON']), items: {...param(null, ['JSON']), validateRules: {Required: {msg: '必填'}}}},
+};
+const nestedTable = context.parameterTable(nestedParams);
+for (const name of ['boxes', 'boxes[]', 'boxes[].id', 'boxes[].detail', 'boxes[].detail.name', 'codes[]']) {
+    assert.ok(nestedTable.includes('>' + name + '<'), name);
+}
+assert.ok(nestedTable.includes('&lt;script&gt;unsafe&lt;/script&gt;'));
+assert.ok(!nestedTable.includes('<script>'));
+assert.ok(nestedTable.includes('<td>0</td>'));
+context.testNestedParams = nestedParams;
+vm.runInContext("activeTryApi = {allowMethod: 'POST', acceptContentType: 'JSON'}; activeTryParams = testNestedParams; buildTryFields();", context);
+assert.equal(elements.get('try-fields').children.length, 1);
+assert.equal(elements.get('try-fields').children[0].children[1].id, 'try-raw-body');
+assert.deepEqual(Object.keys(nestedParams), ['boxes', 'codes']);
+console.log('嵌套参数路径、类型、转义及 JSON 调试输入框兼容检查通过');

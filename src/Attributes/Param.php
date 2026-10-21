@@ -78,6 +78,9 @@ class Param
 
     private function checkRuleConflicts(): void
     {
+        if (isset($this->validate['ObjectShape'], $this->validate['Each'])) {
+            throw new Annotation("param {$this->name}: ObjectShape and Each are mutually exclusive");
+        }
         // 在参数定义阶段拒绝“可选”和“必填/非空”的冲突，避免运行时跳过校验产生歧义。
         // IgnoreValidatorWhenEmpty 同属跳过校验规则，NotEmpty 同属要求非空规则。
         $optionalRules = [];
@@ -123,6 +126,25 @@ class Param
     public function hasSet(): bool
     {
         return $this->parseState?->hasSet ?? false;
+    }
+
+    /**
+     * 从父对象或列表读取的值建立解析状态，不读取 HTTP 来源。
+     * 仅供嵌套规则使用；参数定义需先 clone，避免回写共享定义。
+     * @internal
+     */
+    public function parseValue(mixed $value, bool $hasSet = true): void
+    {
+        $state = new ParamParseState();
+        $state->parseValue($this, $value, $hasSet);
+        $this->parseState = $state;
+    }
+
+    /** @internal 嵌套校验完成后回填结果，保留原有 hasSet，不重复类型转换。 */
+    public function setParsedValue(mixed $value): void
+    {
+        $this->parseState ??= new ParamParseState();
+        $this->parseState->parsedValue = $value;
     }
 
     public function __clone()

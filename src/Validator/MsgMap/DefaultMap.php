@@ -7,6 +7,8 @@ use EasySwoole\HttpAnnotation\Validator\AbstractInterface\ValidateMsgMapInterfac
 class DefaultMap implements ValidateMsgMapInterface
 {
     const MAP = [
+        'ObjectShape' => '{#validateParam} must be an object',
+        'Each' => '{#validateParam} must be a list',
         'Enum' => '{#validateParam} must be a valid enum value',
         'RequiredIf' => '{#validateParam} must be provided and non-empty when parameter {#paramName} equals {#value}',
         'RequiredWith' => '{#validateParam} must be provided and non-empty when any parameter in {#paramNames} is provided and non-empty',

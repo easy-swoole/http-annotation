@@ -388,6 +388,90 @@ public function update(array $params): void
 
 内置校验器位于 `src/Validator`，包括必填、长度、数值、日期、邮箱、文件和字段比较等。控制器在公共参数和 action 参数校验阶段均传入已解析的 `allDefineParams`，支持跨字段比较及条件可选规则；action 同名参数优先，ignoreAction 排除的参数不会进入该集合。
 
+## 嵌套请求参数
+
+`ObjectShape` 定义对象内部字段，`Each` 对列表的每个元素执行规则；两者可以递归组合。原有单层 `Param` 用法不变。
+
+```php
+use EasySwoole\HttpAnnotation\Attributes\Api;
+use EasySwoole\HttpAnnotation\Attributes\Param;
+use EasySwoole\HttpAnnotation\Enum\ContentType;
+use EasySwoole\HttpAnnotation\Enum\HttpMethod;
+use EasySwoole\HttpAnnotation\Enum\ParamFrom;
+use EasySwoole\HttpAnnotation\Enum\ParamType;
+use EasySwoole\HttpAnnotation\Validator\Each;
+use EasySwoole\HttpAnnotation\Validator\IsFloat;
+use EasySwoole\HttpAnnotation\Validator\Min;
+use EasySwoole\HttpAnnotation\Validator\MultipleOf;
+use EasySwoole\HttpAnnotation\Validator\NotEmpty;
+use EasySwoole\HttpAnnotation\Validator\ObjectShape;
+use EasySwoole\HttpAnnotation\Validator\Optional;
+
+#[Api(
+    allowMethod: HttpMethod::POST,
+    acceptContentType: ContentType::JSON,
+    requestParam: [
+        new Param(
+            name: 'box_list',
+            from: [ParamFrom::JSON],
+            type: null,
+            description: '包裹列表',
+            validate: [
+                new NotEmpty(),
+                new Each(validate: [
+                    new ObjectShape(params: [
+                        new Param(
+                            name: 'box_length',
+                            type: ParamType::FLOAT,
+                            description: '包裹长，最多三位小数',
+                            validate: [new IsFloat(), new Min(0.001), new MultipleOf(0.001)],
+                        ),
+                        new Param(
+                            name: 'dangerous_detail',
+                            type: null,
+                            validate: [
+                                new Optional(),
+                                new ObjectShape(params: [
+                                    new Param(name: 'id', validate: [new NotEmpty()]),
+                                ]),
+                            ],
+                            ignorePassArgWhenNotSet: true,
+                        ),
+                    ]),
+                ]),
+            ],
+        ),
+        new Param(
+            name: 'shipper_address',
+            from: [ParamFrom::JSON],
+            type: null,
+            validate: [
+                new NotEmpty(),
+                new ObjectShape(params: [
+                    new Param(name: 'shipper_name', validate: [new NotEmpty()]),
+                ]),
+            ],
+        ),
+    ],
+)]
+public function create(array $data): void
+{
+    // 已完成内部字段转换，例如 box_list[0].box_length 为 float。
+}
+```
+
+嵌套字段的约定：
+
+- `ObjectShape` 读取当前对象的字段，内部 `Param::from` 不参与 HTTP 来源读取，也不允许定义 `ignoreAction`。子字段在文档中继承根参数的来源。
+- `Each` 要求连续、从 0 开始的列表；对象字段使用关联数组表示。JSON 以关联数组解码，空对象 `{}` 与空列表 `[]` 都变为 PHP `[]`，因此空结构无法严格区分。需要非空时搭配 `NotEmpty`。
+- 每个对象、每个列表元素独立克隆参数和验证器。内部字段沿用已有类型转换、默认值和 `Optional` 规则；对象中未知字段原样保留。
+- 未传字段默认写入其默认值（通常为 `null`）；内部字段设置 `ignorePassArgWhenNotSet: true` 时省略。实际传入的空字符串经过 `NULL_WHILE_EMPTY` 转为 `null` 后仍保留。
+- 所有兄弟字段先解析再校验。`RequiredIf`、`EqualWithColumn` 等跨字段规则仅查找当前对象的兄弟字段，不自动回退到顶层参数。简单列表元素的规则没有对象字段上下文。
+- 校验失败仍抛出 `ParamValidateFail`；`getParamName()` 和消息中包含完整路径，例如 `box_list[1].dangerous_detail.id`。嵌套层级最多 32 层，超限作为定义错误抛出 `Annotation`。
+- 文档自动展开成 `box_list`、`box_list[]`、`box_list[].box_length` 等参数行，显示类型、默认值、说明、来源和废弃标记；JSON 的“立即尝试”仍填写完整请求体。
+
+尺寸示例使用 `MultipleOf(0.001)` 判断数值是否为千分之一的整数倍，允许 `11`、`1.234`，不执行四舍五入；它不检查原始文本末尾零的数量。`Decimal` 的既有语义不变。
+
 ## 公共参数与继承
 
 在 `onRequest` 上使用可重复的 `#[Param]` 定义公共参数。接口定义的同名参数优先覆盖公共定义。
@@ -442,6 +526,8 @@ abstract class BaseController extends AnnotationController
 参数解析和校验在调用父控制器 `__hook()` 之前执行，异常不进入父方法内部的 `onException()` 捕获块。接入项目时应核对上层分发器的异常处理，按业务要求返回错误响应。
 
 ## 接口说明与示例
+
+请求示例、成功响应示例、失败响应示例中的合法 JSON/XML 会在生成文档时自动缩进展示，不修改示例对象原始内容。JSON 保留大整数和数字精度；普通文本、无效格式，以及混合文本或显式保留空白的 XML 保持原样。
 
 `ApiGroup::description` 和 `Api::description` 支持普通字符串、`Text`、`Markdown`。文档全局说明使用 `Config::setDescription()`，传入 `Text` 或 `Markdown` 对象。
 

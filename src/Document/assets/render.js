@@ -64,7 +64,7 @@
         const entries = Object.entries(params || {});
         if (!entries.length) return '<p>暂无参数</p>';
         let html = '<div class="parameter-table-scroll" role="region" aria-label="参数表格，可左右滚动" tabindex="0"><table class="parameter-table"><thead><tr><th>名称</th><th>类型</th><th>校验规则</th><th>说明</th><th>默认值</th><th>来源</th></tr></thead><tbody>';
-        for (const [name, param] of entries) {
+        const appendRow = (name, param) => {
             const rules = Object.values(param.validateRules || {})
                 .filter(rule => rule.msg != null && String(rule.msg).trim() !== '')
                 .map(rule => escapeHtml(rule.msg)).join('<br>');
@@ -76,6 +76,13 @@
                 + (descriptionEmpty ? '-' : displayValue(param.description)) + '</td><td>'
                 + displayValue(param.defaultValue) + '</td><td>'
                 + displayValue(Array.isArray(param.from) ? param.from.join(', ') : param.from) + '</td></tr>';
+            for (const [childName, child] of Object.entries(param.children || {})) {
+                appendRow(name + '.' + childName, child);
+            }
+            if (param.items) appendRow(name + '[]', param.items);
+        };
+        for (const [name, param] of entries) {
+            appendRow(name, param);
         }
         return html + '</tbody></table></div>';
     }

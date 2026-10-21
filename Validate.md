@@ -30,6 +30,21 @@ public function login(array $data): void {}
 
 所有规则的最后一个构造参数均为 `?string $errorMsg = null`，以下列出完整签名和示例。错误模板支持 `{#validateParam}` 以及规则参数占位符，例如 `{#min}`、`{#maxLen}`。占位符取决于规则属性名；DateFormat 使用 `{#format}`。未设置自定义消息时，基类统一通过 `MsgMap\DefaultMap` 获取模板；未知规则使用默认兜底消息。各验证器构造函数只接收自定义消息，不再内置默认文案。Decimal、Money 默认消息包含精度及模式说明；IsFile 包含大小和扩展名限制；严格比较规则包含 strict 配置。Func 默认消息不追加回调名称，需要时可传入自定义模板。
 
+## 嵌套对象与列表
+
+```php
+ObjectShape(array $params, ?string $errorMsg = null)
+Each(array $validate, ?string $errorMsg = null)
+```
+
+`ObjectShape` 的 `params` 接收 `Param` 定义；`Each` 的 `validate` 接收验证器列表，可以包含 `ObjectShape` 或另一个 `Each`。同一参数不能同时定义 `ObjectShape` 和 `Each`。对象字段名必须非空且唯一，内部字段禁止设置 `ignoreAction`。
+
+内部 `Param` 从当前对象取值，忽略 HTTP `from`；每个元素克隆规则，类型转换结果回填到最终参数中。未知字段保留；缺省字段默认使用 `value`，设置 `ignorePassArgWhenNotSet` 时省略。跨字段规则只访问当前对象的兄弟字段。
+
+两种组合规则允许空结构，需要非空时搭配 `NotEmpty`。`Each` 仅接受连续列表；`ObjectShape` 接受关联数组，兼容作为空对象的 `[]`。由于 JSON 关联数组解码，无法区分空对象与空列表。最多嵌套 32 层；结构类型错误或子字段值错误走 `ParamValidateFail`，错误路径如 `boxes[0].id`。引用未定义的兄弟字段、嵌套超限等仍属于配置错误。
+
+完整注解及自动文档展示方式见 [README 嵌套请求参数](README.md#嵌套请求参数)。
+
 ## 倍数校验
 
 ### MultipleOf

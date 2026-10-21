@@ -97,14 +97,16 @@ class Utility
 
     public static function validateParam(ValidateRequest $validateRequest,string $validateMsgMapClass = DefaultMap::class): void
     {
+        $validateRequest->validateMsgMapClass = $validateMsgMapClass;
         $rules = $validateRequest->validateParam->validate;
         /** @var AbstractValidator $rule */
         foreach ($rules as $rule){
             if(!$rule->execute($validateRequest)){
-                $msg = $rule->errorMsg($validateRequest->validateParam->name,$validateMsgMapClass);
+                $path = $validateRequest->parameterPath ?? $validateRequest->validateParam->name;
+                $msg = $rule->errorMsg($path,$validateMsgMapClass);
                 $ex = new ParamValidateFail("{$msg} in {$validateRequest->callClass} method {$validateRequest->callMethod}");
                 $ex->setFailRule($rule);
-                $ex->setParamName($validateRequest->validateParam->name);
+                $ex->setParamName($path);
                 throw $ex;
             }
         }

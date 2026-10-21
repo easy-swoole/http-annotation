@@ -14,9 +14,14 @@ use EasySwoole\HttpAnnotation\Bean\Example\ResParam;
 use EasySwoole\HttpAnnotation\Exception\Annotation;
 use EasySwoole\HttpAnnotation\Utility;
 use EasySwoole\HttpAnnotation\Validator\AbstractInterface\AbstractValidator;
+use EasySwoole\HttpAnnotation\Validator\Each;
+use EasySwoole\HttpAnnotation\Validator\ObjectShape;
 use EasySwoole\ParserDown\ParserDown;
 use EasySwoole\Utility\File;
 use ReflectionClass;
+use DOMDocument;
+use DOMXPath;
+use JsonException;
 use UnitEnum;
 use EasySwoole\HttpAnnotation\Enum\ParamFrom;
 
@@ -156,14 +161,17 @@ class Document
     }
 
     // 请求参数与响应参数使用不同的数据结构，分别构建以避免字段含义混淆。
-    private function buildRequestParams(array $params): array
+    private function buildRequestParams(array $params, ?array $sources = null, int $depth = 0): array
     {
+        if ($depth > 32) {
+            throw new Annotation('ObjectShape/Each nesting must not exceed 32 levels');
+        }
         $result = [];
         /** @var Param $param */
         foreach ($params as $paramName => $param){
             $result[$paramName] = [
                 'type'=>$param->type?->name,
-                'from'=>array_map(static fn(ParamFrom $source): string => $source->name, $param->from),
+                'from'=>$sources ?? array_map(static fn(ParamFrom $source): string => $source->name, $param->from),
                 'description'=>$param->description ? $param->description->toString() : null,
                 'defaultValue'=>$param->value,
                 'ignoreAction'=>$param->ignoreAction,
@@ -172,6 +180,22 @@ class Document
             $validateRules = [];
             /** @var AbstractValidator $validateRule */
             foreach ($param->validate as $validateRule){
+                // 组合规则展开为结构，不将子定义序列化进规则参数或试运行顶层字段。
+                if ($validateRule instanceof ObjectShape) {
+                    $result[$paramName]['type'] = 'object';
+                    $result[$paramName]['children'] = $this->buildRequestParams(
+                        $validateRule->getParams(), $result[$paramName]['from'], $depth + 1
+                    );
+                    continue;
+                }
+                if ($validateRule instanceof Each) {
+                    $result[$paramName]['type'] = 'array';
+                    $item = new Param('[]', type: null, validate: $validateRule->getValidators());
+                    $result[$paramName]['items'] = $this->buildRequestParams(
+                        ['[]' => $item], $result[$paramName]['from'], $depth + 1
+                    )['[]'];
+                    continue;
+                }
                 $validateRules[$validateRule::ruleName()] = [
                     'msg'=>$validateRule->errorMsg($paramName, $this->config->getValidateMsgMap()),
                     'args'=>$validateRule->getRuleArgs()
@@ -223,16 +247,101 @@ class Document
         $info['requestParams'] = $this->buildRequestParams($api->requestParam);
         $info['responseParams'] = $this->buildResponseParams($api->responseParam);
         foreach ($api->requestExamples as $example) {
-            $info['requestExamples'][] = $example->toString();
+            $info['requestExamples'][] = $this->formatExample($example->toString());
         }
         foreach ($api->responseExamples as $example) {
             if($example->isSuccessResponse()){
-                $info['responseExamples']['success'][] = $example->toString();
+                $info['responseExamples']['success'][] = $this->formatExample($example->toString());
             }else{
-                $info['responseExamples']['fail'][] = $example->toString();
+                $info['responseExamples']['fail'][] = $this->formatExample($example->toString());
             }
         }
         return $info;
+    }
+
+    // 仅格式化展示，不修改 Example 对象的原始内容或实际发送的数据。
+    private function formatExample(string $content): string
+    {
+        try {
+            json_decode($content, flags: JSON_THROW_ON_ERROR);
+            return $this->formatJson($content);
+        } catch (JsonException) {
+            // 非 JSON 继续尝试 XML；普通文本和不完整示例原样展示。
+        }
+        if (!str_starts_with(ltrim($content), '<') || stripos($content, '<!DOCTYPE') !== false) {
+            return $content;
+        }
+        $previous = libxml_use_internal_errors(true);
+        try {
+            $document = new DOMDocument();
+            $document->preserveWhiteSpace = false;
+            if (!$document->loadXML($content, LIBXML_NONET)) {
+                return $content;
+            }
+            // 混合文本或显式保留空白的 XML 不插入缩进，避免改变文本含义。
+            $xpath = new DOMXPath($document);
+            if ($xpath->query('//*[text()[normalize-space(.) != ""] and *] | //*[@xml:space="preserve"]')->length > 0) {
+                return $content;
+            }
+            $document->formatOutput = true;
+            return rtrim($document->saveXML() ?: $content);
+        } finally {
+            libxml_clear_errors();
+            libxml_use_internal_errors($previous);
+        }
+    }
+
+    // JSON 已经过语法检查；只调整字符串外的空白，保留大整数、数字精度和重复键。
+    private function formatJson(string $content): string
+    {
+        $result = '';
+        $depth = 0;
+        $inString = false;
+        $escaped = false;
+        $previous = '';
+        $length = strlen($content);
+        for ($index = 0; $index < $length; $index++) {
+            $char = $content[$index];
+            if ($inString) {
+                $result .= $char;
+                if ($escaped) {
+                    $escaped = false;
+                } elseif ($char === '\\') {
+                    $escaped = true;
+                } elseif ($char === '"') {
+                    $inString = false;
+                }
+                continue;
+            }
+            if (str_contains(" \t\r\n", $char)) {
+                continue;
+            }
+            if ($char === '"') {
+                $inString = true;
+                $result .= $char;
+            } elseif ($char === '{' || $char === '[') {
+                $depth++;
+                $result .= $char;
+                $next = $index + 1 + strspn($content, " \t\r\n", $index + 1);
+                if (!in_array($content[$next] ?? '', ['}', ']'], true)) {
+                    $result .= "\n" . str_repeat('    ', $depth);
+                }
+            } elseif ($char === '}' || $char === ']') {
+                $depth--;
+                if (!in_array($previous, ['{', '['], true)) {
+                    $result .= "\n" . str_repeat('    ', $depth);
+                }
+                $result .= $char;
+            } elseif ($char === ',') {
+                $result .= ",\n" . str_repeat('    ', $depth);
+            } elseif ($char === ':') {
+                $result .= ': ';
+            } else {
+                $result .= $char;
+            }
+            $previous = $char;
+        }
+        return $result;
     }
 
     private function buildResponseParams(array $params): array

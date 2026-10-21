@@ -87,6 +87,14 @@ final class ParamParseState
         }
     }
 
+    /** @internal 嵌套字段沿用单层参数的默认值、是否传入和类型转换语义。 */
+    public function parseValue(Param $param, mixed $value, bool $hasSet): void
+    {
+        $this->hasSet = $hasSet;
+        $this->parsedValue = $hasSet ? $value : $param->value;
+        $this->convertType($param);
+    }
+
     private function readField(mixed $data, string $name): void
     {
         if (isset($data[$name])) {

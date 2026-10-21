@@ -7,6 +7,8 @@ use EasySwoole\HttpAnnotation\Validator\AbstractInterface\ValidateMsgMapInterfac
 class ChineseMap implements ValidateMsgMapInterface
 {
     const MAP = [
+        'ObjectShape' => '{#validateParam} 必须为对象',
+        'Each' => '{#validateParam} 必须为列表',
         'Enum' => '{#validateParam} 必须为有效的枚举值',
         'RequiredIf' => '{#validateParam} 在参数 {#paramName} 等于 {#value} 时必须传入且非空',
         'RequiredWith' => '{#validateParam} 在 {#paramNames} 中任意参数已传入且非空时必须传入且非空',
