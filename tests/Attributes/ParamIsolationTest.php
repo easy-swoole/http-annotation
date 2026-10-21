@@ -7,11 +7,14 @@ use EasySwoole\HttpAnnotation\AnnotationController;
 use EasySwoole\HttpAnnotation\AttributeCache;
 use EasySwoole\HttpAnnotation\Attributes\Api;
 use EasySwoole\HttpAnnotation\Attributes\Param;
+use EasySwoole\HttpAnnotation\Enum\ParamType;
 use EasySwoole\HttpAnnotation\Validator\AbstractInterface\ValidateFuncInterface;
 use EasySwoole\HttpAnnotation\Validator\Bean\ValidateRequest;
 use EasySwoole\HttpAnnotation\Validator\Func;
 use EasySwoole\HttpAnnotation\Validator\Required;
 use PHPUnit\Framework\TestCase;
+use Error;
+use stdClass;
 
 class ParamIsolationTest extends TestCase
 {
@@ -62,8 +65,72 @@ class ParamIsolationTest extends TestCase
         $parsed->parsedValue($request);
         $copy = clone $parsed;
         $request->withQueryParams(['id' => 'second']);
-        // 已解析副本不能作为下次请求的未解析模板。
-        $this->assertSame('first', $copy->parsedValue($request));
+        // 克隆时清除解析状态，副本可用于新请求，原实例的缓存保持不变。
+        $this->assertFalse($copy->hasSet());
+        $this->assertNull($copy->parsedValue());
+        $this->assertSame('second', $copy->parsedValue($request));
+        $this->assertSame('first', $parsed->parsedValue());
+    }
+
+    public function testParsedValueDoesNotOverwriteDefaultAndIsCached(): void
+    {
+        $param = new Param('id', type: ParamType::INT, value: '7');
+        $this->assertSame('7', $param->parsedValue());
+        $this->assertFalse($param->hasSet());
+        $request = new Request();
+        $request->withQueryParams(['id' => '12']);
+        $this->assertSame(12, $param->parsedValue($request));
+        $this->assertSame('7', $param->value);
+        $this->assertTrue($param->hasSet());
+        $request->withQueryParams(['id' => '99']);
+        $this->assertSame(12, $param->parsedValue($request));
+        $this->assertSame(12, $param->parsedValue());
+
+        $copy = clone $param;
+        $this->assertSame('7', $copy->value);
+        $this->assertSame('7', $copy->parsedValue(new Request()));
+        $this->assertFalse($copy->hasSet());
+        $this->assertSame(12, $param->parsedValue());
+    }
+
+    public function testNullParsedResultsKeepTheirPresenceState(): void
+    {
+        $request = new Request();
+        $request->withQueryParams(['id' => '']);
+        $param = new Param('id', type: ParamType::NULL_WHILE_EMPTY, value: 'default');
+        $this->assertNull($param->parsedValue($request));
+        $this->assertNull($param->parsedValue());
+        $this->assertSame('default', $param->value);
+        $this->assertTrue($param->hasSet());
+        $this->assertNull($param->parsedValue(new Request()));
+
+        $missing = new Param('id', type: ParamType::INT);
+        $this->assertNull($missing->parsedValue(new Request()));
+        $this->assertFalse($missing->hasSet());
+        $request->withQueryParams(['id' => '3']);
+        $this->assertNull($missing->parsedValue($request));
+        $copy = clone $missing;
+        $this->assertSame(3, $copy->parsedValue($request));
+        $this->assertFalse($missing->hasSet());
+    }
+
+    public function testFailedConversionDoesNotPublishPartialState(): void
+    {
+        $param = new Param('id', type: ParamType::STRING, value: 'default');
+        $request = new Request();
+        $request->withQueryParams(['id' => new stdClass()]);
+        try {
+            $param->parsedValue($request);
+            $this->fail('Expected object-to-string conversion to fail');
+        } catch (Error $error) {
+            $this->assertStringContainsString('string', $error->getMessage());
+        }
+        $this->assertSame('default', $param->value);
+        $this->assertSame('default', $param->parsedValue());
+        $this->assertFalse($param->hasSet());
+        $request->withQueryParams(['id' => 'valid']);
+        $this->assertSame('valid', $param->parsedValue($request));
+        $this->assertTrue($param->hasSet());
     }
 
     public function testRepeatedControllerRequestsKeepCacheStableAndReleaseCopies(): void
