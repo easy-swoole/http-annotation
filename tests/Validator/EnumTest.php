@@ -84,7 +84,7 @@ class EnumTest extends TestCase
     public function testMessages(): void
     {
         $rule = new Enum(IntegerStatus::class);
-        $this->assertStringContainsString(IntegerStatus::class, $rule->errorMsg('status'));
+        $this->assertSame('status must be a valid enum value', $rule->errorMsg('status'));
         $this->assertStringNotContainsString('{#', $rule->errorMsg('status', ChineseMap::class));
         $this->assertSame('custom', (new Enum(IntegerStatus::class, true, 'custom'))->errorMsg('status'));
     }
