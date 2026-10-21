@@ -63,6 +63,10 @@ class ParamConversionTest extends TestCase
     {
         foreach ([[ParamType::INT, 'abc', new Integer()],
             [ParamType::INT, '1.5', new Integer()],
+            [ParamType::INT, true, new Integer()],
+            [ParamType::INT, false, new Integer()],
+            [ParamType::INT, 1.0, new Integer()],
+            [ParamType::INT, 0.0, new Integer()],
             [ParamType::BOOLEAN, 'invalid', new IsBool()],
             [ParamType::FLOAT, '12abc', new IsFloat()]] as [$type, $input, $rule]) {
             $request = new Request();

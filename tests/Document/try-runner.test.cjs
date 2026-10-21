@@ -18,6 +18,21 @@ const field = (name, source, value, type = 'STRING') => ({name, source, value, t
     assert.equal(headerRequest.options.body, undefined);
     const form = build('POST', [field('page', 'POST', '0')], 'http://localhost/api');
     assert.equal(form.options.body.toString(), 'page=0');
+    const multipart = context.buildTryRequest('http://localhost/api', 'POST',
+        [field('page', 'POST', '0'), field('Content-Type', 'HEADER', 'text/plain')], null, 'FORM_DATA');
+    assert.ok(multipart.options.body instanceof FormData);
+    assert.equal(multipart.options.body.get('page'), '0');
+    assert.equal(multipart.options.headers.has('Content-Type'), false);
+    const encoded = context.buildTryRequest('http://localhost/api', 'POST',
+        [field('page', 'POST', '0')], null, 'FORM_URLENCODED');
+    assert.ok(encoded.options.body instanceof URLSearchParams);
+    assert.equal(encoded.options.body.toString(), 'page=0');
+    assert.equal(encoded.options.headers.get('Content-Type'), 'application/x-www-form-urlencoded;charset=UTF-8');
+    for (const [contentType, bodyClass] of [['FORM_DATA', FormData], ['FORM_URLENCODED', URLSearchParams]]) {
+        const empty = context.buildTryRequest('http://localhost/api', 'POST', [], null, contentType);
+        assert.ok(empty.options.body instanceof bodyClass);
+        assert.equal(Array.from(empty.options.body).length, 0);
+    }
     const json = build('POST', [field('count', 'JSON', '2', 'INT'), field('enabled', 'JSON', '0', 'BOOLEAN')], 'http://localhost/api');
     assert.equal(json.options.body, '{"count":2,"enabled":false}');
     const xml = build('POST', [field('name', 'XML', '<hi>')], 'http://localhost/api');
@@ -38,6 +53,13 @@ const field = (name, source, value, type = 'STRING') => ({name, source, value, t
     const upload = build('POST', [field('file', 'FILE', file), field('name', 'POST', 'test')], 'http://localhost/api');
     assert.equal(upload.options.body.get('file').name, 'test.txt');
     assert.equal(upload.options.headers.has('Content-Type'), false);
+    const declaredUpload = context.buildTryRequest('http://localhost/api', 'POST',
+        [field('file', 'FILE', file), field('name', 'POST', 'test')], null, 'FORM_DATA');
+    assert.equal(declaredUpload.options.body.get('file').name, 'test.txt');
+    assert.equal(declaredUpload.options.body.get('name'), 'test');
+    assert.equal(declaredUpload.options.headers.has('Content-Type'), false);
+    assert.throws(() => context.buildTryRequest('http://localhost/api', 'POST',
+        [field('file', 'FILE', file)], null, 'FORM_URLENCODED'), /不支持文件上传/);
     for (const code of [200, 400, 404, 500]) {
         let status;
         context.fetch = async () => new Response('{"message":"response"}', {status: code});

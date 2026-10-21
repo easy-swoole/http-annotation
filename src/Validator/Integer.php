@@ -2,10 +2,8 @@
 
 namespace EasySwoole\HttpAnnotation\Validator;
 
-use EasySwoole\HttpAnnotation\Attributes\Param;
 use EasySwoole\HttpAnnotation\Validator\AbstractInterface\AbstractValidator;
 use EasySwoole\HttpAnnotation\Validator\Bean\ValidateRequest;
-use Psr\Http\Message\ServerRequestInterface;
 
 class Integer extends AbstractValidator
 {
@@ -19,7 +17,10 @@ class Integer extends AbstractValidator
 
     protected function validate(ValidateRequest $validateRequest): bool
     {
-        return filter_var($validateRequest->validateParam->parsedValue(), FILTER_VALIDATE_INT) !== false;
+        $value = $validateRequest->validateParam->parsedValue();
+        // 与 INT 转换保持一致，拒绝会被 filter_var 隐式接受的布尔值和浮点值。
+        return (is_int($value) || is_string($value))
+            && filter_var($value, FILTER_VALIDATE_INT) !== false;
     }
 
     public static function ruleName(): string

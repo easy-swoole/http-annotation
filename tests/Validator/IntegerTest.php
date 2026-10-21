@@ -10,6 +10,19 @@ use PHPUnit\Framework\TestCase;
 
 class IntegerTest extends TestCase
 {
+    public function testOnlyIntegersAndIntegerStringsAreAccepted(): void
+    {
+        $rule = new Integer();
+        foreach ([true, false, 1.0, 0.0, 1.5, [], null, '1.0', '1e2',
+            '999999999999999999999'] as $value) {
+            $param = new Param(name: 'num', type: null, value: $value);
+            self::assertFalse($rule->execute(new ValidateRequest($param)), get_debug_type($value));
+        }
+        foreach ([0, 1, -1, PHP_INT_MAX, '0', '1', '-1', (string)PHP_INT_MAX] as $value) {
+            $param = new Param(name: 'num', type: null, value: $value);
+            self::assertTrue($rule->execute(new ValidateRequest($param)));
+        }
+    }
 
     /*
     * 合法

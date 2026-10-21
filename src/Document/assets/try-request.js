@@ -1,4 +1,4 @@
-    function buildTryRequest(address, method, fields, bodyInput = null) {
+    function buildTryRequest(address, method, fields, bodyInput = null, acceptContentType = null) {
         let path = address;
         const headers = new Headers();
         const post = new URLSearchParams();
@@ -70,8 +70,12 @@
             if (!headers.has('Content-Type')) headers.set('Content-Type', 'application/xml');
         }
         if (bodyKinds.has('raw')) options.body = raw;
-        if (bodyKinds.has('form')) {
-            if (files.length) {
+        if (bodyKinds.has('form') || (!['GET', 'HEAD'].includes(method)
+            && ['FORM_DATA', 'FORM_URLENCODED'].includes(acceptContentType))) {
+            if (files.length && acceptContentType === 'FORM_URLENCODED') {
+                throw new Error('application/x-www-form-urlencoded 不支持文件上传');
+            }
+            if (acceptContentType === 'FORM_DATA' || files.length) {
                 const form = new FormData();
                 for (const [name, value] of post) form.append(name, value);
                 for (const [name, value] of files) form.append(name, value);
@@ -79,7 +83,7 @@
                 headers.delete('Content-Type');
             } else {
                 options.body = post;
-                if (!headers.has('Content-Type')) headers.set('Content-Type', 'application/x-www-form-urlencoded;charset=UTF-8');
+                headers.set('Content-Type', 'application/x-www-form-urlencoded;charset=UTF-8');
             }
         }
         if (bodyInput) options.body = bodyInput.value;
@@ -155,7 +159,7 @@
             const fields = collectTryFields();
             const bodyEditor = document.getElementById('try-raw-body');
             const bodyInput = bodyEditor ? {type: activeTryApi.acceptContentType, value: bodyEditor.value} : null;
-            const request = buildTryRequest(document.getElementById('try-url').value, activeTryApi.allowMethod, fields, bodyInput);
+            const request = buildTryRequest(document.getElementById('try-url').value, activeTryApi.allowMethod, fields, bodyInput, activeTryApi.acceptContentType);
             if (Object.values(activeTryParams).some(param => (Array.isArray(param.from) ? param.from : [param.from]).includes('COOKIE'))) {
                 request.options.credentials = 'include';
             }
