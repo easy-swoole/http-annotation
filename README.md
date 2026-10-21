@@ -382,6 +382,7 @@ public function update(array $params): void
 - 想用 `Optional` 保留“未传入且为 null”的语义时，应显式设置 `type: null`，避免默认 STRING 将 `null` 转成空字符串。
 - BOOLEAN 仅转换明确的布尔表示：字符串 `'false'` 转为 `false`，`'true'` 转为 `true`；不识别的输入保留原值，建议搭配 `IsBool()`。
 - JSON 参数按字段名从请求体解码结果取值；XML 参数从根节点的直接子节点取值；RAW_POST 返回整个请求体。
+- JSON/XML 解析在 Swoole 协程中运行：`ArgContext` 按协程 ID 分别缓存两种格式的解码结果，公共参数和 action 参数可共享；每个协程只注册一次 `defer`，结束时清理缓存，不使用通用 `ContextManager` 的键。约定一个请求对应一个协程，请求体在首次解析后不再修改；子协程拥有独立缓存。CLI 测试涉及 JSON/XML 解析时也需在协程中执行。
 
 内置校验器位于 `src/Validator`，包括必填、长度、数值、日期、邮箱、文件和字段比较等。控制器在公共参数和 action 参数校验阶段均传入已解析的 `allDefineParams`，支持跨字段比较及条件可选规则；action 同名参数优先，ignoreAction 排除的参数不会进入该集合。
 

@@ -12,6 +12,7 @@ use EasySwoole\HttpAnnotation\Validator\MsgMap\ChineseMap;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 use stdClass;
+use EasySwoole\HttpAnnotation\Tests\Support\CoroutineRunner;
 
 class EnumTest extends TestCase
 {
@@ -73,7 +74,7 @@ class EnumTest extends TestCase
                 $request->withParsedBody(['status' => '1']);
             }
             $param = new Param('status', from: $source, type: null);
-            $param->parsedValue($request);
+            CoroutineRunner::run(fn() => $param->parsedValue($request));
             $context = new ValidateRequest($param);
             $this->assertTrue((new Enum(IntegerStatus::class))->execute($context));
             $this->assertSame($source === ParamFrom::JSON, (new Enum(IntegerStatus::class, true))->execute($context));

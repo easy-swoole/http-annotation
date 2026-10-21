@@ -11,6 +11,7 @@ use EasySwoole\HttpAnnotation\Validator\DistinctInArray;
 use EasySwoole\HttpAnnotation\Validator\DistinctInString;
 use EasySwoole\HttpAnnotation\Validator\MsgMap\ChineseMap;
 use PHPUnit\Framework\TestCase;
+use EasySwoole\HttpAnnotation\Tests\Support\CoroutineRunner;
 
 class DistinctTest extends TestCase
 {
@@ -79,7 +80,7 @@ class DistinctTest extends TestCase
                     $request->withParsedBody(['ids' => $ids]);
                 }
                 $param = new Param('ids', from: $source, type: null);
-                $this->assertSame($ids, $param->parsedValue($request));
+                $this->assertSame($ids, CoroutineRunner::run(fn() => $param->parsedValue($request)));
                 $this->assertSame(count($ids) === 2, (new DistinctInArray())->execute(new ValidateRequest($param)));
             }
         }

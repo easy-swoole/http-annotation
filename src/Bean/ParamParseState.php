@@ -51,13 +51,8 @@ final class ParamParseState
                     break;
                 }
                 case ParamFrom::JSON:{
-                    // 将 JSON 对象解码为关联数组，再按参数名取值。
-                    $data = $request->getBody()->__toString();
-                    if(empty($data)){
-                        $data = [];
-                    }else{
-                        $data = json_decode($data,true) ?: [];
-                    }
+                    // 协程内共享 JSON 解码结果，再按参数名取值。
+                    $data = ArgContext::getInstance()->getJson($request);
 
                     if(isset($data[$param->name])){
                         $this->hasSet = true;
@@ -76,12 +71,7 @@ final class ParamParseState
                     break;
                 }
                 case ParamFrom::XML:{
-                    $xml = $request->getBody()->__toString();
-                    // xml 转数组
-                    $data = json_decode(json_encode(simplexml_load_string($xml)), true);
-                    if(!is_array($data)){
-                        $data = [];
-                    }
+                    $data = ArgContext::getInstance()->getXml($request);
                     if(isset($data[$param->name])){
                         $this->hasSet = true;
                         if(!empty($param->subObject)){
