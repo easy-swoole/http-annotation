@@ -14,6 +14,7 @@ use EasySwoole\HttpAnnotation\Exception\ParamError;
 use EasySwoole\HttpAnnotation\Exception\RequestMethodNotAllow;
 use EasySwoole\HttpAnnotation\Validator\Bean\ValidateRequest;
 use EasySwoole\HttpAnnotation\Validator\MsgMap\DefaultMap;
+use ReflectionNamedType;
 use Throwable;
 
 
@@ -145,12 +146,11 @@ abstract class AnnotationController extends Controller
         }
 
         $type = $parameters[0]->getType();
-        if ($type) {
-            $type = $type->getName();
-        }
-        // 单数组形参仅接收 action 定义的参数，按配置省略未设置字段。
-        if (count($parameters) == 1 && $type == 'array') {
-            $paramKey = $parameters[0]->name;
+        $paramKey = $parameters[0]->name;
+        // 优先按名称绑定；只有没有同名最终定义的单数组形参才收集 action 参数。
+        // 联合类型和交叉类型不提供 getName()，按普通同名形参绑定。
+        if (count($parameters) == 1 && $type instanceof ReflectionNamedType
+            && $type->getName() === 'array' && !array_key_exists($paramKey, $finalAllParams)) {
             $temp = [];
             foreach ($actionArgsInTag as $param) {
                 /** @var Param $param */

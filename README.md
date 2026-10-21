@@ -87,7 +87,9 @@ class Message extends AnnotationController
 }
 ```
 
-普通方法的形参名称需要与属性中定义的参数名称一致。方法只有一个 `array` 形参时，组件将接口的 `requestParam` 打包成数组传入。此数组模式只收集接口参数；公共参数可在 `onRequest` 中接收。
+普通方法优先按形参名称绑定最终参数定义（包含公共参数和 action 参数）。只有一个 `array` 或 `?array` 形参且不存在同名最终定义时，组件才将接口的 `requestParam` 打包成数组传入。此收集模式只收集接口参数；公共参数可在 `onRequest` 中接收。
+
+例如定义 `new Param('ids', type: null)` 时，`batch(array $ids)` 接收该字段自身的数组值，如 `[1, 2]`；而 `batch(array $data)` 在没有 `data` 参数定义时接收 `['ids' => [1, 2]]`。判断依据是是否存在定义，而不是本次请求是否传入；同名字段缺失时仍按定义的默认值绑定。已有收集形参与字段同名的接口需要调整形参名，以免改变接收结构。
 
 ## 在控制器命名空间下注册路由
 
@@ -302,7 +304,7 @@ INT、BOOLEAN、FLOAT 可分别配合 `Integer()`、`IsBool()`、`IsFloat()` 判
 
 `Param::value` 始终保存声明的默认值，请求取值及类型转换不会覆盖它。解析结果通过 `parsedValue()` 获取，是否实际取到参数通过 `hasSet()` 判断；解析结果在当前实例中缓存，克隆 `Param` 会清除解析状态并保留默认值，供新请求重新解析。
 
-`ignorePassArgWhenNotSet: true` 只在 action 使用**单个 `array` 形参接收参数**时生效：没有取到参数（`hasSet() === false`）时，不将该参数加入传给 action 的数组。独立形参模式不应用此选项。它不跳过参数校验，因此配置 `Required` 等规则时，未传参数仍可能校验失败。
+`ignorePassArgWhenNotSet: true` 只在 action 使用**单个数组形参收集全部接口参数，且该形参没有同名最终参数定义**时生效：没有取到参数（`hasSet() === false`）时，不将该参数加入传给 action 的数组。按名称绑定单个字段时不应用此选项，即使该字段自身是数组。它不跳过参数校验，因此配置 `Required` 等规则时，未传参数仍可能校验失败。
 
 GET、POST、JSON 字段通过 `isset` 判断是否存在，未传字段和显式传入 `null` 均视为未设置；空字符串 `''`、整数 `0`、字符串 `'0'`、`false` 则视为已设置，仍会传入。声明了默认 `value` 也不会改变 `hasSet()`，未设置时仍会省略该参数。
 

@@ -56,16 +56,7 @@ final class ParamParseState
 
                     if(isset($data[$param->name])){
                         $this->hasSet = true;
-                        if(!empty($param->subObject)){
-                            $temps = [];
-                            /** @var Param $item */
-                            foreach ($param->subObject as $item){
-                                $temps[$item->name] = $item->parsedValue($request,$data[$param->name]);
-                            }
-                            $this->parsedValue = $temps;
-                        }else{
-                            $this->parsedValue = $data[$param->name];
-                        }
+                        $this->parsedValue = $data[$param->name];
                     }
 
                     break;
@@ -74,16 +65,7 @@ final class ParamParseState
                     $data = ArgContext::getInstance()->getXml($request);
                     if(isset($data[$param->name])){
                         $this->hasSet = true;
-                        if(!empty($param->subObject)){
-                            $temps = [];
-                            /** @var Param $item */
-                            foreach ($param->subObject as $item){
-                                $temps[$item->name] = $item->parsedValue($request,$data[$param->name]);
-                            }
-                            $this->parsedValue = $temps;
-                        }else{
-                            $this->parsedValue = $data[$param->name];
-                        }
+                        $this->parsedValue = $data[$param->name];
                     }
 
                     break;
