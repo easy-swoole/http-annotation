@@ -32,9 +32,9 @@ class ParamTest extends TestCase
         return [
             'null' => [null, null],
             'empty string' => ['', null],
-            'false' => [false, null],
+            'false' => [false, false],
             'empty array' => [[], null],
-            'float zero' => [0.0, null],
+            'float zero' => [0.0, 0.0],
             'integer zero' => [0, 0],
             'string zero' => ['0', '0'],
             'whitespace' => [' ', ' '],

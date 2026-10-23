@@ -164,7 +164,7 @@ IgnoreValidatorWhenEmpty(string|null $errorMsg = null)
 new IgnoreValidatorWhenEmpty();
 ```
 
-未设置或 PHP empty(value) 为真时跳过所有规则；0、字符串 0、false 也会跳过。
+未传入，或解析值为 null、空字符串、空数组时，跳过该参数全部规则，不受规则声明顺序影响。0、0.0、字符串 `'0'`、false、空白字符串仍执行校验。搭配 `NULL_WHILE_EMPTY` 时，空字符串和空数组先转换为 null；false 和零值保留。与 Required*、NotEmpty 互斥。
 
 ### OptionalIfParamMiss
 
@@ -672,7 +672,7 @@ new Param(name: 'age', from: [ParamFrom::GET], type: null, validate: [
 
 未传且值为 null 时跳过全部校验；传空字符串仍执行 Integer 并失败。Optional* 与 Required*、NotEmpty 不能同时定义，构造 Param 时会直接抛出配置异常。
 
-`IgnoreValidatorWhenEmpty` 的空值规则与 `NotEmpty` 不同：字符串 `'0'` 也会触发跳过。条件 Optional 仅在当前参数未设置时生效；多个条件标记同时配置时，按实现顺序处理：Miss、Set、ValInArray、ValNoInArray，而不是逻辑合取。默认 STRING 会把未传入的 null 转为 `''`，使 Optional 的严格 null 条件失效。
+`IgnoreValidatorWhenEmpty` 只跳过未传入、null、空字符串和空数组，零值和 false 不会触发跳过。条件 Optional 仅在当前参数未设置时生效；多个条件标记同时配置时，按实现顺序处理：Miss、Set、ValInArray、ValNoInArray，而不是逻辑合取。未传参数不会做类型转换，Optional 是否跳过取决于默认值是否为 null。
 
 `ignorePassArgWhenNotSet` 控制 action 数组中是否传递字段，不跳过校验；`NULL_WHILE_EMPTY` 转换值也不改变 hasSet。详见 [README 参数说明](README.md#未传参数与空值转换)。
 

@@ -308,12 +308,12 @@ INT、BOOLEAN、FLOAT 可分别配合 `Integer()`、`IsBool()`、`IsFloat()` 判
 
 GET、POST、JSON 字段通过 `isset` 判断是否存在，未传字段和显式传入 `null` 均视为未设置；空字符串 `''`、整数 `0`、字符串 `'0'`、`false` 则视为已设置，仍会传入。声明了默认 `value` 也不会改变 `hasSet()`，未设置时仍会省略该参数。
 
-`type: ParamType::NULL_WHILE_EMPTY` 使用 PHP 的 `empty()` 规则转换值，但特别保留整数 `0` 和字符串 `'0'`：
+`type: ParamType::NULL_WHILE_EMPTY` 只将空字符串、空数组和 `null` 转换为 `null`，保留零值和布尔值：
 
 | 原始值 | 转换后的值 |
 | --- | --- |
-| `null`、`''`、`false`、`[]`、浮点 `0.0` | `null` |
-| 整数 `0`、字符串 `'0'` | 保留原值和类型 |
+| `null`、`''`、`[]` | `null` |
+| 整数 `0`、浮点 `0.0`、字符串 `'0'`、`false` | 保留原值和类型 |
 | 空格字符串 `' '`、其他非空值 | 保留原值和类型 |
 
 转换不会改变是否已设置参数。组合使用这两个选项时，**已传入的空字符串会转为 `null`，但不会从参数数组中省略**。
@@ -351,7 +351,9 @@ public function updateLimit(array $params): void
 | 未传入 | `false` | `null`（不做类型转换） | `[]`，不包含该字段 | `['queryLimitPeriod' => null]` |
 | 显式传入 `null` | `false` | `null`（不做类型转换） | `[]`，不包含该字段 | `['queryLimitPeriod' => null]` |
 | 空字符串 `''` | `true` | `null` | `['queryLimitPeriod' => null]` | `['queryLimitPeriod' => null]` |
-| `false`、空数组 `[]`、浮点数 `0.0` | `true` | `null` | `['queryLimitPeriod' => null]` | `['queryLimitPeriod' => null]` |
+| 空数组 `[]` | `true` | `null` | `['queryLimitPeriod' => null]` | `['queryLimitPeriod' => null]` |
+| `false` | `true` | `false` | `['queryLimitPeriod' => false]` | `['queryLimitPeriod' => false]` |
+| 浮点数 `0.0` | `true` | `0.0` | `['queryLimitPeriod' => 0.0]` | `['queryLimitPeriod' => 0.0]` |
 | 整数 `0` | `true` | 整数 `0` | `['queryLimitPeriod' => 0]` | `['queryLimitPeriod' => 0]` |
 | 字符串 `'0'` | `true` | 字符串 `'0'` | `['queryLimitPeriod' => '0']` | `['queryLimitPeriod' => '0']` |
 | 空格字符串 `' '` | `true` | 字符串 `' '` | `['queryLimitPeriod' => ' ']` | `['queryLimitPeriod' => ' ']` |
@@ -387,6 +389,36 @@ public function update(array $params): void
 - JSON/XML 解析在 Swoole 协程中运行：`ArgContext` 按协程 ID 分别缓存两种格式的解码结果，公共参数和 action 参数可共享；每个协程只注册一次 `defer`，结束时清理缓存，不使用通用 `ContextManager` 的键。约定一个请求对应一个协程，请求体在首次解析后不再修改；子协程拥有独立缓存。CLI 测试涉及 JSON/XML 解析时也需在协程中执行。
 
 内置校验器位于 `src/Validator`，包括必填、长度、数值、日期、邮箱、文件和字段比较等。控制器在公共参数和 action 参数校验阶段均传入已解析的 `allDefineParams`，支持跨字段比较及条件可选规则；action 同名参数优先，ignoreAction 排除的参数不会进入该集合。
+
+## 空值跳过校验
+
+`NULL_WHILE_EMPTY` 只负责类型转换。需要“未传或传空值时跳过全部规则，非空值正常校验”时，显式搭配 `IgnoreValidatorWhenEmpty`：
+
+```php
+use EasySwoole\HttpAnnotation\Validator\IgnoreValidatorWhenEmpty;
+use EasySwoole\HttpAnnotation\Validator\Integer;
+use EasySwoole\HttpAnnotation\Validator\Min;
+
+new Param(
+    name: 'queryLimitPeriod',
+    from: [ParamFrom::GET],
+    type: ParamType::NULL_WHILE_EMPTY,
+    validate: [new IgnoreValidatorWhenEmpty(), new Integer(), new Min(1)],
+    ignorePassArgWhenNotSet: true,
+);
+```
+
+在默认值为 `null`、action 使用单数组收集模式的情况下：
+
+| 输入 | 解析结果 | 校验行为 | action 数组 |
+| --- | --- | --- | --- |
+| 未传 | `null` | 跳过 | 不包含该字段 |
+| 空字符串 | `null` | 跳过 | 包含该字段，值为 `null` |
+| `0` 或 `'0'` | 保留原值 | 参与校验，`Min(1)` 不通过 | 不调用 action |
+| `'10'` | `'10'` | 正常校验，通过 | 包含该字段，值为 `'10'` |
+| `'abc'` | `'abc'` | 正常校验，`Integer` 不通过 | 不调用 action |
+
+`IgnoreValidatorWhenEmpty` 在参数未传入，或解析结果为 `null`、空字符串、空数组时跳过全部规则；`0`、`0.0`、`'0'`、`false` 和空白字符串仍参与校验。该规则与 `Required*`、`NotEmpty` 互斥，也适用于 `ObjectShape` 内部字段。
 
 ## 嵌套请求参数
 

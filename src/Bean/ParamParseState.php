@@ -148,8 +148,8 @@ final class ParamParseState
                     break;
                 }
                 case ParamType::NULL_WHILE_EMPTY: {
-                    // PHP empty 值转为 null，但特意保留整数 0 和字符串 '0'。
-                    if (empty($this->parsedValue) && $this->parsedValue !== 0 && $this->parsedValue !== '0') {
+                    // 仅空字符串、空数组和 null 为空；0、0.0、'0'、false 保持原值。
+                    if (in_array($this->parsedValue, [null, '', []], true)) {
                         $this->parsedValue = null;
                     }
                     break;

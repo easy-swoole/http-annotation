@@ -109,7 +109,8 @@ abstract class AbstractValidator
         }
 
         if(isset($rules['IgnoreValidatorWhenEmpty'])){
-            if((!$param->hasSet()) || empty($param->parsedValue())){
+            // 空值采用请求语义，不能用 PHP empty() 将 0、false 一并跳过。
+            if ((!$param->hasSet()) || in_array($param->parsedValue(), [null, '', []], true)) {
                 return true;
             }
         }
