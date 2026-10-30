@@ -276,6 +276,55 @@ new Between(min: 1, max: 100);
 
 数值或字符串与 min/max 比较，两端包含；当前实现没有独立的 is_numeric 限制，建议组合 IsNumeric。
 
+### DateDiffWithColumn
+
+```php
+DateDiffWithColumn(string $compare, int $maxSeconds, ?string $errorMsg = null)
+
+new DateDiffWithColumn(compare: 'start_time', maxSeconds: 7 * 86400);
+new DateDiffWithColumn(compare: 'start_time', maxSeconds: 3 * 86400);
+new DateDiffWithColumn(compare: 'start_time', maxSeconds: 36 * 3600);
+```
+
+放在结束时间字段上，要求 `0 <= 当前字段时间 - compare 字段时间 < maxSeconds`。允许相等，禁止结束时间早于开始时间；恰好达到上限不通过。需要严格晚于开始时间时，再搭配 `DateAfterColumn`。
+
+两个字段均使用日期字符串，可包含小时、分钟、秒和时区偏移；不接收整数时间戳。默认按 PHP 当前时区解释未带时区的字符串，显式偏移按各自偏移解析。按实际秒数计算，7 天代表 168 小时，36 小时代表 129600 秒，不按自然日计数。小数秒参与边界比较。
+
+空值、不支持的类型、无法解析或存在日期警告的值（例如 2 月 30 日）返回校验失败；引用字段未定义、compare 为空或 maxSeconds 不大于 0 时抛出配置异常。规则沿用日期解析器可识别的字符串语法；需要限定输入格式时，搭配 `DateFormat`。
+
+可选的查询时间范围可以这样配置（示例使用已有的 `Param`、`ParamFrom`，补充导入以下验证器）：
+
+```php
+use EasySwoole\HttpAnnotation\Validator\DateDiffWithColumn;
+use EasySwoole\HttpAnnotation\Validator\DateFormat;
+use EasySwoole\HttpAnnotation\Validator\Optional;
+use EasySwoole\HttpAnnotation\Validator\OptionalIfParamMiss;
+
+$requestParam = [
+    new Param(
+        name: 'start_time',
+        from: [ParamFrom::GET],
+        validate: [
+            new OptionalIfParamMiss('end_time'),
+            new DateFormat('Y-m-d H:i:s'),
+        ],
+    ),
+    new Param(
+        name: 'end_time',
+        from: [ParamFrom::GET],
+        validate: [
+            new Optional(),
+            new DateFormat('Y-m-d H:i:s'),
+            new DateDiffWithColumn('start_time', 36 * 3600),
+        ],
+    ),
+];
+```
+
+该组合允许两个字段都未传或仅传开始时间；只传结束时间时开始时间的校验失败；两个字段都有值时检查格式及差值。空字符串不视为合法日期。默认值均为 null；如需在未传时省略 action 数组字段，可另加 `ignorePassArgWhenNotSet: true`。`RequiredWith` 条件不成立时仅自身通过，不会跳过后续日期规则，因此不要简单将它与日期规则拼接后当作“可选范围”。
+
+支持 `ObjectShape` 内部的兄弟字段比较，错误路径仍保留完整层级。错误模板可使用 `{#compare}`、`{#maxSeconds}` 和 `{#validateParam}`。
+
 ### Decimal
 
 ```php

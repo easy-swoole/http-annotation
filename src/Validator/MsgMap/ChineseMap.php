@@ -29,6 +29,7 @@ class ChineseMap implements ValidateMsgMapInterface
         'DateAfterColumn' => '{#validateParam} 日期必须晚于参数 {#compare} 的日期',
         'DateBefore' => '{#validateParam} 日期必须早于 {#date}',
         'DateBeforeColumn' => '{#validateParam} 日期必须早于参数 {#compare} 的日期',
+        'DateDiffWithColumn' => '{#validateParam} 必须不早于参数 {#compare}，且时间差小于 {#maxSeconds} 秒',
         'DateFormat' => '{#validateParam} 必须为符合格式 {#format} 的有效日期',
         'Decimal' => '{#validateParam} 必须符合小数精度 {#accuracy}',
         'Different' => '{#validateParam} 必须与 {#compare} 不同',

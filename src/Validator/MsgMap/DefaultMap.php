@@ -29,6 +29,7 @@ class DefaultMap implements ValidateMsgMapInterface
         'DateAfterColumn' => '{#validateParam} must be date after {#compare} column',
         'DateBefore' => '{#validateParam} must be date before {#date}',
         'DateBeforeColumn' => '{#validateParam} must be date before {#compare} column',
+        'DateDiffWithColumn' => '{#validateParam} must be on or after parameter {#compare} and less than {#maxSeconds} seconds later',
         'DateFormat' => '{#validateParam} must be a valid date matching format {#format}',
         'Decimal' => '{#validateParam} must satisfy decimal precision {#accuracy}',
         'Different' => '{#validateParam} must be different from {#compare}',

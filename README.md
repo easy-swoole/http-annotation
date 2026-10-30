@@ -390,6 +390,8 @@ public function update(array $params): void
 
 内置校验器位于 `src/Validator`，包括必填、长度、数值、日期、邮箱、文件和字段比较等。控制器在公共参数和 action 参数校验阶段均传入已解析的 `allDefineParams`，支持跨字段比较及条件可选规则；action 同名参数优先，ignoreAction 排除的参数不会进入该集合。
 
+时间范围可使用 `DateDiffWithColumn(compare: 'start_time', maxSeconds: 36 * 3600)`，限制结束时间不早于开始时间且差值严格小于 36 小时。也可用 `7 * 86400` 或 `3 * 86400` 限制小于 7 天或 3 天。格式限制和可选参数的组合用法见 [DateDiffWithColumn](Validate.md#datediffwithcolumn)。
+
 ## 空值跳过校验
 
 `NULL_WHILE_EMPTY` 只负责类型转换。需要“未传或传空值时跳过全部规则，非空值正常校验”时，显式搭配 `IgnoreValidatorWhenEmpty`：
